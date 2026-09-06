@@ -6074,7 +6074,7 @@ function renderMerchantAnalytics() {
     if (merchantList.length > 0) {
         const topM = merchantList[0];
         const topShare = totalFoodSpendRon > 0 ? ((topM.totalRon / totalFoodSpendRon) * 100).toFixed(1) : '0';
-        if (kpiTopStoreEl) kpiTopStoreEl.textContent = `${topM.merchant.icon} ${topM.merchant.name}`;
+        if (kpiTopStoreEl) kpiTopStoreEl.innerHTML = `<span style="display:inline-flex; align-items:center; gap:6px;">${getMerchantLogoHtml(topM.merchant.name, 20)} <span>${escapeHtml(topM.merchant.name)}</span></span>`;
         if (kpiTopShareEl) kpiTopShareEl.textContent = `${topShare}% ${t('merchant_of_food_budget', lang)}`;
     } else {
         if (kpiTopStoreEl) kpiTopStoreEl.textContent = '-';
@@ -6239,8 +6239,10 @@ function renderMerchantRanking(merchantList, totalFoodSpendRon, mainCurr) {
         card.innerHTML = `
             <div class="merchant-rank-header">
                 <div class="merchant-rank-title">
-                    <div style="width:30px; height:30px; border-radius:8px; background:${m.color ? m.color + '22' : 'rgba(59, 130, 246, 0.12)'}; border: 1px solid ${m.color ? m.color + '44' : 'rgba(59, 130, 246, 0.25)'}; display:flex; align-items:center; justify-content:center; font-size:1.15rem; flex-shrink:0;">${m.icon}</div>
-                    <span>${m.name}</span>
+                    <div style="width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        ${getMerchantLogoHtml(m.name, 26)}
+                    </div>
+                    <span>${escapeHtml(m.name)}</span>
                 </div>
                 <div class="merchant-rank-amount">
                     ${totalDisp}
@@ -6376,6 +6378,8 @@ function renderFoodBasketReceiptsModal() {
         const descText = tx.description ? tx.description : m.name;
         const isSuspended = isTxSuspended(tx);
         const payMethod = tx.paymentMethod === 'cash' ? `💵 ${t('pay_method_cash', lang)}` : `💳 ${t('pay_method_card', lang)}`;
+        const visualIcon = getReceiptVisualIcon(tx, m);
+        const isVisualEmoji = typeof visualIcon === 'string' && !visualIcon.startsWith('<span');
 
         const row = document.createElement('div');
         row.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
@@ -6388,7 +6392,9 @@ function renderFoodBasketReceiptsModal() {
         row.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
                 <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
-                    <div style="width:34px; height:34px; border-radius:9px; background:${m.color ? m.color + '22' : 'rgba(59, 130, 246, 0.12)'}; border: 1px solid ${m.color ? m.color + '44' : 'rgba(59, 130, 246, 0.25)'}; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">${m.icon}</div>
+                    <div style="width:36px; height:36px; border-radius:9px; background:${m.color ? m.color + '18' : 'rgba(59, 130, 246, 0.12)'}; border: 1px solid ${m.color ? m.color + '44' : 'rgba(59, 130, 246, 0.25)'}; display:flex; align-items:center; justify-content:center; font-size:${isVisualEmoji ? '1.35rem' : '1rem'}; flex-shrink:0;">
+                        ${visualIcon}
+                    </div>
                     <div style="min-width:0;">
                         <div style="font-weight:700; font-size:0.88rem; color:var(--text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                             ${escapeHtml(descText)}
@@ -6396,7 +6402,10 @@ function renderFoodBasketReceiptsModal() {
                         <div style="font-size:0.70rem; color:var(--text-muted); display:flex; align-items:center; gap:6px; margin-top:2px;">
                             <span>📅 ${formatDateDisplay(tx.date)}</span>
                             <span>•</span>
-                            <span style="font-weight:600; color:${m.color || 'var(--accent)'};">${m.name}</span>
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:600; color:${m.color || 'var(--accent)'};">
+                                ${getMerchantLogoHtml(m.name, 14)}
+                                <span>${escapeHtml(m.name)}</span>
+                            </span>
                             <span>•</span>
                             <span>${payMethod}</span>
                         </div>
@@ -6691,7 +6700,7 @@ function getMerchantLogoHtml(name, size = 18) {
         return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#000;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.55)}px;line-height:1;">5</span>`;
     }
 
-    // Supermarketuri & Mâncare
+    // Supermarketuri & Magazine Mâncare
     if (lower.includes('emag')) {
         return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#005eb8;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.4)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.2);"><span style="color:#e21e26;">e</span>MAG</span>`;
     }
@@ -6718,6 +6727,47 @@ function getMerchantLogoHtml(name, size = 18) {
     }
     if (lower.includes('freshful')) {
         return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#2d8259;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;">freshful</span>`;
+    }
+    if (lower.includes('sezamo')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#eab308;color:#000;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;">SEZ</span>`;
+    }
+    if (lower.includes('petresti') || lower.includes('petrești')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#d97706;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.40)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.15);">PET</span>`;
+    }
+    if (lower.includes('ardeal')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#b91c1c;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.40)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.15);">ARD</span>`;
+    }
+    if (lower.includes('unicarm')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#b91c1c;color:#ffd700;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.36)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.15);">UNI</span>`;
+    }
+    if (lower.includes('diana')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#dc2626;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;">DIA</span>`;
+    }
+    if (lower.includes('annabella')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#ef4444;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.36)}px;line-height:1;">ANN</span>`;
+    }
+    if (lower.includes('sergiana')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#991b1b;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.36)}px;line-height:1;">SER</span>`;
+    }
+    if (lower.includes('metro')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#002b49;color:#ffdd00;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.36)}px;line-height:1;">METRO</span>`;
+    }
+    if (lower.includes('selgros')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#e30613;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;">SELGROS</span>`;
+    }
+
+    // Tech & Servicii Online
+    if (lower.includes('google')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#fff;border:1px solid #e2e8f0;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.58)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.1);"><span style="color:#4285f4;">G</span></span>`;
+    }
+    if (lower.includes('apple')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#000;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.50)}px;line-height:1;"></span>`;
+    }
+    if (lower.includes('netflix')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#000;color:#e50914;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.55)}px;line-height:1;">N</span>`;
+    }
+    if (lower.includes('spotify')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#1db954;color:#000;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.50)}px;line-height:1;">•))</span>`;
     }
 
     // Magazine Haine & Shopping
@@ -6840,6 +6890,47 @@ function getMerchantLogoHtml(name, size = 18) {
     const initials = clean.split(/\s+/).map(w => w[0]).join('').substring(0, 3).toUpperCase() || clean.substring(0, 2).toUpperCase();
 
     return `<span class="merchant-brand-logo merchant-brand-custom" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:${brandColor};color:#ffffff;font-family:sans-serif;font-weight:800;font-size:${Math.max(9, Math.round(size*0.48))}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">${initials}</span>`;
+}
+
+// Returnează iconița vizuală specifică bonului (articol din lista de cumpărături sau sigla magazinului)
+function getReceiptVisualIcon(tx, m) {
+    const desc = (tx.description || '').toLowerCase().trim();
+    const cat = appData.categories.find(c => c.id === tx.categoryId);
+
+    if (desc) {
+        if (desc.includes('apa') || desc.includes('apă')) return '💧';
+        if (desc.includes('strudel') || desc.includes('ștrudel') || desc.includes('croissant') || desc.includes('patiserie') || desc.includes('placinta') || desc.includes('plăcintă') || desc.includes('covrig')) return '🥐';
+        if (desc.includes('suc') || desc.includes('cola') || desc.includes('fanta') || desc.includes('pepsi') || desc.includes('sprite') || desc.includes('fresh')) return '🧃';
+        if (desc.includes('cafea') || desc.includes('cappuccino') || desc.includes('espresso') || desc.includes('latte')) return '☕';
+        if (desc.includes('paine') || desc.includes('pâine') || desc.includes('bagheta') || desc.includes('chifla')) return '🥖';
+        if (desc.includes('lapte') || desc.includes('iaurt') || desc.includes('kefir') || desc.includes('smantana') || desc.includes('smântână')) return '🥛';
+        if (desc.includes('oua') || desc.includes('ouă')) return '🥚';
+        if (desc.includes('carne') || desc.includes('ceafa') || desc.includes('cotlet') || desc.includes('porc') || desc.includes('vita') || desc.includes('vită')) return '🥩';
+        if (desc.includes('pui') || desc.includes('aripi') || desc.includes('piept') || desc.includes('copanele')) return '🍗';
+        if (desc.includes('peste') || desc.includes('pește') || desc.includes('somon') || desc.includes('ton')) return '🐟';
+        if (desc.includes('branza') || desc.includes('brânză') || desc.includes('cascaval') || desc.includes('cașcaval') || desc.includes('telemea') || desc.includes('mozzarella')) return '🧀';
+        if (desc.includes('mezel') || desc.includes('salam') || desc.includes('sunca') || desc.includes('șuncă') || desc.includes('bacon') || desc.includes('parizer')) return '🥓';
+        if (desc.includes('fruct') || desc.includes('mere') || desc.includes('banan') || desc.includes('portocal') || desc.includes('lamai') || desc.includes('capsun') || desc.includes('căpșun')) return '🍎';
+        if (desc.includes('legum') || desc.includes('rosii') || desc.includes('roșii') || desc.includes('castrav') || desc.includes('cartof') || desc.includes('ceapa') || desc.includes('usturoi') || desc.includes('salata') || desc.includes('salată')) return '🥦';
+        if (desc.includes('dulci') || desc.includes('ciocolat') || desc.includes('biscuit') || desc.includes('napolit') || desc.includes('bomboan')) return '🍫';
+        if (desc.includes('inghetata') || desc.includes('înghețată')) return '🍦';
+        if (desc.includes('tort') || desc.includes('prajitur') || desc.includes('prăjitur')) return '🍰';
+        if (desc.includes('pizza')) return '🍕';
+        if (desc.includes('burger') || desc.includes('kebab') || desc.includes('shaorma') || desc.includes('sandwich')) return '🍔';
+        if (desc.includes('bere')) return '🍺';
+        if (desc.includes('vin')) return '🍷';
+        if (desc.includes('pisic') || desc.includes('caine') || desc.includes('câine') || desc.includes('animale') || desc.includes('pet food') || desc.includes('pedigree') || desc.includes('whiskas') || desc.includes('purina')) return '🐱';
+        if (desc.includes('medicament') || desc.includes('pastil') || desc.includes('vitam') || desc.includes('sirop') || desc.includes('aspirin') || desc.includes('paracetamol')) return '💊';
+        if (desc.includes('detergent') || desc.includes('sapun') || desc.includes('săpun') || desc.includes('sampon') || desc.includes('șampon') || desc.includes('gel dus') || desc.includes('hartie igienica') || desc.includes('hârtie igienică')) return '🧼';
+        if (desc.includes('benzina') || desc.includes('benzină') || desc.includes('motorina') || desc.includes('motorină') || desc.includes('gpl') || desc.includes('carburant')) return '⛽';
+
+        if (appData.settings && Array.isArray(appData.settings.customShoppingItems)) {
+            const customItem = appData.settings.customShoppingItems.find(i => i && i.name && (desc === i.name.toLowerCase().trim() || desc.includes(i.name.toLowerCase().trim())));
+            if (customItem && customItem.icon) return customItem.icon;
+        }
+    }
+
+    return getMerchantLogoHtml(m ? m.name : (tx.merchant || ''), 28);
 }
 
 // Extrage lista de magazine ordonate inteligent în funcție de categoria activă și frecvența de utilizare
