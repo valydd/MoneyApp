@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.23";
+const APP_VERSION = "3.3.24";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.23.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.24.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -442,7 +442,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.23.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.24.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -678,7 +678,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.23.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.24.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -905,7 +905,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.23.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.24.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1134,7 +1134,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.23.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.24.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1364,7 +1364,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.23.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.24.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -6714,7 +6714,7 @@ function getCategoryDomain(catId) {
     if (raw.includes('electronice') || raw.includes('it') || raw.includes('gadget') || raw.includes('electrocasnice') || raw.includes('telefon') || raw.includes('pc') || raw.includes('laptop') || raw.includes('tech')) {
         return 'tech';
     }
-    if (raw.includes('facturi') || raw.includes('utilitati') || raw.includes('utilități') || raw.includes('curent') || raw.includes('gaz') || raw.includes('energie') || raw.includes('apa') || raw.includes('apă') || raw.includes('salubritate') || raw.includes('internet') || raw.includes('tv') || raw.includes('telefonie')) {
+    if (raw.includes('facturi') || raw.includes('utilitati') || raw.includes('utilități') || raw.includes('curent') || raw.includes('gaz') || raw.includes('gaze') || raw.includes('energie') || raw.includes('apa') || raw.includes('apă') || raw.includes('salubritate') || raw.includes('gunoi') || raw.includes('internet') || raw.includes('tv') || raw.includes('telefonie') || raw.includes('telefon') || raw.includes('impozit') || raw.includes('taxe') || raw.includes('chirie') || raw.includes('întreținere') || raw.includes('intretinere') || raw.includes('asociație') || raw.includes('asociatie') || raw.includes('electric') || raw.includes('rate') || raw.includes('rată') || raw.includes('credit') || raw.includes('asigurare') || raw.includes('⚡') || raw.includes('💡') || raw.includes('🔥') || raw.includes('💧') || raw.includes('📶') || raw.includes('📱') || raw.includes('🏢') || raw.includes('🏛️') || raw.includes('🗑️') || raw.includes('🛡️')) {
         return 'utilities';
     }
     if (raw.includes('divertisment') || raw.includes('iesiri') || raw.includes('ieșiri') || raw.includes('cinema') || raw.includes('film') || raw.includes('jocuri') || raw.includes('gaming') || raw.includes('concediu') || raw.includes('vacanta') || raw.includes('vacanță') || raw.includes('calatorie') || raw.includes('călătorie')) {
@@ -6955,6 +6955,53 @@ function getMerchantLogoHtml(name, size = 18) {
         return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#fff;border:1px solid #e2e8f0;color:#502379;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.55)}px;line-height:1;">dm</span>`;
     }
 
+    // Utilități & Energie & Telecom & Taxe
+    if (lower.includes('hidroelectrica') || lower.includes('hidro')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#006699;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">HIDRO</span>`;
+    }
+    if (lower.includes('electrica')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#004b93;color:#ffd700;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">⚡EL</span>`;
+    }
+    if (lower.includes('enel') || lower.includes('ppc')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#008a00;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">PPC</span>`;
+    }
+    if (lower.includes('e.on') || lower.includes('eon')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#ed1c24;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">e.on</span>`;
+    }
+    if (lower.includes('engie')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#00aaff;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">ENGIE</span>`;
+    }
+    if (lower.includes('premier') || lower.includes('premier energy')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#0d9488;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">PRM</span>`;
+    }
+    if (lower.includes('digi') || lower.includes('rcs') || lower.includes('rds')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#005baa;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">DIGI</span>`;
+    }
+    if (lower.includes('orange') || lower.includes('yoxo')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#ff6600;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">ORANGE</span>`;
+    }
+    if (lower.includes('vodafone')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#e60000;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">VODA</span>`;
+    }
+    if (lower.includes('telekom')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#e20074;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.55)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">T</span>`;
+    }
+    if (lower.includes('apa nova') || lower.includes('apanova') || lower.includes('compania de apa') || lower.includes('raja') || lower.includes('aquatim') || lower.includes('apavital')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#0284c7;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.42)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">💧APĂ</span>`;
+    }
+    if (lower.includes('ghiseul') || lower.includes('ghișeul') || lower.includes('anaf') || lower.includes('ditl') || lower.includes('primarie') || lower.includes('primărie') || lower.includes('taxe')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#1e3a8a;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">🏛️TAX</span>`;
+    }
+    if (lower.includes('chirie') || lower.includes('proprietar')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#d97706;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">🏠RENT</span>`;
+    }
+    if (lower.includes('intretinere') || lower.includes('întreținere') || lower.includes('asociatie') || lower.includes('asociație')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#475569;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.35)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">🏢BLOC</span>`;
+    }
+    if (lower.includes('salubritate') || lower.includes('gunoi') || lower.includes('rebu') || lower.includes('supercom') || lower.includes('brantner') || lower.includes('rosal') || lower.includes('romprest')) {
+        return `<span class="merchant-brand-logo" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:#15803d;color:#fff;font-family:sans-serif;font-weight:900;font-size:${Math.round(size*0.38)}px;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,0.18);">🗑️SAL</span>`;
+    }
+
     if (lower.includes('piata') || lower.includes('piață')) return `<span>🥦</span>`;
     if (lower.includes('aprozar')) return `<span>🍅</span>`;
     if (lower.includes('brutarie') || lower.includes('brutărie')) return `<span>🥖</span>`;
@@ -7004,6 +7051,17 @@ function getReceiptVisualIcon(tx, m) {
         if (desc.includes('medicament') || desc.includes('pastil') || desc.includes('vitam') || desc.includes('sirop') || desc.includes('aspirin') || desc.includes('paracetamol')) return '💊';
         if (desc.includes('detergent') || desc.includes('sapun') || desc.includes('săpun') || desc.includes('sampon') || desc.includes('șampon') || desc.includes('gel dus') || desc.includes('hartie igienica') || desc.includes('hârtie igienică')) return '🧼';
         if (desc.includes('benzina') || desc.includes('benzină') || desc.includes('motorina') || desc.includes('motorină') || desc.includes('gpl') || desc.includes('carburant')) return '⛽';
+        if (desc.includes('curent') || desc.includes('electr') || desc.includes('lumina') || desc.includes('lumină') || desc.includes('energie')) return '💡';
+        if (desc.includes('gaz') || desc.includes('gaze') || desc.includes('incalzire') || desc.includes('încălzire') || desc.includes('termo')) return '🔥';
+        if (desc.includes('canal') || desc.includes('apa nova') || desc.includes('apanova')) return '💧';
+        if (desc.includes('internet') || desc.includes('cablu') || desc.includes('fibra') || desc.includes('tv')) return '📶';
+        if (desc.includes('telefon') || desc.includes('mobil') || desc.includes('abonament')) return '📱';
+        if (desc.includes('chirie') || desc.includes('garsoniera') || desc.includes('apartament')) return '🏠';
+        if (desc.includes('intretinere') || desc.includes('întreținere') || desc.includes('asociatie') || desc.includes('asociație') || desc.includes('bloc')) return '🏢';
+        if (desc.includes('impozit') || desc.includes('taxa') || desc.includes('taxă') || desc.includes('ditl') || desc.includes('anaf') || desc.includes('primarie') || desc.includes('primărie')) return '🏛️';
+        if (desc.includes('salubritate') || desc.includes('gunoi') || desc.includes('deseuri') || desc.includes('deșeuri')) return '🗑️';
+        if (desc.includes('asigurare') || desc.includes('pad') || desc.includes('casco') || desc.includes('rca')) return '🛡️';
+        if (desc.includes('rata') || desc.includes('rată') || desc.includes('credit') || desc.includes('banca') || desc.includes('bancă') || desc.includes('leasing')) return '💳';
 
         if (appData.settings && Array.isArray(appData.settings.customShoppingItems)) {
             const customItem = appData.settings.customShoppingItems.find(i => i && i.name && (desc === i.name.toLowerCase().trim() || desc.includes(i.name.toLowerCase().trim())));
@@ -7101,7 +7159,31 @@ function getFoodMerchantsList(activeCatId) {
         // Electronice & IT
         { name: 'eMAG', domain: 'tech', priority: 95 },
         { name: 'Altex', domain: 'tech', priority: 94 },
-        { name: 'Flanco', domain: 'tech', priority: 90 }
+        { name: 'Flanco', domain: 'tech', priority: 90 },
+
+        // Facturi, Energie, Utilități, Telecom & Taxe
+        { name: 'Hidroelectrica', domain: 'utilities', priority: 98 },
+        { name: 'Electrica Furnizare', domain: 'utilities', priority: 97 },
+        { name: 'Engie', domain: 'utilities', priority: 96 },
+        { name: 'PPC (Enel)', domain: 'utilities', priority: 95 },
+        { name: 'E.ON', domain: 'utilities', priority: 94 },
+        { name: 'Digi (RCS-RDS)', domain: 'utilities', priority: 93 },
+        { name: 'Apa Nova', domain: 'utilities', priority: 92 },
+        { name: 'Premier Energy', domain: 'utilities', priority: 91 },
+        { name: 'Compania de Apă', domain: 'utilities', priority: 90 },
+        { name: 'Orange', domain: 'utilities', priority: 89 },
+        { name: 'Vodafone', domain: 'utilities', priority: 88 },
+        { name: 'Telekom', domain: 'utilities', priority: 87 },
+        { name: 'Întreținere Bloc', domain: 'utilities', priority: 86 },
+        { name: 'Chirie Apartament', domain: 'utilities', priority: 85 },
+        { name: 'Ghișeul.ro', domain: 'utilities', priority: 84 },
+        { name: 'Primărie / DITL', domain: 'utilities', priority: 83 },
+        { name: 'Salubritate / Gunoi', domain: 'utilities', priority: 82 },
+        { name: 'Nova Power & Gas', domain: 'utilities', priority: 81 },
+        { name: 'Restart Energy', domain: 'utilities', priority: 80 },
+        { name: 'Tinmar Energy', domain: 'utilities', priority: 79 },
+        { name: 'Asociație Proprietari', domain: 'utilities', priority: 78 },
+        { name: 'ANAF / Taxe', domain: 'utilities', priority: 77 }
     ];
 
     const hidden = (appData && appData.settings && Array.isArray(appData.settings.hiddenMerchants))
@@ -7292,7 +7374,20 @@ function getFoodShoppingItemsList(activeCatId) {
         { name: 'Săpun / Gel duș', icon: '🧼', domain: 'home', priority: 90 },
         { name: 'Șampon', icon: '🧴', domain: 'home', priority: 89 },
         { name: 'Pastă dinți', icon: '🪥', domain: 'home', priority: 88 },
-        { name: 'Becuri', icon: '💡', domain: 'home', priority: 85 }
+        { name: 'Becuri', icon: '💡', domain: 'home', priority: 85 },
+
+        // Facturi, Energie, Utilități, Servicii & Taxe
+        { name: 'Curent Electric', icon: '💡', domain: 'utilities', priority: 98 },
+        { name: 'Gaze Naturale', icon: '🔥', domain: 'utilities', priority: 97 },
+        { name: 'Apă & Canal', icon: '💧', domain: 'utilities', priority: 96 },
+        { name: 'Internet & TV', icon: '📶', domain: 'utilities', priority: 95 },
+        { name: 'Telefonie Mobilă', icon: '📱', domain: 'utilities', priority: 94 },
+        { name: 'Întreținere Bloc', icon: '🏢', domain: 'utilities', priority: 93 },
+        { name: 'Chirie Apartament', icon: '🏠', domain: 'utilities', priority: 92 },
+        { name: 'Impozit & Taxe', icon: '🏛️', domain: 'utilities', priority: 91 },
+        { name: 'Salubritate / Gunoi', icon: '🗑️', domain: 'utilities', priority: 90 },
+        { name: 'Asigurare Locuință', icon: '🛡️', domain: 'utilities', priority: 89 },
+        { name: 'Rată Bancă / Credit', icon: '💳', domain: 'utilities', priority: 88 }
     ];
 
     const hidden = (appData && appData.settings && Array.isArray(appData.settings.hiddenShoppingItems))
