@@ -913,7 +913,7 @@ body.light-theme .balance-title-converted {
 .btn-bal-summary {
     width: 24px;
     height: 24px;
-    border-radius: var(--radius-md);
+    border-radius: 6px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.18);
     display: flex;
