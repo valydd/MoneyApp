@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.21";
+const APP_VERSION = "3.3.22";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.21.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.22.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -335,7 +335,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: 'Nu afișa sumă convertită lângă titlu',
         badge_active: 'Activ',
         toast_fund_curr_disabled: 'Conversia fondului a fost dezactivată',
-        toast_fund_curr_set: 'Conversia fondului setată în'
+        toast_fund_curr_set: 'Conversia fondului setată în',
+        totals_modal_title: 'Total Venituri & Cheltuieli',
+        totals_modal_desc: 'Sumarul general al tuturor veniturilor și cheltuielilor înregistrate:',
+        totals_card_income: 'Total Venituri',
+        totals_card_expense: 'Total Cheltuieli',
+        totals_card_net_balance: 'Fond Disponibil Net',
+        totals_card_savings_rate: 'Rată Economisire & Activitate',
+        totals_card_tx_count: 'tranzacții active'
     },
     en: {
         currency_label: 'Currency',
@@ -435,7 +442,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.21.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.22.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -564,7 +571,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: 'Do not show converted amount next to title',
         badge_active: 'Active',
         toast_fund_curr_disabled: 'Fund conversion has been disabled',
-        toast_fund_curr_set: 'Fund conversion set to'
+        toast_fund_curr_set: 'Fund conversion set to',
+        totals_modal_title: 'Total Income & Expenses',
+        totals_modal_desc: 'General summary of all recorded income and expenses:',
+        totals_card_income: 'Total Income',
+        totals_card_expense: 'Total Expenses',
+        totals_card_net_balance: 'Net Available Fund',
+        totals_card_savings_rate: 'Savings Rate & Activity',
+        totals_card_tx_count: 'active transactions'
     },
     de: {
         currency_label: 'Währung',
@@ -664,7 +678,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.21.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.22.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -787,7 +801,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: 'Keinen umgerechneten Betrag neben dem Titel anzeigen',
         badge_active: 'Aktiv',
         toast_fund_curr_disabled: 'Guthaben-Umrechnung wurde deaktiviert',
-        toast_fund_curr_set: 'Guthaben-Umrechnung festgelegt auf'
+        toast_fund_curr_set: 'Guthaben-Umrechnung festgelegt auf',
+        totals_modal_title: 'Gesamteinnahmen & Gesamtausgaben',
+        totals_modal_desc: 'Gesamtübersicht aller erfassten Einnahmen und Ausgaben:',
+        totals_card_income: 'Gesamteinnahmen',
+        totals_card_expense: 'Gesamtausgaben',
+        totals_card_net_balance: 'Netto-Verfügbares Guthaben',
+        totals_card_savings_rate: 'Sparquote & Aktivität',
+        totals_card_tx_count: 'aktive Transaktionen'
     },
     tr: {
         currency_label: 'Para Birimi',
@@ -884,7 +905,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.21.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.22.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1006,7 +1027,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: 'Başlığın yanında dönüştürülmüş tutarı gösterme',
         badge_active: 'Aktif',
         toast_fund_curr_disabled: 'Bakiye dönüşümü devre dışı bırakıldı',
-        toast_fund_curr_set: 'Bakiye dönüşümü ayarlandı:'
+        toast_fund_curr_set: 'Bakiye dönüşümü ayarlandı:',
+        totals_modal_title: 'Toplam Gelir ve Toplam Gider',
+        totals_modal_desc: 'Kaydedilen tüm gelir ve giderlerin genel özeti:',
+        totals_card_income: 'Toplam Gelir',
+        totals_card_expense: 'Toplam Gider',
+        totals_card_net_balance: 'Net Mevcut Fon',
+        totals_card_savings_rate: 'Tasarruf Oranı ve Faaliyet',
+        totals_card_tx_count: 'aktif işlem'
     },
     ja: {
         currency_label: '通貨',
@@ -1106,7 +1134,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.21.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.22.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1229,7 +1257,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: 'タイトルの横に換算額を表示しない',
         badge_active: '有効',
         toast_fund_curr_disabled: '残高換算が無効化されました',
-        toast_fund_curr_set: '残高換算を設定しました：'
+        toast_fund_curr_set: '残高換算を設定しました：',
+        totals_modal_title: '総収入と総支出',
+        totals_modal_desc: '記録されたすべての収入と支出の概要：',
+        totals_card_income: '総収入',
+        totals_card_expense: '総支出',
+        totals_card_net_balance: '純利用可能資金',
+        totals_card_savings_rate: '貯蓄率と活動',
+        totals_card_tx_count: '件のアクティブな取引'
     },
     zh: {
         currency_label: '货币',
@@ -1329,7 +1364,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.21.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.22.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1452,7 +1487,14 @@ const I18N_DICTIONARY = {
         fund_curr_none_desc: '在标题旁不显示换算金额',
         badge_active: '已启用',
         toast_fund_curr_disabled: '资金换算已停用',
-        toast_fund_curr_set: '资金换算已设置为'
+        toast_fund_curr_set: '资金换算已设置为',
+        totals_modal_title: '总收入和总支出',
+        totals_modal_desc: '所有已记录收入和支出的总体摘要：',
+        totals_card_income: '总收入',
+        totals_card_expense: '总支出',
+        totals_card_net_balance: '净可用资金',
+        totals_card_savings_rate: '储蓄率与活动',
+        totals_card_tx_count: '笔有效交易'
     }
 };
 
@@ -8421,6 +8463,147 @@ function openFundCurrencyPickerModal() {
     openModal('modalFundCurrencyPicker');
 }
 
+function openTotalsSummaryModal() {
+    const container = document.getElementById('totalsSummaryListContainer');
+    if (!container) return;
+
+    const mainCurr = getActiveCurrency();
+    const activeLang = getLanguageForCurrency();
+
+    // Calcul date specifice venituri & cheltuieli
+    let totalIncomeRon = 0;
+    let totalExpenseRon = 0;
+    let cardIncomeRon = 0;
+    let cardExpenseRon = 0;
+    let cashIncomeRon = 0;
+    let cashExpenseRon = 0;
+    let incomeCount = 0;
+    let expenseCount = 0;
+    let activeTxCount = 0;
+
+    appData.transactions.forEach(tx => {
+        if (isTxSuspended(tx)) return;
+        const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+        const method = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
+        activeTxCount++;
+        if (tx.type === 'income') {
+            incomeCount++;
+            totalIncomeRon += amtRon;
+            if (method === 'cash') cashIncomeRon += amtRon;
+            else cardIncomeRon += amtRon;
+        } else if (tx.type === 'expense') {
+            expenseCount++;
+            totalExpenseRon += amtRon;
+            if (method === 'cash') cashExpenseRon += amtRon;
+            else cardExpenseRon += amtRon;
+        } else if (tx.type === 'transfer') {
+            const dir = tx.transferDirection || 'card-to-cash';
+            if (dir === 'card-to-cash') {
+                cardExpenseRon += amtRon;
+                cashIncomeRon += amtRon;
+            } else if (dir === 'cash-to-card') {
+                cashExpenseRon += amtRon;
+                cardIncomeRon += amtRon;
+            }
+        }
+    });
+
+    const netBalanceRon = totalIncomeRon - totalExpenseRon;
+    const cardBalanceRon = cardIncomeRon - cardExpenseRon;
+    const cashBalanceRon = cashIncomeRon - cashExpenseRon;
+
+    const displayIncome = convertFromRon(totalIncomeRon, mainCurr);
+    const displayExpense = convertFromRon(totalExpenseRon, mainCurr);
+    const displayBalance = convertFromRon(netBalanceRon, mainCurr);
+    const displayCardIncome = convertFromRon(cardIncomeRon, mainCurr);
+    const displayCashIncome = convertFromRon(cashIncomeRon, mainCurr);
+    const displayCardExpense = convertFromRon(cardExpenseRon, mainCurr);
+    const displayCashExpense = convertFromRon(cashExpenseRon, mainCurr);
+    const displayCard = convertFromRon(cardBalanceRon, mainCurr);
+    const displayCash = convertFromRon(cashBalanceRon, mainCurr);
+
+    let savingsRate = 0;
+    if (totalIncomeRon > 0) {
+        savingsRate = Math.max(0, Math.round(((totalIncomeRon - totalExpenseRon) / totalIncomeRon) * 100));
+    }
+
+    container.innerHTML = '';
+
+    // 1. Total Venituri Card
+    const incomeCard = document.createElement('div');
+    incomeCard.className = 'currency-card-item';
+    incomeCard.style.cursor = 'default';
+    incomeCard.innerHTML = `
+        <div class="currency-card-left">
+            <div class="currency-flag-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">📈</div>
+            <div>
+                <div class="currency-card-title">${t('totals_card_income', activeLang)}</div>
+                <div class="currency-card-sub">💳 ${formatMoney(displayCardIncome, mainCurr)} • 💵 ${formatMoney(displayCashIncome, mainCurr)}</div>
+            </div>
+        </div>
+        <div class="currency-card-right">
+            <span style="font-weight: 800; color: #10b981; font-size: 0.96rem;">+${formatMoney(displayIncome, mainCurr)}</span>
+        </div>
+    `;
+    container.appendChild(incomeCard);
+
+    // 2. Total Cheltuieli Card
+    const expenseCard = document.createElement('div');
+    expenseCard.className = 'currency-card-item';
+    expenseCard.style.cursor = 'default';
+    expenseCard.innerHTML = `
+        <div class="currency-card-left">
+            <div class="currency-flag-badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">📉</div>
+            <div>
+                <div class="currency-card-title">${t('totals_card_expense', activeLang)}</div>
+                <div class="currency-card-sub">💳 ${formatMoney(displayCardExpense, mainCurr)} • 💵 ${formatMoney(displayCashExpense, mainCurr)}</div>
+            </div>
+        </div>
+        <div class="currency-card-right">
+            <span style="font-weight: 800; color: #ef4444; font-size: 0.96rem;">-${formatMoney(displayExpense, mainCurr)}</span>
+        </div>
+    `;
+    container.appendChild(expenseCard);
+
+    // 3. Fond Disponibil Net
+    const balanceCard = document.createElement('div');
+    balanceCard.className = 'currency-card-item';
+    balanceCard.style.cursor = 'default';
+    balanceCard.innerHTML = `
+        <div class="currency-card-left">
+            <div class="currency-flag-badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">💰</div>
+            <div>
+                <div class="currency-card-title">${t('totals_card_net_balance', activeLang)}</div>
+                <div class="currency-card-sub">💳 ${formatMoney(displayCard, mainCurr)} • 💵 ${formatMoney(displayCash, mainCurr)}</div>
+            </div>
+        </div>
+        <div class="currency-card-right">
+            <span style="font-weight: 800; color: ${displayBalance >= 0 ? '#10b981' : '#ef4444'}; font-size: 0.96rem;">${formatMoney(displayBalance, mainCurr)}</span>
+        </div>
+    `;
+    container.appendChild(balanceCard);
+
+    // 4. Rată Economisire & Activitate
+    const statsCard = document.createElement('div');
+    statsCard.className = 'currency-card-item';
+    statsCard.style.cursor = 'default';
+    statsCard.innerHTML = `
+        <div class="currency-card-left">
+            <div class="currency-flag-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">📊</div>
+            <div>
+                <div class="currency-card-title">${t('totals_card_savings_rate', activeLang)}</div>
+                <div class="currency-card-sub">${activeTxCount} ${t('totals_card_tx_count', activeLang)} (${incomeCount} 📈, ${expenseCount} 📉)</div>
+            </div>
+        </div>
+        <div class="currency-card-right">
+            <span class="currency-active-pill" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-weight: 800; font-size: 0.84rem;">${savingsRate}%</span>
+        </div>
+    `;
+    container.appendChild(statsCard);
+
+    openModal('modalTotalsSummary');
+}
+
 // Open Category Form for Add/Edit
 function openCategoryEditModal(catToEdit = null) {
     const idInput = document.getElementById('editCategoryId');
@@ -9295,12 +9478,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToggleTotals = document.getElementById('btnToggleTotalsSummary');
     if (btnToggleTotals) {
         btnToggleTotals.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            const incEl = document.getElementById('displayTotalIncome');
-            const expEl = document.getElementById('displayTotalExpense');
-            const incText = incEl ? incEl.textContent : '0.00 RON';
-            const expText = expEl ? expEl.textContent : '0.00 RON';
-            showToast(`📈 ${t('total_income')}: ${incText}\n📉 ${t('total_expenses')}: ${expText}`, 'info');
+            openTotalsSummaryModal();
         });
     }
 
