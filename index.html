@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=362">
+    <link rel="stylesheet" href="style.css?v=363">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.26</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.27</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -180,15 +180,15 @@
             <div class="card-section overview-chart-box">
                 <div class="section-header">
                     <button type="button" class="section-title-btn" id="btnExportAllCategories" title="Apasă pentru a exporta lista cu categoriile și totalul cheltuielilor">
-                        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--accent)"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99H22c-.47-4.74-4.24-8.52-9-8.99zm0 11.01V22c4.76-.46 8.53-4.25 9-8.99H13z"/></svg>
+                        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:currentColor;"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99H22c-.47-4.74-4.24-8.52-9-8.99zm0 11.01V22c4.76-.46 8.53-4.25 9-8.99H13z"/></svg>
                         <span data-i18n="expenses_by_cat">Categorii</span>
                         <svg viewBox="0 0 24 24" class="export-icon-hint"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     </button>
                     <div class="period-select-wrap">
                         <input type="hidden" id="overviewPeriod" value="current-month">
-                        <button type="button" class="btn-tx-filter-trigger" id="btnOpenOverviewPeriod" title="Alege perioada de afișare" style="height: 28px; padding: 0 10px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-sm);">
+                        <button type="button" class="btn-tx-filter-trigger" id="btnOpenOverviewPeriod" title="Alege perioada de afișare">
                             <span id="overviewPeriodCurrentLabel" data-i18n="period_current_month">Luna Aceasta</span>
-                            <svg viewBox="0 0 24 24" style="width: 12px; height: 12px; fill: currentColor; opacity: 0.7; flex-shrink: 0;"><path d="M7 10l5 5 5-5z"/></svg>
+                            <svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: currentColor; opacity: 0.7; flex-shrink: 0;"><path d="M7 10l5 5 5-5z"/></svg>
                         </button>
                     </div>
                 </div>
@@ -1021,9 +1021,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.26.apk" download="MoneyApp_v3.3.26.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.27.apk" download="MoneyApp_v3.3.27.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.26.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.27.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1511,6 +1511,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=362"></script>
+    <script src="app.js?v=363"></script>
 </body>
 </html>

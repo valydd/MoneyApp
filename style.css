@@ -1138,10 +1138,13 @@ body.light-theme .btn-bal-summary {
 }
 
 .overview-chart-box .section-title,
+.overview-chart-box .section-title-btn,
 .section-title-btn {
-    font-size: 0.78rem;
-    font-weight: 600 !important;
-    color: var(--text-color);
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--text-muted) !important;
     white-space: nowrap;
     background: transparent;
     border: none;
@@ -1153,11 +1156,39 @@ body.light-theme .btn-bal-summary {
     cursor: pointer;
     border-radius: var(--radius-sm);
     transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.overview-chart-box .section-title-btn span {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--text-muted) !important;
+}
+
+.overview-chart-box #btnOpenOverviewPeriod {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--text-muted) !important;
+    height: 24px;
+    padding: 0 8px;
+    line-height: 1;
+}
+
+.overview-chart-box #overviewPeriodCurrentLabel {
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--text-muted) !important;
 }
 
 .section-title-btn:hover {
     background: var(--input-bg);
-    color: var(--accent);
+    color: var(--accent) !important;
 }
 
 .section-title-btn:active {
@@ -4114,8 +4145,11 @@ body.dark-theme .tx-secondary-val {
     }
 
     .overview-chart-box .section-title {
-        font-size: 0.76rem !important;
-        font-weight: 500 !important; /* Nu mai este bold */
+        font-size: 0.68rem !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        color: var(--text-muted) !important;
         white-space: nowrap !important;
         gap: 4px !important;
         margin: 0 !important;
