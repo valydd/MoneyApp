@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=351">
+    <link rel="stylesheet" href="style.css?v=352">
 </head>
 <body>
     <div class="container">
@@ -116,19 +116,22 @@
                 <!-- Balance Card -->
                 <div class="balance-card">
                     <div class="balance-card-header">
-                        <div class="balance-title" data-i18n="balance_title">Fond Actual Disponibil</div>
+                        <div class="balance-title-wrap">
+                            <span class="balance-title" data-i18n="balance_title">Fond Actual Disponibil</span>
+                            <span class="balance-title-converted" id="displayHeaderConvertedBalance"></span>
+                        </div>
                         <button type="button" class="btn-bal-summary" id="btnToggleTotalsSummary" title="Apasă pentru a vedea Total Cheltuieli și Total Venituri"></button>
                     </div>
 
-                    <!-- Valoare Fond în Centru Mare (Zecimale și RON mici) -->
+                    <!-- Valoare Fond în Centru Mare (Zecimale și RON mici) + Buton Monedă Conversie în Dreapta Jos -->
                     <div class="balance-main-amount-wrap">
                         <div class="balance-amount positive" id="displayTotalBalance">
                             <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
                         </div>
+                        <button type="button" class="btn-bal-summary btn-bal-currency" id="btnBalanceCurrencyPicker" title="Apasă pentru a alege moneda de conversie a fondului" style="position: absolute; right: 0; bottom: 2px;">
+                            <span id="btnBalanceCurrencyCode" style="font-size: 0.62rem; font-weight: 800; color: var(--text-muted);">EUR</span>
+                        </button>
                     </div>
-
-                    <!-- Valoarea în Euro sub și rata de schimb lângă -->
-                    <div class="balance-converted" id="displayConvertedEur">≈ 0,00 € (1 € = 5.25 lei)</div>
 
                     <!-- Surse fonduri: Card vs Cash (insigna deasupra, valoare mare dedesubt) + Buton Transfer -->
                     <div class="balance-sources-grid">
@@ -1111,6 +1114,29 @@
         </div>
     </div>
 
+    <!-- MODAL: ALEGE MONEDA CONVERSIE FOND ACTUAL -->
+    <div class="modal-overlay" id="modalFundCurrencyPicker">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.25rem;">💱</span>
+                    <span>Monedă Conversie Fond</span>
+                </div>
+                <button class="modal-close" data-close="modalFundCurrencyPicker">&times;</button>
+            </div>
+
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                Alege moneda în care vrei să fie afișată conversia fondului disponibil lângă titlu:
+            </p>
+
+            <div class="currency-list-container" id="fundCurrencyListContainer">
+                <!-- Populare dinamică via JS -->
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalFundCurrencyPicker" style="margin-top: 14px;" data-i18n="btn_cancel">Anulează</button>
+        </div>
+    </div>
+
     <!-- MODAL 10: TRANZACȚII SUSPENDATE (DEDICAT) -->
     <div class="modal-overlay" id="modalSuspendedTransactions">
         <div class="modal-box" style="max-width: 500px;">
@@ -1462,6 +1488,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=351"></script>
+    <script src="app.js?v=352"></script>
 </body>
 </html>

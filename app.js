@@ -2117,24 +2117,31 @@ function updateBalanceCards() {
         cashEl.className = displayCash >= 0 ? 'source-val positive' : 'source-val negative';
     }
 
-    // Conversie secundara informativa
-    const secondaryCurr = mainCurr === 'RON' ? 'EUR' : 'RON';
-    const secondaryVal = convertFromRon(netBalanceRon, secondaryCurr);
-    const mainInfo = getCurrencyInfo(mainCurr);
+    // Conversie secundară afișată imediat după titlul Fond Actual Disponibil
+    const convCurr = appData.settings?.fundConversionCurrency || (mainCurr === 'RON' ? 'EUR' : 'RON');
+    const headerConvEl = document.getElementById('displayHeaderConvertedBalance');
+    const btnConvCode = document.getElementById('btnBalanceCurrencyCode');
 
-    if (mainCurr === 'RON') {
-        const eurInfo = getCurrencyInfo('EUR');
-        const eurEl = document.getElementById('displayConvertedEur');
-        if (eurEl) {
-            eurEl.textContent = `≈ ${formatMoney(secondaryVal, 'EUR')} (1 € = ${eurInfo.rateToRon.toFixed(2)} lei)`;
-            eurEl.title = `1 € = ${eurInfo.rateToRon.toFixed(2)} lei`;
+    if (btnConvCode) {
+        btnConvCode.textContent = convCurr === 'none' ? '✕' : (convCurr === 'EUR' ? '€' : convCurr);
+        btnConvCode.title = `Monedă conversie: ${convCurr}`;
+    }
+
+    if (headerConvEl) {
+        if (convCurr === 'none' || convCurr === mainCurr) {
+            headerConvEl.style.display = 'none';
+            headerConvEl.textContent = '';
+        } else {
+            headerConvEl.style.display = 'inline';
+            const convertedVal = convertFromRon(netBalanceRon, convCurr);
+            headerConvEl.textContent = `(≈ ${formatMoney(convertedVal, convCurr)})`;
         }
-    } else {
-        const eurEl = document.getElementById('displayConvertedEur');
-        if (eurEl) {
-            eurEl.textContent = `≈ ${formatMoney(secondaryVal, 'RON')} (1 ${mainInfo.code} = ${mainInfo.rateToRon.toFixed(2)} lei)`;
-            eurEl.title = `1 ${mainInfo.code} = ${mainInfo.rateToRon.toFixed(2)} lei`;
-        }
+    }
+
+    const oldEurEl = document.getElementById('displayConvertedEur');
+    if (oldEurEl) {
+        oldEurEl.style.display = 'none';
+        oldEurEl.textContent = '';
     }
 
     const incEl = document.getElementById('displayTotalIncome');
@@ -8300,6 +8307,88 @@ function setMainCurrency(newCurrency) {
     showToast(toastMsg, 'success');
 }
 
+// Modal pentru alegerea monedei de conversie a Fondului Actual Disponibil
+function openFundCurrencyPickerModal() {
+    const container = document.getElementById('fundCurrencyListContainer');
+    if (!container) return;
+
+    const mainCurr = getActiveCurrency();
+    const activeLang = getLanguageForCurrency();
+    const currentConv = appData.settings?.fundConversionCurrency || (mainCurr === 'RON' ? 'EUR' : 'RON');
+
+    container.innerHTML = '';
+
+    // Opțiunea Fără conversie
+    const isNone = currentConv === 'none';
+    const noneCard = document.createElement('div');
+    noneCard.className = 'currency-card-item' + (isNone ? ' active' : '');
+    noneCard.innerHTML = `
+        <div class="currency-card-left">
+            <div class="currency-flag-badge">🚫</div>
+            <div>
+                <div class="currency-card-title">Fără conversie</div>
+                <div class="currency-card-sub">Nu afișa sumă convertită lângă titlu</div>
+            </div>
+        </div>
+        <div class="currency-card-right">
+            ${isNone ? `<span class="currency-active-pill">Activ</span>` : `<span class="currency-rate-text">✕</span>`}
+        </div>
+    `;
+    noneCard.onclick = () => {
+        if (!appData.settings) appData.settings = {};
+        appData.settings.fundConversionCurrency = 'none';
+        saveData();
+        persistDatabaseToFile();
+        closeModal('modalFundCurrencyPicker');
+        updateOverviewBalance();
+        showToast('Conversia fondului a fost dezactivată', 'info');
+    };
+    container.appendChild(noneCard);
+
+    WORLD_CURRENCIES.forEach(curr => {
+        const info = getCurrencyInfo(curr.code);
+        const isActive = info.code === currentConv;
+        const localizedName = getLocalizedCurrencyName(info.code, activeLang);
+
+        let rateDesc = '';
+        if (info.code === 'RON') {
+            rateDesc = `1.00 RON`;
+        } else {
+            const unitRon = activeLang === 'ro' ? 'lei' : 'RON';
+            rateDesc = `1 ${info.code} = ${info.rateToRon.toFixed(2)} ${unitRon}`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'currency-card-item' + (isActive ? ' active' : '');
+        card.innerHTML = `
+            <div class="currency-card-left">
+                <div class="currency-flag-badge">${info.flag}</div>
+                <div>
+                    <div class="currency-card-title">${localizedName} (${info.code})</div>
+                    <div class="currency-card-sub">${rateDesc}</div>
+                </div>
+            </div>
+            <div class="currency-card-right">
+                ${isActive ? `<span class="currency-active-pill">Activ</span>` : `<span class="currency-rate-text">${info.symbol}</span>`}
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            if (!appData.settings) appData.settings = {};
+            appData.settings.fundConversionCurrency = info.code;
+            saveData();
+            persistDatabaseToFile();
+            closeModal('modalFundCurrencyPicker');
+            updateOverviewBalance();
+            showToast(`Conversia fondului setată în ${info.code} (${info.symbol})`, 'success');
+        });
+
+        container.appendChild(card);
+    });
+
+    openModal('modalFundCurrencyPicker');
+}
+
 // Open Category Form for Add/Edit
 function openCategoryEditModal(catToEdit = null) {
     const idInput = document.getElementById('editCategoryId');
@@ -9180,6 +9269,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const incText = incEl ? incEl.textContent : '0.00 RON';
             const expText = expEl ? expEl.textContent : '0.00 RON';
             showToast(`📈 ${t('total_income')}: ${incText}\n📉 ${t('total_expenses')}: ${expText}`, 'info');
+        });
+    }
+
+    // Button for Fund Conversion Currency Picker
+    const btnFundCurr = document.getElementById('btnBalanceCurrencyPicker');
+    if (btnFundCurr) {
+        btnFundCurr.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openFundCurrencyPickerModal();
         });
     }
 

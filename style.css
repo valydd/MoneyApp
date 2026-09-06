@@ -867,6 +867,14 @@ body.dark-theme .tab-btn.active svg {
     pointer-events: auto;
 }
 
+.balance-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
 .balance-title {
     font-size: 0.68rem;
     text-transform: uppercase;
@@ -877,6 +885,16 @@ body.dark-theme .tab-btn.active svg {
     white-space: nowrap;
     line-height: 1;
     flex-shrink: 0;
+}
+
+.balance-title-converted {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent, #3b82f6);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .btn-bal-summary {
@@ -905,15 +923,20 @@ body.light-theme .btn-bal-summary {
     transform: scale(0.92);
 }
 
+.btn-bal-currency {
+    z-index: 5;
+}
+
 .balance-main-amount-wrap {
-    margin-top: -3px;
-    margin-bottom: 0px;
+    margin-top: 2px;
+    margin-bottom: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     position: relative;
     z-index: 1;
+    min-height: 48px;
 }
 
 .balance-amount {
@@ -925,10 +948,12 @@ body.light-theme .btn-bal-summary {
     letter-spacing: -0.5px;
     margin-bottom: 0;
     white-space: nowrap;
+    width: 100%;
+    text-align: center;
 }
 
 .balance-amount .bal-int {
-    font-size: 2.20rem;
+    font-size: 2.85rem;
     font-weight: 900;
     letter-spacing: -0.5px;
     -webkit-text-stroke: 0.35px rgba(0, 0, 0, 0.28);
@@ -936,7 +961,7 @@ body.light-theme .btn-bal-summary {
 }
 
 .balance-amount .bal-dec {
-    font-size: 0.95rem;
+    font-size: 1.20rem;
     font-weight: 800;
     opacity: 0.90;
     -webkit-text-stroke: 0.25px rgba(0, 0, 0, 0.28);
@@ -944,9 +969,9 @@ body.light-theme .btn-bal-summary {
 }
 
 .balance-amount .bal-curr {
-    font-size: 0.70rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    margin-left: 3px;
+    margin-left: 4px;
     opacity: 0.85;
 }
 
@@ -959,13 +984,7 @@ body.light-theme .btn-bal-summary {
 }
 
 .balance-converted {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 0px;
-    margin-bottom: 3px;
-    line-height: 1.15;
-    text-align: center;
+    display: none;
 }
 
 .balance-grid {
