@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.15";
+const APP_VERSION = "3.3.16";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.15.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.16.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -428,7 +428,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.15.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.16.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -650,7 +650,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.15.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.16.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -866,7 +866,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.15.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.16.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1082,7 +1082,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.15.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.16.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1298,7 +1298,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.15.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.16.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -4858,7 +4858,893 @@ function detectMerchantFromTransaction(tx) {
     if (desc.includes('restaurant') || desc.includes('pizzerie') || desc.includes('kebab') || desc.includes('shaorma') || desc.includes('mcdonald') || desc.includes('kfc') || desc.includes('burger')) return KNOWN_MERCHANTS[13];
     if (desc.includes('glovo') || desc.includes('tazz') || desc.includes('bolt food')) return KNOWN_MERCHANTS[14];
 
-    return null;
+function openKpiDetailModal(metricKey) {
+    const modal = document.getElementById('modalKpiDetail');
+    if (!modal) return;
+
+    const modalIconEl = document.getElementById('kpiDetailModalIcon');
+    const modalTitleEl = document.getElementById('kpiDetailModalTitle');
+    const modalSubEl = document.getElementById('kpiDetailModalSub');
+    const modalBodyEl = document.getElementById('kpiDetailModalBody');
+    if (!modalBodyEl) return;
+
+    const filteredTxs = getFilteredTransactionsForStats();
+    const mainCurr = getActiveCurrency();
+    const activeLang = getLanguageForCurrency();
+    const daysCount = getDaysInStatsPeriod();
+
+    let totIncomeRon = 0;
+    let totExpenseRon = 0;
+    let peakExpenseTx = null;
+    let peakIncomeTx = null;
+    let expenseCount = 0;
+    let incomeCount = 0;
+    let transferCount = 0;
+    let cardExpenseRon = 0;
+    let cashExpenseRon = 0;
+    let cardExpenseCount = 0;
+    let cashExpenseCount = 0;
+
+    const categoryMap = {};
+    const incomeSourceMap = {};
+    const daysWithExpenses = new Set();
+    const weekdayExpenseMap = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 0: 0 };
+
+    filteredTxs.forEach(t => {
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        if (t.type === 'income') {
+            totIncomeRon += amtRon;
+            incomeCount++;
+            if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
+                peakIncomeTx = t;
+            }
+            const src = (t.description && t.description.trim()) ? t.description.trim() : (activeLang === 'ro' ? 'Venit Diverse' : 'Income');
+            if (!incomeSourceMap[src]) incomeSourceMap[src] = { name: src, totalRon: 0, count: 0, txs: [] };
+            incomeSourceMap[src].totalRon += amtRon;
+            incomeSourceMap[src].count++;
+            incomeSourceMap[src].txs.push(t);
+        } else if (t.type === 'expense') {
+            totExpenseRon += amtRon;
+            expenseCount++;
+            if (t.date) daysWithExpenses.add(t.date);
+            if (!peakExpenseTx || amtRon > (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0)) {
+                peakExpenseTx = t;
+            }
+            if (t.account === 'cash') {
+                cashExpenseRon += amtRon;
+                cashExpenseCount++;
+            } else {
+                cardExpenseRon += amtRon;
+                cardExpenseCount++;
+            }
+            const catId = t.categoryId || 'other';
+            if (!categoryMap[catId]) {
+                const catObj = appData.categories.find(c => c.id === catId) || { name: 'Diverse', icon: '📦', color: '#64748b' };
+                categoryMap[catId] = { name: catObj.name, icon: catObj.icon, color: catObj.color || '#3b82f6', totalRon: 0, count: 0 };
+            }
+            categoryMap[catId].totalRon += amtRon;
+            categoryMap[catId].count++;
+
+            if (t.date) {
+                const dayOfWeek = new Date(t.date).getDay();
+                weekdayExpenseMap[dayOfWeek] += amtRon;
+            }
+        } else if (t.type === 'transfer') {
+            transferCount++;
+        }
+    });
+
+    let totalBalRon = 0;
+    let cardBalRon = 0;
+    let cashBalRon = 0;
+    appData.transactions.forEach(t => {
+        if (isTxSuspended(t)) return;
+        const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        if (t.type === 'income') {
+            totalBalRon += a;
+            if (t.account === 'cash') cashBalRon += a;
+            else cardBalRon += a;
+        } else if (t.type === 'expense') {
+            totalBalRon -= a;
+            if (t.account === 'cash') cashBalRon -= a;
+            else cardBalRon -= a;
+        } else if (t.type === 'transfer') {
+            const dir = t.direction || 'card-to-cash';
+            if (dir === 'card-to-cash') {
+                cardBalRon -= a;
+                cashBalRon += a;
+            } else {
+                cashBalRon -= a;
+                cardBalRon += a;
+            }
+        }
+    });
+
+    const netSavingsRon = totIncomeRon - totExpenseRon;
+    const savingsRate = totIncomeRon > 0 ? ((netSavingsRon / totIncomeRon) * 100).toFixed(1) : (netSavingsRon >= 0 ? '0.0' : '-');
+    const dailyAvgRon = totExpenseRon / Math.max(1, daysCount);
+    const dailyIncomeRon = totIncomeRon / Math.max(1, daysCount);
+    const daysRunway = calculateGlobalRunwayDays();
+
+    let periodText = 'Luna curentă';
+    if (currentStatsPeriod === 'month') periodText = activeLang === 'ro' ? 'Luna Aceasta' : 'This Month';
+    else if (currentStatsPeriod === '3months') periodText = activeLang === 'ro' ? 'Ultimele 3 Luni' : 'Last 3 Months';
+    else if (currentStatsPeriod === 'year') {
+        const ySel = document.getElementById('statsYearSelect');
+        const yr = ySel && ySel.value ? ySel.value : new Date().getFullYear();
+        periodText = `${activeLang === 'ro' ? 'Anul' : 'Year'} ${yr}`;
+    } else if (currentStatsPeriod === 'all') {
+        periodText = activeLang === 'ro' ? 'Toată Perioada' : 'All Time';
+    }
+
+    if (modalSubEl) modalSubEl.textContent = `${periodText} • ${daysCount} ${activeLang === 'ro' ? 'zile' : 'days'}`;
+
+    let html = '';
+
+    if (metricKey === 'income') {
+        if (modalIconEl) modalIconEl.textContent = '📈';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Venituri & Încasări' : 'Income & Receipts';
+
+        const avgPerIncomeRon = incomeCount > 0 ? (totIncomeRon / incomeCount) : 0;
+        const peakAmt = peakIncomeTx ? (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0) : 0;
+        const incomeSources = Object.values(incomeSourceMap).sort((a, b) => b.totalRon - a.totalRon);
+        const incomeTxs = filteredTxs.filter(t => t.type === 'income').sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.id - a.id));
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #10b981;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Total Încasat în Perioadă' : 'Total Income in Period'}</div>
+                <div class="kpi-detail-hero-val income-color">${formatMoney(convertFromRon(totIncomeRon, mainCurr), mainCurr)}</div>
+                <div class="kpi-detail-hero-sub">${incomeCount} ${activeLang === 'ro' ? 'încasări înregistrate' : 'receipts recorded'}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Medie per Încasare' : 'Average per Receipt'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(avgPerIncomeRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Ritm Mediu Zilnic' : 'Daily Income Rate'}</div>
+                    <div class="kpi-detail-mini-val income-color">${formatMoney(convertFromRon(dailyIncomeRon, mainCurr), mainCurr)}/zi</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Cea mai mare Încasare' : 'Peak Single Income'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(peakAmt, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Excedent / Economii' : 'Net Surplus'}</div>
+                    <div class="kpi-detail-mini-val ${netSavingsRon >= 0 ? 'income-color' : 'expense-color'}">${formatMoney(convertFromRon(netSavingsRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                ${netSavingsRon >= 0 
+                    ? `💡 <strong>Bilanț Pozitiv:</strong> Ai încasat mai mult decât ai cheltuit cu <strong>${formatMoney(convertFromRon(netSavingsRon, mainCurr), mainCurr)}</strong> (${savingsRate}% rată de economisire).` 
+                    : `⚠️ <strong>Atenție:</strong> În această perioadă cheltuielile depășesc veniturile încasate cu <strong>${formatMoney(convertFromRon(Math.abs(netSavingsRon), mainCurr), mainCurr)}</strong>.`}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>💼 ${activeLang === 'ro' ? 'Repartizare pe Surse / Descrieri' : 'Income Sources'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">${incomeSources.length} ${activeLang === 'ro' ? 'surse' : 'sources'}</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                ${incomeSources.length === 0 ? `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">Nu există încasări în această perioadă.</div>` : ''}
+                ${incomeSources.map(src => {
+                    const pct = totIncomeRon > 0 ? ((src.totalRon / totIncomeRon) * 100).toFixed(1) : 0;
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon" style="color: #10b981;">💰</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">${escapeHtml(src.name)}</div>
+                                    <div class="kpi-detail-row-meta">${src.count} ${activeLang === 'ro' ? 'încasări' : 'tx'} • ${pct}% din total</div>
+                                    <div class="kpi-detail-progress-track">
+                                        <div class="kpi-detail-progress-bar" style="width: ${pct}%; background: #10b981;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt income-color">${formatMoney(convertFromRon(src.totalRon, mainCurr), mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>🕒 ${activeLang === 'ro' ? 'Istoric Încasări din Perioadă' : 'Income Receipts Log'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">${incomeTxs.length} ${activeLang === 'ro' ? 'tranzacții' : 'tx'}</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+                ${incomeTxs.map(t => {
+                    const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                    const accIcon = t.account === 'cash' ? '💵 Cash' : '💳 Card';
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon" style="color: #10b981;">📈</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">${escapeHtml(t.description || (activeLang === 'ro' ? 'Venit' : 'Income'))}</div>
+                                    <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${accIcon}</div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt income-color">+${formatMoney(convertFromRon(amt, mainCurr), mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    } else if (metricKey === 'expense') {
+        if (modalIconEl) modalIconEl.textContent = '📉';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Cheltuieli & Plăți' : 'Expenses & Payments';
+
+        const avgTicketRon = expenseCount > 0 ? (totExpenseRon / expenseCount) : 0;
+        const peakAmt = peakExpenseTx ? (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0) : 0;
+        const categoriesList = Object.values(categoryMap).sort((a, b) => b.totalRon - a.totalRon);
+        const top5Expenses = filteredTxs
+            .filter(t => t.type === 'expense')
+            .sort((a, b) => (parseFloat(b.amountInRon) || parseFloat(b.amount) || 0) - (parseFloat(a.amountInRon) || parseFloat(a.amount) || 0))
+            .slice(0, 5);
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #ef4444;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Total Cheltuit în Perioadă' : 'Total Spent in Period'}</div>
+                <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                <div class="kpi-detail-hero-sub">${expenseCount} ${activeLang === 'ro' ? 'plăți efectuate' : 'payments made'}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Coș Mediu per Plată' : 'Avg Spend per Payment'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(avgTicketRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Ritm Zilnic (Burn Rate)' : 'Daily Burn Rate'}</div>
+                    <div class="kpi-detail-mini-val expense-color">${formatMoney(convertFromRon(dailyAvgRon, mainCurr), mainCurr)}/zi</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Vârf Plată Unică' : 'Peak Single Expense'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(peakAmt, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Categorii Active' : 'Active Categories'}</div>
+                    <div class="kpi-detail-mini-val">${categoriesList.length} ${activeLang === 'ro' ? 'categorii' : 'categories'}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                ${totIncomeRon > 0 
+                    ? `📊 Cheltuielile reprezintă <strong>${((totExpenseRon / totIncomeRon) * 100).toFixed(1)}%</strong> din totalul veniturilor tale din această perioadă.` 
+                    : `ℹ️ Ai efectuat ${expenseCount} plăți totalizând <strong>${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</strong>.`}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>🏷️ ${activeLang === 'ro' ? 'Top Categorii de Cheltuieli' : 'Expenses by Category'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">${categoriesList.length} ${activeLang === 'ro' ? 'categorii' : 'categories'}</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                ${categoriesList.length === 0 ? `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">Nu există cheltuieli în această perioadă.</div>` : ''}
+                ${categoriesList.map(c => {
+                    const pct = totExpenseRon > 0 ? ((c.totalRon / totExpenseRon) * 100).toFixed(1) : 0;
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon">${c.icon}</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">${escapeHtml(c.name)}</div>
+                                    <div class="kpi-detail-row-meta">${c.count} ${activeLang === 'ro' ? 'plăți' : 'payments'} • ${pct}% din total</div>
+                                    <div class="kpi-detail-progress-track">
+                                        <div class="kpi-detail-progress-bar" style="width: ${pct}%; background: ${c.color};"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt expense-color">${formatMoney(convertFromRon(c.totalRon, mainCurr), mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>⚡ ${activeLang === 'ro' ? 'Top 5 Cele Mai Mari Plăți' : 'Top 5 Largest Payments'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">TOP 5</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+                ${top5Expenses.map((t, idx) => {
+                    const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                    const cat = appData.categories.find(c => c.id === t.categoryId) || { name: 'Diverse', icon: '⚡' };
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon">#${idx + 1}</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">${cat.icon} ${escapeHtml(t.description || cat.name)}</div>
+                                    <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'}</div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt expense-color">${formatMoney(convertFromRon(amt, mainCurr), mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    } else if (metricKey === 'savings') {
+        if (modalIconEl) modalIconEl.textContent = '💎';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Sold Net & Bilanț Financiar' : 'Net Savings & Balance';
+
+        const expPctOfInc = totIncomeRon > 0 ? Math.min(100, (totExpenseRon / totIncomeRon) * 100).toFixed(1) : 0;
+        const savPctOfInc = totIncomeRon > 0 ? Math.max(0, (netSavingsRon / totIncomeRon) * 100).toFixed(1) : 0;
+        const netDailyRon = netSavingsRon / Math.max(1, daysCount);
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid ${netSavingsRon >= 0 ? '#10b981' : '#ef4444'};">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Sold Net (Bilanț Perioadă)' : 'Net Cashflow (Period Balance)'}</div>
+                <div class="kpi-detail-hero-val ${netSavingsRon >= 0 ? 'income-color' : 'expense-color'}">
+                    ${netSavingsRon >= 0 ? '+' : ''}${formatMoney(convertFromRon(netSavingsRon, mainCurr), mainCurr)}
+                </div>
+                <div class="kpi-detail-hero-sub">${netSavingsRon >= 0 ? (activeLang === 'ro' ? 'Excedent financiar păstrat' : 'Net savings retained') : (activeLang === 'ro' ? 'Deficit în această perioadă' : 'Deficit in this period')}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Total Încasat (+)' : 'Total Inflows (+)'}</div>
+                    <div class="kpi-detail-mini-val income-color">${formatMoney(convertFromRon(totIncomeRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Total Cheltuit (-)' : 'Total Outflows (-)'}</div>
+                    <div class="kpi-detail-mini-val expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? '% Păstrat din Venit' : '% Retained'}</div>
+                    <div class="kpi-detail-mini-val">${savingsRate}%</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Economie Medie / zi' : 'Daily Net Savings'}</div>
+                    <div class="kpi-detail-mini-val ${netDailyRon >= 0 ? 'income-color' : 'expense-color'}">${formatMoney(convertFromRon(netDailyRon, mainCurr), mainCurr)}/zi</div>
+                </div>
+            </div>
+
+            <div style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
+                <div style="font-size: 0.78rem; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;">
+                    <span>⚖️ ${activeLang === 'ro' ? 'Distribuție Venituri: Cheltuieli vs Economii' : 'Income Allocation: Spent vs Saved'}</span>
+                </div>
+                <div style="height: 14px; border-radius: 7px; background: #374151; display: flex; overflow: hidden; margin-bottom: 8px;">
+                    <div style="width: ${expPctOfInc}%; background: #ef4444;" title="Cheltuieli: ${expPctOfInc}%"></div>
+                    <div style="width: ${savPctOfInc}%; background: #10b981;" title="Economii: ${savPctOfInc}%"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted);">
+                    <span style="color: #ef4444; font-weight: 700;">🔴 Cheltuieli: ${expPctOfInc}%</span>
+                    <span style="color: #10b981; font-weight: 700;">🟢 Economii Nete: ${savPctOfInc}%</span>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                ${netSavingsRon >= 0 
+                    ? `🎯 <strong>Felicitări!</strong> Ritmul tău financiar generează un surplus de <strong>${formatMoney(convertFromRon(netDailyRon, mainCurr), mainCurr)} pe zi</strong>. Acești bani contribuie direct la creșterea autonomiei tale financiare.` 
+                    : `⚠️ <strong>Recomandare:</strong> Pentru a restabili echilibrul, încearcă să reduci plățile zilnice cu aproximativ <strong>${formatMoney(convertFromRon(Math.abs(netDailyRon), mainCurr), mainCurr)}/zi</strong>.`}
+            </div>
+        `;
+    } else if (metricKey === 'rate') {
+        if (modalIconEl) modalIconEl.textContent = '🎯';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Rata de Economisire' : 'Savings Rate';
+
+        const rateNum = parseFloat(savingsRate) || 0;
+        let healthLabel = 'Moderată';
+        let healthColor = '#f59e0b';
+        let adviceText = '';
+
+        if (rateNum >= 30) {
+            healthLabel = activeLang === 'ro' ? 'Excelentă (Fortăreață)' : 'Excellent';
+            healthColor = '#10b981';
+            adviceText = 'Economisești peste 30% din venituri! Ești într-o zonă de siguranță financiară superioară, excelentă pentru investiții pe termen lung.';
+        } else if (rateNum >= 20) {
+            healthLabel = activeLang === 'ro' ? 'Foarte Bună (Standard 50/30/20)' : 'Very Good';
+            healthColor = '#10b981';
+            adviceText = 'Atingi standardul de aur al regulii 50/30/20 (minim 20% economii). Menține acest ritm sănătos!';
+        } else if (rateNum >= 10) {
+            healthLabel = activeLang === 'ro' ? 'Moderat Bună' : 'Moderate';
+            healthColor = '#3b82f6';
+            adviceText = 'Economisești o parte din bani, dar ai putea optimiza micile cheltuieli recurente pentru a ajunge la pragul recomandat de 20%.';
+        } else if (rateNum > 0) {
+            healthLabel = activeLang === 'ro' ? 'Redusă' : 'Low';
+            healthColor = '#f59e0b';
+            adviceText = 'Rata de economisire este sub 10%. O cheltuială neprevăzută îți poate afecta bugetul. Recomandăm revizuirea categoriilor de top.';
+        } else {
+            healthLabel = activeLang === 'ro' ? 'Negativă / Fără Economii' : 'Negative';
+            healthColor = '#ef4444';
+            adviceText = 'Cheltuielile au depășit veniturile în această perioadă. Este util să identifici plățile neesențiale din tab-ul Statistici.';
+        }
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid ${healthColor};">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Rata Reală de Economisire' : 'Actual Savings Rate'}</div>
+                <div class="kpi-detail-hero-val" style="color: ${healthColor};">${savingsRate}%</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? 'din veniturile încasate au fost păstrate' : 'of earned income retained'}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Calificativ Buget' : 'Budget Rating'}</div>
+                    <div class="kpi-detail-mini-val" style="color: ${healthColor}; font-size: 0.85rem;">${healthLabel}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Standard Recomandat' : 'Target Rate'}</div>
+                    <div class="kpi-detail-mini-val income-color">≥ 20.0%</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Economii Nete' : 'Net Savings'}</div>
+                    <div class="kpi-detail-mini-val ${netSavingsRon >= 0 ? 'income-color' : 'expense-color'}">${formatMoney(convertFromRon(netSavingsRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Venituri de Bază' : 'Base Inflows'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(totIncomeRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                💡 <strong>Diagnostic & Ghid 50/30/20:</strong><br>
+                ${adviceText}
+            </div>
+
+            <div style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px;">
+                <div style="font-size: 0.80rem; font-weight: 700; margin-bottom: 8px;">🎯 Ghid Praguri de Economisire:</div>
+                <div style="font-size: 0.74rem; color: var(--text-color); display: flex; flex-direction: column; gap: 6px;">
+                    <div>🟢 <strong>≥ 30%:</strong> Libertate Financiară accelerată</div>
+                    <div>🟢 <strong>20% – 30%:</strong> Standardul Recomandat (Regula 50/30/20)</div>
+                    <div>🔵 <strong>10% – 20%:</strong> Nivel Bun de stabilitate</div>
+                    <div>🟡 <strong>0% – 10%:</strong> Zonă vulnerabilă la neprevăzut</div>
+                    <div>🔴 <strong>< 0%:</strong> Deficit bugetar</div>
+                </div>
+            </div>
+        `;
+    } else if (metricKey === 'daily_avg') {
+        if (modalIconEl) modalIconEl.textContent = '⏱️';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Ritm Zilnic de Cheltuire (Burn Rate)' : 'Daily Burn Rate';
+
+        const daysWithExpensesCount = daysWithExpenses.size;
+        const zeroSpendDaysCount = Math.max(0, daysCount - daysWithExpensesCount);
+        const weekdayNames = activeLang === 'ro' 
+            ? ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'] 
+            : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        let maxWeekdayIdx = 1;
+        let maxWeekdayAmt = 0;
+        for (let d = 0; d < 7; d++) {
+            if (weekdayExpenseMap[d] > maxWeekdayAmt) {
+                maxWeekdayAmt = weekdayExpenseMap[d];
+                maxWeekdayIdx = d;
+            }
+        }
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #f59e0b;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Medie Plăți / Zi (Burn Rate)' : 'Daily Spend Pace'}</div>
+                <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(dailyAvgRon, mainCurr), mainCurr)}/zi</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `calculat pe durata a ${daysCount} zile din perioada selectată` : `calculated across ${daysCount} days in period`}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Zile cu Plăți Active' : 'Active Spending Days'}</div>
+                    <div class="kpi-detail-mini-val">${daysWithExpensesCount} ${activeLang === 'ro' ? 'zile' : 'days'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Zile Fără Cheltuieli' : 'Zero-Spend Days'}</div>
+                    <div class="kpi-detail-mini-val income-color">${zeroSpendDaysCount} ${activeLang === 'ro' ? 'zile' : 'days'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Proiecție Lunară (30z)' : '30-Day Projection'}</div>
+                    <div class="kpi-detail-mini-val expense-color">${formatMoney(convertFromRon(dailyAvgRon * 30, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Proiecție Anuală (365z)' : '365-Day Projection'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(dailyAvgRon * 365, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                📅 <strong>Ziua cu cel mai intens ritm de cheltuire:</strong> <strong>${weekdayNames[maxWeekdayIdx]}</strong> (${formatMoney(convertFromRon(maxWeekdayAmt, mainCurr), mainCurr)} total cheltuit în această perioadă).
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>🗓️ ${activeLang === 'ro' ? 'Cheltuieli pe Zilele Săptămânii' : 'Spending by Day of Week'}</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+                ${[1, 2, 3, 4, 5, 6, 0].map(d => {
+                    const amt = weekdayExpenseMap[d] || 0;
+                    const pct = totExpenseRon > 0 ? ((amt / totExpenseRon) * 100).toFixed(1) : 0;
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon">📅</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">${weekdayNames[d]}</div>
+                                    <div class="kpi-detail-row-meta">${pct}% din total cheltuieli</div>
+                                    <div class="kpi-detail-progress-track">
+                                        <div class="kpi-detail-progress-bar" style="width: ${pct}%; background: #f59e0b;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt expense-color">${formatMoney(convertFromRon(amt, mainCurr), mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    } else if (metricKey === 'peak_exp') {
+        if (modalIconEl) modalIconEl.textContent = '⚡';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Vârf Cheltuială' : 'Peak Expense';
+
+        const peakAmt = peakExpenseTx ? (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0) : 0;
+        const peakCat = peakExpenseTx ? (appData.categories.find(c => c.id === peakExpenseTx.categoryId) || { name: 'Cheltuială', icon: '⚡' }) : null;
+        const peakPct = totExpenseRon > 0 ? ((peakAmt / totExpenseRon) * 100).toFixed(1) : 0;
+        const top5Expenses = filteredTxs
+            .filter(t => t.type === 'expense')
+            .sort((a, b) => (parseFloat(b.amountInRon) || parseFloat(b.amount) || 0) - (parseFloat(a.amountInRon) || parseFloat(a.amount) || 0))
+            .slice(0, 10);
+
+        if (!peakExpenseTx) {
+            html += `<div style="text-align:center; padding:30px; color:var(--text-muted);">Nu există cheltuieli în această perioadă.</div>`;
+        } else {
+            html += `
+                <div class="kpi-detail-hero" style="border-left: 4px solid #ef4444;">
+                    <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Cea Mai Mare Plată Unică' : 'Highest Single Expense'}</div>
+                    <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(peakAmt, mainCurr), mainCurr)}</div>
+                    <div class="kpi-detail-hero-sub">${peakCat.icon} ${escapeHtml(peakCat.name)} • ${formatDateDisplay(peakExpenseTx.date)}</div>
+                </div>
+
+                <div class="kpi-detail-mini-grid">
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Pondere în Cheltuieli' : 'Share of Period Spend'}</div>
+                        <div class="kpi-detail-mini-val expense-color">${peakPct}%</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Metodă Plată' : 'Payment Method'}</div>
+                        <div class="kpi-detail-mini-val">${peakExpenseTx.account === 'cash' ? '💵 Cash' : '💳 Card'}</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Descriere Plată' : 'Description'}</div>
+                        <div class="kpi-detail-mini-val" style="font-size: 0.80rem;">${escapeHtml(peakExpenseTx.description || peakCat.name)}</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Ora Înregistrării' : 'Timestamp'}</div>
+                        <div class="kpi-detail-mini-val">${peakExpenseTx.time || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="kpi-detail-section-title">
+                    <span>🏆 ${activeLang === 'ro' ? 'Clasament Cele Mai Mari Plăți din Perioadă' : 'Largest Expenses in Period'}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                    ${top5Expenses.map((t, idx) => {
+                        const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                        const cat = appData.categories.find(c => c.id === t.categoryId) || { name: 'Diverse', icon: '⚡' };
+                        const share = totExpenseRon > 0 ? ((amt / totExpenseRon) * 100).toFixed(1) : 0;
+                        return `
+                            <div class="kpi-detail-row-item">
+                                <div class="kpi-detail-row-left">
+                                    <div class="kpi-detail-row-icon" style="font-weight: 800; font-size: 0.8rem;">#${idx + 1}</div>
+                                    <div class="kpi-detail-row-info">
+                                        <div class="kpi-detail-row-name">${cat.icon} ${escapeHtml(t.description || cat.name)}</div>
+                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'} • ${share}%</div>
+                                    </div>
+                                </div>
+                                <div class="kpi-detail-row-right">
+                                    <div class="kpi-detail-row-amt expense-color">${formatMoney(convertFromRon(amt, mainCurr), mainCurr)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+    } else if (metricKey === 'daily_income') {
+        if (modalIconEl) modalIconEl.textContent = '💰';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Medie Venit/zi & Ritm Câștig' : 'Daily Income Rate';
+
+        const netDailyRon = dailyIncomeRon - dailyAvgRon;
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #10b981;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Medie Venituri / Zi' : 'Daily Income Pace'}</div>
+                <div class="kpi-detail-hero-val income-color">${formatMoney(convertFromRon(dailyIncomeRon, mainCurr), mainCurr)}/zi</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `pe durata a ${daysCount} zile calendaristice` : `across ${daysCount} calendar days`}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Cashflow Net Zilnic' : 'Net Daily Cashflow'}</div>
+                    <div class="kpi-detail-mini-val ${netDailyRon >= 0 ? 'income-color' : 'expense-color'}">${formatMoney(convertFromRon(netDailyRon, mainCurr), mainCurr)}/zi</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Număr Încasări' : 'Income Events'}</div>
+                    <div class="kpi-detail-mini-val">${incomeCount} ${activeLang === 'ro' ? 'încasări' : 'receipts'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Proiecție Lunară (30z)' : '30-Day Inflow Proj.'}</div>
+                    <div class="kpi-detail-mini-val income-color">${formatMoney(convertFromRon(dailyIncomeRon * 30, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Proiecție Anuală (365z)' : '365-Day Inflow Proj.'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(dailyIncomeRon * 365, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                📈 <strong>Comparație zilnică:</strong> Câștigi în medie <strong>${formatMoney(convertFromRon(dailyIncomeRon, mainCurr), mainCurr)}/zi</strong> și cheltuiești <strong>${formatMoney(convertFromRon(dailyAvgRon, mainCurr), mainCurr)}/zi</strong>.
+                ${netDailyRon >= 0 
+                    ? ` Rămâi cu un surplus zilnic de <strong>${formatMoney(convertFromRon(netDailyRon, mainCurr), mainCurr)}/zi</strong>.` 
+                    : ` Ai un deficit zilnic de <strong>${formatMoney(convertFromRon(Math.abs(netDailyRon), mainCurr), mainCurr)}/zi</strong>.`}
+            </div>
+        `;
+    } else if (metricKey === 'peak_inc') {
+        if (modalIconEl) modalIconEl.textContent = '🌟';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Vârf Încasare' : 'Peak Income';
+
+        const peakAmt = peakIncomeTx ? (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0) : 0;
+        const peakPct = totIncomeRon > 0 ? ((peakAmt / totIncomeRon) * 100).toFixed(1) : 0;
+        const sortedIncomes = filteredTxs
+            .filter(t => t.type === 'income')
+            .sort((a, b) => (parseFloat(b.amountInRon) || parseFloat(b.amount) || 0) - (parseFloat(a.amountInRon) || parseFloat(a.amount) || 0));
+
+        if (!peakIncomeTx) {
+            html += `<div style="text-align:center; padding:30px; color:var(--text-muted);">Nu există încasări în această perioadă.</div>`;
+        } else {
+            html += `
+                <div class="kpi-detail-hero" style="border-left: 4px solid #10b981;">
+                    <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Cea Mai Mare Încasare Unică' : 'Highest Single Income'}</div>
+                    <div class="kpi-detail-hero-val income-color">${formatMoney(convertFromRon(peakAmt, mainCurr), mainCurr)}</div>
+                    <div class="kpi-detail-hero-sub">💼 ${escapeHtml(peakIncomeTx.description || (activeLang === 'ro' ? 'Încasare' : 'Income'))} • ${formatDateDisplay(peakIncomeTx.date)}</div>
+                </div>
+
+                <div class="kpi-detail-mini-grid">
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Pondere în Venituri' : 'Share of Period Income'}</div>
+                        <div class="kpi-detail-mini-val income-color">${peakPct}%</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Destinație' : 'Account'}</div>
+                        <div class="kpi-detail-mini-val">${peakIncomeTx.account === 'cash' ? '💵 Portofel Cash' : '💳 Cont Card'}</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Data Încasării' : 'Date'}</div>
+                        <div class="kpi-detail-mini-val">${formatDateDisplay(peakIncomeTx.date)}</div>
+                    </div>
+                    <div class="kpi-detail-mini-card">
+                        <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Ora Înregistrării' : 'Timestamp'}</div>
+                        <div class="kpi-detail-mini-val">${peakIncomeTx.time || '-'}</div>
+                    </div>
+                </div>
+
+                <div class="kpi-detail-section-title">
+                    <span>🏆 ${activeLang === 'ro' ? 'Clasament Încasări din Perioadă' : 'All Income Inflows in Period'}</span>
+                </div>
+                <div style="margin-bottom: 6px;">
+                    ${sortedIncomes.map((t, idx) => {
+                        const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                        const share = totIncomeRon > 0 ? ((amt / totIncomeRon) * 100).toFixed(1) : 0;
+                        return `
+                            <div class="kpi-detail-row-item">
+                                <div class="kpi-detail-row-left">
+                                    <div class="kpi-detail-row-icon" style="color: #10b981; font-weight: 800; font-size: 0.8rem;">#${idx + 1}</div>
+                                    <div class="kpi-detail-row-info">
+                                        <div class="kpi-detail-row-name">${escapeHtml(t.description || (activeLang === 'ro' ? 'Încasare' : 'Income'))}</div>
+                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'} • ${share}%</div>
+                                    </div>
+                                </div>
+                                <div class="kpi-detail-row-right">
+                                    <div class="kpi-detail-row-amt income-color">+${formatMoney(convertFromRon(amt, mainCurr), mainCurr)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+    } else if (metricKey === 'runway') {
+        if (modalIconEl) modalIconEl.textContent = '🛡️';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Autonomie Financiară & Rezerve' : 'Financial Runway & Reserves';
+
+        let safetyBadge = 'Moderat';
+        let safetyColor = '#3b82f6';
+        if (daysRunway >= 180) {
+            safetyBadge = activeLang === 'ro' ? 'Fortăreață (>6 Luni)' : 'Fortress (>6 Mo)';
+            safetyColor = '#10b981';
+        } else if (daysRunway >= 90) {
+            safetyBadge = activeLang === 'ro' ? 'Sigur (3-6 Luni)' : 'Safe (3-6 Mo)';
+            safetyColor = '#10b981';
+        } else if (daysRunway >= 30) {
+            safetyBadge = activeLang === 'ro' ? 'Moderat (1-3 Luni)' : 'Moderate (1-3 Mo)';
+            safetyColor = '#3b82f6';
+        } else if (daysRunway > 0) {
+            safetyBadge = activeLang === 'ro' ? 'Vulnerabil (<1 Lună)' : 'Vulnerable (<1 Mo)';
+            safetyColor = '#f59e0b';
+        } else {
+            safetyBadge = activeLang === 'ro' ? 'Epuizat' : 'Exhausted';
+            safetyColor = '#ef4444';
+        }
+
+        const runwayDisplay = daysRunway >= 999 
+            ? '&infin; Zile' 
+            : (daysRunway >= 60 ? `~${(daysRunway / 30.4).toFixed(1)} Luni` : `${daysRunway} Zile`);
+
+        const sim10Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.11) : daysRunway;
+        const sim20Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.25) : daysRunway;
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid ${safetyColor};">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Autonomie Totală Disponibilă' : 'Estimated Financial Runway'}</div>
+                <div class="kpi-detail-hero-val" style="color: ${safetyColor};">${runwayDisplay}</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `timpul de acoperire a cheltuielilor (~${daysRunway} zile de rezervă)` : `time you can sustain current spend without new income`}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Sold Total Disponibil' : 'Total Available Balance'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(totalBalRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Nivel Siguranță' : 'Safety Tier'}</div>
+                    <div class="kpi-detail-mini-val" style="color: ${safetyColor}; font-size: 0.85rem;">${safetyBadge}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">💳 ${activeLang === 'ro' ? 'Sold Card (Bancă)' : 'Card Balance'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(cardBalRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">💵 ${activeLang === 'ro' ? 'Sold Cash (Portofel)' : 'Cash Balance'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(cashBalRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                🛡️ <strong>Simulare de Optimizare a Autonomiei:</strong><br>
+                • Dacă reduci cheltuielile lunare cu <strong>10%</strong>, autonomia crește la <strong>${sim10Days} zile</strong> (+${sim10Days - daysRunway} zile).<br>
+                • Dacă reduci cheltuielile lunare cu <strong>20%</strong>, autonomia crește la <strong>${sim20Days} zile</strong> (+${sim20Days - daysRunway} zile).
+            </div>
+
+            <div style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px;">
+                <div style="font-size: 0.80rem; font-weight: 700; margin-bottom: 6px;">💡 Recomandare Fond de Urgență:</div>
+                <div style="font-size: 0.74rem; color: var(--text-color); line-height: 1.45;">
+                    Specialiștii financiari recomandă menținerea unei rezerve de <strong>minim 3 până la 6 luni de cheltuieli</strong> în conturi sigure și ușor accesibile.
+                </div>
+            </div>
+        `;
+    } else if (metricKey === 'activity') {
+        if (modalIconEl) modalIconEl.textContent = '🧾';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Volum & Activitate Tranzacții' : 'Transaction Volume & Activity';
+
+        const totTx = expenseCount + incomeCount + transferCount;
+        const expShare = totTx > 0 ? ((expenseCount / totTx) * 100).toFixed(1) : 0;
+        const incShare = totTx > 0 ? ((incomeCount / totTx) * 100).toFixed(1) : 0;
+        const trfShare = totTx > 0 ? ((transferCount / totTx) * 100).toFixed(1) : 0;
+        const cardShare = expenseCount > 0 ? ((cardExpenseCount / expenseCount) * 100).toFixed(1) : 0;
+        const cashShare = expenseCount > 0 ? ((cashExpenseCount / expenseCount) * 100).toFixed(1) : 0;
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #3b82f6;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Total Tranzacții Înregistrate' : 'Total Transactions Count'}</div>
+                <div class="kpi-detail-hero-val">${totTx} <span class="b-kpi-curr">${activeLang === 'ro' ? 'tranzacții' : 'tx'}</span></div>
+                <div class="kpi-detail-hero-sub">${expenseCount} ${activeLang === 'ro' ? 'plăți' : 'expenses'} • ${incomeCount} ${activeLang === 'ro' ? 'încasări' : 'income'}${transferCount > 0 ? ` • ${transferCount} ${activeLang === 'ro' ? 'transferuri' : 'transfers'}` : ''}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Frecvență Medie Zilnică' : 'Daily Frequency'}</div>
+                    <div class="kpi-detail-mini-val">${(totTx / Math.max(1, daysCount)).toFixed(2)} tx/zi</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Plăți Card vs Cash' : 'Card vs Cash Ratio'}</div>
+                    <div class="kpi-detail-mini-val">${cardShare}% Card</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Volum Total Plăți' : 'Total Expense Volume'}</div>
+                    <div class="kpi-detail-mini-val expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Volum Total Încasări' : 'Total Inflow Volume'}</div>
+                    <div class="kpi-detail-mini-val income-color">${formatMoney(convertFromRon(totIncomeRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>📊 ${activeLang === 'ro' ? 'Repartizare pe Tipuri de Operațiuni' : 'Operation Types Breakdown'}</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon" style="color: #ef4444;">📉</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Cheltuieli & Plăți' : 'Expenses'}</div>
+                            <div class="kpi-detail-row-meta">${expenseCount} tranzacții • ${expShare}% din volum</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${expShare}%; background: #ef4444;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon" style="color: #10b981;">📈</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Venituri & Încasări' : 'Income'}</div>
+                            <div class="kpi-detail-row-meta">${incomeCount} tranzacții • ${incShare}% din volum</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${incShare}%; background: #10b981;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt income-color">${formatMoney(convertFromRon(totIncomeRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+
+                ${transferCount > 0 ? `
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon" style="color: #8b5cf6;">🔄</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Transferuri Interne (Card ⇄ Cash)' : 'Internal Transfers'}</div>
+                            <div class="kpi-detail-row-meta">${transferCount} tranzacții • ${trfShare}% din volum</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${trfShare}%; background: #8b5cf6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>` : ''}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>💳 ${activeLang === 'ro' ? 'Metode de Plată Utilizate' : 'Payment Methods'}</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon">💳</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Plăți cu Cardul (Bancă)' : 'Card Payments'}</div>
+                            <div class="kpi-detail-row-meta">${cardExpenseCount} plăți • ${cardShare}% din total plăți</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${cardShare}%; background: #3b82f6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt">${formatMoney(convertFromRon(cardExpenseRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon">💵</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Plăți în Numerar (Cash)' : 'Cash Payments'}</div>
+                            <div class="kpi-detail-row-meta">${cashExpenseCount} plăți • ${cashShare}% din total plăți</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${cashShare}%; background: #10b981;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt">${formatMoney(convertFromRon(cashExpenseRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    modalBodyEl.innerHTML = html;
+    openModal('modalKpiDetail');
 }
 
 let merchantChartInstance = null;
@@ -8664,13 +9550,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Deschidere Analiză Magazine la click pe Cardul "Coș Mediu Bon" din Statistici
-    const cardStatAvgTicket = document.getElementById('cardStatAvgTicket');
-    if (cardStatAvgTicket) {
-        cardStatAvgTicket.addEventListener('click', () => {
-            openMerchantAnalyticsModal(currentStatsPeriod);
-        });
-    }
+    // Interactivitate Carduri KPI Statistici (Deschidere Modale cu Detalii Complete)
+    const kpiCardsConfig = [
+        { id: 'cardStatIncome', action: () => openKpiDetailModal('income') },
+        { id: 'cardStatExpense', action: () => openKpiDetailModal('expense') },
+        { id: 'cardStatSavings', action: () => openKpiDetailModal('savings') },
+        { id: 'cardStatRate', action: () => openKpiDetailModal('rate') },
+        { id: 'cardStatDailyAvg', action: () => openKpiDetailModal('daily_avg') },
+        { id: 'cardStatPeakExp', action: () => openKpiDetailModal('peak_exp') },
+        { id: 'cardStatDailyIncome', action: () => openKpiDetailModal('daily_income') },
+        { id: 'cardStatPeakInc', action: () => openKpiDetailModal('peak_inc') },
+        { id: 'cardStatAvgTicket', action: () => openMerchantAnalyticsModal(currentStatsPeriod) },
+        { id: 'cardStatRunway', action: () => openKpiDetailModal('runway') },
+        { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') }
+    ];
+
+    kpiCardsConfig.forEach(({ id, action }) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('click', action);
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    action();
+                }
+            });
+        }
+    });
 
     // Ascultatori pentru tab-urile de perioada din modalul de Analiza Magazine
     document.querySelectorAll('.merchant-period-btn').forEach(btn => {

@@ -5067,3 +5067,175 @@ body.dark-theme .tx-secondary-val {
     border-color: var(--accent);
 }
 
+/* Carduri KPI Statistici Interactive */
+.b-kpi-card-clickable {
+    cursor: pointer !important;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease !important;
+    position: relative;
+    user-select: none;
+}
+.b-kpi-card-clickable:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+.b-kpi-card-clickable:active {
+    transform: scale(0.97);
+}
+.b-kpi-badge-click {
+    font-size: 0.72rem;
+    margin-left: auto;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.b-kpi-card-clickable:hover .b-kpi-badge-click {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+/* Stiluri Modal Detalii KPI */
+.kpi-detail-hero {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+.kpi-detail-hero-label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+.kpi-detail-hero-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 4px;
+}
+.kpi-detail-hero-sub {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+}
+.kpi-detail-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.kpi-detail-mini-card {
+    background: var(--item-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 9px 10px;
+}
+.kpi-detail-mini-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+}
+.kpi-detail-mini-val {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+.kpi-detail-section-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 12px 0 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.kpi-detail-row-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--item-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+}
+.kpi-detail-row-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+.kpi-detail-row-icon {
+    font-size: 1.1rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--input-bg);
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+.kpi-detail-row-info {
+    min-width: 0;
+    flex: 1;
+}
+.kpi-detail-row-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.kpi-detail-row-meta {
+    font-size: 0.70rem;
+    color: var(--text-muted);
+}
+.kpi-detail-row-right {
+    text-align: right;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+.kpi-detail-row-amt {
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+.kpi-detail-row-pct {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.kpi-detail-progress-track {
+    width: 100%;
+    height: 5px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.kpi-detail-progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.kpi-detail-advice-card {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 0.80rem;
+    color: var(--text-color);
+    line-height: 1.45;
+    margin-bottom: 12px;
+}
+.dark-theme .kpi-detail-advice-card {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+
