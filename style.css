@@ -5314,4 +5314,203 @@ body.dark-theme .tx-secondary-val {
     border-color: rgba(59, 130, 246, 0.3);
 }
 
+/* ==========================================================================
+   SCANER INTELIGENT BONURI & FACTURI (MODAL 15)
+   ========================================================================== */
+.scanner-viewport-container {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    background: #000000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+#receiptScannerVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.scanner-guide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.scanner-guide-frame {
+    position: relative;
+    width: 86%;
+    height: 80%;
+    border: 2px dashed rgba(59, 130, 246, 0.7);
+    border-radius: 12px;
+    box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.42);
+    overflow: hidden;
+}
+
+.scanner-laser-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2.5px;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0) 0%, #3b82f6 50%, rgba(59, 130, 246, 0) 100%);
+    box-shadow: 0 0 8px #3b82f6;
+    animation: scannerBeam 2.2s infinite ease-in-out;
+}
+
+@keyframes scannerBeam {
+    0% { top: 4%; opacity: 0.8; }
+    50% { top: 92%; opacity: 1; }
+    100% { top: 4%; opacity: 0.8; }
+}
+
+.scanner-status-pill {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 10;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.scanner-status-dot {
+    width: 7px;
+    height: 7px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: scannerPulse 1.4s infinite;
+}
+
+@keyframes scannerPulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1.25); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.scanner-cam-controls {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+}
+
+.btn-scanner-ctrl {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.90rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.btn-scanner-ctrl:active {
+    transform: scale(0.9);
+}
+
+.scanner-result-card {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-top: 8px;
+    animation: scannerResultFadeIn 0.25s ease-out;
+}
+
+@keyframes scannerResultFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.scanner-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scanner-confidence-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 2px 6px;
+    border-radius: 12px;
+}
+
+.scanner-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.scanner-field-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.scanner-field-label {
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.scanner-merchant-preview {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
+    color: var(--text-color);
+    min-height: 28px;
+}
+
+.btn-scan-receipt-trigger:hover {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.20), rgba(6, 182, 212, 0.25)) !important;
+    border-color: #2563eb !important;
+}
+
+.btn-scan-receipt-trigger:active {
+    transform: scale(0.97);
+}
+
 

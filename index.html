@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=363">
+    <link rel="stylesheet" href="style.css?v=364">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.27</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.28</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -680,11 +680,15 @@
                     </select>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <label class="form-checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.80rem; font-weight: 600; color: var(--text-color); background: var(--item-bg); padding: 7px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                        <input type="checkbox" id="expenseIsSuspended" style="width: 16px; height: 16px; accent-color: #f59e0b; cursor: pointer;">
-                        <span data-i18n="lbl_suspend_tx">⏸️ Suspendă tranzacția (exclude temporar din calcule)</span>
+                <div class="form-group" style="margin-bottom: 10px; display: flex; gap: 8px; align-items: stretch;">
+                    <label class="form-checkbox-label" style="display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 0.76rem; font-weight: 700; color: var(--text-color); background: var(--item-bg); padding: 7px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); flex: 1; min-height: 38px; box-sizing: border-box; margin: 0; user-select: none;">
+                        <input type="checkbox" id="expenseIsSuspended" style="width: 15px; height: 15px; accent-color: #f59e0b; cursor: pointer; margin: 0;">
+                        <span data-i18n="lbl_suspend_tx_short">⏸️ Suspendă</span>
                     </label>
+                    <button type="button" class="btn-scan-receipt-trigger" id="btnOpenReceiptScanner" title="Scanează automat bonul sau factura cu camera telefonului" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 8px; font-size: 0.76rem; font-weight: 700; background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(37, 99, 235, 0.35); color: #2563eb; border-radius: var(--radius-sm); cursor: pointer; min-height: 38px; box-sizing: border-box; transition: all 0.2s ease;">
+                        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+                        <span data-i18n="btn_scan_receipt">📷 Scanează Bon</span>
+                    </button>
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
@@ -1021,9 +1025,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.27.apk" download="MoneyApp_v3.3.27.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.28.apk" download="MoneyApp_v3.3.28.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.27.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.28.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1504,6 +1508,132 @@
         </div>
     </div>
 
+    <!-- MODAL 15: SCANER INTELIGENT BONURI & FACTURI -->
+    <div class="modal-overlay" id="modalReceiptScanner">
+        <div class="modal-box" style="max-width: 440px; padding: 14px;">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.1rem;">📷</span>
+                    <span data-i18n="scanner_modal_title">Scaner Bonuri & Facturi</span>
+                </div>
+                <button class="modal-close" data-close="modalReceiptScanner" id="btnCloseReceiptScanner">&times;</button>
+            </div>
+
+            <div class="scanner-body">
+                <!-- Vizor Cameră Live -->
+                <div class="scanner-viewport-container" id="scannerViewportContainer">
+                    <video id="receiptScannerVideo" playsinline autoplay muted></video>
+                    <canvas id="receiptScannerCanvas" style="display:none;"></canvas>
+                    
+                    <!-- Ghidaj Vizual / Rama de scanare -->
+                    <div class="scanner-guide-overlay">
+                        <div class="scanner-guide-frame">
+                            <div class="scanner-laser-line"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stare scanare / Feedback in timp real -->
+                    <div class="scanner-status-pill" id="scannerStatusPill">
+                        <span class="scanner-status-dot"></span>
+                        <span id="scannerStatusText" data-i18n="scanner_status_ready">Îndreaptă camera spre bon sau cod QR</span>
+                    </div>
+
+                    <!-- Controale rapide pe camera (Lanterna / Schimba camera) -->
+                    <div class="scanner-cam-controls">
+                        <button type="button" class="btn-scanner-ctrl" id="btnToggleTorch" title="Aprinde/Stinge Lanterna" style="display:none;">
+                            💡
+                        </button>
+                        <button type="button" class="btn-scanner-ctrl" id="btnSwitchCamera" title="Comută Camera">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input ascuns pentru încărcare fișier / galerie foto -->
+                <input type="file" id="receiptScannerFileInput" accept="image/*" capture="environment" style="display:none;">
+
+                <!-- Bara de acțiuni scanare (Galerie / Fă Poză) -->
+                <div style="display: flex; gap: 8px; margin-top: 10px; margin-bottom: 10px;">
+                    <button type="button" class="btn btn-secondary" id="btnTriggerFileScan" style="flex: 1; padding: 8px 10px; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span>🖼️</span>
+                        <span data-i18n="scanner_btn_upload_photo">Încarcă Poză / Galerie</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="btnRestartLiveCam" style="padding: 8px 12px; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;" title="Pornește / Resetează camera">
+                        <span>📹</span>
+                        <span data-i18n="scanner_btn_live_cam">Live</span>
+                    </button>
+                </div>
+
+                <!-- Card Rezultate Detectate (Apare după ce bonul/codul este recunoscut) -->
+                <div class="scanner-result-card" id="scannerResultCard" style="display:none;">
+                    <div class="scanner-result-header">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 0.95rem;">✨</span>
+                            <span style="font-size: 0.82rem; font-weight: 800; color: var(--text-color);" data-i18n="scanner_result_title">Date Detectate Automat</span>
+                        </div>
+                        <span class="scanner-confidence-badge" id="scannerConfidenceBadge">Detectat 100%</span>
+                    </div>
+
+                    <div class="scanner-result-grid">
+                        <!-- Magazin / Furnizor detectat -->
+                        <div class="scanner-field-item">
+                            <span class="scanner-field-label" data-i18n="scanner_lbl_merchant">Magazin / Furnizor</span>
+                            <div class="scanner-merchant-preview" id="scannerResultMerchant">
+                                <span id="scannerResultMerchantLogo">🏪</span>
+                                <span id="scannerResultMerchantName" style="font-weight: 700;">Necunoscut</span>
+                            </div>
+                        </div>
+
+                        <!-- Sumă Totală detectată -->
+                        <div class="scanner-field-item">
+                            <span class="scanner-field-label" data-i18n="scanner_lbl_amount">Sumă Totală</span>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" step="0.01" id="scannerResultAmount" class="form-control" style="font-size: 1.05rem; font-weight: 800; color: #10b981; padding: 4px 8px; height: 32px; width: 100%;">
+                                <span id="scannerResultCurrency" style="font-size: 0.80rem; font-weight: 800; color: var(--text-muted);">RON</span>
+                            </div>
+                        </div>
+
+                        <!-- Categorie Auto-Selectată -->
+                        <div class="scanner-field-item">
+                            <span class="scanner-field-label" data-i18n="scanner_lbl_category">Categorie Atribuită</span>
+                            <div id="scannerResultCategoryPill" style="display: inline-flex; align-items: center; gap: 5px; background: rgba(37, 99, 235, 0.12); color: #2563eb; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">
+                                <span id="scannerResultCatIcon">🛍️</span>
+                                <span id="scannerResultCatName">General</span>
+                            </div>
+                        </div>
+
+                        <!-- Metodă de plată (Card/Cash) & Dată -->
+                        <div class="scanner-field-item">
+                            <span class="scanner-field-label" data-i18n="scanner_lbl_payment_date">Plată & Dată</span>
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 700;">
+                                <span id="scannerResultAccount" style="padding: 2px 6px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 4px;">💳 Card</span>
+                                <span id="scannerResultDate" style="color: var(--text-muted);">Azi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notiță / Detalii extrase -->
+                    <div id="scannerResultNoteWrap" style="margin-top: 6px; font-size: 0.74rem; color: var(--text-muted); background: var(--card-bg); border-radius: 4px; padding: 4px 6px; border: 1px dashed var(--border-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <span id="scannerResultNote"></span>
+                    </div>
+
+                    <!-- Buton Aplicare -->
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button type="button" class="btn btn-secondary" id="btnRescanReceipt" style="flex: 1; padding: 8px 10px; font-size: 0.82rem; font-weight: 700;" data-i18n="scanner_btn_rescan">
+                            🔄 Rescanează
+                        </button>
+                        <button type="button" class="btn btn-accent" id="btnApplyScannedReceipt" style="flex: 2; padding: 8px 10px; font-size: 0.82rem; font-weight: 700; background: #10b981; border-color: #10b981;" data-i18n="scanner_btn_apply">
+                            ✅ Aplică în Cheltuială
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Buton Închidere simplu -->
+                <button type="button" class="btn btn-secondary btn-block" data-close="modalReceiptScanner" style="margin-top: 8px; padding: 8px 10px; font-size: 0.82rem;" data-i18n="btn_close">Închide</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notifications Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -1511,6 +1641,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=363"></script>
+    <script src="app.js?v=364"></script>
 </body>
 </html>
