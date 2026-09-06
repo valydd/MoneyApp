@@ -888,13 +888,26 @@ body.dark-theme .tab-btn.active svg {
 }
 
 .balance-title-converted {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--accent, #3b82f6);
+    font-size: 0.70rem;
+    font-weight: 600;
+    color: #64748b;
     letter-spacing: 0;
     text-transform: none;
     line-height: 1;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+body.light-theme .balance-title-converted {
+    color: #475569;
+}
+
+.balance-title-converted .conv-sep {
+    font-weight: 300;
+    opacity: 0.7;
+    margin-right: 1px;
 }
 
 .btn-bal-summary {
@@ -925,6 +938,13 @@ body.light-theme .btn-bal-summary {
 
 .btn-bal-currency {
     z-index: 5;
+    font-weight: 500;
+}
+
+.btn-bal-currency span {
+    font-weight: 500;
+    font-size: 0.62rem;
+    color: var(--text-muted);
 }
 
 .balance-main-amount-wrap {

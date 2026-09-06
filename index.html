@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=354">
+    <link rel="stylesheet" href="style.css?v=355">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.18</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.19</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -117,20 +117,22 @@
                 <div class="balance-card">
                     <div class="balance-card-header">
                         <div class="balance-title-wrap">
-                            <span class="balance-title" data-i18n="balance_title">Fond Actual Disponibil</span>
+                            <span class="balance-title" data-i18n="balance_title">Fond Disponibil</span>
                             <span class="balance-title-converted" id="displayHeaderConvertedBalance"></span>
                         </div>
-                        <button type="button" class="btn-bal-summary" id="btnToggleTotalsSummary" title="Apasă pentru a vedea Total Cheltuieli și Total Venituri"></button>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button type="button" class="btn-bal-summary btn-bal-currency" id="btnBalanceCurrencyPicker" title="Apasă pentru a alege moneda de conversie a fondului">
+                                <span id="btnBalanceCurrencyCode" style="font-size: 0.62rem; font-weight: 500; color: var(--text-muted);">EUR</span>
+                            </button>
+                            <button type="button" class="btn-bal-summary" id="btnToggleTotalsSummary" title="Apasă pentru a vedea Total Cheltuieli și Total Venituri"></button>
+                        </div>
                     </div>
 
-                    <!-- Valoare Fond în Centru Mare (Zecimale și RON mici) + Buton Monedă Conversie în Dreapta Jos -->
+                    <!-- Valoare Fond în Centru Mare (Zecimale și RON mici) -->
                     <div class="balance-main-amount-wrap">
                         <div class="balance-amount positive" id="displayTotalBalance">
                             <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
                         </div>
-                        <button type="button" class="btn-bal-summary btn-bal-currency" id="btnBalanceCurrencyPicker" title="Apasă pentru a alege moneda de conversie a fondului" style="position: absolute; right: 0; bottom: 2px;">
-                            <span id="btnBalanceCurrencyCode" style="font-size: 0.62rem; font-weight: 800; color: var(--text-muted);">EUR</span>
-                        </button>
                     </div>
 
                     <!-- Surse fonduri: Card vs Cash (insigna deasupra, valoare mare dedesubt) + Buton Transfer -->
@@ -1021,9 +1023,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.18.apk" download="MoneyApp_v3.3.18.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.19.apk" download="MoneyApp_v3.3.19.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.18.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.19.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1488,6 +1490,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=354"></script>
+    <script src="app.js?v=355"></script>
 </body>
 </html>

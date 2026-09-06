@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.18";
+const APP_VERSION = "3.3.19";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -118,7 +118,7 @@ const I18N_DICTIONARY = {
         tab_stats_full: 'Statistici',
         tab_categories: 'Categorii',
         tab_categories_full: 'Categorii',
-        balance_title: 'Fond Actual Disponibil',
+        balance_title: 'Fond Disponibil',
         total_expenses: 'Cheltuieli Totale',
         total_income: 'Venituri Totale',
         btn_expense: 'Cheltuială',
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.18.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.19.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -428,7 +428,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.18.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.19.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -650,7 +650,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.18.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.19.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -863,7 +863,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.18.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.19.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1078,7 +1078,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.18.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.19.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1294,7 +1294,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.18.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.19.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -2119,10 +2119,8 @@ function updateBalanceCards() {
     const btnConvCode = document.getElementById('btnBalanceCurrencyCode');
 
     if (btnConvCode) {
-        let label = convCurr;
-        if (convCurr === 'none') {
-            label = '✕';
-        } else {
+        let label = '';
+        if (convCurr !== 'none') {
             const cInfo = getCurrencyInfo(convCurr);
             if (cInfo && cInfo.symbol && ['€', '$', '£', '¥', '₺', '₹'].includes(cInfo.symbol)) {
                 label = cInfo.symbol;
@@ -2131,17 +2129,17 @@ function updateBalanceCards() {
             }
         }
         btnConvCode.textContent = label;
-        btnConvCode.title = `Monedă conversie fond: ${convCurr}`;
+        btnConvCode.title = convCurr === 'none' ? 'Alege monedă conversie fond' : `Monedă conversie fond: ${convCurr}`;
     }
 
     if (headerConvEl) {
         if (convCurr === 'none' || convCurr === mainCurr) {
             headerConvEl.style.display = 'none';
-            headerConvEl.textContent = '';
+            headerConvEl.innerHTML = '';
         } else {
-            headerConvEl.style.display = 'inline';
+            headerConvEl.style.display = 'inline-flex';
             const convertedVal = convertFromRon(netBalanceRon, convCurr);
-            headerConvEl.textContent = `(≈ ${formatMoney(convertedVal, convCurr)})`;
+            headerConvEl.innerHTML = `<span class="conv-sep">-</span> <span>${formatMoney(convertedVal, convCurr)}</span>`;
         }
     }
 
