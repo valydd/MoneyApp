@@ -4784,79 +4784,243 @@ function exportStatsTableCsv() {
 // BUSINESS INTELLIGENCE: ANALIZĂ COMPARATIVĂ COȘ MÂNCARE & MAGAZINE
 // ==========================================
 const KNOWN_MERCHANTS = [
-    { key: 'lidl', name: 'Lidl', icon: '🛒', color: '#0050aa' },
-    { key: 'kaufland', name: 'Kaufland', icon: '🏪', color: '#e60000' },
-    { key: 'carrefour', name: 'Carrefour', icon: '🛍️', color: '#004e9a' },
-    { key: 'mega_image', name: 'Mega Image', icon: '🍏', color: '#d8232a' },
-    { key: 'penny', name: 'Penny', icon: '🧺', color: '#cc0000' },
-    { key: 'auchan', name: 'Auchan', icon: '🏬', color: '#e2001a' },
-    { key: 'profi', name: 'Profi', icon: '🛒', color: '#007ac1' },
-    { key: 'metro', name: 'Metro', icon: '🏢', color: '#002b49' },
-    { key: 'selgros', name: 'Selgros', icon: '🏢', color: '#e30613' },
-    { key: 'freshful', name: 'Freshful', icon: '🥬', color: '#00b050' },
-    { key: 'piata', name: 'Piață / Tarabă', icon: '🥦', color: '#16a34a' },
-    { key: 'macelarie', name: 'Măcelărie', icon: '🥩', color: '#b91c1c' },
-    { key: 'brutarie', name: 'Brutărie / Panificație', icon: '🥖', color: '#d97706' },
-    { key: 'restaurant', name: 'Restaurant / Fast-Food', icon: '🍽️', color: '#8b5cf6' },
-    { key: 'glovo', name: 'Glovo / Tazz / Delivery', icon: '🛵', color: '#ffc244' }
+    { key: 'lidl', name: 'Lidl', icon: '🟡', color: '#0050aa', match: ['lidl'] },
+    { key: 'kaufland', name: 'Kaufland', icon: '🔴', color: '#e60000', match: ['kaufland'] },
+    { key: 'carrefour', name: 'Carrefour', icon: '🛍️', color: '#004e9a', match: ['carrefour', 'carrefur'] },
+    { key: 'mega_image', name: 'Mega Image', icon: '🦁', color: '#d8232a', match: ['mega image', 'mega'] },
+    { key: 'profi', name: 'Profi', icon: '🏪', color: '#007ac1', match: ['profi'] },
+    { key: 'penny', name: 'Penny', icon: '🧺', color: '#cc0000', match: ['penny'] },
+    { key: 'auchan', name: 'Auchan', icon: '🏬', color: '#e2001a', match: ['auchan'] },
+    { key: 'metro', name: 'Metro', icon: '🏢', color: '#002b49', match: ['metro'] },
+    { key: 'selgros', name: 'Selgros', icon: '🏢', color: '#e30613', match: ['selgros'] },
+    { key: 'freshful', name: 'Freshful', icon: '🥬', color: '#00b050', match: ['freshful'] },
+    { key: 'sezamo', name: 'Sezamo', icon: '🥖', color: '#eab308', match: ['sezamo'] },
+    { key: 'cora', name: 'Cora', icon: '🛒', color: '#0284c7', match: ['cora'] },
+    { key: 'supeco', name: 'Supeco', icon: '🛒', color: '#ea580c', match: ['supeco'] },
+    { key: 'diana', name: 'Diana', icon: '🥩', color: '#dc2626', match: ['diana'] },
+    { key: 'unicarm', name: 'Unicarm', icon: '🥓', color: '#b91c1c', match: ['unicarm'] },
+    { key: 'annabella', name: 'Annabella', icon: '🍎', color: '#ef4444', match: ['annabella'] },
+    { key: 'sergiana', name: 'Sergiana', icon: '🥩', color: '#991b1b', match: ['sergiana'] },
+    { key: 'ardealu', name: 'Ardealu', icon: '🥩', color: '#b91c1c', match: ['ardealu', 'ardealul', 'ardeal'] },
+    { key: 'petresti', name: 'Petrești', icon: '🏪', color: '#d97706', match: ['petresti', 'petrești', 'piata petresti', 'piața petrești'] },
+    { key: 'piata', name: 'Piață / Tarabă', icon: '🥦', color: '#16a34a', match: ['piata', 'piață', 'aprozar', 'taraba', 'tarabă', 'legume', 'fructe'] },
+    { key: 'macelarie', name: 'Măcelărie', icon: '🥩', color: '#b91c1c', match: ['macelarie', 'măcelărie', 'carmangerie', 'mezeluri', 'carne'] },
+    { key: 'brutarie', name: 'Brutărie / Panificație', icon: '🥖', color: '#d97706', match: ['brutarie', 'brutărie', 'panificatie', 'panificație', 'brutar'] },
+    { key: 'cofetarie', name: 'Cofetărie / Patiserie', icon: '🍰', color: '#ec4899', match: ['cofetarie', 'cofetărie', 'patiserie', 'dulciuri', 'prajituri', 'torturi'] },
+    { key: 'simigerie_luca', name: 'Simigeria LUCA', icon: '🥨', color: '#e11d48', match: ['luca', 'simigeria luca'] },
+    { key: 'simigerie_matei', name: 'Simigeria Matei', icon: '🥨', color: '#ea580c', match: ['matei', 'simigeria matei'] },
+    { key: 'simigerie_petru', name: 'Simigeria Petru', icon: '🥨', color: '#d97706', match: ['petru', 'simigeria petru'] },
+    { key: 'fornetti', name: 'Fornetti', icon: '🥐', color: '#ca8a04', match: ['fornetti', 'forneti'] },
+    
+    // Tech / Subscripții / Servicii
+    { key: 'google', name: 'Google', icon: '🌐', color: '#4285f4', match: ['google', 'play store', 'google play', 'youtube', 'gsuite', 'google one', 'google drive'] },
+    { key: 'apple', name: 'Apple', icon: '🍎', color: '#8e8e93', match: ['apple', 'app store', 'itunes', 'icloud'] },
+    { key: 'microsoft', name: 'Microsoft', icon: '💻', color: '#00a4ef', match: ['microsoft', 'office 365', 'xbox', 'windows'] },
+    { key: 'emag', name: 'eMAG', icon: '📦', color: '#005ebd', match: ['emag', 'genius', 'sameday'] },
+    { key: 'altex', name: 'Altex', icon: '⚡', color: '#ffd100', match: ['altex', 'alt ex'] },
+    { key: 'flanco', name: 'Flanco', icon: '🔌', color: '#ff6600', match: ['flanco'] },
+    { key: 'pcgarage', name: 'PC Garage', icon: '🖥️', color: '#c20e1a', match: ['pc garage', 'pcgarage'] },
+    { key: 'amazon', name: 'Amazon', icon: '📦', color: '#ff9900', match: ['amazon', 'aws', 'prime'] },
+    { key: 'netflix', name: 'Netflix', icon: '🎬', color: '#e50914', match: ['netflix'] },
+    { key: 'spotify', name: 'Spotify', icon: '🎵', color: '#1db954', match: ['spotify'] },
+    { key: 'hbo', name: 'Max / HBO', icon: '📺', color: '#9333ea', match: ['hbo', 'max', 'hbomax'] },
+    { key: 'disney', name: 'Disney+', icon: '✨', color: '#113ccf', match: ['disney', 'disney+'] },
+    { key: 'openai', name: 'OpenAI / ChatGPT', icon: '🤖', color: '#10a37f', match: ['openai', 'chatgpt'] },
+    { key: 'steam', name: 'Steam / Gaming', icon: '🎮', color: '#171a21', match: ['steam', 'playstation', 'psn', 'xbox', 'nintendo'] },
+
+    // Utilități / Telecom
+    { key: 'digi', name: 'Digi / RCS-RDS', icon: '📶', color: '#005baa', match: ['digi', 'rcs', 'rds', 'rcs rds'] },
+    { key: 'orange', name: 'Orange', icon: '🍊', color: '#ff6600', match: ['orange', 'yoxo'] },
+    { key: 'vodafone', name: 'Vodafone', icon: '🔴', color: '#e60000', match: ['vodafone'] },
+    { key: 'telekom', name: 'Telekom', icon: '🟣', color: '#e20074', match: ['telekom'] },
+    { key: 'enel', name: 'PPC / Enel', icon: '💡', color: '#008a00', match: ['enel', 'ppc'] },
+    { key: 'electrica', name: 'Electrica', icon: '⚡', color: '#004b93', match: ['electrica', 'furnizare'] },
+    { key: 'eon', name: 'E.ON', icon: '🔥', color: '#ed1c24', match: ['eon', 'e.on'] },
+    { key: 'engie', name: 'Engie', icon: '🔥', color: '#00aaff', match: ['engie'] },
+    { key: 'hidroelectrica', name: 'Hidroelectrica', icon: '💧', color: '#006699', match: ['hidroelectrica'] },
+    { key: 'apanova', name: 'Apa Nova', icon: '🚰', color: '#0077c8', match: ['apa nova', 'apanova', 'raja', 'aquatim', 'compania de apa'] },
+
+    // Bricolaj / Casă
+    { key: 'dedeman', name: 'Dedeman', icon: '🔨', color: '#ff6a00', match: ['dedeman'] },
+    { key: 'leroy', name: 'Leroy Merlin', icon: '📐', color: '#78be20', match: ['leroy', 'leroy merlin'] },
+    { key: 'hornbach', name: 'Hornbach', icon: '🪚', color: '#fe6700', match: ['hornbach'] },
+    { key: 'bricodepot', name: 'Brico Dépôt', icon: '🧰', color: '#da291c', match: ['brico depot', 'bricodepot'] },
+    { key: 'ikea', name: 'IKEA', icon: '🛋️', color: '#0051ba', match: ['ikea'] },
+    { key: 'jysk', name: 'JYSK', icon: '🛏️', color: '#002f6c', match: ['jysk'] },
+    { key: 'mobexpert', name: 'Mobexpert', icon: '🪑', color: '#582c83', match: ['mobexpert'] },
+
+    // Carburant / Transport
+    { key: 'omv', name: 'OMV', icon: '⛽', color: '#00519e', match: ['omv'] },
+    { key: 'petrom', name: 'Petrom', icon: '⛽', color: '#003366', match: ['petrom'] },
+    { key: 'rompetrol', name: 'Rompetrol', icon: '⛽', color: '#df1e26', match: ['rompetrol'] },
+    { key: 'mol', name: 'MOL', icon: '⛽', color: '#009a44', match: ['mol'] },
+    { key: 'lukoil', name: 'Lukoil', icon: '⛽', color: '#ed1b2d', match: ['lukoil'] },
+    { key: 'socar', name: 'Socar', icon: '⛽', color: '#002f6c', match: ['socar'] },
+    { key: 'uber', name: 'Uber', icon: '🚗', color: '#000000', match: ['uber'] },
+    { key: 'bolt', name: 'Bolt', icon: '🚗', color: '#34d186', match: ['bolt'] },
+    { key: 'cfr', name: 'CFR Călători', icon: '🚆', color: '#003399', match: ['cfr', 'tren'] },
+    { key: 'wizz', name: 'Wizz Air / Zbor', icon: '✈️', color: '#c6007e', match: ['wizz', 'wizzair', 'tarom', 'ryanair', 'aeroport', 'avion'] },
+
+    // Farmacie & Sănătate
+    { key: 'catena', name: 'Catena', icon: '💊', color: '#00a651', match: ['catena'] },
+    { key: 'drmax', name: 'Dr. Max / Sensiblu', icon: '💊', color: '#00833e', match: ['dr max', 'drmax', 'sensiblu'] },
+    { key: 'helpnet', name: 'Help Net', icon: '💊', color: '#009639', match: ['help net', 'helpnet'] },
+    { key: 'farmaciatei', name: 'Farmacia Tei / Bebe Tei', icon: '💊', color: '#0066b2', match: ['farmacia tei', 'bebe tei', 'tei'] },
+    { key: 'dm', name: 'DM Drogerie', icon: '💄', color: '#ffdd00', match: ['dm', 'dm drogerie'] },
+    { key: 'reginamaria', name: 'Regina Maria / MedLife', icon: '🏥', color: '#003399', match: ['regina maria', 'medlife', 'synevo', 'clinica', 'spital', 'policlinica'] },
+
+    // Food Delivery / Restaurant
+    { key: 'glovo', name: 'Glovo', icon: '🛵', color: '#ffc244', match: ['glovo'] },
+    { key: 'tazz', name: 'Tazz', icon: '🛵', color: '#e50914', match: ['tazz'] },
+    { key: 'mcdonalds', name: 'McDonald\'s', icon: '🍔', color: '#ffbc0d', match: ['mcdonalds', 'mcdonald', 'mc donalds', 'mcd'] },
+    { key: 'kfc', name: 'KFC', icon: '🍗', color: '#a3080c', match: ['kfc'] },
+    { key: 'burgerking', name: 'Burger King', icon: '🍔', color: '#d62300', match: ['burger king', 'burgerking'] },
+    { key: 'pizzahut', name: 'Pizza Hut / Pizzerie', icon: '🍕', color: '#ee3124', match: ['pizza', 'pizza hut', 'dodo pizza', 'pizzahut', 'trattoria', 'ristorante'] },
+    { key: 'starbucks', name: 'Starbucks / Cafenea', icon: '☕', color: '#00704a', match: ['starbucks', '5 to go', '5togo', 'cafenea', 'coffee', 'espresso', 'cafe'] },
+    { key: 'restaurant', name: 'Restaurant / Fast-Food', icon: '🍽️', color: '#8b5cf6', match: ['restaurant', 'kebab', 'shaorma', 'fast food', 'fastfood', 'bistro', 'cantina'] },
+
+    // Fashion / Shopping
+    { key: 'zara', name: 'Zara / H&M / Haine', icon: '👗', color: '#a855f7', match: ['zara', 'h&m', 'hm', 'pepco', 'sinsay', 'bershka', 'pull&bear', 'stradivarius', 'reserved', 'mohito', 'kik', 'takko'] },
+    { key: 'decathlon', name: 'Decathlon / Sport', icon: '⚽', color: '#0082c3', match: ['decathlon', 'intersport', 'sportisimo', 'hervis', 'nike', 'adidas', 'puma'] }
 ];
 
 function detectMerchantFromTransaction(tx) {
     if (!tx || tx.type !== 'expense') return null;
 
-    if (tx.merchant && tx.merchant.trim().length > 0) {
-        const mLower = tx.merchant.toLowerCase().trim();
-        const found = KNOWN_MERCHANTS.find(m => m.name.toLowerCase() === mLower || m.key === mLower);
-        if (found) return found;
-        const customM = (appData.settings?.customMerchants || []).find(m => m.name.toLowerCase().trim() === mLower);
-        if (customM) {
-            return {
-                key: mLower.replace(/[^a-z0-9]/g, '_'),
-                name: customM.name,
-                icon: customM.icon || '🛒',
-                color: '#6366f1'
-            };
-        }
-        return {
-            key: mLower.replace(/[^a-z0-9]/g, '_'),
-            name: tx.merchant.trim(),
-            icon: '🛒',
-            color: '#6366f1'
-        };
-    }
-
-    const desc = (tx.description || '').toLowerCase();
+    const rawMerchant = (tx.merchant || '').trim();
+    const desc = (tx.description || '').toLowerCase().trim();
     const cat = appData.categories.find(c => c.id === tx.categoryId);
     const catName = cat ? (cat.name || '').toLowerCase() : '';
 
-    // Verificăm dacă descrierea conține un magazin personalizat adăugat de utilizator
+    // 1. Verificare comerciant personalizat definit în setări
     if (appData.settings && Array.isArray(appData.settings.customMerchants)) {
-        const customM = appData.settings.customMerchants.find(m => m && m.name && (desc === m.name.toLowerCase().trim() || desc.startsWith(m.name.toLowerCase().trim() + ' ')));
-        if (customM) {
-            return {
-                key: customM.name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-                name: customM.name,
-                icon: customM.icon || '🛒',
-                color: '#6366f1'
-            };
+        if (rawMerchant) {
+            const customM = appData.settings.customMerchants.find(m => m && m.name && m.name.toLowerCase().trim() === rawMerchant.toLowerCase());
+            if (customM) {
+                return {
+                    key: customM.name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                    name: customM.name,
+                    icon: customM.icon || (cat ? cat.icon : '🏪'),
+                    color: customM.color || (cat ? cat.color : '#6366f1')
+                };
+            }
+        }
+        if (desc) {
+            const customM = appData.settings.customMerchants.find(m => m && m.name && (desc === m.name.toLowerCase().trim() || desc.includes(m.name.toLowerCase().trim())));
+            if (customM) {
+                return {
+                    key: customM.name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                    name: customM.name,
+                    icon: customM.icon || (cat ? cat.icon : '🏪'),
+                    color: customM.color || (cat ? cat.color : '#6366f1')
+                };
+            }
         }
     }
 
-    if (desc.includes('lidl')) return KNOWN_MERCHANTS[0];
-    if (desc.includes('kaufland')) return KNOWN_MERCHANTS[1];
-    if (desc.includes('carrefour')) return KNOWN_MERCHANTS[2];
-    if (desc.includes('mega image') || desc.startsWith('mega ')) return KNOWN_MERCHANTS[3];
-    if (desc.includes('penny')) return KNOWN_MERCHANTS[4];
-    if (desc.includes('auchan')) return KNOWN_MERCHANTS[5];
-    if (desc.includes('profi')) return KNOWN_MERCHANTS[6];
-    if (desc.includes('metro')) return KNOWN_MERCHANTS[7];
-    if (desc.includes('selgros')) return KNOWN_MERCHANTS[8];
-    if (desc.includes('freshful')) return KNOWN_MERCHANTS[9];
-    if (desc.includes('piata') || desc.includes('piață') || desc.includes('aprozar')) return KNOWN_MERCHANTS[10];
-    if (desc.includes('macelarie') || desc.includes('măcelărie')) return KNOWN_MERCHANTS[11];
-    if (desc.includes('brutarie') || desc.includes('brutărie') || desc.includes('patiserie')) return KNOWN_MERCHANTS[12];
-    if (desc.includes('restaurant') || desc.includes('pizzerie') || desc.includes('kebab') || desc.includes('shaorma') || desc.includes('mcdonald') || desc.includes('kfc') || desc.includes('burger')) return KNOWN_MERCHANTS[13];
-    if (desc.includes('glovo') || desc.includes('tazz') || desc.includes('bolt food')) return KNOWN_MERCHANTS[14];
+    // 2. Căutare după rawMerchant dacă este setat
+    if (rawMerchant) {
+        const rawLower = rawMerchant.toLowerCase();
+        // Căutare exactă sau parțială în KNOWN_MERCHANTS
+        const found = KNOWN_MERCHANTS.find(m => {
+            if (m.name.toLowerCase() === rawLower || m.key === rawLower) return true;
+            if (m.match && m.match.some(keyword => rawLower.includes(keyword) || keyword.includes(rawLower))) return true;
+            return false;
+        });
+
+        if (found) {
+            return {
+                key: found.key,
+                name: rawMerchant,
+                icon: found.icon,
+                color: found.color
+            };
+        }
+
+        // Dacă nu e găsit în preseturi, deducem icon și color din cuvinte cheie generale, categorie sau hash
+        let resolvedIcon = null;
+        let resolvedColor = null;
+
+        // Reguli inteligente de cuvinte cheie din numele comerciantului
+        if (rawLower.includes('farmaci') || rawLower.includes('sensiblu') || rawLower.includes('catena') || rawLower.includes('helpnet') || rawLower.includes('remed') || rawLower.includes('medic') || rawLower.includes('doctor')) {
+            resolvedIcon = '💊';
+            resolvedColor = '#059669';
+        } else if (rawLower.includes('cafe') || rawLower.includes('coffee') || rawLower.includes('espresso') || rawLower.includes('bar') || rawLower.includes('ceai')) {
+            resolvedIcon = '☕';
+            resolvedColor = '#92400e';
+        } else if (rawLower.includes('pizza')) {
+            resolvedIcon = '🍕';
+            resolvedColor = '#ea580c';
+        } else if (rawLower.includes('burger') || rawLower.includes('kebab') || rawLower.includes('shaorma') || rawLower.includes('fastfood') || rawLower.includes('grill') || rawLower.includes('gyros')) {
+            resolvedIcon = '🍔';
+            resolvedColor = '#d97706';
+        } else if (rawLower.includes('brutar') || rawLower.includes('panific') || rawLower.includes('covrig') || rawLower.includes('patiser') || rawLower.includes('simig')) {
+            resolvedIcon = '🥖';
+            resolvedColor = '#d97706';
+        } else if (rawLower.includes('macelar') || rawLower.includes('carne') || rawLower.includes('carmanger') || rawLower.includes('mezel')) {
+            resolvedIcon = '🥩';
+            resolvedColor = '#dc2626';
+        } else if (rawLower.includes('cofetar') || rawLower.includes('dulce') || rawLower.includes('prajitur') || rawLower.includes('tort')) {
+            resolvedIcon = '🍰';
+            resolvedColor = '#db2777';
+        } else if (rawLower.includes('benzin') || rawLower.includes('combustibil') || rawLower.includes('carburant') || rawLower.includes('peco') || rawLower.includes('diesel') || rawLower.includes('benzina')) {
+            resolvedIcon = '⛽';
+            resolvedColor = '#0284c7';
+        } else if (rawLower.includes('taxi') || rawLower.includes('curier') || rawLower.includes('livrare') || rawLower.includes('transport')) {
+            resolvedIcon = '🚗';
+            resolvedColor = '#10b981';
+        } else if (rawLower.includes('digi') || rawLower.includes('vodafone') || rawLower.includes('orange') || rawLower.includes('telekom') || rawLower.includes('internet') || rawLower.includes('tv')) {
+            resolvedIcon = '📶';
+            resolvedColor = '#3b82f6';
+        } else if (rawLower.includes('enel') || rawLower.includes('electrica') || rawLower.includes('curent') || rawLower.includes('gaz') || rawLower.includes('apa ') || rawLower.includes('salubritate')) {
+            resolvedIcon = '💡';
+            resolvedColor = '#eab308';
+        } else if (rawLower.includes('haine') || rawLower.includes('pantofi') || rawLower.includes('incaltaminte') || rawLower.includes('fashion') || rawLower.includes('boutique') || rawLower.includes('textil')) {
+            resolvedIcon = '👗';
+            resolvedColor = '#a855f7';
+        } else if (rawLower.includes('mobila') || rawLower.includes('dedeman') || rawLower.includes('leroy') || rawLower.includes('brico') || rawLower.includes('ikea') || rawLower.includes('jysk') || rawLower.includes('construct')) {
+            resolvedIcon = '🔨';
+            resolvedColor = '#ea580c';
+        } else if (rawLower.includes('market') || rawLower.includes('magazin') || rawLower.includes('supermarket') || rawLower.includes('chiosc') || rawLower.includes('alimentar') || rawLower.includes('bacanie') || rawLower.includes('minimarket')) {
+            resolvedIcon = '🏪';
+            resolvedColor = '#2563eb';
+        }
+
+        if (!resolvedIcon && cat && cat.icon) {
+            resolvedIcon = cat.icon;
+            resolvedColor = cat.color || '#6366f1';
+        }
+
+        if (!resolvedColor) {
+            const palette = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#14b8a6'];
+            let hash = 0;
+            for (let i = 0; i < rawLower.length; i++) {
+                hash = rawLower.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            resolvedColor = palette[Math.abs(hash) % palette.length];
+        }
+
+        return {
+            key: rawLower.replace(/[^a-z0-9]/g, '_'),
+            name: rawMerchant,
+            icon: resolvedIcon || '🏪',
+            color: resolvedColor
+        };
+    }
+
+    // 3. Căutare în descriere dacă merchant nu este setat explicit
+    if (desc) {
+        for (const m of KNOWN_MERCHANTS) {
+            if (m.match && m.match.some(keyword => desc.includes(keyword))) {
+                return {
+                    key: m.key,
+                    name: m.name,
+                    icon: m.icon,
+                    color: m.color
+                };
+            }
+        }
+    }
 
     return null;
 }
@@ -6075,7 +6239,7 @@ function renderMerchantRanking(merchantList, totalFoodSpendRon, mainCurr) {
         card.innerHTML = `
             <div class="merchant-rank-header">
                 <div class="merchant-rank-title">
-                    <span style="font-size: 1.15rem;">${m.icon}</span>
+                    <div style="width:30px; height:30px; border-radius:8px; background:${m.color ? m.color + '22' : 'rgba(59, 130, 246, 0.12)'}; border: 1px solid ${m.color ? m.color + '44' : 'rgba(59, 130, 246, 0.25)'}; display:flex; align-items:center; justify-content:center; font-size:1.15rem; flex-shrink:0;">${m.icon}</div>
                     <span>${m.name}</span>
                 </div>
                 <div class="merchant-rank-amount">
@@ -6223,8 +6387,8 @@ function renderFoodBasketReceiptsModal() {
 
         row.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-                <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
-                    <span style="font-size:1.25rem; flex-shrink:0;">${m.icon}</span>
+                <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                    <div style="width:34px; height:34px; border-radius:9px; background:${m.color ? m.color + '22' : 'rgba(59, 130, 246, 0.12)'}; border: 1px solid ${m.color ? m.color + '44' : 'rgba(59, 130, 246, 0.25)'}; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">${m.icon}</div>
                     <div style="min-width:0;">
                         <div style="font-weight:700; font-size:0.88rem; color:var(--text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                             ${escapeHtml(descText)}
