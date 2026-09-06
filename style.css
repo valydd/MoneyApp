@@ -890,7 +890,7 @@ body.dark-theme .tab-btn.active svg {
 .balance-title-converted {
     font-size: 0.70rem;
     font-weight: 600;
-    color: #64748b;
+    color: #cbd5e1;
     letter-spacing: 0;
     text-transform: none;
     line-height: 1;
@@ -901,7 +901,7 @@ body.dark-theme .tab-btn.active svg {
 }
 
 body.light-theme .balance-title-converted {
-    color: #475569;
+    color: #64748b;
 }
 
 .balance-title-converted .conv-sep {
@@ -913,9 +913,9 @@ body.light-theme .balance-title-converted {
 .btn-bal-summary {
     width: 24px;
     height: 24px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -923,13 +923,13 @@ body.light-theme .balance-title-converted {
     transition: all 0.15s ease;
     padding: 0;
     flex-shrink: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 body.light-theme .btn-bal-summary {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 .btn-bal-summary:active {
