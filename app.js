@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.19";
+const APP_VERSION = "3.3.20";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.19.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.20.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -328,7 +328,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: 'din total',
         export_lbl_tx_history: 'Istoric Tranzacții',
         export_lbl_generated: 'Generat din',
-        export_btn: 'Export'
+        export_btn: 'Export',
+        fund_curr_modal_title: 'Monedă Conversie Fond',
+        fund_curr_modal_desc: 'Alege moneda în care vrei să fie afișată conversia fondului disponibil lângă titlu:',
+        fund_curr_none: 'Fără conversie',
+        fund_curr_none_desc: 'Nu afișa sumă convertită lângă titlu',
+        badge_active: 'Activ',
+        toast_fund_curr_disabled: 'Conversia fondului a fost dezactivată',
+        toast_fund_curr_set: 'Conversia fondului setată în'
     },
     en: {
         currency_label: 'Currency',
@@ -428,7 +435,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.19.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.20.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -550,7 +557,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: 'of total',
         export_lbl_tx_history: 'Transaction History',
         export_lbl_generated: 'Generated from',
-        export_btn: 'Export'
+        export_btn: 'Export',
+        fund_curr_modal_title: 'Fund Conversion Currency',
+        fund_curr_modal_desc: 'Choose the currency to display the converted available fund next to the title:',
+        fund_curr_none: 'No conversion',
+        fund_curr_none_desc: 'Do not show converted amount next to title',
+        badge_active: 'Active',
+        toast_fund_curr_disabled: 'Fund conversion has been disabled',
+        toast_fund_curr_set: 'Fund conversion set to'
     },
     de: {
         currency_label: 'Währung',
@@ -650,7 +664,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.19.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.20.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -766,7 +780,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: 'vom Gesamten',
         export_lbl_tx_history: 'Transaktionsverlauf',
         export_lbl_generated: 'Erstellt von',
-        export_btn: 'Exportieren'
+        export_btn: 'Exportieren',
+        fund_curr_modal_title: 'Währung für Guthaben-Umrechnung',
+        fund_curr_modal_desc: 'Wählen Sie die Währung für die Umrechnung des verfügbaren Guthabens neben dem Titel:',
+        fund_curr_none: 'Keine Umrechnung',
+        fund_curr_none_desc: 'Keinen umgerechneten Betrag neben dem Titel anzeigen',
+        badge_active: 'Aktiv',
+        toast_fund_curr_disabled: 'Guthaben-Umrechnung wurde deaktiviert',
+        toast_fund_curr_set: 'Guthaben-Umrechnung festgelegt auf'
     },
     tr: {
         currency_label: 'Para Birimi',
@@ -863,7 +884,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.19.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.20.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -978,7 +999,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: 'toplamın',
         export_lbl_tx_history: 'İşlem Geçmişi',
         export_lbl_generated: 'Şuradan oluşturuldu:',
-        export_btn: 'Dışa Aktar'
+        export_btn: 'Dışa Aktar',
+        fund_curr_modal_title: 'Bakiye Dönüşüm Para Birimi',
+        fund_curr_modal_desc: 'Başlığın yanında gösterilecek bakiye dönüştürme para birimini seçin:',
+        fund_curr_none: 'Dönüşüm yok',
+        fund_curr_none_desc: 'Başlığın yanında dönüştürülmüş tutarı gösterme',
+        badge_active: 'Aktif',
+        toast_fund_curr_disabled: 'Bakiye dönüşümü devre dışı bırakıldı',
+        toast_fund_curr_set: 'Bakiye dönüşümü ayarlandı:'
     },
     ja: {
         currency_label: '通貨',
@@ -1078,7 +1106,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.19.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.20.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1194,7 +1222,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: '全体に占める割合',
         export_lbl_tx_history: '取引履歴',
         export_lbl_generated: '生成元:',
-        export_btn: 'エクスポート'
+        export_btn: 'エクスポート',
+        fund_curr_modal_title: '残高換算通貨',
+        fund_curr_modal_desc: 'タイトルの横に表示する利用可能残高の換算通貨を選択してください：',
+        fund_curr_none: '換算なし',
+        fund_curr_none_desc: 'タイトルの横に換算額を表示しない',
+        badge_active: '有効',
+        toast_fund_curr_disabled: '残高換算が無効化されました',
+        toast_fund_curr_set: '残高換算を設定しました：'
     },
     zh: {
         currency_label: '货币',
@@ -1294,7 +1329,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.19.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.20.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1410,7 +1445,14 @@ const I18N_DICTIONARY = {
         export_lbl_of_total: '占总额',
         export_lbl_tx_history: '交易历史明细',
         export_lbl_generated: '生成自',
-        export_btn: '导出'
+        export_btn: '导出',
+        fund_curr_modal_title: '资金换算货币',
+        fund_curr_modal_desc: '选择在标题旁显示的可用资金换算货币：',
+        fund_curr_none: '不换算',
+        fund_curr_none_desc: '在标题旁不显示换算金额',
+        badge_active: '已启用',
+        toast_fund_curr_disabled: '资金换算已停用',
+        toast_fund_curr_set: '资金换算已设置为'
     }
 };
 
@@ -2113,24 +2155,9 @@ function updateBalanceCards() {
         cashEl.className = displayCash >= 0 ? 'source-val positive' : 'source-val negative';
     }
 
-    // Conversie secundară afișată imediat după titlul Fond Actual Disponibil
+    // Conversie secundară afișată imediat după titlul Fond Disponibil
     const convCurr = appData.settings?.fundConversionCurrency || (mainCurr === 'RON' ? 'EUR' : 'RON');
     const headerConvEl = document.getElementById('displayHeaderConvertedBalance');
-    const btnConvCode = document.getElementById('btnBalanceCurrencyCode');
-
-    if (btnConvCode) {
-        let label = '';
-        if (convCurr !== 'none') {
-            const cInfo = getCurrencyInfo(convCurr);
-            if (cInfo && cInfo.symbol && ['€', '$', '£', '¥', '₺', '₹'].includes(cInfo.symbol)) {
-                label = cInfo.symbol;
-            } else {
-                label = convCurr;
-            }
-        }
-        btnConvCode.textContent = label;
-        btnConvCode.title = convCurr === 'none' ? 'Alege monedă conversie fond' : `Monedă conversie fond: ${convCurr}`;
-    }
 
     if (headerConvEl) {
         if (convCurr === 'none' || convCurr === mainCurr) {
@@ -8312,7 +8339,7 @@ function setMainCurrency(newCurrency) {
     showToast(toastMsg, 'success');
 }
 
-// Modal pentru alegerea monedei de conversie a Fondului Actual Disponibil
+// Modal pentru alegerea monedei de conversie a Fondului Disponibil
 function openFundCurrencyPickerModal() {
     const container = document.getElementById('fundCurrencyListContainer');
     if (!container) return;
@@ -8331,12 +8358,12 @@ function openFundCurrencyPickerModal() {
         <div class="currency-card-left">
             <div class="currency-flag-badge">🚫</div>
             <div>
-                <div class="currency-card-title">Fără conversie</div>
-                <div class="currency-card-sub">Nu afișa sumă convertită lângă titlu</div>
+                <div class="currency-card-title">${t('fund_curr_none', activeLang)}</div>
+                <div class="currency-card-sub">${t('fund_curr_none_desc', activeLang)}</div>
             </div>
         </div>
         <div class="currency-card-right">
-            ${isNone ? `<span class="currency-active-pill">Activ</span>` : `<span class="currency-rate-text">✕</span>`}
+            ${isNone ? `<span class="currency-active-pill">${t('badge_active', activeLang)}</span>` : `<span class="currency-rate-text">✕</span>`}
         </div>
     `;
     noneCard.onclick = () => {
@@ -8346,7 +8373,7 @@ function openFundCurrencyPickerModal() {
         persistDatabaseToFile();
         closeModal('modalFundCurrencyPicker');
         updateBalanceCards();
-        showToast('Conversia fondului a fost dezactivată', 'info');
+        showToast(t('toast_fund_curr_disabled', activeLang), 'info');
     };
     container.appendChild(noneCard);
 
@@ -8374,7 +8401,7 @@ function openFundCurrencyPickerModal() {
                 </div>
             </div>
             <div class="currency-card-right">
-                ${isActive ? `<span class="currency-active-pill">Activ</span>` : `<span class="currency-rate-text">${info.symbol}</span>`}
+                ${isActive ? `<span class="currency-active-pill">${t('badge_active', activeLang)}</span>` : `<span class="currency-rate-text">${info.symbol}</span>`}
             </div>
         `;
 
@@ -8385,7 +8412,7 @@ function openFundCurrencyPickerModal() {
             persistDatabaseToFile();
             closeModal('modalFundCurrencyPicker');
             updateBalanceCards();
-            showToast(`Conversia fondului setată în ${info.code} (${info.symbol})`, 'success');
+            showToast(`${t('toast_fund_curr_set', activeLang)} ${info.code} (${info.symbol})`, 'success');
         });
 
         container.appendChild(card);
