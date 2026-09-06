@@ -4876,6 +4876,8 @@ function openKpiDetailModal(metricKey) {
     const activeLang = getLanguageForCurrency();
     const daysCount = getDaysInStatsPeriod();
 
+    const isCashTx = (tx) => !!(tx && ((tx.paymentMethod === 'cash') || (tx.account === 'cash') || (typeof tx.paymentMethod === 'string' && tx.paymentMethod.toLowerCase() === 'cash') || (typeof tx.account === 'string' && tx.account.toLowerCase() === 'cash')));
+
     let totIncomeRon = 0;
     let totExpenseRon = 0;
     let peakExpenseTx = null;
@@ -4887,6 +4889,10 @@ function openKpiDetailModal(metricKey) {
     let cashExpenseRon = 0;
     let cardExpenseCount = 0;
     let cashExpenseCount = 0;
+    let cardIncomeRon = 0;
+    let cashIncomeRon = 0;
+    let cardIncomeCount = 0;
+    let cashIncomeCount = 0;
 
     const categoryMap = {};
     const incomeSourceMap = {};
@@ -4895,9 +4901,18 @@ function openKpiDetailModal(metricKey) {
 
     filteredTxs.forEach(t => {
         const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        const cash = isCashTx(t);
+
         if (t.type === 'income') {
             totIncomeRon += amtRon;
             incomeCount++;
+            if (cash) {
+                cashIncomeRon += amtRon;
+                cashIncomeCount++;
+            } else {
+                cardIncomeRon += amtRon;
+                cardIncomeCount++;
+            }
             if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
                 peakIncomeTx = t;
             }
@@ -4913,7 +4928,7 @@ function openKpiDetailModal(metricKey) {
             if (!peakExpenseTx || amtRon > (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0)) {
                 peakExpenseTx = t;
             }
-            if (t.account === 'cash') {
+            if (cash) {
                 cashExpenseRon += amtRon;
                 cashExpenseCount++;
             } else {
@@ -4943,16 +4958,17 @@ function openKpiDetailModal(metricKey) {
     appData.transactions.forEach(t => {
         if (isTxSuspended(t)) return;
         const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        const cash = isCashTx(t);
         if (t.type === 'income') {
             totalBalRon += a;
-            if (t.account === 'cash') cashBalRon += a;
+            if (cash) cashBalRon += a;
             else cardBalRon += a;
         } else if (t.type === 'expense') {
             totalBalRon -= a;
-            if (t.account === 'cash') cashBalRon -= a;
+            if (cash) cashBalRon -= a;
             else cardBalRon -= a;
         } else if (t.type === 'transfer') {
-            const dir = t.direction || 'card-to-cash';
+            const dir = t.transferDirection || t.direction || 'card-to-cash';
             if (dir === 'card-to-cash') {
                 cardBalRon -= a;
                 cashBalRon += a;
@@ -5060,7 +5076,7 @@ function openKpiDetailModal(metricKey) {
             <div style="margin-bottom: 6px;">
                 ${incomeTxs.map(t => {
                     const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-                    const accIcon = t.account === 'cash' ? '💵 Cash' : '💳 Card';
+                    const accIcon = isCashTx(t) ? '💵 Cash' : '💳 Card';
                     return `
                         <div class="kpi-detail-row-item">
                             <div class="kpi-detail-row-left">
@@ -5158,13 +5174,14 @@ function openKpiDetailModal(metricKey) {
                 ${top5Expenses.map((t, idx) => {
                     const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
                     const cat = appData.categories.find(c => c.id === t.categoryId) || { name: 'Diverse', icon: '⚡' };
+                    const payLabel = isCashTx(t) ? '💵 Cash' : '💳 Card';
                     return `
                         <div class="kpi-detail-row-item">
                             <div class="kpi-detail-row-left">
                                 <div class="kpi-detail-row-icon">#${idx + 1}</div>
                                 <div class="kpi-detail-row-info">
                                     <div class="kpi-detail-row-name">${cat.icon} ${escapeHtml(t.description || cat.name)}</div>
-                                    <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'}</div>
+                                    <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)} • ${payLabel}</div>
                                 </div>
                             </div>
                             <div class="kpi-detail-row-right">
@@ -5395,6 +5412,7 @@ function openKpiDetailModal(metricKey) {
         if (!peakExpenseTx) {
             html += `<div style="text-align:center; padding:30px; color:var(--text-muted);">Nu există cheltuieli în această perioadă.</div>`;
         } else {
+            const peakPayLabel = isCashTx(peakExpenseTx) ? '💵 Cash' : '💳 Card';
             html += `
                 <div class="kpi-detail-hero" style="border-left: 4px solid #ef4444;">
                     <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Cea Mai Mare Plată Unică' : 'Highest Single Expense'}</div>
@@ -5409,7 +5427,7 @@ function openKpiDetailModal(metricKey) {
                     </div>
                     <div class="kpi-detail-mini-card">
                         <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Metodă Plată' : 'Payment Method'}</div>
-                        <div class="kpi-detail-mini-val">${peakExpenseTx.account === 'cash' ? '💵 Cash' : '💳 Card'}</div>
+                        <div class="kpi-detail-mini-val">${peakPayLabel}</div>
                     </div>
                     <div class="kpi-detail-mini-card">
                         <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Descriere Plată' : 'Description'}</div>
@@ -5429,13 +5447,14 @@ function openKpiDetailModal(metricKey) {
                         const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
                         const cat = appData.categories.find(c => c.id === t.categoryId) || { name: 'Diverse', icon: '⚡' };
                         const share = totExpenseRon > 0 ? ((amt / totExpenseRon) * 100).toFixed(1) : 0;
+                        const payLabel = isCashTx(t) ? '💵 Cash' : '💳 Card';
                         return `
                             <div class="kpi-detail-row-item">
                                 <div class="kpi-detail-row-left">
                                     <div class="kpi-detail-row-icon" style="font-weight: 800; font-size: 0.8rem;">#${idx + 1}</div>
                                     <div class="kpi-detail-row-info">
                                         <div class="kpi-detail-row-name">${cat.icon} ${escapeHtml(t.description || cat.name)}</div>
-                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'} • ${share}%</div>
+                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${payLabel} • ${share}%</div>
                                     </div>
                                 </div>
                                 <div class="kpi-detail-row-right">
@@ -5499,6 +5518,7 @@ function openKpiDetailModal(metricKey) {
         if (!peakIncomeTx) {
             html += `<div style="text-align:center; padding:30px; color:var(--text-muted);">Nu există încasări în această perioadă.</div>`;
         } else {
+            const peakIncPayLabel = isCashTx(peakIncomeTx) ? '💵 Portofel Cash' : '💳 Cont Card';
             html += `
                 <div class="kpi-detail-hero" style="border-left: 4px solid #10b981;">
                     <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Cea Mai Mare Încasare Unică' : 'Highest Single Income'}</div>
@@ -5513,7 +5533,7 @@ function openKpiDetailModal(metricKey) {
                     </div>
                     <div class="kpi-detail-mini-card">
                         <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Destinație' : 'Account'}</div>
-                        <div class="kpi-detail-mini-val">${peakIncomeTx.account === 'cash' ? '💵 Portofel Cash' : '💳 Cont Card'}</div>
+                        <div class="kpi-detail-mini-val">${peakIncPayLabel}</div>
                     </div>
                     <div class="kpi-detail-mini-card">
                         <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Data Încasării' : 'Date'}</div>
@@ -5532,13 +5552,14 @@ function openKpiDetailModal(metricKey) {
                     ${sortedIncomes.map((t, idx) => {
                         const amt = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
                         const share = totIncomeRon > 0 ? ((amt / totIncomeRon) * 100).toFixed(1) : 0;
+                        const payLabel = isCashTx(t) ? '💵 Cash' : '💳 Card';
                         return `
                             <div class="kpi-detail-row-item">
                                 <div class="kpi-detail-row-left">
                                     <div class="kpi-detail-row-icon" style="color: #10b981; font-weight: 800; font-size: 0.8rem;">#${idx + 1}</div>
                                     <div class="kpi-detail-row-info">
                                         <div class="kpi-detail-row-name">${escapeHtml(t.description || (activeLang === 'ro' ? 'Încasare' : 'Income'))}</div>
-                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${t.account === 'cash' ? '💵 Cash' : '💳 Card'} • ${share}%</div>
+                                        <div class="kpi-detail-row-meta">${formatDateDisplay(t.date)}${t.time ? ' ' + t.time : ''} • ${payLabel} • ${share}%</div>
                                     </div>
                                 </div>
                                 <div class="kpi-detail-row-right">
@@ -5627,8 +5648,10 @@ function openKpiDetailModal(metricKey) {
         const expShare = totTx > 0 ? ((expenseCount / totTx) * 100).toFixed(1) : 0;
         const incShare = totTx > 0 ? ((incomeCount / totTx) * 100).toFixed(1) : 0;
         const trfShare = totTx > 0 ? ((transferCount / totTx) * 100).toFixed(1) : 0;
-        const cardShare = expenseCount > 0 ? ((cardExpenseCount / expenseCount) * 100).toFixed(1) : 0;
-        const cashShare = expenseCount > 0 ? ((cashExpenseCount / expenseCount) * 100).toFixed(1) : 0;
+        const cardExpenseShare = expenseCount > 0 ? ((cardExpenseCount / expenseCount) * 100).toFixed(1) : 0;
+        const cashExpenseShare = expenseCount > 0 ? ((cashExpenseCount / expenseCount) * 100).toFixed(1) : 0;
+        const cardIncomeShare = incomeCount > 0 ? ((cardIncomeCount / incomeCount) * 100).toFixed(1) : 0;
+        const cashIncomeShare = incomeCount > 0 ? ((cashIncomeCount / incomeCount) * 100).toFixed(1) : 0;
 
         html += `
             <div class="kpi-detail-hero" style="border-left: 4px solid #3b82f6;">
@@ -5644,7 +5667,7 @@ function openKpiDetailModal(metricKey) {
                 </div>
                 <div class="kpi-detail-mini-card">
                     <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Plăți Card vs Cash' : 'Card vs Cash Ratio'}</div>
-                    <div class="kpi-detail-mini-val">${cardShare}% Card</div>
+                    <div class="kpi-detail-mini-val">${cardExpenseShare}% Card / ${cashExpenseShare}% Cash</div>
                 </div>
                 <div class="kpi-detail-mini-card">
                     <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Volum Total Plăți' : 'Total Expense Volume'}</div>
@@ -5708,17 +5731,17 @@ function openKpiDetailModal(metricKey) {
             </div>
 
             <div class="kpi-detail-section-title">
-                <span>💳 ${activeLang === 'ro' ? 'Metode de Plată Utilizate' : 'Payment Methods'}</span>
+                <span>💳 ${activeLang === 'ro' ? 'Plăți: Card vs Cash' : 'Expense Payment Methods'}</span>
             </div>
-            <div style="margin-bottom: 6px;">
+            <div style="margin-bottom: 12px;">
                 <div class="kpi-detail-row-item">
                     <div class="kpi-detail-row-left">
                         <div class="kpi-detail-row-icon">💳</div>
                         <div class="kpi-detail-row-info">
                             <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Plăți cu Cardul (Bancă)' : 'Card Payments'}</div>
-                            <div class="kpi-detail-row-meta">${cardExpenseCount} plăți • ${cardShare}% din total plăți</div>
+                            <div class="kpi-detail-row-meta">${cardExpenseCount} plăți • ${cardExpenseShare}% din total plăți</div>
                             <div class="kpi-detail-progress-track">
-                                <div class="kpi-detail-progress-bar" style="width: ${cardShare}%; background: #3b82f6;"></div>
+                                <div class="kpi-detail-progress-bar" style="width: ${cardExpenseShare}%; background: #3b82f6;"></div>
                             </div>
                         </div>
                     </div>
@@ -5732,9 +5755,9 @@ function openKpiDetailModal(metricKey) {
                         <div class="kpi-detail-row-icon">💵</div>
                         <div class="kpi-detail-row-info">
                             <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Plăți în Numerar (Cash)' : 'Cash Payments'}</div>
-                            <div class="kpi-detail-row-meta">${cashExpenseCount} plăți • ${cashShare}% din total plăți</div>
+                            <div class="kpi-detail-row-meta">${cashExpenseCount} plăți • ${cashExpenseShare}% din total plăți</div>
                             <div class="kpi-detail-progress-track">
-                                <div class="kpi-detail-progress-bar" style="width: ${cashShare}%; background: #10b981;"></div>
+                                <div class="kpi-detail-progress-bar" style="width: ${cashExpenseShare}%; background: #10b981;"></div>
                             </div>
                         </div>
                     </div>
@@ -5743,6 +5766,44 @@ function openKpiDetailModal(metricKey) {
                     </div>
                 </div>
             </div>
+
+            ${incomeCount > 0 ? `
+            <div class="kpi-detail-section-title">
+                <span>💰 ${activeLang === 'ro' ? 'Încasări: Card vs Cash' : 'Income Deposit Methods'}</span>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon">💳</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Încasări pe Card (Cont Bancar)' : 'Card/Bank Inflow'}</div>
+                            <div class="kpi-detail-row-meta">${cardIncomeCount} încasări • ${cardIncomeShare}% din venituri</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${cardIncomeShare}%; background: #3b82f6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt income-color">${formatMoney(convertFromRon(cardIncomeRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+
+                <div class="kpi-detail-row-item">
+                    <div class="kpi-detail-row-left">
+                        <div class="kpi-detail-row-icon">💵</div>
+                        <div class="kpi-detail-row-info">
+                            <div class="kpi-detail-row-name">${activeLang === 'ro' ? 'Încasări în Numerar (Portofel Cash)' : 'Cash Inflow'}</div>
+                            <div class="kpi-detail-row-meta">${cashIncomeCount} încasări • ${cashIncomeShare}% din venituri</div>
+                            <div class="kpi-detail-progress-track">
+                                <div class="kpi-detail-progress-bar" style="width: ${cashIncomeShare}%; background: #10b981;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-detail-row-right">
+                        <div class="kpi-detail-row-amt income-color">${formatMoney(convertFromRon(cashIncomeRon, mainCurr), mainCurr)}</div>
+                    </div>
+                </div>
+            </div>` : ''}
         `;
     }
 
