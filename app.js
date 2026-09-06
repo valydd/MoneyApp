@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.13";
+const APP_VERSION = "3.3.15";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
