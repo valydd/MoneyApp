@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.28";
+const APP_VERSION = "3.3.29";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.28.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.29.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -350,6 +350,7 @@ const I18N_DICTIONARY = {
         scanner_status_scanning: 'Se analizează bonul / codul...',
         scanner_status_detected: '✅ Date recunoscute cu succes!',
         scanner_btn_upload_photo: 'Încarcă Poză / Galerie',
+        scanner_btn_capture: 'Analizează Bonul',
         scanner_btn_live_cam: 'Live',
         scanner_result_title: 'Date Detectate Automat',
         scanner_lbl_merchant: 'Magazin / Furnizor',
@@ -459,7 +460,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.28.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.29.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -603,6 +604,7 @@ const I18N_DICTIONARY = {
         scanner_status_scanning: 'Analyzing receipt / code...',
         scanner_status_detected: '✅ Data successfully recognized!',
         scanner_btn_upload_photo: 'Upload Photo / Gallery',
+        scanner_btn_capture: 'Analyze Receipt',
         scanner_btn_live_cam: 'Live',
         scanner_result_title: 'Automatically Detected Data',
         scanner_lbl_merchant: 'Store / Provider',
@@ -712,7 +714,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.28.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.29.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -956,7 +958,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.28.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.29.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1202,7 +1204,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.28.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.29.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1449,7 +1451,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.28.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.29.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -10477,8 +10479,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToggleTorch = document.getElementById('btnToggleTorch');
     const btnSwitchCamera = document.getElementById('btnSwitchCamera');
     const receiptScannerFileInput = document.getElementById('receiptScannerFileInput');
+    const btnCaptureLiveReceipt = document.getElementById('btnCaptureLiveReceipt');
     const btnRescanReceipt = document.getElementById('btnRescanReceipt');
     const btnApplyScannedReceipt = document.getElementById('btnApplyScannedReceipt');
+    const scannerViewportContainer = document.getElementById('scannerViewportContainer');
 
     if (btnOpenReceiptScanner) {
         btnOpenReceiptScanner.addEventListener('click', () => {
@@ -10503,6 +10507,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 processReceiptFile(file);
             }
             receiptScannerFileInput.value = '';
+        });
+    }
+
+    if (btnCaptureLiveReceipt) {
+        btnCaptureLiveReceipt.addEventListener('click', () => {
+            captureLiveSnapshotAndAnalyze();
+        });
+    }
+
+    if (scannerViewportContainer) {
+        scannerViewportContainer.addEventListener('click', (e) => {
+            if (e.target.closest('.scanner-cam-controls')) return;
+            captureLiveSnapshotAndAnalyze();
         });
     }
 
@@ -10539,6 +10556,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Bridge callbacks pentru recunoaștere nativă OCR (ML Kit)
+    window.onNativeReceiptOcrResult = function(recognizedText) {
+        console.log('Rezultat OCR Nativ primit:', recognizedText);
+        const parsed = parseScannedBarcodeOrText(recognizedText, 'ocr');
+        if (parsed) {
+            onReceiptDataDetected(parsed);
+        } else {
+            const lang = getLanguageForCurrency();
+            const statusText = document.getElementById('scannerStatusText');
+            if (statusText) statusText.textContent = t('scanner_err_no_data', lang);
+            showToast(t('scanner_err_no_data', lang), 'error');
+        }
+    };
+
+    window.onNativeReceiptOcrError = function(err) {
+        console.log('Eroare OCR Nativ:', err);
+        const lang = getLanguageForCurrency();
+        const statusText = document.getElementById('scannerStatusText');
+        if (statusText) statusText.textContent = t('scanner_err_no_data', lang);
+    };
+
     function openReceiptScannerModal() {
         resetScannerResult();
         openModal('modalReceiptScanner');
@@ -10566,6 +10604,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnTorch = document.getElementById('btnToggleTorch');
         const lang = getLanguageForCurrency();
 
+        if (video) {
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            video.setAttribute('autoplay', '');
+            video.setAttribute('muted', '');
+        }
+
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             if (statusText) statusText.textContent = t('scanner_err_camera', lang);
             return;
@@ -10574,6 +10621,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (statusText) statusText.textContent = t('scanner_status_scanning', lang);
             const constraints = {
+                audio: false,
                 video: {
                     facingMode: { ideal: currentScannerFacingMode },
                     width: { ideal: 1280 },
@@ -10584,7 +10632,12 @@ document.addEventListener('DOMContentLoaded', () => {
             receiptMediaStream = await navigator.mediaDevices.getUserMedia(constraints);
             if (video) {
                 video.srcObject = receiptMediaStream;
-                await video.play();
+                try {
+                    await video.play();
+                } catch (playErr) {
+                    console.log('Video play error (retry):', playErr);
+                    setTimeout(() => { try { video.play(); } catch(e){} }, 150);
+                }
             }
 
             // Verificare suport lanterna
@@ -10598,10 +10651,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Pornire interval de scanare continua (la fiecare 350ms)
+            // Pornire interval de scanare coduri de bare / QR (la fiecare 400ms)
             receiptScannerInterval = setInterval(() => {
-                scanLiveVideoFrame();
-            }, 350);
+                scanLiveVideoBarcodeFrame();
+            }, 400);
 
         } catch (err) {
             console.log('Eroare pornire camera scaner:', err);
@@ -10640,7 +10693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function scanLiveVideoFrame() {
+    async function scanLiveVideoBarcodeFrame() {
         const video = document.getElementById('receiptScannerVideo');
         const canvas = document.getElementById('receiptScannerCanvas');
         if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) return;
@@ -10650,7 +10703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // 1. Încercare detectare Barcode / QR Code prin BarcodeDetector
+        // Verificare cod de bare prin BarcodeDetector
         if (barcodeDetectorInstance) {
             try {
                 const barcodes = await barcodeDetectorInstance.detect(canvas);
@@ -10660,15 +10713,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         const parsed = parseScannedBarcodeOrText(rawVal, 'barcode');
                         if (parsed) {
                             onReceiptDataDetected(parsed);
-                            return;
                         }
                     }
                 }
             } catch (e) {}
         }
+    }
 
-        // 2. Analiză rapidă cadru foto (OCR heuristic)
-        // Nu blocăm dacă nu e cod de bare
+    function captureLiveSnapshotAndAnalyze() {
+        const video = document.getElementById('receiptScannerVideo');
+        const canvas = document.getElementById('receiptScannerCanvas');
+        const statusText = document.getElementById('scannerStatusText');
+        const lang = getLanguageForCurrency();
+
+        if (!video || !canvas || video.readyState < 2) {
+            showToast('Camera nu este încă gata. Încercați din nou.', 'error');
+            return;
+        }
+
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        if (statusText) statusText.textContent = t('scanner_status_scanning', lang);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        triggerImageAnalysis(dataUrl, canvas);
     }
 
     function processReceiptFile(file) {
@@ -10678,6 +10749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statusText) statusText.textContent = t('scanner_status_scanning', lang);
 
         reader.onload = async (e) => {
+            const dataUrl = e.target.result;
             const img = new Image();
             img.onload = async () => {
                 const canvas = document.getElementById('receiptScannerCanvas') || document.createElement('canvas');
@@ -10686,34 +10758,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
 
-                let parsed = null;
-
-                // 1. Verificare cod de bare din imagine
-                if (barcodeDetectorInstance) {
-                    try {
-                        const barcodes = await barcodeDetectorInstance.detect(canvas);
-                        if (barcodes && barcodes.length > 0) {
-                            const raw = barcodes[0].rawValue || '';
-                            parsed = parseScannedBarcodeOrText(raw, 'barcode');
-                        }
-                    } catch (err) {}
-                }
-
-                // 2. Dacă nu are cod de bare, analiză fișier imagine / text
-                if (!parsed) {
-                    parsed = parseReceiptImageCanvas(canvas);
-                }
-
-                if (parsed) {
-                    onReceiptDataDetected(parsed);
-                } else {
-                    if (statusText) statusText.textContent = t('scanner_err_no_data', lang);
-                    showToast(t('scanner_err_no_data', lang), 'error');
-                }
+                triggerImageAnalysis(dataUrl, canvas);
             };
-            img.src = e.target.result;
+            img.src = dataUrl;
         };
         reader.readAsDataURL(file);
+    }
+
+    function triggerImageAnalysis(dataUrl, canvas) {
+        const statusText = document.getElementById('scannerStatusText');
+        const lang = getLanguageForCurrency();
+
+        // 1. Dacă suntem în aplicația Android cu suport ML Kit Nativ
+        if (window.AndroidBridge && typeof window.AndroidBridge.scanReceiptBase64 === 'function') {
+            try {
+                window.AndroidBridge.scanReceiptBase64(dataUrl);
+                return;
+            } catch (e) {
+                console.log('AndroidBridge OCR error:', e);
+            }
+        }
+
+        // 2. Verificare cod de bare pe canvas
+        if (barcodeDetectorInstance && canvas) {
+            barcodeDetectorInstance.detect(canvas).then(barcodes => {
+                if (barcodes && barcodes.length > 0) {
+                    const raw = barcodes[0].rawValue || '';
+                    const parsed = parseScannedBarcodeOrText(raw, 'barcode');
+                    if (parsed) {
+                        onReceiptDataDetected(parsed);
+                        return;
+                    }
+                }
+                fallbackWebAnalysis(canvas);
+            }).catch(() => {
+                fallbackWebAnalysis(canvas);
+            });
+            return;
+        }
+
+        fallbackWebAnalysis(canvas);
+    }
+
+    function fallbackWebAnalysis(canvas) {
+        const lang = getLanguageForCurrency();
+        const statusText = document.getElementById('scannerStatusText');
+        if (statusText) statusText.textContent = t('scanner_err_no_data', lang);
+        showToast(t('scanner_err_no_data', lang), 'error');
     }
 
     // Catalog extins de furnizori și potriviri inteligente
@@ -10721,7 +10812,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Supermarketuri & Mâncare
         { keys: ['kaufland', 'kauf'], name: 'Kaufland', domain: 'supermarket', catGuess: 'Mâncare', color: '#e11d48', logo: 'K' },
         { keys: ['lidl'], name: 'Lidl', domain: 'supermarket', catGuess: 'Mâncare', color: '#0284c7', logo: 'L' },
-        { keys: ['mega image', 'mega', 'megaimage', 'shop&go'], name: 'Mega Image', domain: 'supermarket', catGuess: 'Mâncare', color: '#dc2626', logo: 'M' },
+        { keys: ['mega image', 'mega', 'megaimage', 'shop&go', 'shop & go'], name: 'Mega Image', domain: 'supermarket', catGuess: 'Mâncare', color: '#dc2626', logo: 'M' },
         { keys: ['carrefour', 'carref'], name: 'Carrefour', domain: 'supermarket', catGuess: 'Mâncare', color: '#2563eb', logo: 'C' },
         { keys: ['auchan'], name: 'Auchan', domain: 'supermarket', catGuess: 'Mâncare', color: '#ef4444', logo: 'A' },
         { keys: ['penny'], name: 'Penny', domain: 'supermarket', catGuess: 'Mâncare', color: '#f59e0b', logo: 'P' },
@@ -10784,6 +10875,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = rawString.trim();
         if (text.length < 3) return null;
 
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
         const low = text.toLowerCase();
         let matchedMerchant = null;
         let amount = null;
@@ -10802,17 +10894,29 @@ document.addEventListener('DOMContentLoaded', () => {
             if (matchedMerchant) break;
         }
 
-        // 2. Extragere Sumă
-        // Tipar 1: "TOTAL: 123.45" sau "TOTAL LEI 123,45" sau "REST DE PLATA: 148,50"
-        const totalMatches = text.match(/(?:TOTAL|TOTAL\s*LEI|REST\s*DE\s*PLAT[AĂ]|DE\s*PLAT[AĂ]|SUM[AĂ]|VALOARE|LEI|RON)\s*[:=]?\s*([0-9]{1,6}[.,][0-9]{2})/i);
-        if (totalMatches && totalMatches[1]) {
-            amount = parseFloat(totalMatches[1].replace(',', '.'));
+        // 2. Extragere Sumă inteligentă (din linii specifice sau întreg textul)
+        // Căutare linii cu TOTAL, LEI, DE PLATA
+        for (const line of lines) {
+            const lineMatch = line.match(/(?:TOTAL|TOTAL\s*LEI|TOTAL\s*GENERAL|REST\s*DE\s*PLAT[AĂ]|DE\s*PLAT[AĂ]|SUM[AĂ]|VALOARE|LEI|RON)\s*[:=]?\s*([0-9]{1,6}[.,][0-9]{2})/i);
+            if (lineMatch && lineMatch[1]) {
+                const parsedNum = parseFloat(lineMatch[1].replace(',', '.'));
+                if (!isNaN(parsedNum) && parsedNum > 0) {
+                    amount = parsedNum;
+                    break;
+                }
+            }
         }
 
-        // Tipar 2: Dacă e cod de bare de factură utilități (ex: Digi, Hidroelectrica, PPC etc.)
-        // Facturile au adesea suma codificată la finalul barcode-ului (ex: ...0014850 = 148.50)
+        // Căutare generală dacă nu s-a găsit pe linie dedicată
+        if (!amount) {
+            const totalMatches = text.match(/(?:TOTAL|TOTAL\s*LEI|REST\s*DE\s*PLAT[AĂ]|DE\s*PLAT[AĂ]|SUM[AĂ]|VALOARE|LEI|RON)\s*[:=]?\s*([0-9]{1,6}[.,][0-9]{2})/i);
+            if (totalMatches && totalMatches[1]) {
+                amount = parseFloat(totalMatches[1].replace(',', '.'));
+            }
+        }
+
+        // Tipar factură utilități (barcode cu coadă de sumă)
         if (!amount && source === 'barcode' && /^\d{16,40}$/.test(text)) {
-            // Extrage ultimele 6-8 cifre ca valoare în bani
             const tail = text.slice(-8);
             const numVal = parseInt(tail, 10);
             if (!isNaN(numVal) && numVal > 100 && numVal < 5000000) {
@@ -10820,12 +10924,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Tipar 3: Căutare generală număr cu 2 zecimale
+        // Căutare numere zecimale pe bon
         if (!amount) {
             const anyNums = text.match(/\b([0-9]{1,5}[.,][0-9]{2})\b/g);
             if (anyNums && anyNums.length > 0) {
-                // De regulă cel mai mare număr de pe bon este Totalul
-                const nums = anyNums.map(n => parseFloat(n.replace(',', '.'))).filter(n => !isNaN(n) && n > 0);
+                const nums = anyNums.map(n => parseFloat(n.replace(',', '.'))).filter(n => !isNaN(n) && n > 0 && n < 100000);
                 if (nums.length > 0) {
                     amount = Math.max(...nums);
                 }
@@ -10835,7 +10938,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Extragere Metodă de Plată
         if (/(?:NUMERAR|CASH|REST\s*DAT)/i.test(text)) {
             account = 'cash';
-        } else if (/(?:CARD|MASTERCARD|VISA|POS|CONTACTLESS)/i.test(text)) {
+        } else if (/(?:CARD|MASTERCARD|VISA|POS|CONTACTLESS|TRANZACTIE|APROBAT)/i.test(text)) {
             account = 'card';
         }
 
@@ -10852,16 +10955,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Notiță
         if (matchedMerchant) {
             note = `Bon: ${matchedMerchant.name}`;
-        } else if (source === 'barcode') {
-            note = `Factură cod: ${text.slice(0, 16)}`;
+        } else if (lines.length > 0) {
+            note = lines[0].slice(0, 30);
         }
 
-        // Dacă nu avem cel puțin un magazin sau o sumă validă, nu e un rezultat concludent
         if (!matchedMerchant && (!amount || amount <= 0)) {
             return null;
         }
 
-        // Găsire categorie potrivită în DB
         const matchedCategory = findBestMatchingCategory(matchedMerchant);
 
         return {
@@ -10874,27 +10975,6 @@ document.addEventListener('DOMContentLoaded', () => {
             raw: text
         };
     }
-
-    function parseReceiptImageCanvas(canvas) {
-        // Fallback inteligent pentru recunoaștere când nu este disponibil OCR greoi
-        // Creează o scanare demonstrativă și extrage date dacă utilizatorul a încărcat o factură/bon
-        const w = canvas.width;
-        const h = canvas.height;
-        if (w < 50 || h < 50) return null;
-
-        return {
-            merchant: { name: 'Bon Fiscal / Factură', logo: '🧾', color: '#2563eb' },
-            amount: '0.00',
-            account: 'card',
-            date: new Date().toISOString().split('T')[0],
-            category: database.categories[0] || null,
-            note: 'Scanare Bon'
-        };
-    }
-
-    function findBestMatchingCategory(merchantObj) {
-        if (!database.categories || database.categories.length === 0) return null;
-        if (!merchantObj) return database.categories[0];
 
         const guess = (merchantObj.catGuess || '').toLowerCase();
         const domain = (merchantObj.domain || '').toLowerCase();
