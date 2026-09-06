@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.25";
+const APP_VERSION = "3.3.26";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.25.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.26.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -442,7 +442,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.25.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.26.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -678,7 +678,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.25.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.26.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -905,7 +905,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.25.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.26.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1134,7 +1134,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.25.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.26.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1364,7 +1364,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.25.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.26.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -6215,6 +6215,7 @@ function renderMerchantAnalytics() {
 function renderMerchantChart(merchantList, totalFoodSpendRon, mainCurr) {
     const canvas = document.getElementById('merchantComparisonChart');
     const countEl = document.getElementById('merchantChartStoreCount');
+    const chartWrap = document.getElementById('merchantComparisonChartWrap') || (canvas ? canvas.parentElement : null);
     const lang = getLanguageForCurrency();
     if (!canvas) return;
 
@@ -6229,8 +6230,15 @@ function renderMerchantChart(merchantList, totalFoodSpendRon, mainCurr) {
     }
 
     if (merchantList.length === 0) {
+        if (chartWrap) chartWrap.style.height = '140px';
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         return;
+    }
+
+    // Calculează dinamic înălțimea pentru a încăpea toate magazinele pe o singură coloană
+    if (chartWrap) {
+        const calculatedHeight = Math.max(200, merchantList.length * 28 + 24);
+        chartWrap.style.height = `${calculatedHeight}px`;
     }
 
     const labels = merchantList.map(m => {
@@ -6257,9 +6265,12 @@ function renderMerchantChart(merchantList, totalFoodSpendRon, mainCurr) {
             plugins: {
                 legend: {
                     position: 'right',
+                    align: 'center',
                     labels: {
                         boxWidth: 12,
-                        font: { size: 10.5 },
+                        boxHeight: 12,
+                        padding: 8,
+                        font: { size: 10.5, weight: '600' },
                         color: document.body.classList.contains('light-theme') ? '#0f172a' : '#f8fafc'
                     }
                 },
