@@ -4858,6 +4858,9 @@ function detectMerchantFromTransaction(tx) {
     if (desc.includes('restaurant') || desc.includes('pizzerie') || desc.includes('kebab') || desc.includes('shaorma') || desc.includes('mcdonald') || desc.includes('kfc') || desc.includes('burger')) return KNOWN_MERCHANTS[13];
     if (desc.includes('glovo') || desc.includes('tazz') || desc.includes('bolt food')) return KNOWN_MERCHANTS[14];
 
+    return null;
+}
+
 function openKpiDetailModal(metricKey) {
     const modal = document.getElementById('modalKpiDetail');
     if (!modal) return;
