@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.44";
+const APP_VERSION = "3.3.45";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.44.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.45.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -474,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.44.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.45.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -742,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.44.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.45.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1000,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.44.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.45.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1260,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.44.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.45.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1521,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.44.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.45.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -3651,6 +3651,10 @@ function deleteTransaction(txId) {
     const modalSusp = document.getElementById('modalSuspendedTransactions');
     if (modalSusp && modalSusp.classList.contains('active')) {
         renderSuspendedTransactionsList();
+    }
+    const modalBills = document.getElementById('modalBillsAnalytics');
+    if (modalBills && modalBills.classList.contains('active')) {
+        renderBillsAnalytics();
     }
     showToast('Tranzacție ștearsă cu succes.', 'success');
 }
@@ -6861,6 +6865,12 @@ const BILL_OPTIMIZATION_SOLUTIONS = {
     }
 };
 
+function getCleanBillTypeName(bt) {
+    if (!bt) return '';
+    const raw = bt.name || '';
+    return raw.replace(/^[^\w\s\u00C0-\u024F\u1E00-\u1EFF]+/, '').trim();
+}
+
 function matchKeywordWordBoundary(text, keyword) {
     if (!text || !keyword) return false;
     const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -7098,7 +7108,7 @@ function renderBillsAnalytics() {
         if (peakBillTx) {
             const peakBType = classifyBillTransaction(peakBillTx) || { icon: '⚡', name: 'Factură' };
             const pMc = getTransactionMerchantAndComment(peakBillTx);
-            const pName = pMc.merchant || peakBillTx.description || peakBType.name;
+            const pName = pMc.merchant || peakBillTx.description || getCleanBillTypeName(peakBType);
             kpiPeakEl.innerHTML = formatMoney(convertFromRon(peakBillAmtRon, mainCurr), mainCurr);
             kpiPeakSubEl.textContent = `${peakBType.icon} ${escapeHtml(pName)} • ${formatDateDisplay(peakBillTx.date)}`;
         } else {
@@ -7160,9 +7170,13 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
         const arrRon = monthlyTypeSumsRon[bt.key];
         const hasData = arrRon.some(v => v !== null && v > 0);
         if (hasData) {
+            const totalSumRon = arrRon.reduce((acc, v) => acc + (v || 0), 0);
+            const cleanName = getCleanBillTypeName(bt);
             const arrDisp = arrRon.map(v => v !== null ? convertFromRon(v, mainCurr) : null);
             activeDatasets.push({
-                label: bt.name,
+                label: cleanName,
+                billTypeObj: bt,
+                totalSumRon: totalSumRon,
                 data: arrDisp,
                 borderColor: bt.color,
                 backgroundColor: bt.color + '22',
@@ -7186,21 +7200,61 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
 
     if (legendContainer) {
         legendContainer.innerHTML = '';
+        legendContainer.style.display = 'grid';
+        legendContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        legendContainer.style.gap = '6px';
+        legendContainer.style.marginTop = '10px';
+
         activeDatasets.forEach(ds => {
-            const pill = document.createElement('div');
-            pill.className = 'bills-legend-pill';
-            pill.style.display = 'inline-flex';
-            pill.style.alignItems = 'center';
-            pill.style.gap = '5px';
-            pill.style.padding = '3px 8px';
-            pill.style.borderRadius = '12px';
-            pill.style.fontSize = '0.72rem';
-            pill.style.fontWeight = '700';
-            pill.style.background = ds.borderColor + '18';
-            pill.style.color = ds.borderColor;
-            pill.style.border = `1px solid ${ds.borderColor}40`;
-            pill.innerHTML = `<span style="width:8px; height:8px; border-radius:50%; background:${ds.borderColor}; display:inline-block;"></span> <span>${escapeHtml(ds.label)}</span>`;
-            legendContainer.appendChild(pill);
+            const bt = ds.billTypeObj;
+            const isSelected = currentFilteredBillTypeKey === bt.key;
+            const cleanName = getCleanBillTypeName(bt);
+            const sumRon = ds.totalSumRon || 0;
+            const sumDisp = sumRon > 0 ? formatMoney(convertFromRon(sumRon, mainCurr), mainCurr) : '';
+
+            const card = document.createElement('div');
+            card.className = `bills-legend-square-card ${isSelected ? 'active' : ''}`;
+            card.style.background = isSelected ? `${bt.color}25` : 'var(--card-bg)';
+            card.style.border = isSelected ? `2px solid ${bt.color}` : `1px solid ${bt.color}45`;
+            card.style.borderRadius = '10px';
+            card.style.padding = '8px 4px';
+            card.style.display = 'flex';
+            card.style.flexDirection = 'column';
+            card.style.alignItems = 'center';
+            card.style.justifyContent = 'center';
+            card.style.textAlign = 'center';
+            card.style.cursor = 'pointer';
+            card.style.transition = 'all 0.18s ease';
+            card.style.minHeight = '66px';
+            card.style.boxShadow = isSelected ? `0 2px 8px ${bt.color}35` : 'none';
+
+            card.innerHTML = `
+                <div style="font-size: 1.35rem; line-height: 1; margin-bottom: 2px;">
+                    ${bt.icon}
+                </div>
+                <div style="font-size: 0.70rem; font-weight: 700; color: var(--text-color); line-height: 1.15; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                    ${escapeHtml(cleanName)}
+                </div>
+                ${sumDisp ? `<div style="font-size: 0.66rem; font-weight: 800; color: ${bt.color}; margin-top: 3px;">${sumDisp}</div>` : ''}
+            `;
+
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentFilteredBillTypeKey === bt.key) {
+                    currentFilteredBillTypeKey = null;
+                } else {
+                    currentFilteredBillTypeKey = bt.key;
+                }
+                renderBillsAnalytics();
+                setTimeout(() => {
+                    const listSection = document.getElementById('billsTransactionsList');
+                    if (listSection) {
+                        listSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 50);
+            });
+
+            legendContainer.appendChild(card);
         });
     }
 
@@ -7281,6 +7335,7 @@ function renderBillsDiagnostic(billTypeList, totalBillsSpendRon, mainCurr, lang,
 
     billTypeList.forEach(item => {
         const bt = item.billType;
+        const cleanBtName = getCleanBillTypeName(bt);
         const monthlyMap = {};
         appData.transactions.forEach(t => {
             if (!t.date || isTxSuspended(t) || t.type !== 'expense') return;
@@ -7318,7 +7373,7 @@ function renderBillsDiagnostic(billTypeList, totalBillsSpendRon, mainCurr, lang,
                     billType: bt,
                     badgeText: `⚠️ Creștere +${diffPct.toFixed(0)}% (+${diffDisp})`,
                     badgeBg: diffPct >= 30 ? '#ef4444' : '#f59e0b',
-                    title: `${bt.name} - Creștere cost în ${latestM}`,
+                    title: `${cleanBtName} - Creștere cost în ${latestM}`,
                     evaluation: `Factura a urcat de la <strong>${prevDisp}</strong> (${prevM}) la <strong>${latestDisp}</strong> (${latestM}), o creștere de <strong>+${diffPct.toFixed(1)}%</strong> (+${diffDisp}).`,
                     solution: targetedTip
                 });
@@ -7337,7 +7392,7 @@ function renderBillsDiagnostic(billTypeList, totalBillsSpendRon, mainCurr, lang,
                 billType: bt,
                 badgeText: `📊 Cost Principal (${sharePct.toFixed(0)}%)`,
                 badgeBg: '#6366f1',
-                title: `${bt.name} - Pondere majoră în facturi`,
+                title: `${cleanBtName} - Pondere majoră în facturi`,
                 evaluation: `Această utilitate reprezintă <strong>${sharePct.toFixed(1)}%</strong> din totalul cheltuielilor tale cu facturile (${totalDisp}).`,
                 solution: targetedTip
             });
@@ -7412,6 +7467,7 @@ function renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, la
 
     billTypeList.forEach(item => {
         const bt = item.billType;
+        const cleanName = getCleanBillTypeName(bt);
         const totalDisp = formatMoney(convertFromRon(item.totalRon, mainCurr), mainCurr);
         const sharePct = totalBillsSpendRon > 0 ? ((item.totalRon / totalBillsSpendRon) * 100).toFixed(1) : '0.0';
         const avgBillRon = item.count > 0 ? (item.totalRon / item.count) : 0;
@@ -7431,11 +7487,11 @@ function renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, la
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 32px; height: 32px; border-radius: 8px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                    <div style="width: 34px; height: 34px; border-radius: 8px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0;">
                         ${bt.icon}
                     </div>
                     <div>
-                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-color);">${escapeHtml(bt.name)}</div>
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-color);">${escapeHtml(cleanName)}</div>
                         <div style="font-size: 0.68rem; color: var(--text-muted);">${item.count} ${lang === 'ro' ? 'plăți' : 'payments'} • ${lang === 'ro' ? 'Medie' : 'Avg'}: <strong>${avgDisp}</strong></div>
                     </div>
                 </div>
@@ -7456,6 +7512,12 @@ function renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, la
                 currentFilteredBillTypeKey = bt.key;
             }
             renderBillsAnalytics();
+            setTimeout(() => {
+                const listSection = document.getElementById('billsTransactionsList');
+                if (listSection) {
+                    listSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 50);
         });
 
         container.appendChild(card);
@@ -7478,7 +7540,7 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
         if (currentFilteredBillTypeKey) {
             const btObj = BILL_TYPES.find(b => b.key === currentFilteredBillTypeKey) || { name: 'Filtru' };
             btnClearFilter.style.display = 'inline-block';
-            btnClearFilter.textContent = `✕ ${btObj.name}`;
+            btnClearFilter.textContent = `✕ ${getCleanBillTypeName(btObj)}`;
             btnClearFilter.onclick = () => {
                 currentFilteredBillTypeKey = null;
                 renderBillsAnalytics();
@@ -7492,7 +7554,7 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
         let filterSuffix = '';
         if (currentFilteredBillTypeKey) {
             const btObj = BILL_TYPES.find(b => b.key === currentFilteredBillTypeKey);
-            if (btObj) filterSuffix = ` • ${btObj.name}`;
+            if (btObj) filterSuffix = ` • ${getCleanBillTypeName(btObj)}`;
         }
         subInfoEl.textContent = `${filtered.length} ${lang === 'ro' ? 'facturi' : 'bills'}${filterSuffix}`;
     }
@@ -7508,9 +7570,10 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
     sorted.forEach(item => {
         const tx = item.tx;
         const bt = item.billType;
+        const cleanTypeName = getCleanBillTypeName(bt);
         const amtDisp = formatMoney(convertFromRon(item.amtRon, mainCurr), mainCurr);
         const mc = getTransactionMerchantAndComment(tx);
-        const nameText = mc.merchant || tx.description || bt.name;
+        const nameText = mc.merchant || tx.description || cleanTypeName;
         const commentText = mc.comment && mc.comment !== nameText ? mc.comment : '';
         const payMethod = tx.paymentMethod === 'cash' ? `💵 Cash` : `💳 Card`;
 
@@ -7524,10 +7587,12 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
         row.style.justifyContent = 'space-between';
         row.style.alignItems = 'center';
         row.style.gap = '8px';
+        row.style.cursor = 'pointer';
+        row.style.transition = 'all 0.15s ease';
 
         row.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
-                <div style="width: 30px; height: 30px; border-radius: 7px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0;">
                     ${bt.icon}
                 </div>
                 <div style="min-width: 0; flex: 1;">
@@ -7537,17 +7602,32 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
                     <div style="font-size: 0.68rem; color: var(--text-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 1px;">
                         <span>📅 ${formatDateDisplay(tx.date)}</span>
                         <span>•</span>
-                        <span style="color: ${bt.color}; font-weight: 600;">${escapeHtml(bt.name.replace(/^[^\w\s]+/, '').trim())}</span>
+                        <span style="color: ${bt.color}; font-weight: 700;">${escapeHtml(cleanTypeName)}</span>
                         <span>•</span>
                         <span>${payMethod}</span>
                     </div>
                     ${commentText ? `<div style="font-size: 0.66rem; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">💬 ${escapeHtml(commentText)}</div>` : ''}
                 </div>
             </div>
-            <div style="text-align: right; flex-shrink: 0; margin-left: auto;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto;">
                 <span class="expense-color" style="font-weight: 800; font-size: 0.90rem; white-space: nowrap;">-${amtDisp}</span>
+                <button type="button" class="btn-edit-bill-tx" style="background: rgba(59, 130, 246, 0.12); color: var(--accent); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; padding: 4px 7px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;" title="Editează această factură">
+                    ✏️
+                </button>
             </div>
         `;
+
+        row.addEventListener('click', (e) => {
+            window.openEditExpenseModal(tx);
+        });
+
+        const editBtn = row.querySelector('.btn-edit-bill-tx');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.openEditExpenseModal(tx);
+            });
+        }
 
         listEl.appendChild(row);
     });
@@ -10923,6 +11003,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('modalCategoryDetails').classList.contains('active')) {
                 openCategoryDetailModal(categoryId);
             }
+            if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
+                renderBillsAnalytics();
+            }
             showToast(t('btn_save'), 'success');
             return;
         }
@@ -10951,6 +11034,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTransactionsHistory();
         renderStatsTab();
         closeModal('modalExpense');
+        if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
+            renderBillsAnalytics();
+        }
         showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
     });
 

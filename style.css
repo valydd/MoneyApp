@@ -1530,6 +1530,23 @@ body.dark-theme .chart-center-curr {
     visibility: visible;
 }
 
+#modalExpense, #modalIncome, #modalTransfer {
+    z-index: 1050;
+}
+
+.bills-legend-square-card:active {
+    transform: scale(0.96);
+}
+
+.bills-tx-item:hover {
+    border-color: var(--accent) !important;
+}
+
+.bills-tx-item:active {
+    background: var(--input-bg) !important;
+    transform: scale(0.99);
+}
+
 .modal-box {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
