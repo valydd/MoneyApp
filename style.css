@@ -1605,7 +1605,8 @@ body.dark-theme .chart-center-curr {
     max-height: calc(100vh - 12px);
 }
 
-#modalIncome .modal-box {
+#modalIncome .modal-box,
+#modalTransfer .modal-box {
     overflow: visible;
     max-height: none;
 }
