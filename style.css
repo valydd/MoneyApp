@@ -1216,12 +1216,12 @@ body.light-theme .btn-chart-export-summary {
 .btn-chart-export-summary svg {
     width: 12px;
     height: 12px;
-    fill: #3b82f6;
+    fill: #94a3b8;
     transition: transform 0.15s ease;
 }
 
 body.light-theme .btn-chart-export-summary svg {
-    fill: #2563eb;
+    fill: #94a3b8;
 }
 
 .btn-chart-export-summary:hover svg {
@@ -5231,23 +5231,27 @@ body.dark-theme .tx-secondary-val {
 }
 
 .source-box.source-card {
-    border-top: 1px solid #2563eb;
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.02) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.16);
+    border-top: 1px solid #3b82f6;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.12) 0%, transparent 100%);
 }
 
 body.light-theme .source-box.source-card {
+    border: 1px solid rgba(37, 99, 235, 0.14);
     border-top: 1px solid #2563eb;
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.16) 0%, rgba(37, 99, 235, 0.01) 100%);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.09) 0%, transparent 100%);
 }
 
 .source-box.source-cash {
+    border: 1px solid rgba(16, 185, 129, 0.16);
     border-top: 1px solid #10b981;
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.22) 0%, rgba(16, 185, 129, 0.02) 100%);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, transparent 100%);
 }
 
 body.light-theme .source-box.source-cash {
+    border: 1px solid rgba(16, 185, 129, 0.14);
     border-top: 1px solid #10b981;
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.01) 100%);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.09) 0%, transparent 100%);
 }
 
 .source-badge {
