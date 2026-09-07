@@ -843,8 +843,8 @@ body.dark-theme .tab-btn.active svg {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12));
     border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: var(--radius-md);
-    padding: 9px 11px 9px 11px;
-    margin-bottom: 3px;
+    padding: 16px 12px 14px 12px;
+    margin-bottom: 4px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -949,15 +949,15 @@ body.light-theme .btn-bal-summary {
 }
 
 .balance-main-amount-wrap {
-    margin-top: 2px;
-    margin-bottom: 4px;
+    margin-top: 6px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     position: relative;
     z-index: 1;
-    min-height: 48px;
+    min-height: 54px;
 }
 
 .balance-amount {
@@ -1016,13 +1016,13 @@ body.light-theme .btn-bal-summary {
 .quick-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 6px;
+    margin-bottom: 5px;
 }
 
 .quick-actions .btn {
-    padding: 12px 10px;
-    min-height: 46px;
+    padding: 10px 10px;
+    min-height: 44px;
     font-size: 0.92rem;
     font-weight: 700;
 }
@@ -1325,8 +1325,8 @@ body.light-theme .btn-chart-export-summary svg {
     position: relative;
     width: 100% !important;
     max-width: 440px !important;
-    height: 310px !important;
-    margin: 4px auto 10px auto !important;
+    height: 325px !important;
+    margin: 2px auto 6px auto !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3666,13 +3666,13 @@ body.dark-theme .tx-secondary-val {
     }
 
     .balance-card {
-        padding: 7px 10px;
-        margin-bottom: 6px;
-        border-radius: 10px;
+        padding: 15px 12px 13px 12px !important;
+        margin-bottom: 4px !important;
+        border-radius: 12px;
     }
 
     .balance-title {
-        font-size: 0.65rem;
+        font-size: 0.68rem;
         margin-bottom: 1px;
         letter-spacing: 0.5px;
     }
@@ -3709,13 +3709,13 @@ body.dark-theme .tx-secondary-val {
     }
 
     .quick-actions {
-        margin-bottom: 3px;
-        gap: 6px;
+        margin-bottom: 5px !important;
+        gap: 6px !important;
     }
 
     .btn {
-        padding: 8px 10px;
-        font-size: 0.82rem;
+        padding: 9px 10px;
+        font-size: 0.85rem;
         border-radius: 9px;
         gap: 5px;
     }
@@ -3776,8 +3776,8 @@ body.dark-theme .tx-secondary-val {
     .overview-chart-box .chart-wrapper {
         width: 100% !important;
         max-width: 440px !important;
-        height: 310px !important;
-        margin: 2px auto 8px auto !important;
+        height: 325px !important;
+        margin: 2px auto 6px auto !important;
     }
 
     .chart-center-val {
@@ -4931,9 +4931,9 @@ body.dark-theme .tx-secondary-val {
 .balance-sources-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 5px;
-    margin-bottom: 2px;
+    gap: 14px;
+    margin-top: 8px;
+    margin-bottom: 3px;
     position: relative;
     width: 100%;
     box-sizing: border-box;
@@ -4943,12 +4943,12 @@ body.dark-theme .tx-secondary-val {
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    padding: 5px 3px 5px 3px;
+    padding: 7px 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1px;
+    gap: 2px;
     box-sizing: border-box;
     transition: all 0.2s ease;
     cursor: pointer;
