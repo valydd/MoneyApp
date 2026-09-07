@@ -2354,7 +2354,7 @@ body.dark-theme .popover-col {
     overflow-y: visible;
 }
 
-/* Separator Saptamanal in Istoric Tranzactii */
+/* Separator Saptamanal in Istoric Tranzactii (Pliabil / Expandabil) */
 .tx-week-separator {
     display: flex;
     flex-direction: column;
@@ -2369,12 +2369,29 @@ body.dark-theme .popover-col {
     user-select: none;
     flex-shrink: 0;
     min-height: fit-content;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.tx-week-separator:hover {
+    background: #2d3848;
+    border-color: rgba(255, 255, 255, 0.24);
 }
 
 body.light-theme .tx-week-separator {
     background: #eef2f6;
     border: 1px solid #cbd5e1;
     border-left: 3.5px solid var(--accent);
+}
+
+body.light-theme .tx-week-separator:hover {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+}
+
+.tx-week-separator.is-collapsed {
+    margin-bottom: 8px;
+    opacity: 0.92;
 }
 
 .tx-week-separator:first-child {
@@ -2384,8 +2401,30 @@ body.light-theme .tx-week-separator {
 .tx-week-top-row {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     width: 100%;
+}
+
+.tx-week-chevron {
+    width: 15px;
+    height: 15px;
+    fill: var(--text-muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.tx-week-separator.is-collapsed .tx-week-chevron {
+    transform: rotate(-90deg);
+}
+
+.tx-week-items {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.tx-week-items.is-collapsed {
+    display: none !important;
 }
 
 .tx-week-info {
@@ -2682,8 +2721,28 @@ body.dark-theme .tx-search-total-box {
 
 .tx-search-total-val {
     font-size: 0.82rem;
-    font-weight: 800;
     color: var(--accent);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 1px;
+}
+
+.tx-search-total-val .bal-int {
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.tx-search-total-val .bal-dec {
+    font-size: 0.68rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.tx-search-total-val .bal-curr {
+    font-size: 0.66rem;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-left: 2px;
 }
 
 .tx-controls-row {
