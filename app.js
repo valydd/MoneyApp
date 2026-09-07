@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.41";
+const APP_VERSION = "3.3.42";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.41.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.42.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -474,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.41.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.42.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -742,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.41.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.42.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1000,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.41.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.42.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1260,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.41.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.42.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1521,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.41.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.42.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -6792,6 +6792,75 @@ const BILL_TYPES = [
     }
 ];
 
+const BILL_OPTIMIZATION_SOLUTIONS = {
+    electricity: {
+        icon: '💡',
+        title: 'Energie Electrică (Curent)',
+        solutions: [
+            'Înlocuirea becurilor convenționale cu <strong>LED-uri economice</strong> reduce consumul de iluminat cu până la <strong>80%</strong>.',
+            'Oprirea aparatelor din modul <strong>Standby</strong> (TV, laptopuri, electrocasnice mici) economisește <strong>5-10%</strong> din factură.',
+            'Folosirea mașinii de spălat rufe și vase pe programe <strong>Eco (30°-40°C)</strong> scade consumul electric cu până la <strong>40%</strong> per spălare.'
+        ]
+    },
+    gas_heating: {
+        icon: '🔥',
+        title: 'Gaze Naturale & Încălzire',
+        solutions: [
+            'Ajustarea termostatului cu <strong>1°C mai puțin</strong> (ex: de la 22°C la 21°C) scade consumul de gaz cu aprox. <strong>6-7%</strong>.',
+            'Folosirea unui <strong>cronotermostat programabil</strong> (18-19°C noaptea / când ești plecat) aduce economii de până la <strong>20%</strong>.',
+            'Etanșarea ferestrelor și aerisirea scurtă (5-10 min) cu geamul larg deschis previn pierderile masive de căldură.'
+        ]
+    },
+    water_sewerage: {
+        icon: '💧',
+        title: 'Apă & Canalizare',
+        solutions: [
+            'Montarea de <strong>aeratoare / perlatoare economice</strong> la robinete reduce debitul cu <strong>35-40%</strong> păstrând aceeași presiune.',
+            'Verificarea periodică a rezervorului WC: o scurgere continuă nevăzută poate risipi între <strong>30 și 50 litri/zi</strong>.',
+            'Optimizarea duratei dușurilor și închiderea apei în timpul periajului dentar sau săpunirii.'
+        ]
+    },
+    internet_tv: {
+        icon: '🌐',
+        title: 'Internet & Televiziune',
+        solutions: [
+            'Renegocierea contractului la final de perioadă sau comasarea într-un <strong>pachet unic (Internet + TV + Mobil)</strong> pentru reduceri de <strong>20-30%</strong>.',
+            'Eliminarea extra-opțiunilor sau pachetelor de canale TV neutilizate și a decodoarelor suplimentare inactive.'
+        ]
+    },
+    phone: {
+        icon: '📱',
+        title: 'Telefonie Mobilă',
+        solutions: [
+            'Trecerea la abonamente digitale flexibile fără perioadă contractuală sau oferte speciale de fidelizare.',
+            'Dezactivarea serviciilor automate cu taxare recurentă prin SMS sau roaming nesolicitat.'
+        ]
+    },
+    maintenance: {
+        icon: '🏢',
+        title: 'Întreținere Bloc & Asociație',
+        solutions: [
+            'Transmiterea lunară riguroasă a indexului la apometre pentru a evita recalculările și diferențele comune de branșament.',
+            'Verificarea lunară a listei de plată afișate la avizier pentru a identifica eventuale cheltuieli comune anormale.'
+        ]
+    },
+    taxes_loans: {
+        icon: '🏦',
+        title: 'Rate, Impozite & Asigurări',
+        solutions: [
+            'Achitarea impozitelor locale până la 31 martie pentru a beneficia de <strong>bonificația de 10%</strong> acordată de primării.',
+            'Compararea ofertelor RCA/PAD pe agregatoare online înainte de reînnoire pentru cel mai bun tarif.'
+        ]
+    },
+    other_bills: {
+        icon: '📦',
+        title: 'Alte Facturi & Abonamente',
+        solutions: [
+            'Revizuirea periodică a abonamentelor lunare recurente (streaming video/audio, cloud, aplicații) și anularea celor nefolosite.'
+        ]
+    }
+};
+
 function isBillCategory(catId) {
     if (!catId) return false;
     if (catId === 'cat-2') return true;
@@ -7040,7 +7109,13 @@ function renderBillsAnalytics() {
     // 3. Randare Clasament & Breakdown pe Tipuri de Facturi
     renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, lang);
 
-    // 4. Randare Listă Tranzacții Facturi Filtrate
+    // 4. Randare Comparații Lunare & Variații Consum pe Tipuri
+    renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear);
+
+    // 5. Randare Soluții & Recomandări Practice de Reducere Facturi
+    renderBillsOptimizationTips(billTypeList, mainCurr, lang);
+
+    // 6. Randare Listă Tranzacții Facturi Filtrate
     renderBillsTransactionsList(billsTxs, mainCurr, lang);
 }
 
@@ -7087,8 +7162,9 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
                 pointBackgroundColor: bt.color,
                 pointBorderColor: '#ffffff',
                 pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHitRadius: 25,
                 fill: false,
                 tension: 0.25,
                 spanGaps: true
@@ -7141,9 +7217,10 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            events: ['click'], // Doar la click/tap explicit pe un punct din grafic
             interaction: {
-                mode: 'nearest',
-                intersect: false
+                mode: 'point',
+                intersect: true
             },
             scales: {
                 x: {
@@ -7163,6 +7240,10 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    enabled: true,
+                    events: ['click'],
+                    mode: 'point',
+                    intersect: true,
                     callbacks: {
                         label: (ctx) => {
                             if (ctx.raw === null || ctx.raw === undefined) return '';
@@ -7173,6 +7254,129 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
                 datalabels: { display: false }
             }
         }
+    });
+}
+
+function renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear) {
+    const container = document.getElementById('billsComparisonList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (billTypeList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.75rem;">Nu există date comparative pentru perioada selectată.</div>`;
+        return;
+    }
+
+    const curYear = selectedYear || new Date().getFullYear();
+
+    billTypeList.forEach(item => {
+        const bt = item.billType;
+        const monthlyMap = {};
+        appData.transactions.forEach(t => {
+            if (!t.date || isTxSuspended(t) || t.type !== 'expense') return;
+            const bType = classifyBillTransaction(t);
+            if (bType && bType.key === bt.key) {
+                const ym = t.date.substring(0, 7);
+                const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                monthlyMap[ym] = (monthlyMap[ym] || 0) + amtRon;
+            }
+        });
+
+        const sortedMonths = Object.keys(monthlyMap).sort();
+        let diffHtml = '';
+        let trendBadge = '';
+
+        if (sortedMonths.length >= 2) {
+            const latestM = sortedMonths[sortedMonths.length - 1];
+            const prevM = sortedMonths[sortedMonths.length - 2];
+            const latestAmt = monthlyMap[latestM];
+            const prevAmt = monthlyMap[prevM];
+            const diffRon = latestAmt - prevAmt;
+            const diffPct = prevAmt > 0 ? ((diffRon / prevAmt) * 100) : 0;
+            const diffDisp = formatMoney(convertFromRon(Math.abs(diffRon), mainCurr), mainCurr);
+
+            if (diffRon > 1) {
+                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#ef4444; background:rgba(239,68,68,0.12); padding:2px 6px; border-radius:4px;">📈 +${diffPct.toFixed(1)}% (+${diffDisp})</span>`;
+                diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Consum/cost crescut în <strong>${latestM}</strong> față de <strong>${prevM}</strong>.</div>`;
+            } else if (diffRon < -1) {
+                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#10b981; background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px;">📉 -${Math.abs(diffPct).toFixed(1)}% (-${diffDisp})</span>`;
+                diffHtml = `<div style="font-size:0.70rem; color:#10b981; margin-top:2px;">Economie realizată în <strong>${latestM}</strong> față de <strong>${prevM}</strong>!</div>`;
+            } else {
+                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#3b82f6; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:4px;">⚖️ Stabil (±0%)</span>`;
+                diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Cost constant între ultimele 2 luni înregistrate.</div>`;
+            }
+        } else if (sortedMonths.length === 1) {
+            const m = sortedMonths[0];
+            const amtDisp = formatMoney(convertFromRon(monthlyMap[m], mainCurr), mainCurr);
+            trendBadge = `<span style="font-size:0.68rem; font-weight:700; color:#6366f1; background:rgba(99,102,241,0.12); padding:2px 6px; border-radius:4px;">📅 ${m}</span>`;
+            diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Valoare înregistrată: <strong>${amtDisp}</strong>.</div>`;
+        }
+
+        const avgRon = item.count > 0 ? (item.totalRon / item.count) : 0;
+        const avgDisp = formatMoney(convertFromRon(avgRon, mainCurr), mainCurr);
+        const maxDisp = formatMoney(convertFromRon(item.highestRon, mainCurr), mainCurr);
+
+        const card = document.createElement('div');
+        card.style.background = 'var(--item-bg)';
+        card.style.border = '1px solid var(--border-color)';
+        card.style.borderRadius = '8px';
+        card.style.padding = '8px 10px';
+
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 1.05rem;">${bt.icon}</span>
+                    <strong style="font-size: 0.82rem; color: var(--text-color);">${escapeHtml(bt.name)}</strong>
+                </div>
+                ${trendBadge}
+            </div>
+            ${diffHtml}
+            <div style="display: flex; gap: 10px; margin-top: 5px; font-size: 0.68rem; color: var(--text-dim); border-top: 1px dashed var(--border-color); padding-top: 4px;">
+                <span>Medie/plată: <strong>${avgDisp}</strong></span>
+                <span>•</span>
+                <span>Vârf maxim: <strong>${maxDisp}</strong></span>
+                <span>•</span>
+                <span>Total: <strong>${formatMoney(convertFromRon(item.totalRon, mainCurr), mainCurr)}</strong></span>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+function renderBillsOptimizationTips(billTypeList, mainCurr, lang) {
+    const container = document.getElementById('billsOptimizationTipsList');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const activeKeys = billTypeList.map(item => item.billType.key);
+    const keysToShow = activeKeys.length > 0 ? activeKeys : ['electricity', 'gas_heating', 'water_sewerage'];
+
+    keysToShow.forEach(key => {
+        const itemConfig = BILL_OPTIMIZATION_SOLUTIONS[key] || BILL_OPTIMIZATION_SOLUTIONS['other_bills'];
+        if (!itemConfig) return;
+
+        const tipCard = document.createElement('div');
+        tipCard.style.background = 'var(--item-bg)';
+        tipCard.style.border = '1px solid var(--border-color)';
+        tipCard.style.borderRadius = '8px';
+        tipCard.style.padding = '8px 10px';
+
+        let solutionsHtml = itemConfig.solutions.map(sol => `
+            <li style="margin-bottom: 4px; line-height: 1.35;">${sol}</li>
+        `).join('');
+
+        tipCard.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="font-size: 1.05rem;">${itemConfig.icon}</span>
+                <strong style="font-size: 0.82rem; color: var(--text-color);">${escapeHtml(itemConfig.title)}</strong>
+            </div>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.72rem; color: var(--text-muted);">
+                ${solutionsHtml}
+            </ul>
+        `;
+
+        container.appendChild(tipCard);
     });
 }
 
