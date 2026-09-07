@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=374">
+    <link rel="stylesheet" href="style.css?v=375">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.38</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.39</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -414,14 +414,25 @@
                     </div>
 
                     <!-- 11. Volum & Activitate Tranzacții -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatTotalTxCountCard" style="grid-column: span 2;" role="button" tabindex="0" title="Apasă pentru statistici complete de activitate și volum tranzacții">
+                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatTotalTxCountCard" role="button" tabindex="0" title="Apasă pentru statistici complete de activitate și volum tranzacții">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">🧾</span>
-                            <span class="b-kpi-label" data-i18n="stat_activity_vol">Volum & Activitate Tranzacții</span>
+                            <span class="b-kpi-label" data-i18n="stat_activity_vol">Volum Activitate</span>
                             <span class="b-kpi-badge-click" title="Detalii">🔍</span>
                         </div>
                         <div class="b-kpi-value" id="statKpiTotalTxCount">0 tranzacții</div>
                         <div class="b-kpi-sub" id="statKpiActivitySub">Plăți și încasări</div>
+                    </div>
+
+                    <!-- 12. Facturi & Utilități (Nou) -->
+                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">⚡</span>
+                            <span class="b-kpi-label" data-i18n="stat_bills_title">Facturi & Utilități</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🔍</span>
+                        </div>
+                        <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
+                        <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
                     </div>
                 </div>
 
@@ -1308,6 +1319,95 @@
         </div>
     </div>
 
+    <!-- MODAL 11C: ANALIZA DETALIATĂ FACTURI & UTILITĂȚI (EXECUTIVE BUSINESS INTELLIGENCE) -->
+    <div class="modal-overlay" id="modalBillsAnalytics">
+        <div class="modal-box modal-fullscreen-box">
+            <div class="modal-header" style="padding-bottom: 6px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.3rem;">⚡</span>
+                    <div>
+                        <div style="font-size: 1.02rem; font-weight: 700;" data-i18n="bills_modal_title">Analiză Facturi & Utilități</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;" data-i18n="bills_modal_sub">Evoluție lunară pe tipuri de facturi, tendințe și costuri anuale</div>
+                    </div>
+                </div>
+                <button class="modal-close" data-close="modalBillsAnalytics">&times;</button>
+            </div>
+
+            <div style="overflow-y: auto; padding-right: 4px; flex: 1;">
+                <!-- Selector Perioada Utilitati -->
+                <div class="bills-period-tabs" style="display: flex; gap: 4px; margin: 4px 0 12px 0; background: var(--input-bg); padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                    <button type="button" class="bills-period-btn active" data-period="month" data-i18n="stat_pill_month" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:var(--accent); color:#ffffff; font-weight:700; cursor:pointer;">Luna Aceasta</button>
+                    <button type="button" class="bills-period-btn" data-period="3months" data-i18n="stat_pill_3months" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">3 Luni</button>
+                    <button type="button" class="bills-period-btn" data-period="year" data-i18n="stat_pill_year" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">Anul Curent</button>
+                    <button type="button" class="bills-period-btn" data-period="all" data-i18n="stat_pill_all" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">Tot</button>
+                </div>
+
+                <!-- 4 KPI-uri sintetice Utilități -->
+                <div class="bills-kpi-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;" data-i18n="bills_kpi_total">⚡ TOTAL FACTURI</div>
+                        <div id="billsKpiTotalSpend" style="font-size: 1.05rem; font-weight: 800; color: #ef4444; margin: 2px 0;">0 RON</div>
+                        <div id="billsKpiTotalSub" style="font-size: 0.66rem; color: var(--text-dim);" data-i18n="bills_kpi_total_sub">În perioada selectată</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;" data-i18n="bills_kpi_avg">📅 MEDIE LUNARĂ</div>
+                        <div id="billsKpiMonthlyAvg" style="font-size: 1.05rem; font-weight: 800; color: var(--accent); margin: 2px 0;">0 RON/lună</div>
+                        <div id="billsKpiAvgSub" style="font-size: 0.66rem; color: var(--text-dim);" data-i18n="bills_kpi_avg_sub">Ritm mediu utilități</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;" data-i18n="bills_kpi_peak">🔥 VÂRF FACTURĂ</div>
+                        <div id="billsKpiPeakBill" style="font-size: 1.05rem; font-weight: 800; color: var(--text-color); margin: 2px 0;">0 RON</div>
+                        <div id="billsKpiPeakSub" style="font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;" data-i18n="bills_kpi_share">📊 PONDERE BUGET</div>
+                        <div id="billsKpiBudgetShare" style="font-size: 1.05rem; font-weight: 800; color: #f59e0b; margin: 2px 0;">0%</div>
+                        <div id="billsKpiShareSub" style="font-size: 0.66rem; color: var(--text-dim);" data-i18n="bills_kpi_share_sub">din cheltuieli totale</div>
+                    </div>
+                </div>
+
+                <!-- GRAFIC CU LINII: EVOLUȚIE LUNARĂ PE TIPURI DE FACTURI -->
+                <div class="bills-chart-section" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 5px;">
+                            <span>📈</span>
+                            <span data-i18n="bills_chart_title">Evoluție Lunară pe Tipuri de Facturi</span>
+                        </div>
+                        <span id="billsChartPeriodBadge" style="font-size: 0.66rem; font-weight: 700; color: var(--accent); background: rgba(59, 130, 246, 0.12); padding: 2px 6px; border-radius: 4px;">Ultimele 12 Luni</span>
+                    </div>
+                    <div style="width: 100%; height: 220px; position: relative;">
+                        <canvas id="billsTrendChart"></canvas>
+                    </div>
+                    <div id="billsChartLegend" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; justify-content: center;"></div>
+                </div>
+
+                <!-- DESCOMPUNERE PE TIPURI DE FACTURI ȘI FURNIZORI -->
+                <div class="bills-breakdown-section" style="margin-bottom: 12px;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span data-i18n="bills_breakdown_title">⚡ Tipuri de Facturi & Furnizori</span>
+                        <span id="billsTypesCountBadge" style="font-size: 0.68rem; font-weight: 700; color: var(--accent);">0 tipuri</span>
+                    </div>
+                    <div class="bills-breakdown-list" id="billsTypeBreakdownList" style="display: flex; flex-direction: column; gap: 6px;">
+                        <!-- Populate dynamically -->
+                    </div>
+                </div>
+
+                <!-- LISTA TRANZACȚIILOR DE FACTURI -->
+                <div class="bills-tx-section" style="margin-bottom: 10px;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span data-i18n="bills_history_title">📋 Istoric Plăți Facturi</span>
+                        <span id="billsTxCountBadge" style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted);">0 plăți</span>
+                    </div>
+                    <div class="bills-tx-list" id="billsTransactionsList" style="display: flex; flex-direction: column; gap: 5px;">
+                        <!-- Populate dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalBillsAnalytics" style="margin-top: 10px;" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
     <!-- MODAL 11B: PAGINĂ FULLSCREEN TOATE BONURILE COȘ MÂNCARE -->
     <div class="modal-overlay" id="modalFoodBasketReceipts">
         <div class="modal-box modal-fullscreen-box">
@@ -1515,6 +1615,98 @@
         </div>
     </div>
 
+    <!-- MODAL 14B: ANALIZĂ FACTURI & UTILITĂȚI (EVOLUȚIE LUNARĂ & DETALII COMPLETE) -->
+    <div class="modal-overlay modal-fullscreen-custom" id="modalBillsAnalytics">
+        <div class="modal-box modal-box-fullscreen">
+            <div class="modal-header">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.2rem;">⚡</span>
+                    <div>
+                        <div data-i18n="bills_modal_title">Analiză Facturi & Utilități</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;" data-i18n="bills_modal_sub">Evoluție lunară pe tipuri de facturi, tendințe și costuri</div>
+                    </div>
+                </div>
+                <button class="modal-close" data-close="modalBillsAnalytics">&times;</button>
+            </div>
+
+            <!-- Filtre Perioadă (Pill-uri) -->
+            <div class="merchant-period-selector" style="margin-bottom: 12px; display: flex; gap: 6px; background: var(--item-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--border-color);">
+                <button type="button" class="btn bills-period-btn" data-period="month" style="flex:1; padding:6px; font-size:0.75rem; border-radius:7px; border:none;" data-i18n="stat_pill_month">Luna Aceasta</button>
+                <button type="button" class="btn bills-period-btn" data-period="3months" style="flex:1; padding:6px; font-size:0.75rem; border-radius:7px; border:none;" data-i18n="stat_pill_3months">3 Luni</button>
+                <button type="button" class="btn bills-period-btn active" data-period="year" style="flex:1; padding:6px; font-size:0.75rem; border-radius:7px; border:none; background:var(--accent); color:#ffffff; font-weight:700;" data-i18n="stat_pill_year">Anul Curent</button>
+                <button type="button" class="btn bills-period-btn" data-period="all" style="flex:1; padding:6px; font-size:0.75rem; border-radius:7px; border:none;" data-i18n="stat_pill_all">Tot</button>
+            </div>
+
+            <!-- 4 Mini-KPI-uri Facturi -->
+            <div class="merchant-kpi-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+                <div class="merchant-kpi-card" style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;">
+                    <div class="merchant-kpi-label" style="font-size: 0.70rem; color: var(--text-muted); font-weight: 700;" data-i18n="bills_kpi_total">⚡ TOTAL FACTURI</div>
+                    <div class="merchant-kpi-val expense-color" id="billsKpiTotalSpend" style="font-size: 1.05rem; font-weight: 800; margin: 2px 0;">0 RON</div>
+                    <div class="merchant-kpi-sub" id="billsKpiTotalSub" style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="bills_kpi_total_sub">În perioada selectată</div>
+                </div>
+                <div class="merchant-kpi-card" style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;">
+                    <div class="merchant-kpi-label" style="font-size: 0.70rem; color: var(--text-muted); font-weight: 700;" data-i18n="bills_kpi_avg">📅 MEDIE LUNARĂ</div>
+                    <div class="merchant-kpi-val" id="billsKpiMonthlyAvg" style="font-size: 1.05rem; font-weight: 800; margin: 2px 0;">0 RON</div>
+                    <div class="merchant-kpi-sub" id="billsKpiAvgSub" style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="bills_kpi_avg_sub">Ritm mediu utilități</div>
+                </div>
+                <div class="merchant-kpi-card" style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;">
+                    <div class="merchant-kpi-label" style="font-size: 0.70rem; color: var(--text-muted); font-weight: 700;" data-i18n="bills_kpi_peak">🔥 VÂRF FACTURĂ</div>
+                    <div class="merchant-kpi-val" id="billsKpiPeakBill" style="font-size: 0.95rem; font-weight: 800; margin: 2px 0;">-</div>
+                    <div class="merchant-kpi-sub" id="billsKpiPeakSub" style="font-size: 0.68rem; color: var(--text-muted);">-</div>
+                </div>
+                <div class="merchant-kpi-card" style="background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px;">
+                    <div class="merchant-kpi-label" style="font-size: 0.70rem; color: var(--text-muted); font-weight: 700;" data-i18n="bills_kpi_share">📊 PONDERE BUGET</div>
+                    <div class="merchant-kpi-val" id="billsKpiBudgetShare" style="font-size: 1.05rem; font-weight: 800; margin: 2px 0; color: #f59e0b;">0.0%</div>
+                    <div class="merchant-kpi-sub" id="billsKpiShareSub" style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="bills_kpi_share_sub">din cheltuieli totale</div>
+                </div>
+            </div>
+
+            <!-- GRAFICUL CU LINII: Evoluție Lunară pe Tipuri de Facturi (Multi-Line Chart) -->
+            <div class="business-chart-card" style="margin-bottom: 14px; background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;">
+                <div class="b-chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div>
+                        <div class="b-chart-title" style="font-size: 0.88rem; font-weight: 800; color: var(--text-color);" data-i18n="bills_chart_title">Evoluție Lunară pe Tipuri de Facturi</div>
+                        <div class="b-chart-sub" style="font-size: 0.72rem; color: var(--text-muted);">Comparație grafică pe fiecare lună cu linii colorate</div>
+                    </div>
+                    <span id="billsChartActiveTypesCount" style="font-size: 0.72rem; font-weight: 700; color: var(--accent);"></span>
+                </div>
+                <div style="height: 220px; position: relative;" id="billsTrendChartWrap">
+                    <canvas id="billsTrendChart"></canvas>
+                </div>
+                <div id="billsChartLegend" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; justify-content: center;"></div>
+            </div>
+
+            <!-- SITUAȚIE & CLASAMENT TIPURI DE FACTURI (Cu bare și statistici) -->
+            <div class="business-chart-card" style="margin-bottom: 14px; background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;">
+                <div class="b-chart-header" style="margin-bottom: 10px;">
+                    <div>
+                        <div class="b-chart-title" style="font-size: 0.88rem; font-weight: 800; color: var(--text-color);" data-i18n="bills_breakdown_title">⚡ Tipuri de Facturi & Furnizori</div>
+                        <div class="b-chart-sub" style="font-size: 0.72rem; color: var(--text-muted);">Totaluri, pondere și medii pe fiecare utilitate</div>
+                    </div>
+                </div>
+                <div id="billsTypeBreakdownList" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Generat dinamic in app.js -->
+                </div>
+            </div>
+
+            <!-- ISTORIC TRANZACȚII FACTURI (Cu opțiune de filtrare) -->
+            <div class="business-chart-card" style="margin-bottom: 12px; background: var(--item-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;">
+                <div class="b-chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div>
+                        <div class="b-chart-title" style="font-size: 0.88rem; font-weight: 800; color: var(--text-color);" data-i18n="bills_history_title">📋 Istoric Plăți Facturi</div>
+                        <div class="b-chart-sub" id="billsHistorySubInfo" style="font-size: 0.72rem; color: var(--text-muted);">Toate facturile plătite în perioada selectată</div>
+                    </div>
+                    <button type="button" id="btnClearBillsTypeFilter" style="display: none; padding: 3px 8px; font-size: 0.70rem; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer;">✕ Toate tipurile</button>
+                </div>
+                <div id="billsTransactionsList" style="display: flex; flex-direction: column; gap: 6px;">
+                    <!-- Generat dinamic in app.js -->
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalBillsAnalytics" style="margin-top: 10px; padding: 10px;" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
     <!-- MODAL 15: SCANER INTELIGENT BONURI & FACTURI -->
     <div class="modal-overlay" id="modalReceiptScanner">
         <div class="modal-box" style="max-width: 440px; padding: 14px;">
@@ -1648,6 +1840,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=374"></script>
+    <script src="app.js?v=375"></script>
 </body>
 </html>

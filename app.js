@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.34";
+const APP_VERSION = "3.3.39";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.38.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.39.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -360,7 +360,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 Rescanează',
         scanner_btn_apply: '✅ Aplică în Cheltuială',
         scanner_err_camera: 'Nu s-a putut accesa camera. Puteți încărca o fotografie a bonului.',
-        scanner_err_no_data: 'Nu s-au putut extrage date clare. Încercați o fotografie mai clară sau introduceți manual.'
+        scanner_err_no_data: 'Nu s-au putut extrage date clare. Încercați o fotografie mai clară sau introduceți manual.',
+        stat_bills_title: 'Facturi & Utilități',
+        bills_modal_title: 'Analiză Facturi & Utilități',
+        bills_modal_sub: 'Evoluție lunară pe tipuri de facturi, tendințe și costuri anuale',
+        bills_kpi_total: '⚡ TOTAL FACTURI',
+        bills_kpi_total_sub: 'În perioada selectată',
+        bills_kpi_avg: '📅 MEDIE LUNARĂ',
+        bills_kpi_avg_sub: 'Ritm mediu utilități',
+        bills_kpi_peak: '🔥 VÂRF FACTURĂ',
+        bills_kpi_share: '📊 PONDERE BUGET',
+        bills_kpi_share_sub: 'din cheltuieli totale',
+        bills_chart_title: 'Evoluție Lunară pe Tipuri de Facturi',
+        bills_breakdown_title: '⚡ Tipuri de Facturi & Furnizori',
+        bills_history_title: '📋 Istoric Plăți Facturi',
+        bills_empty: 'Nu există plăți de facturi înregistrate în această perioadă.'
     },
     en: {
         currency_label: 'Currency',
@@ -460,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.38.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.39.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -614,7 +628,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 Rescan',
         scanner_btn_apply: '✅ Apply to Expense',
         scanner_err_camera: 'Could not access camera. You can upload a photo of the receipt.',
-        scanner_err_no_data: 'Could not extract clear data. Try a clearer photo or enter manually.'
+        scanner_err_no_data: 'Could not extract clear data. Try a clearer photo or enter manually.',
+        stat_bills_title: 'Bills & Utilities',
+        bills_modal_title: 'Bills & Utilities Analysis',
+        bills_modal_sub: 'Monthly trend by bill type, patterns and annual costs',
+        bills_kpi_total: '⚡ TOTAL BILLS',
+        bills_kpi_total_sub: 'In selected period',
+        bills_kpi_avg: '📅 MONTHLY AVG',
+        bills_kpi_avg_sub: 'Average utilities pace',
+        bills_kpi_peak: '🔥 PEAK BILL',
+        bills_kpi_share: '📊 BUDGET SHARE',
+        bills_kpi_share_sub: 'of total expenses',
+        bills_chart_title: 'Monthly Trend by Bill Type',
+        bills_breakdown_title: '⚡ Bill Types & Providers',
+        bills_history_title: '📋 Bill Payment History',
+        bills_empty: 'No bill payments recorded in this period.'
     },
     de: {
         currency_label: 'Währung',
@@ -714,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.38.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.39.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -861,7 +889,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 Neu scannen',
         scanner_btn_apply: '✅ In Ausgabe übernehmen',
         scanner_err_camera: 'Kamera nicht erreichbar. Sie können ein Belegfoto hochladen.',
-        scanner_err_no_data: 'Keine klaren Daten gefunden. Bitte deutlicheres Foto versuchen.'
+        scanner_err_no_data: 'Keine klaren Daten gefunden. Bitte deutlicheres Foto versuchen.',
+        stat_bills_title: 'Rechnungen & Nebenkosten',
+        bills_modal_title: 'Rechnungs- & Nebenkostenanalyse',
+        bills_modal_sub: 'Monatliche Entwicklung nach Rechnungsart, Trends und Jahreskosten',
+        bills_kpi_total: '⚡ GESAMT RECHNUNGEN',
+        bills_kpi_total_sub: 'Im ausgewählten Zeitraum',
+        bills_kpi_avg: '📅 MONATSDURCHSCHNITT',
+        bills_kpi_avg_sub: 'Durchschnittlicher Versorgungsaufwand',
+        bills_kpi_peak: '🔥 HÖCHSTE RECHNUNG',
+        bills_kpi_share: '📊 BUDGETANTEIL',
+        bills_kpi_share_sub: 'der Gesamtausgaben',
+        bills_chart_title: 'Monatliche Entwicklung nach Rechnungsart',
+        bills_breakdown_title: '⚡ Rechnungsarten & Anbieter',
+        bills_history_title: '📋 Rechnungsverlauf',
+        bills_empty: 'Keine Rechnungszahlungen in diesem Zeitraum erfasst.'
     },
     tr: {
         currency_label: 'Para Birimi',
@@ -958,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.38.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.39.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1104,7 +1146,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 Yeniden Tara',
         scanner_btn_apply: '✅ Gidere Uygula',
         scanner_err_camera: 'Kameraya erişilemedi. Fiş fotoğrafı yükleyebilirsiniz.',
-        scanner_err_no_data: 'Net veri çıkarılamadı. Daha net bir fotoğraf deneyin.'
+        scanner_err_no_data: 'Net veri çıkarılamadı. Daha net bir fotoğraf deneyin.',
+        stat_bills_title: 'Faturalar & Abonelikler',
+        bills_modal_title: 'Fatura & Abonelik Analizi',
+        bills_modal_sub: 'Fatura türüne göre aylık gelişim, eğilimler ve yıllık maliyetler',
+        bills_kpi_total: '⚡ TOPLAM FATURA',
+        bills_kpi_total_sub: 'Seçilen dönemde',
+        bills_kpi_avg: '📅 AYLIK ORTALAMA',
+        bills_kpi_avg_sub: 'Ortalama fatura harcaması',
+        bills_kpi_peak: '🔥 EN YÜKSEK FATURA',
+        bills_kpi_share: '📊 BÜTÇE PAYI',
+        bills_kpi_share_sub: 'toplam giderlerden',
+        bills_chart_title: 'Fatura Türlerine Göre Aylık Gelişim',
+        bills_breakdown_title: '⚡ Fatura Türleri ve Sağlayıcılar',
+        bills_history_title: '📋 Fatura Ödeme Geçmişi',
+        bills_empty: 'Bu dönemde kayıtlı fatura ödemesi bulunamadı.'
     },
     ja: {
         currency_label: '通貨',
@@ -1204,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.38.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.39.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1351,7 +1407,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 再スキャン',
         scanner_btn_apply: '✅ 支出に適用',
         scanner_err_camera: 'カメラにアクセスできませんでした。写真をアップロードできます。',
-        scanner_err_no_data: 'データを読み取れませんでした。より鮮明な写真をお試しください。'
+        scanner_err_no_data: 'データを読み取れませんでした。より鮮明な写真をお試しください。',
+        stat_bills_title: '請求書＆公共料金',
+        bills_modal_title: '請求書・公共料金分析',
+        bills_modal_sub: '請求書タイプ別の月次推移、トレンドと年間コスト',
+        bills_kpi_total: '⚡ 請求書合計',
+        bills_kpi_total_sub: '選択された期間内',
+        bills_kpi_avg: '📅 月平均額',
+        bills_kpi_avg_sub: '平均公共料金ペース',
+        bills_kpi_peak: '🔥 最高請求額',
+        bills_kpi_share: '📊 予算シェア',
+        bills_kpi_share_sub: '総支出に占める割合',
+        bills_chart_title: '請求書タイプ別の月次推移',
+        bills_breakdown_title: '⚡ 請求書タイプと提供元',
+        bills_history_title: '📋 請求書支払い履歴',
+        bills_empty: 'この期間の請求書支払い記録はありません。'
     },
     zh: {
         currency_label: '货币',
@@ -1451,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.38.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.39.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1598,7 +1668,21 @@ const I18N_DICTIONARY = {
         scanner_btn_rescan: '🔄 重新扫描',
         scanner_btn_apply: '✅ 填入支出表单',
         scanner_err_camera: '无法访问摄像头，您可以上传小票照片。',
-        scanner_err_no_data: '未能提取有效数据，请尝试更清晰的照片。'
+        scanner_err_no_data: '未能提取有效数据，请尝试更清晰的照片。',
+        stat_bills_title: '账单与公用事业',
+        bills_modal_title: '账单与公用事业分析',
+        bills_modal_sub: '按账单类型查看每月趋势、消费规律与年度成本',
+        bills_kpi_total: '⚡ 账单总支出',
+        bills_kpi_total_sub: '在所选期间内',
+        bills_kpi_avg: '📅 月均支出',
+        bills_kpi_avg_sub: '公用事业平均水平',
+        bills_kpi_peak: '🔥 最高单笔账单',
+        bills_kpi_share: '📊 预算占比',
+        bills_kpi_share_sub: '占总支出的比例',
+        bills_chart_title: '各类账单每月走势分析',
+        bills_breakdown_title: '⚡ 账单类型与供应商',
+        bills_history_title: '📋 账单缴费明细记录',
+        bills_empty: '此期间内无账单缴费记录。'
     }
 };
 
@@ -4353,6 +4437,26 @@ function renderStatsTab() {
         kpiActivitySub.textContent = `${expenseCount} ${activeLang === 'ro' ? 'plăți' : 'expenses'} • ${incomeCount} ${activeLang === 'ro' ? 'încasări' : 'income'}`;
     }
 
+    // 12. Facturi & Utilități (Calcul Card KPI)
+    let totBillsRon = 0;
+    let billsCount = 0;
+    filteredTxs.filter(t => t.type === 'expense').forEach(t => {
+        if (isBillTransaction(t)) {
+            const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+            totBillsRon += amtRon;
+            billsCount++;
+        }
+    });
+    const kpiBillsEl = document.getElementById('statKpiBillsTotal');
+    const kpiBillsSub = document.getElementById('statKpiBillsSub');
+    if (kpiBillsEl) {
+        kpiBillsEl.innerHTML = formatKpiMoneyHtml(convertFromRon(totBillsRon, mainCurr), mainCurr);
+    }
+    if (kpiBillsSub) {
+        const billsPct = totExpenseRon > 0 ? ((totBillsRon / totExpenseRon) * 100).toFixed(1) : '0';
+        kpiBillsSub.textContent = `${billsCount} ${activeLang === 'ro' ? 'facturi' : 'bills'} • ${billsPct}% ${activeLang === 'ro' ? 'din cheltuieli' : 'of spend'}`;
+    }
+
     // 3. GRAFIC 1: Distribuție pe Zilele Săptămânii (plasat deasupra Cashflow)
     renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang);
 
@@ -6614,6 +6718,570 @@ function renderFoodBasketReceiptsModal() {
                 </div>
             </div>
         `;
+        listEl.appendChild(row);
+    });
+}
+
+// ==========================================
+// BUSINESS INTELLIGENCE: ANALIZĂ FACTURI & UTILITĂȚI (MULTI-LINE TREND & CLASSIFICATION)
+// ==========================================
+const BILL_TYPES = [
+    {
+        key: 'electricity',
+        name: '⚡ Curent / Energie',
+        nameEn: '⚡ Electricity & Energy',
+        color: '#f59e0b',
+        icon: '⚡',
+        keywords: ['curent', 'electric', 'energie', 'enel', 'e.on energie', 'hidroelectrica', 'electrica', 'premier energy', 'cezon', 'pfe', 'lumina', 'power']
+    },
+    {
+        key: 'gas',
+        name: '🔥 Gaze Naturale',
+        nameEn: '🔥 Natural Gas',
+        color: '#ea580c',
+        icon: '🔥',
+        keywords: ['gaz', 'gaze', 'engie', 'e.on gaz', 'distrigaz', 'nova power', 'gaz metan', 'eon gaz']
+    },
+    {
+        key: 'water_waste',
+        name: '💧 Apă & Salubritate',
+        nameEn: '💧 Water & Waste',
+        color: '#06b6d4',
+        icon: '💧',
+        keywords: ['apa', 'apă', 'apa nova', 'aquatim', 'raja', 'salubritate', 'salubrizare', 'gunoi', 'retim', 'supercom', 'rosal', 'brantner', 'polaris', 'rer', 'canalizare', 'apaterm', 'termoenergetica', 'radet']
+    },
+    {
+        key: 'internet_tv',
+        name: '🌐 Internet & Televiziune',
+        nameEn: '🌐 Internet & TV',
+        color: '#6366f1',
+        icon: '🌐',
+        keywords: ['internet', 'tv', 'digi', 'rcs', 'rds', 'rcs-rds', 'vodafone fix', 'upc', 'orange communications', 'fibra', 'cablu', 'akto']
+    },
+    {
+        key: 'phone',
+        name: '📱 Telefonie Mobilă',
+        nameEn: '📱 Mobile Phone',
+        color: '#ec4899',
+        icon: '📱',
+        keywords: ['telefon', 'telefonie', 'orange', 'vodafone', 'telekom', 'yoxo', 'digi mobil', 'reincarcare', 'abonament telefon']
+    },
+    {
+        key: 'maintenance',
+        name: '🏢 Întreținere & Bloc',
+        nameEn: '🏢 Building Maintenance',
+        color: '#10b981',
+        icon: '🏢',
+        keywords: ['intretinere', 'întreținere', 'asociatie', 'asociație', 'fond rulment', 'fond reparatii', 'cote intretinere', 'cheltuieli bloc', 'avizier', 'administrator']
+    },
+    {
+        key: 'taxes_loans',
+        name: '🏦 Rate & Taxe Utilități',
+        nameEn: '🏦 Rates & Utility Taxes',
+        color: '#8b5cf6',
+        icon: '🏦',
+        keywords: ['impozit', 'taxa', 'taxe', 'rata', 'rate', 'credit', 'asigurare', 'pad', 'casco', 'rca', 'banca', 'anp', 'ghiseul.ro', 'anaf']
+    },
+    {
+        key: 'other_bills',
+        name: '📦 Alte Facturi / Servicii',
+        nameEn: '📦 Other Bills / Services',
+        color: '#64748b',
+        icon: '📦',
+        keywords: ['factura', 'factură', 'utilitati', 'utilități', 'abonament', 'servicii']
+    }
+];
+
+function classifyBillTransaction(tx) {
+    if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return null;
+
+    const cat = appData.categories.find(c => c.id === tx.categoryId);
+    const catName = cat ? normalizeDiacritics(cat.name || '').toLowerCase() : '';
+    const desc = normalizeDiacritics(tx.description || '').toLowerCase();
+    const mc = getTransactionMerchantAndComment(tx);
+    const merchantName = normalizeDiacritics(mc.merchant || '').toLowerCase();
+    const comment = normalizeDiacritics(mc.comment || '').toLowerCase();
+    const combined = `${catName} ${desc} ${merchantName} ${comment}`;
+
+    const isBillsCategory = catName.includes('factur') || catName.includes('utilitat') || catName.includes('intretinere') || (cat && cat.id === 'cat-2');
+
+    // Căutare în fiecare tip de factură specific
+    for (const bType of BILL_TYPES) {
+        if (bType.key === 'other_bills') continue;
+        for (const kw of bType.keywords) {
+            const normKw = normalizeDiacritics(kw);
+            if (combined.includes(normKw)) {
+                return bType;
+            }
+        }
+    }
+
+    // Dacă este în categoria de facturi sau descrierea/comentariul conține cuvinte cheie generale de facturi
+    if (isBillsCategory || combined.includes('factur') || combined.includes('utilitat') || combined.includes('abonament')) {
+        return BILL_TYPES.find(b => b.key === 'other_bills');
+    }
+
+    return null;
+}
+
+function isBillTransaction(tx) {
+    return classifyBillTransaction(tx) !== null;
+}
+
+let billsTrendChartInstance = null;
+let currentBillsPeriod = 'year';
+let currentFilteredBillTypeKey = null;
+
+function openBillsAnalyticsModal(periodKey) {
+    if (periodKey) currentBillsPeriod = periodKey;
+    currentFilteredBillTypeKey = null;
+
+    // Actualizare stări butoane perioadă
+    document.querySelectorAll('.bills-period-btn').forEach(btn => {
+        if (btn.dataset.period === currentBillsPeriod) {
+            btn.classList.add('active');
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#ffffff';
+            btn.style.fontWeight = '700';
+        } else {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = 'var(--text-muted)';
+            btn.style.fontWeight = '600';
+        }
+    });
+
+    renderBillsAnalytics();
+    openModal('modalBillsAnalytics');
+}
+
+function renderBillsAnalytics() {
+    const today = new Date();
+    const curYear = today.getFullYear();
+    const curMonth = today.getMonth() + 1;
+    const curMonthStr = `${curYear}-${String(curMonth).padStart(2, '0')}`;
+    const ninetyDaysAgo = new Date(today);
+    ninetyDaysAgo.setDate(today.getDate() - 90);
+    const ninetyDaysAgoStr = ninetyDaysAgo.toISOString().split('T')[0];
+
+    const yearSelect = document.getElementById('statsYearSelect');
+    const selectedYear = yearSelect && yearSelect.value ? parseInt(yearSelect.value, 10) : curYear;
+    const yearPrefix = String(selectedYear);
+
+    // 1. Tranzacțiile din perioada selectată pentru statistici globale
+    const periodAllTxs = appData.transactions.filter(t => {
+        if (!t.date || isTxSuspended(t) || t.type !== 'expense') return false;
+        if (currentBillsPeriod === 'month') return t.date.startsWith(curMonthStr);
+        if (currentBillsPeriod === '3months') return t.date >= ninetyDaysAgoStr;
+        if (currentBillsPeriod === 'year') return t.date.startsWith(yearPrefix);
+        return true;
+    });
+
+    let totalPeriodExpensesRon = 0;
+    periodAllTxs.forEach(t => {
+        totalPeriodExpensesRon += parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+    });
+
+    // 2. Extragere și clasificare tranzacții facturi
+    const billsTxs = [];
+    const billTypeMap = {};
+
+    periodAllTxs.forEach(t => {
+        const bType = classifyBillTransaction(t);
+        if (!bType) return;
+
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        billsTxs.push({ tx: t, billType: bType, amtRon });
+
+        if (!billTypeMap[bType.key]) {
+            billTypeMap[bType.key] = {
+                billType: bType,
+                totalRon: 0,
+                count: 0,
+                highestRon: 0,
+                highestTx: null,
+                txs: []
+            };
+        }
+
+        const group = billTypeMap[bType.key];
+        group.totalRon += amtRon;
+        group.count += 1;
+        group.txs.push(t);
+        if (amtRon > group.highestRon) {
+            group.highestRon = amtRon;
+            group.highestTx = t;
+        }
+    });
+
+    const billTypeList = Object.values(billTypeMap).sort((a, b) => b.totalRon - a.totalRon);
+    const mainCurr = getActiveCurrency();
+    const lang = getLanguageForCurrency();
+
+    let totalBillsSpendRon = 0;
+    let peakBillTx = null;
+    let peakBillAmtRon = 0;
+
+    billsTxs.forEach(item => {
+        totalBillsSpendRon += item.amtRon;
+        if (item.amtRon > peakBillAmtRon) {
+            peakBillAmtRon = item.amtRon;
+            peakBillTx = item.tx;
+        }
+    });
+
+    // Calcule perioadă pentru media lunară
+    let monthsCount = 1;
+    if (currentBillsPeriod === 'month') {
+        monthsCount = 1;
+    } else if (currentBillsPeriod === '3months') {
+        monthsCount = 3;
+    } else if (currentBillsPeriod === 'year') {
+        monthsCount = Math.max(1, curMonth);
+    } else {
+        const validDates = billsTxs.map(b => b.tx.date).filter(Boolean).sort();
+        if (validDates.length > 0) {
+            const d1 = new Date(validDates[0]);
+            const d2 = new Date(validDates[validDates.length - 1]);
+            monthsCount = Math.max(1, Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24 * 30.4)));
+        } else {
+            monthsCount = 12;
+        }
+    }
+
+    const monthlyAvgRon = totalBillsSpendRon / monthsCount;
+    const budgetShare = totalPeriodExpensesRon > 0 ? ((totalBillsSpendRon / totalPeriodExpensesRon) * 100).toFixed(1) : '0.0';
+
+    // 1. Populare cele 4 mini KPI-uri
+    const kpiTotalEl = document.getElementById('billsKpiTotalSpend');
+    const kpiTotalSubEl = document.getElementById('billsKpiTotalSub');
+    const kpiAvgEl = document.getElementById('billsKpiMonthlyAvg');
+    const kpiAvgSubEl = document.getElementById('billsKpiAvgSub');
+    const kpiPeakEl = document.getElementById('billsKpiPeakBill');
+    const kpiPeakSubEl = document.getElementById('billsKpiPeakSub');
+    const kpiShareEl = document.getElementById('billsKpiBudgetShare');
+    const kpiShareSubEl = document.getElementById('billsKpiShareSub');
+
+    if (kpiTotalEl) {
+        kpiTotalEl.textContent = formatMoney(convertFromRon(totalBillsSpendRon, mainCurr), mainCurr);
+    }
+    if (kpiTotalSubEl) {
+        kpiTotalSubEl.textContent = `${billsTxs.length} ${lang === 'ro' ? 'plăți înregistrate' : 'payments'}`;
+    }
+
+    if (kpiAvgEl) {
+        kpiAvgEl.textContent = `${formatMoney(convertFromRon(monthlyAvgRon, mainCurr), mainCurr)}/lună`;
+    }
+    if (kpiAvgSubEl) {
+        kpiAvgSubEl.textContent = `${lang === 'ro' ? 'calculat pe' : 'over'} ~${monthsCount} ${lang === 'ro' ? 'luni' : 'months'}`;
+    }
+
+    if (kpiPeakEl && kpiPeakSubEl) {
+        if (peakBillTx) {
+            const peakBType = classifyBillTransaction(peakBillTx) || { icon: '⚡', name: 'Factură' };
+            const pMc = getTransactionMerchantAndComment(peakBillTx);
+            const pName = pMc.merchant || peakBillTx.description || peakBType.name;
+            kpiPeakEl.innerHTML = formatMoney(convertFromRon(peakBillAmtRon, mainCurr), mainCurr);
+            kpiPeakSubEl.textContent = `${peakBType.icon} ${escapeHtml(pName)} • ${formatDateDisplay(peakBillTx.date)}`;
+        } else {
+            kpiPeakEl.textContent = '-';
+            kpiPeakSubEl.textContent = lang === 'ro' ? 'Nicio factură' : 'No bills';
+        }
+    }
+
+    if (kpiShareEl) {
+        kpiShareEl.textContent = `${budgetShare}%`;
+    }
+    if (kpiShareSubEl) {
+        kpiShareSubEl.textContent = `${lang === 'ro' ? 'din total' : 'of total'} ${formatMoney(convertFromRon(totalPeriodExpensesRon, mainCurr), mainCurr)}`;
+    }
+
+    // 2. Randare Grafic Multi-Linie Trend
+    renderBillsTrendChart(mainCurr, lang, selectedYear);
+
+    // 3. Randare Clasament & Breakdown pe Tipuri de Facturi
+    renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, lang);
+
+    // 4. Randare Listă Tranzacții Facturi Filtrate
+    renderBillsTransactionsList(billsTxs, mainCurr, lang);
+}
+
+function renderBillsTrendChart(mainCurr, lang, selectedYear) {
+    const canvas = document.getElementById('billsTrendChart');
+    const legendContainer = document.getElementById('billsChartLegend');
+    const activeTypesCountEl = document.getElementById('billsChartActiveTypesCount');
+    if (!canvas) return;
+
+    const curYear = selectedYear || new Date().getFullYear();
+    const monthNames = I18N_DICTIONARY[lang]?.monthsShort || I18N_DICTIONARY['ro'].monthsShort;
+
+    // Matrice [tip_factura][luna 0..11]
+    const monthlyTypeSumsRon = {};
+    BILL_TYPES.forEach(bt => {
+        monthlyTypeSumsRon[bt.key] = new Array(12).fill(0);
+    });
+
+    appData.transactions.forEach(t => {
+        if (!t.date || isTxSuspended(t) || t.type !== 'expense') return;
+        const [y, m] = t.date.split('-').map(Number);
+        if (y === curYear && m >= 1 && m <= 12) {
+            const bType = classifyBillTransaction(t);
+            if (bType && monthlyTypeSumsRon[bType.key]) {
+                const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                monthlyTypeSumsRon[bType.key][m - 1] += amtRon;
+            }
+        }
+    });
+
+    // Identificare tipuri care au cel puțin o plată în anul selectat
+    const activeDatasets = [];
+    BILL_TYPES.forEach(bt => {
+        const arrRon = monthlyTypeSumsRon[bt.key];
+        const hasData = arrRon.some(v => v > 0);
+        if (hasData) {
+            const arrDisp = arrRon.map(v => convertFromRon(v, mainCurr));
+            activeDatasets.push({
+                label: bt.name,
+                data: arrDisp,
+                borderColor: bt.color,
+                backgroundColor: bt.color + '22',
+                borderWidth: 2.8,
+                pointBackgroundColor: bt.color,
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1.5,
+                pointRadius: 3.5,
+                pointHoverRadius: 6,
+                fill: false,
+                tension: 0.35
+            });
+        }
+    });
+
+    if (activeTypesCountEl) {
+        activeTypesCountEl.textContent = `${activeDatasets.length} ${lang === 'ro' ? 'tipuri active' : 'active types'}`;
+    }
+
+    if (legendContainer) {
+        legendContainer.innerHTML = '';
+        activeDatasets.forEach(ds => {
+            const pill = document.createElement('div');
+            pill.className = 'bills-legend-pill';
+            pill.style.display = 'inline-flex';
+            pill.style.alignItems = 'center';
+            pill.style.gap = '5px';
+            pill.style.padding = '3px 8px';
+            pill.style.borderRadius = '12px';
+            pill.style.fontSize = '0.72rem';
+            pill.style.fontWeight = '700';
+            pill.style.background = ds.borderColor + '18';
+            pill.style.color = ds.borderColor;
+            pill.style.border = `1px solid ${ds.borderColor}40`;
+            pill.innerHTML = `<span style="width:8px; height:8px; border-radius:50%; background:${ds.borderColor}; display:inline-block;"></span> <span>${escapeHtml(ds.label)}</span>`;
+            legendContainer.appendChild(pill);
+        });
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (billsTrendChartInstance) {
+        try { billsTrendChartInstance.destroy(); } catch (e) {}
+        billsTrendChartInstance = null;
+    }
+
+    billsTrendChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthNames,
+            datasets: activeDatasets.length > 0 ? activeDatasets : [{
+                label: lang === 'ro' ? 'Facturi' : 'Bills',
+                data: new Array(12).fill(0),
+                borderColor: '#64748b',
+                borderWidth: 2,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: 'var(--text-muted)', font: { size: 10 } }
+                },
+                y: {
+                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    ticks: {
+                        color: 'var(--text-muted)',
+                        font: { size: 10 },
+                        callback: (v) => v + ' ' + mainCurr
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw, mainCurr)}`
+                    }
+                },
+                datalabels: { display: false }
+            }
+        }
+    });
+}
+
+function renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, lang) {
+    const container = document.getElementById('billsTypeBreakdownList');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (billTypeList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:0.80rem;">${t('bills_empty', lang)}</div>`;
+        return;
+    }
+
+    billTypeList.forEach(item => {
+        const bt = item.billType;
+        const totalDisp = formatMoney(convertFromRon(item.totalRon, mainCurr), mainCurr);
+        const sharePct = totalBillsSpendRon > 0 ? ((item.totalRon / totalBillsSpendRon) * 100).toFixed(1) : '0.0';
+        const avgBillRon = item.count > 0 ? (item.totalRon / item.count) : 0;
+        const avgDisp = formatMoney(convertFromRon(avgBillRon, mainCurr), mainCurr);
+        const maxDisp = formatMoney(convertFromRon(item.highestRon, mainCurr), mainCurr);
+        const isSelected = currentFilteredBillTypeKey === bt.key;
+
+        const card = document.createElement('div');
+        card.className = 'bills-breakdown-card';
+        card.style.background = isSelected ? 'rgba(37, 99, 235, 0.10)' : 'var(--item-bg)';
+        card.style.border = isSelected ? '1.5px solid var(--accent)' : '1px solid var(--border-color)';
+        card.style.borderRadius = '10px';
+        card.style.padding = '10px 12px';
+        card.style.cursor = 'pointer';
+        card.style.transition = 'all 0.18s ease';
+
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+                        ${bt.icon}
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 0.86rem; color: var(--text-color);">${escapeHtml(bt.name)}</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">${item.count} ${lang === 'ro' ? 'plăți' : 'payments'} • ${lang === 'ro' ? 'Medie' : 'Avg'}: <strong>${avgDisp}</strong></div>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 800; font-size: 0.92rem; color: #ef4444;">-${totalDisp}</div>
+                    <div style="font-size: 0.70rem; color: ${bt.color}; font-weight: 700;">${sharePct}% din facturi</div>
+                </div>
+            </div>
+            <div style="height: 5px; border-radius: 3px; background: rgba(148, 163, 184, 0.15); overflow: hidden;">
+                <div style="height: 100%; width: ${sharePct}%; background: ${bt.color}; border-radius: 3px;"></div>
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            if (currentFilteredBillTypeKey === bt.key) {
+                currentFilteredBillTypeKey = null;
+            } else {
+                currentFilteredBillTypeKey = bt.key;
+            }
+            renderBillsAnalytics();
+        });
+
+        container.appendChild(card);
+    });
+}
+
+function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
+    const listEl = document.getElementById('billsTransactionsList');
+    const subInfoEl = document.getElementById('billsHistorySubInfo');
+    const btnClearFilter = document.getElementById('btnClearBillsTypeFilter');
+    if (!listEl) return;
+
+    listEl.innerHTML = '';
+
+    let filtered = currentFilteredBillTypeKey
+        ? billsTxs.filter(item => item.billType.key === currentFilteredBillTypeKey)
+        : billsTxs;
+
+    if (btnClearFilter) {
+        if (currentFilteredBillTypeKey) {
+            const btObj = BILL_TYPES.find(b => b.key === currentFilteredBillTypeKey) || { name: 'Filtru' };
+            btnClearFilter.style.display = 'inline-block';
+            btnClearFilter.textContent = `✕ ${btObj.name}`;
+            btnClearFilter.onclick = () => {
+                currentFilteredBillTypeKey = null;
+                renderBillsAnalytics();
+            };
+        } else {
+            btnClearFilter.style.display = 'none';
+        }
+    }
+
+    if (subInfoEl) {
+        let filterSuffix = '';
+        if (currentFilteredBillTypeKey) {
+            const btObj = BILL_TYPES.find(b => b.key === currentFilteredBillTypeKey);
+            if (btObj) filterSuffix = ` • ${btObj.name}`;
+        }
+        subInfoEl.textContent = `${filtered.length} ${lang === 'ro' ? 'facturi' : 'bills'}${filterSuffix}`;
+    }
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; padding:18px; color:var(--text-muted); font-size:0.80rem;">${t('bills_empty', lang)}</div>`;
+        return;
+    }
+
+    // Sortare cronologică descrescătoare
+    const sorted = [...filtered].sort((a, b) => new Date(b.tx.date) - new Date(a.tx.date) || (b.tx.createdAt || 0) - (a.tx.createdAt || 0));
+
+    sorted.forEach(item => {
+        const tx = item.tx;
+        const bt = item.billType;
+        const amtDisp = formatMoney(convertFromRon(item.amtRon, mainCurr), mainCurr);
+        const mc = getTransactionMerchantAndComment(tx);
+        const nameText = mc.merchant || tx.description || bt.name;
+        const commentText = mc.comment && mc.comment !== nameText ? mc.comment : '';
+        const payMethod = tx.paymentMethod === 'cash' ? `💵 Cash` : `💳 Card`;
+
+        const row = document.createElement('div');
+        row.className = 'bills-tx-item';
+        row.style.background = 'var(--item-bg)';
+        row.style.border = '1px solid var(--border-color)';
+        row.style.borderRadius = '8px';
+        row.style.padding = '8px 10px';
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+
+        row.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                <div style="width: 30px; height: 30px; border-radius: 7px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0;">
+                    ${bt.icon}
+                </div>
+                <div style="min-width: 0;">
+                    <div style="font-weight: 700; font-size: 0.84rem; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${escapeHtml(nameText)}
+                    </div>
+                    <div style="font-size: 0.68rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 1px;">
+                        <span>📅 ${formatDateDisplay(tx.date)}</span>
+                        <span>•</span>
+                        <span style="color: ${bt.color}; font-weight: 600;">${escapeHtml(bt.name.replace(/^[^\w\s]+/, '').trim())}</span>
+                        <span>•</span>
+                        <span>${payMethod}</span>
+                    </div>
+                    ${commentText ? `<div style="font-size: 0.66rem; color: var(--text-dim); margin-top: 2px;">💬 ${escapeHtml(commentText)}</div>` : ''}
+                </div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0; margin-left: 8px;">
+                <span class="expense-color" style="font-weight: 800; font-size: 0.90rem;">-${amtDisp}</span>
+            </div>
+        `;
+
         listEl.appendChild(row);
     });
 }
@@ -10422,7 +11090,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'cardStatPeakInc', action: () => openKpiDetailModal('peak_inc') },
         { id: 'cardStatAvgTicket', action: () => openMerchantAnalyticsModal(currentStatsPeriod) },
         { id: 'cardStatRunway', action: () => openKpiDetailModal('runway') },
-        { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') }
+        { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') },
+        { id: 'cardStatBillsAnalytics', action: () => openBillsAnalyticsModal(currentStatsPeriod) }
     ];
 
     kpiCardsConfig.forEach(({ id, action }) => {
@@ -10453,6 +11122,24 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.fontWeight = '700';
             currentMerchantPeriod = btn.dataset.period;
             renderMerchantAnalytics();
+        });
+    });
+
+    // Ascultatori pentru tab-urile de perioada din modalul de Analiza Facturi
+    document.querySelectorAll('.bills-period-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.bills-period-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+                b.style.fontWeight = '600';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#ffffff';
+            btn.style.fontWeight = '700';
+            currentBillsPeriod = btn.dataset.period;
+            renderBillsAnalytics();
         });
     });
 
