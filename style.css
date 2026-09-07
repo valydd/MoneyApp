@@ -1324,9 +1324,9 @@ body.light-theme .btn-chart-export-summary svg {
 .chart-wrapper {
     position: relative;
     width: 100% !important;
-    max-width: 440px !important;
-    height: 325px !important;
-    margin: 2px auto 6px auto !important;
+    max-width: 100% !important;
+    height: 270px !important;
+    margin: 2px auto 4px auto !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3769,15 +3769,15 @@ body.dark-theme .tx-secondary-val {
     }
 
     .card-section.overview-chart-box {
-        padding: 7px 5px 2px 5px !important;
+        padding: 6px 3px 2px 3px !important;
     }
 
     .chart-wrapper,
     .overview-chart-box .chart-wrapper {
         width: 100% !important;
-        max-width: 440px !important;
-        height: 325px !important;
-        margin: 2px auto 6px auto !important;
+        max-width: 100% !important;
+        height: 270px !important;
+        margin: 2px auto 4px auto !important;
     }
 
     .chart-center-val {
