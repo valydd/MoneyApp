@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.62";
+const APP_VERSION = "3.3.63";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.62.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.63.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -474,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.62.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.63.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -742,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.62.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.63.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1000,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.62.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.63.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1260,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.62.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.63.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1521,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.62.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.63.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -11785,8 +11785,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const rawVal = barcodes[0].rawValue || '';
                     if (rawVal) {
                         const parsed = parseScannedBarcodeOrText(rawVal, 'barcode');
-                        if (parsed) {
+                        // Dacă are sumă explicită din QR fiscal (ANAF etc.), finalizăm direct
+                        if (parsed && parseFloat(parsed.amount) > 0 && parsed.hasExplicitSum) {
                             onReceiptDataDetected(parsed);
+                        } else {
+                            // Dacă e cod de bare de factură/utilități (1D), facem automat captură snapshot pentru OCR complet
+                            captureLiveSnapshotAndAnalyze();
                         }
                     }
                 }
@@ -11805,8 +11809,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 720;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -11857,7 +11861,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (barcodeDetectorInstance && canvas) {
             barcodeDetectorInstance.detect(canvas).then(barcodes => {
                 if (barcodes && barcodes.length > 0) {
-                    const raw = barcodes[0].rawValue || '';
+                    const raw = barcodes.map(b => b.rawValue || '').filter(Boolean).join('\n');
                     const parsed = parseScannedBarcodeOrText(raw, 'barcode');
                     if (parsed) {
                         onReceiptDataDetected(parsed);
@@ -11883,9 +11887,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Catalog extins de comercianți, magazine și utilități din România și internațional
     const KNOWN_MERCHANT_MAP = [
+        // Utilități & Energie & Facturi
+        { keys: ['electrica furnizare', 'furnizare energie electrica', 'sc electrica', 'electrica'], name: 'Electrica Furnizare', domain: 'utilities', catGuess: 'Facturi', color: '#2563eb', logo: '⚡' },
+        { keys: ['engie romania', 'gdf suez', 'engie'], name: 'Engie Romania', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '🔥' },
+        { keys: ['rcs & rds', 'rcs-rds', 'rcs rds', 'digi romania', 'digi'], name: 'Digi Romania', domain: 'utilities', catGuess: 'Facturi', color: '#2563eb', logo: '📶' },
+        { keys: ['hidroelectrica', 'speeh hidroelectrica', 's.p.e.e.h.', 'hidro'], name: 'Hidroelectrica', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '⚡' },
+        { keys: ['e.on energie', 'eon energie', 'e.on', 'eon', 'delgaz'], name: 'E.ON Energie', domain: 'utilities', catGuess: 'Facturi', color: '#dc2626', logo: '⚡' },
+        { keys: ['ppc energie', 'ppc', 'enel energie', 'enel', 'e-distributie'], name: 'PPC / Enel', domain: 'utilities', catGuess: 'Facturi', color: '#7c3aed', logo: '⚡' },
+        { keys: ['orange romania', 'orange communications', 'orange'], name: 'Orange', domain: 'utilities', catGuess: 'Facturi', color: '#ea580c', logo: '📱' },
+        { keys: ['vodafone romania', 'vodafone'], name: 'Vodafone', domain: 'utilities', catGuess: 'Facturi', color: '#dc2626', logo: '📱' },
+        { keys: ['telekom romania', 'telekom'], name: 'Telekom', domain: 'utilities', catGuess: 'Facturi', color: '#ec4899', logo: '📱' },
+        { keys: ['apa nova', 'apanova', 'veolia', 'compania de apa', 'aquatim', 'raja', 'apa canal', 'apavit', 'hidro-prahova'], name: 'Apă & Canal', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '💧' },
+        { keys: ['salubrizare', 'salubritate', 'rebu', 'supercom', 'brantner', 'rosal', 'romprest', 'polaris'], name: 'Salubrizare & Gunoi', domain: 'utilities', catGuess: 'Facturi', color: '#059669', logo: '🗑️' },
+        { keys: ['ghiseul.ro', 'ghiseul', 'impozit', 'taxe locale', 'directia taxe', 'primaria'], name: 'Ghișeul.ro / Taxe', domain: 'utilities', catGuess: 'Facturi', color: '#0f766e', logo: '🏛️' },
+        { keys: ['allianz', 'omniasig', 'groupama', 'generali', 'asirom', 'grawe', 'euroins'], name: 'Asigurări', domain: 'utilities', catGuess: 'Facturi', color: '#1e3a8a', logo: '🛡️' },
+
         // Supermarketuri & Mâncare
         { keys: ['kaufland', 'kauf', 'sc kaufland'], name: 'Kaufland', domain: 'supermarket', catGuess: 'Mâncare', color: '#e11d48', logo: 'K' },
-        { keys: ['lidl', 'sc lidl', 'lidl discount'], name: 'Lidl', domain: 'supermarket', catGuess: 'Mâncare', color: '#0284c7', logo: 'L' },
+        { keys: ['lidl', 'sc lidl', 'lidl discount', 'lidl plus'], name: 'Lidl', domain: 'supermarket', catGuess: 'Mâncare', color: '#0284c7', logo: 'L' },
         { keys: ['mega image', 'megaimage', 'shop&go', 'shop & go', 'mega'], name: 'Mega Image', domain: 'supermarket', catGuess: 'Mâncare', color: '#dc2626', logo: 'M' },
         { keys: ['carrefour', 'carref', 'carrefour express', 'carrefour market'], name: 'Carrefour', domain: 'supermarket', catGuess: 'Mâncare', color: '#2563eb', logo: 'C' },
         { keys: ['auchan', 'myauchan', 'my auchan'], name: 'Auchan', domain: 'supermarket', catGuess: 'Mâncare', color: '#ef4444', logo: 'A' },
@@ -11896,34 +11915,20 @@ document.addEventListener('DOMContentLoaded', () => {
         { keys: ['supeco'], name: 'Supeco', domain: 'supermarket', catGuess: 'Mâncare', color: '#059669', logo: 'S' },
         { keys: ['la cocos', 'la cocoș', 'cocos'], name: 'La Cocoș', domain: 'supermarket', catGuess: 'Mâncare', color: '#ea580c', logo: '🐓' },
         { keys: ['annabella'], name: 'Annabella', domain: 'supermarket', catGuess: 'Mâncare', color: '#d97706', logo: '🍎' },
-        { keys: ['diana'], name: 'Magazinele Diana', domain: 'supermarket', catGuess: 'Mâncare', color: '#dc2626', logo: '🥩' },
+        { keys: ['diana', 'magazinele diana'], name: 'Magazinele Diana', domain: 'supermarket', catGuess: 'Mâncare', color: '#dc2626', logo: '🥩' },
 
         // Benzinării & Transport
         { keys: ['rompetrol', 'kmg rompetrol'], name: 'Rompetrol', domain: 'fuel', catGuess: 'Transport', color: '#d97706', logo: '⛽' },
-        { keys: ['omv', 'omv petrom marketing'], name: 'OMV', domain: 'fuel', catGuess: 'Transport', color: '#2563eb', logo: '⛽' },
+        { keys: ['omv petrom marketing', 'omv'], name: 'OMV', domain: 'fuel', catGuess: 'Transport', color: '#2563eb', logo: '⛽' },
         { keys: ['petrom'], name: 'Petrom', domain: 'fuel', catGuess: 'Transport', color: '#1d4ed8', logo: '⛽' },
-        { keys: ['mol', 'mol romania'], name: 'MOL', domain: 'fuel', catGuess: 'Transport', color: '#16a34a', logo: '⛽' },
-        { keys: ['lukoil', 'lukoil romania'], name: 'Lukoil', domain: 'fuel', catGuess: 'Transport', color: '#dc2626', logo: '⛽' },
-        { keys: ['socar', 'socar petroleum'], name: 'Socar', domain: 'fuel', catGuess: 'Transport', color: '#059669', logo: '⛽' },
+        { keys: ['mol romania', 'mol'], name: 'MOL', domain: 'fuel', catGuess: 'Transport', color: '#16a34a', logo: '⛽' },
+        { keys: ['lukoil romania', 'lukoil'], name: 'Lukoil', domain: 'fuel', catGuess: 'Transport', color: '#dc2626', logo: '⛽' },
+        { keys: ['socar petroleum', 'socar'], name: 'Socar', domain: 'fuel', catGuess: 'Transport', color: '#059669', logo: '⛽' },
         { keys: ['gazprom'], name: 'Gazprom', domain: 'fuel', catGuess: 'Transport', color: '#0284c7', logo: '⛽' },
         { keys: ['uber'], name: 'Uber', domain: 'transport', catGuess: 'Transport', color: '#0f172a', logo: '🚗' },
         { keys: ['bolt'], name: 'Bolt', domain: 'transport', catGuess: 'Transport', color: '#10b981', logo: '🚗' },
-        { keys: ['cfr', 'cfr calatori'], name: 'CFR Călători', domain: 'transport', catGuess: 'Transport', color: '#2563eb', logo: '🚆' },
+        { keys: ['cfr calatori', 'cfr'], name: 'CFR Călători', domain: 'transport', catGuess: 'Transport', color: '#2563eb', logo: '🚆' },
         { keys: ['metrorex', 'stb', 'ratb'], name: 'Transport Public', domain: 'transport', catGuess: 'Transport', color: '#0284c7', logo: '🚌' },
-
-        // Utilități & Energie & Facturi
-        { keys: ['hidroelectrica', 'hidro'], name: 'Hidroelectrica', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '⚡' },
-        { keys: ['electrica', 'electrica furnizare'], name: 'Electrica Furnizare', domain: 'utilities', catGuess: 'Facturi', color: '#2563eb', logo: '⚡' },
-        { keys: ['ppc', 'enel', 'enel energie'], name: 'PPC / Enel', domain: 'utilities', catGuess: 'Facturi', color: '#7c3aed', logo: '⚡' },
-        { keys: ['e.on', 'eon', 'eon energie'], name: 'E.ON Energie', domain: 'utilities', catGuess: 'Facturi', color: '#dc2626', logo: '⚡' },
-        { keys: ['engie', 'gdf suez'], name: 'Engie Romania', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '🔥' },
-        { keys: ['digi', 'rcs&rds', 'rcs-rds', 'rcs rds'], name: 'Digi', domain: 'utilities', catGuess: 'Facturi', color: '#2563eb', logo: '📶' },
-        { keys: ['orange', 'orange romania'], name: 'Orange', domain: 'utilities', catGuess: 'Facturi', color: '#ea580c', logo: '📱' },
-        { keys: ['vodafone', 'vodafone romania'], name: 'Vodafone', domain: 'utilities', catGuess: 'Facturi', color: '#dc2626', logo: '📱' },
-        { keys: ['telekom'], name: 'Telekom', domain: 'utilities', catGuess: 'Facturi', color: '#ec4899', logo: '📱' },
-        { keys: ['apa nova', 'apanova', 'compania de apa', 'aquatim', 'raja'], name: 'Apă & Utilități', domain: 'utilities', catGuess: 'Facturi', color: '#0284c7', logo: '💧' },
-        { keys: ['salubrizare', 'rebu', 'supercom', 'brantner', 'rosal'], name: 'Salubrizare', domain: 'utilities', catGuess: 'Facturi', color: '#059669', logo: '🗑️' },
-        { keys: ['ghiseul', 'ghiseul.ro', 'impozit', 'taxe locale', 'primaria'], name: 'Ghișeul.ro / Taxe', domain: 'utilities', catGuess: 'Facturi', color: '#0f766e', logo: '🏛️' },
 
         // Farmacii & Sănătate
         { keys: ['catena'], name: 'Catena', domain: 'health', catGuess: 'Sănătate', color: '#16a34a', logo: '💊' },
@@ -11931,7 +11936,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { keys: ['farmacia tei', 'bebe tei', 'tei'], name: 'Farmacia Tei', domain: 'health', catGuess: 'Sănătate', color: '#2563eb', logo: '💊' },
         { keys: ['help net', 'helpnet'], name: 'Help Net', domain: 'health', catGuess: 'Sănătate', color: '#ea580c', logo: '💊' },
         { keys: ['sensiblu'], name: 'Sensiblu', domain: 'health', catGuess: 'Sănătate', color: '#0284c7', logo: '💊' },
-        { keys: ['dona', 'farmacia dona'], name: 'Farmacia Dona', domain: 'health', catGuess: 'Sănătate', color: '#059669', logo: '💊' },
+        { keys: ['farmacia dona', 'dona'], name: 'Farmacia Dona', domain: 'health', catGuess: 'Sănătate', color: '#059669', logo: '💊' },
         { keys: ['medlife', 'regina maria', 'sanador', 'synevo', 'affidea'], name: 'Clinică Medicală', domain: 'health', catGuess: 'Sănătate', color: '#059669', logo: '🏥' },
 
         // Bricolaj & Casă
@@ -11959,24 +11964,16 @@ document.addEventListener('DOMContentLoaded', () => {
         { keys: ['h&m', 'h & m', 'zara', 'bershka', 'pull&bear', 'stradivarius', 'reserved', 'sinsay', 'c&a'], name: 'Haine / Modă', domain: 'fashion', catGuess: 'Îmbrăcăminte', color: '#1e293b', logo: '👗' },
         { keys: ['deichmann', 'ccc', 'epantofi'], name: 'Încălțăminte', domain: 'fashion', catGuess: 'Îmbrăcăminte', color: '#16a34a', logo: '👟' },
 
-        // Restaurante, Fast Food & Cafenele
-        { keys: ['mcdonald', 'mcdonalds', 'mc donald', 'premier restaurants'], name: "McDonald's", domain: 'restaurant', catGuess: 'Restaurant', color: '#dc2626', logo: '🍔' },
-        { keys: ['kfc', 'us food network'], name: 'KFC', domain: 'restaurant', catGuess: 'Restaurant', color: '#b91c1c', logo: '🍗' },
-        { keys: ['burger king', 'amrest'], name: 'Burger King', domain: 'restaurant', catGuess: 'Restaurant', color: '#c2410c', logo: '👑' },
-        { keys: ['subway'], name: 'Subway', domain: 'restaurant', catGuess: 'Restaurant', color: '#16a34a', logo: '🥪' },
-        { keys: ['taco bell'], name: 'Taco Bell', domain: 'restaurant', catGuess: 'Restaurant', color: '#7c3aed', logo: '🌮' },
-        { keys: ['spartan'], name: 'Spartan', domain: 'restaurant', catGuess: 'Restaurant', color: '#ea580c', logo: '🥙' },
-        { keys: ['dristor', 'dristor kebab'], name: 'Dristor Kebab', domain: 'restaurant', catGuess: 'Restaurant', color: '#dc2626', logo: '🥙' },
-        { keys: ['chopstix'], name: 'Chopstix', domain: 'restaurant', catGuess: 'Restaurant', color: '#ef4444', logo: '🥢' },
-        { keys: ['mesopotamia'], name: 'Mesopotamia', domain: 'restaurant', catGuess: 'Restaurant', color: '#d97706', logo: '🥙' },
-        { keys: ['noodle pack', 'noodlepack'], name: 'Noodle Pack', domain: 'restaurant', catGuess: 'Restaurant', color: '#ea580c', logo: '🍜' },
-        { keys: ['pizza hut', 'domino', 'dominos', 'trenta', 'presto', 'fabio'], name: 'Pizzerie', domain: 'restaurant', catGuess: 'Restaurant', color: '#dc2626', logo: '🍕' },
-        { keys: ['city grill', 'beraria h', 'caru cu bere', 'hanu lui manuc'], name: 'Restaurant', domain: 'restaurant', catGuess: 'Restaurant', color: '#b45309', logo: '🍽️' },
-        { keys: ['luca', 'simigeria luca', 'matei', 'petru', 'fornetti'], name: 'Simigerie / Patiserie', domain: 'food', catGuess: 'Mâncare', color: '#d97706', logo: '🥨' },
-        { keys: ['starbucks'], name: 'Starbucks', domain: 'cafe', catGuess: 'Mâncare', color: '#15803d', logo: '☕' },
-        { keys: ['5togo', '5 to go'], name: '5 To Go', domain: 'cafe', catGuess: 'Mâncare', color: '#dc2626', logo: '☕' },
-        { keys: ['ted', "ted's", 'tucano', 'meron', 'captain bean'], name: 'Cafenea', domain: 'cafe', catGuess: 'Mâncare', color: '#854d0e', logo: '☕' },
-        { keys: ['glovo', 'tazz', 'bolt food', 'wolt', 'bringo', 'freshful', 'sezamo'], name: 'Comandă / Livrare', domain: 'delivery', catGuess: 'Restaurant', color: '#f59e0b', logo: '🛵' }
+        // Restaurante & Fast-Food & Livrări
+        { keys: ['mcdonalds', 'mcdonald', 'mc donald'], name: 'McDonald\'s', domain: 'food', catGuess: 'Mâncare', color: '#eab308', logo: '🍔' },
+        { keys: ['kfc', 'us food network'], name: 'KFC', domain: 'food', catGuess: 'Mâncare', color: '#dc2626', logo: '🍗' },
+        { keys: ['burger king'], name: 'Burger King', domain: 'food', catGuess: 'Mâncare', color: '#d97706', logo: '🍔' },
+        { keys: ['taco bell'], name: 'Taco Bell', domain: 'food', catGuess: 'Mâncare', color: '#7c3aed', logo: '🌮' },
+        { keys: ['subway'], name: 'Subway', domain: 'food', catGuess: 'Mâncare', color: '#16a34a', logo: '🥪' },
+        { keys: ['dristor', 'dristor kebab'], name: 'Dristor Kebab', domain: 'food', catGuess: 'Mâncare', color: '#dc2626', logo: '🥙' },
+        { keys: ['socului', 'socului kebab'], name: 'Socului Kebab', domain: 'food', catGuess: 'Mâncare', color: '#ea580c', logo: '🥙' },
+        { keys: ['tazz'], name: 'Tazz', domain: 'delivery', catGuess: 'Mâncare', color: '#ef4444', logo: '🛵' },
+        { keys: ['glovo'], name: 'Glovo', domain: 'delivery', catGuess: 'Mâncare', color: '#eab308', logo: '🛵' }
     ];
 
     function parseScannedBarcodeOrText(rawInput, source = 'text') {
@@ -11984,12 +11981,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let ocrText = '';
         let barcodeRaw = '';
-        let barcodeFormat = '';
 
         if (typeof rawInput === 'object') {
             ocrText = (rawInput.ocrText || '').trim();
             barcodeRaw = (rawInput.barcode || '').trim();
-            barcodeFormat = (rawInput.barcodeFormat || '').trim();
         } else if (typeof rawInput === 'string') {
             if (source === 'barcode') {
                 barcodeRaw = rawInput.trim();
@@ -12003,86 +11998,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let matchedMerchant = null;
         let amount = null;
+        let hasExplicitSum = false;
         let account = 'card';
         let date = new Date().toISOString().split('T')[0];
         let note = '';
         let detectedCui = null;
+        let invoiceNumber = null;
+        let dueDate = null;
 
-        // ==========================================
-        // 1. ANALIZĂ COD QR / COD DE BARE (DACĂ EXISTĂ)
-        // ==========================================
-        if (barcodeRaw) {
-            // A. Verificare URL Bon Fiscal ANAF (ex: https://servicii.anaf.ro/verificare-bon?s=45.20&d=20260907&c=12345678)
-            if (barcodeRaw.includes('http://') || barcodeRaw.includes('https://') || barcodeRaw.includes('anaf.ro') || barcodeRaw.includes('?')) {
-                try {
-                    const urlStr = barcodeRaw.startsWith('http') ? barcodeRaw : `https://${barcodeRaw}`;
-                    const urlObj = new URL(urlStr);
-                    const params = urlObj.searchParams;
-
-                    // Extragere sumă din parametri URL
-                    const paramSum = params.get('s') || params.get('val') || params.get('suma') || params.get('total') || params.get('amount') || params.get('v');
-                    if (paramSum) {
-                        const parsedS = parseFloat(paramSum.replace(',', '.'));
-                        if (!isNaN(parsedS) && parsedS > 0) amount = parsedS;
-                    }
-
-                    // Extragere dată din parametri URL
-                    const paramDate = params.get('d') || params.get('data') || params.get('date');
-                    if (paramDate) {
-                        // format YYYYMMDD sau DDMMYYYY sau YYYY-MM-DD
-                        if (/^\d{8}$/.test(paramDate)) {
-                            if (paramDate.startsWith('20')) {
-                                date = `${paramDate.slice(0, 4)}-${paramDate.slice(4, 6)}-${paramDate.slice(6, 8)}`;
-                            } else {
-                                date = `${paramDate.slice(4, 8)}-${paramDate.slice(2, 4)}-${paramDate.slice(0, 2)}`;
-                            }
-                        } else if (paramDate.includes('-') || paramDate.includes('.')) {
-                            const dParts = paramDate.split(/[-.]/);
-                            if (dParts.length === 3) {
-                                if (dParts[0].length === 4) date = `${dParts[0]}-${dParts[1].padStart(2, '0')}-${dParts[2].padStart(2, '0')}`;
-                                else date = `${dParts[2]}-${dParts[1].padStart(2, '0')}-${dParts[0].padStart(2, '0')}`;
-                            }
-                        }
-                    }
-
-                    const paramCui = params.get('c') || params.get('cui') || params.get('cif');
-                    if (paramCui) detectedCui = paramCui;
-                } catch (urlErr) {
-                    // Fallback regex pe URL string
-                    const sMatch = barcodeRaw.match(/[?&](?:s|val|suma|total|amount|v)=([0-9.,]+)/i);
-                    if (sMatch && sMatch[1]) {
-                        const num = parseFloat(sMatch[1].replace(',', '.'));
-                        if (!isNaN(num) && num > 0) amount = num;
-                    }
-                }
-            }
-
-            // B. Verificare QR structurat Text (ex: CUI:12345, TOTAL:150.50, DATA:07.09.2026)
-            if (!amount) {
-                const qrValMatch = barcodeRaw.match(/(?:TOTAL|SUMA|VAL|VALOARE|LEI|RON)[:=\s]+([0-9]{1,6}[.,][0-9]{2})/i);
-                if (qrValMatch && qrValMatch[1]) {
-                    amount = parseFloat(qrValMatch[1].replace(',', '.'));
-                }
-            }
-
-            // C. Verificare cod de bare utilități (16-40 cifre cu suma la coadă în bănuți)
-            if (!amount && /^\d{16,40}$/.test(barcodeRaw)) {
-                const tail = barcodeRaw.slice(-8);
-                const numVal = parseInt(tail, 10);
-                if (!isNaN(numVal) && numVal > 100 && numVal < 5000000) {
-                    amount = parseFloat((numVal / 100).toFixed(2));
-                }
-            }
-        }
-
-        // ==========================================
-        // 2. ANALIZĂ TEXT OCR (PENTRU BONURI CU SAU FĂRĂ COD)
-        // ==========================================
         const rawToScan = ocrText || combinedText;
         const lines = rawToScan.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-        const lowText = rawToScan.toLowerCase();
+        const lowText = combinedText.toLowerCase();
 
-        // A. Identificare Magazin / Furnizor din catalog
+        // 1. Identificare Magazin / Furnizor Utilități din catalog
         for (const m of KNOWN_MERCHANT_MAP) {
             for (const k of m.keys) {
                 if (lowText.includes(k)) {
@@ -12093,53 +12021,93 @@ document.addEventListener('DOMContentLoaded', () => {
             if (matchedMerchant) break;
         }
 
-        // B. Dacă nu s-a găsit în catalog, căutăm denumirea firmei în antetul bonului (primele 4 rânduri)
-        if (!matchedMerchant && lines.length > 0) {
-            for (let i = 0; i < Math.min(lines.length, 4); i++) {
-                const line = lines[i];
-                // Tipar: S.C. NUME FIRMA S.R.L. sau S.A.
-                const scMatch = line.match(/(?:S\.?C\.?\s+)?([A-Z0-9\s.-]{3,35})\s+(?:S\.?R\.?L\.?|S\.?A\.?|S\.?C\.?S\.?)/i);
-                if (scMatch && scMatch[1]) {
-                    const cleanName = scMatch[1].trim();
-                    if (cleanName.length >= 3 && !/^(BON|FISCAL|CUI|CIF|DATA|CASA)/i.test(cleanName)) {
-                        matchedMerchant = {
-                            name: cleanName,
-                            domain: 'general',
-                            catGuess: 'Cumpărături',
-                            color: '#2563eb',
-                            logo: '🏬'
-                        };
-                        break;
+        const isUtilityInvoice = (matchedMerchant && matchedMerchant.domain === 'utilities') ||
+            /(?:FACTUR[AĂ]|FACTURA\s*CURENT[AĂ]|FURNIZARE|COD\s*CLIENT|SCADEN[TȚ][AĂ]|LOC\s*CONSUM|TOTAL\s*DE\s*PLAT[AĂ]\s*FACTUR[AĂ]|REST\s*DE\s*PLAT[AĂ]\s*FACTUR[AĂ])/i.test(rawToScan);
+
+        // 2. Extragere Număr Factură (dacă este factură)
+        const invMatch = rawToScan.match(/(?:FACTUR[AĂ]\s*(?:SERIA\s*[\w\d]+\s*)?(?:NR\.?|NUM[AĂ]RUL)?|NR\.?\s*FACTUR[AĂ]|SERIA\s*[\w\d]+\s*NR\.?|FACTURA\s*NR)\s*[:=]?\s*([A-Z0-9\/-]{3,24})/i);
+        if (invMatch && invMatch[1]) {
+            invoiceNumber = invMatch[1].trim();
+        }
+
+        // 3. Extragere Dată Scadență (dacă este factură)
+        const dueMatch = rawToScan.match(/(?:SCADEN[TȚ][AĂ]|DATA\s*SCADEN[TȚ][AĂ]|SCADENT\s*LA|P[AÂN][AĂ]\s*LA\s*DATA\s*(?:DE)?|PANA\s*LA)\s*[:=]?\s*(0[1-9]|[12][0-9]|3[01])[.\/-](0[1-9]|1[0-2])[.\/-](20\d\d|\d\d)/i);
+        if (dueMatch) {
+            let d = dueMatch[1];
+            let m = dueMatch[2];
+            let y = dueMatch[3];
+            if (y.length === 2) y = '20' + y;
+            dueDate = `${d}.${m}.${y}`;
+        }
+
+        // 4. ANALIZĂ COD QR / URL ANAF FISCAL (dacă există)
+        if (barcodeRaw) {
+            // A. Verificare URL Bon Fiscal ANAF (ex: https://servicii.anaf.ro/verificare-bon?s=45.20&d=20260907&c=12345678)
+            if (barcodeRaw.includes('http://') || barcodeRaw.includes('https://') || barcodeRaw.includes('anaf.ro') || barcodeRaw.includes('?')) {
+                try {
+                    const urlStr = barcodeRaw.startsWith('http') ? barcodeRaw : `https://${barcodeRaw}`;
+                    const urlObj = new URL(urlStr);
+                    const params = urlObj.searchParams;
+
+                    const paramSum = params.get('s') || params.get('val') || params.get('suma') || params.get('total') || params.get('amount') || params.get('v');
+                    if (paramSum) {
+                        const parsedS = parseFloat(paramSum.replace(',', '.'));
+                        if (!isNaN(parsedS) && parsedS > 0) {
+                            amount = parsedS;
+                            hasExplicitSum = true;
+                        }
+                    }
+
+                    const paramDate = params.get('d') || params.get('data') || params.get('date');
+                    if (paramDate) {
+                        if (/^\d{8}$/.test(paramDate)) {
+                            if (paramDate.startsWith('20')) {
+                                date = `${paramDate.slice(0, 4)}-${paramDate.slice(4, 6)}-${paramDate.slice(6, 8)}`;
+                            } else {
+                                date = `${paramDate.slice(4, 8)}-${paramDate.slice(2, 4)}-${paramDate.slice(0, 2)}`;
+                            }
+                        }
+                    }
+
+                    const paramCui = params.get('c') || params.get('cui') || params.get('cif');
+                    if (paramCui) detectedCui = paramCui;
+                } catch (urlErr) {
+                    const sMatch = barcodeRaw.match(/[?&](?:s|val|suma|total|amount|v)=([0-9.,]+)/i);
+                    if (sMatch && sMatch[1]) {
+                        const num = parseFloat(sMatch[1].replace(',', '.'));
+                        if (!isNaN(num) && num > 0) {
+                            amount = num;
+                            hasExplicitSum = true;
+                        }
                     }
                 }
             }
 
-            // Dacă tot nu e găsit, luăm primul rând care seamănă cu un titlu
-            if (!matchedMerchant) {
-                const firstValidLine = lines.find(l => l.length >= 3 && l.length <= 32 && !/^(BON|FISCAL|CUI|CIF|STR\.|TEL|DATA|\d+)/i.test(l));
-                if (firstValidLine) {
-                    matchedMerchant = {
-                        name: firstValidLine.slice(0, 28),
-                        domain: 'general',
-                        catGuess: 'Cumpărături',
-                        color: '#2563eb',
-                        logo: '🧾'
-                    };
+            // B. Verificare QR structurat Text (ex: CUI:12345, TOTAL:150.50, DATA:07.09.2026)
+            if (!amount) {
+                const qrValMatch = barcodeRaw.match(/(?:TOTAL|SUMA|VAL|VALOARE|LEI|RON)[:=\s]+([0-9]{1,6}[.,][0-9]{2})/i);
+                if (qrValMatch && qrValMatch[1]) {
+                    amount = parseFloat(qrValMatch[1].replace(',', '.'));
+                    hasExplicitSum = true;
                 }
             }
         }
 
-        // C. Extragere Sumă Totală din Textul Bonului (dacă nu a fost găsită din QR)
+        // 5. EXTRAGERE SUMĂ TOTALĂ DIN TEXTUL FACTURII SAU BONULUI (OCR)
         if (!amount || isNaN(amount) || amount <= 0) {
-            // Prioritate 1: Căutare linii cu cuvinte cheie fiscale puternice
-            const totalPatterns = [
-                /(?:TOTAL\s*DE\s*PLAT[AĂ]|REST\s*DE\s*PLAT[AĂ]|TOTAL\s*GENERAL|TOTAL\s*LEI|TOTAL\s*RON|TOTAL\s*EUR|TOTAL\s*€|SUMA\s*TOTAL[AĂ]|VALOARE\s*TOTAL[AĂ]|TOTAL\s*ACHITAT|VALOARE\s*BON)\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
-                /(?:DE\s*PLAT[AĂ]|TOTAL|ACHITAT|SUMA)\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
-                /(?:TOTAL|REST\s*DE\s*PLAT[AĂ]|DE\s*PLAT[AĂ]).*?([0-9]{1,4}[.,][0-9]{2})\s*(?:LEI|RON|EUR|€)?$/i
+            // Reguli de extragere specifice facturilor românești și bonurilor fiscale
+            const invoicePatterns = [
+                // Tipare specifice facturilor de utilități (Digi, Electrica, Engie, Hidroelectrica, E.ON, Enel/PPC, Apa Nova etc.)
+                /(?:TOTAL\s*DE\s*PLAT[AĂ]\s*FACTUR[AĂ]\s*CURENT[AĂ]|TOTAL\s*FACTUR[AĂ]\s*CURENT[AĂ]|TOTAL\s*FACTURA\s*CURENTA)\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
+                /(?:TOTAL\s*DE\s*PLAT[AĂ]|TOTAL\s*DE\s*PLATA|SOLD\s*TOTAL\s*DE\s*PLAT[AĂ]|SOLD\s*TOTAL|REST\s*DE\s*PLAT[AĂ]|REST\s*DE\s*PLATA|SUMA\s*DATORAT[AĂ]|SUMA\s*DE\s*PLAT[AĂ])\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
+                /(?:VALOARE\s*TOTAL[AĂ]\s*DE\s*PLAT[AĂ]|VALOARE\s*DE\s*PLAT[AĂ]|VALOARE\s*FACTUR[AĂ]|TOTAL\s*FACTUR[AĂ]|TOTAL\s*FACTURA|TOTAL\s*ACHITAT|TOTAL\s*GENERAL)\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
+                /(?:TOTAL\s*LEI|TOTAL\s*RON|TOTAL\s*EUR|TOTAL\s*€|VALOARE\s*BON)\s*[:=]?\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
+                /(?:DE\s*PLAT[AĂ]|DE\s*PLATA|TOTAL|ACHITAT|SUMA)\s*[:=]\s*([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})/i,
+                /(?:TOTAL|REST\s*DE\s*PLAT[AĂ]|DE\s*PLAT[AĂ]).*?([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})\s*(?:LEI|RON|EUR|€)\b/i
             ];
 
             for (const line of lines) {
-                for (const pat of totalPatterns) {
+                for (const pat of invoicePatterns) {
                     const match = line.match(pat);
                     if (match && match[1]) {
                         const cleanNumStr = match[1].replace(/\s/g, '').replace(/\.(?=\d{3})/g, '').replace(',', '.');
@@ -12153,26 +12121,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (amount) break;
             }
 
-            // Prioritate 2: Linie cu "TOTAL" urmată de sumă pe linia imediat următoare
+            // Verificare rând cu etichetă urmat de valoare pe linia următoare
             if (!amount) {
                 for (let i = 0; i < lines.length - 1; i++) {
-                    if (/^(?:TOTAL|TOTAL\s*LEI|REST\s*DE\s*PLATA|DE\s*PLATA)$/i.test(lines[i])) {
-                        const nextMatch = lines[i + 1].match(/^([0-9]{1,5}[.,][0-9]{2})/);
+                    if (/^(?:TOTAL\s*DE\s*PLAT[AĂ]|TOTAL\s*FACTUR[AĂ]|TOTAL\s*CURENT|DE\s*PLAT[AĂ]|TOTAL|REST\s*DE\s*PLAT[AĂ])$/i.test(lines[i])) {
+                        const nextMatch = lines[i + 1].match(/^([0-9]{1,5}(?:[ .][0-9]{3})*[.,][0-9]{2})/);
                         if (nextMatch && nextMatch[1]) {
-                            amount = parseFloat(nextMatch[1].replace(',', '.'));
-                            break;
+                            const cleanNumStr = nextMatch[1].replace(/\s/g, '').replace(/\.(?=\d{3})/g, '').replace(',', '.');
+                            const parsedNum = parseFloat(cleanNumStr);
+                            if (!isNaN(parsedNum) && parsedNum > 0) {
+                                amount = parsedNum;
+                                break;
+                            }
                         }
                     }
                 }
             }
 
-            // Prioritate 3: Căutare generală a celei mai probabile sume de pe bon (cea mai mare sumă monetară validă, ignorând date, coduri CUI, ore)
-            if (!amount) {
+            // Cross-check cu codul de bare (PayPoint etc.): dacă o sumă candidată în bani se regăsește în codul de bare
+            if (!amount && barcodeRaw) {
+                const cleanDigits = barcodeRaw.replace(/\D/g, '');
                 const allDecimalMatches = rawToScan.match(/\b([0-9]{1,5}[.,][0-9]{2})\b/g);
-                if (allDecimalMatches && allDecimalMatches.length > 0) {
-                    const candidateNumbers = allDecimalMatches
+                if (allDecimalMatches && cleanDigits.length >= 12) {
+                    for (const cand of allDecimalMatches) {
+                        const candFloat = parseFloat(cand.replace(',', '.'));
+                        if (!isNaN(candFloat) && candFloat > 1.00) {
+                            const centsStr = Math.round(candFloat * 100).toString();
+                            if (centsStr.length >= 3 && cleanDigits.includes(centsStr)) {
+                                amount = candFloat;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Fallback: căutare număr urmat de LEI / RON
+            if (!amount) {
+                const leiMatch = rawToScan.match(/\b([0-9]{1,4}(?:[ .][0-9]{3})*[.,][0-9]{2})\s*(?:LEI|RON)\b/i);
+                if (leiMatch && leiMatch[1]) {
+                    const cleanNumStr = leiMatch[1].replace(/\s/g, '').replace(/\.(?=\d{3})/g, '').replace(',', '.');
+                    const parsedNum = parseFloat(cleanNumStr);
+                    if (!isNaN(parsedNum) && parsedNum > 0 && parsedNum !== 19.00 && parsedNum !== 9.00 && parsedNum !== 5.00) {
+                        amount = parsedNum;
+                    }
+                }
+            }
+
+            // Fallback general: cel mai mare număr valid de pe document
+            if (!amount) {
+                const allDecimals = rawToScan.match(/\b([0-9]{1,5}[.,][0-9]{2})\b/g);
+                if (allDecimals && allDecimals.length > 0) {
+                    const candidateNumbers = allDecimals
                         .map(s => parseFloat(s.replace(',', '.')))
-                        .filter(n => !isNaN(n) && n > 0.5 && n < 50000 && n !== 19.00 && n !== 9.00 && n !== 5.00); // exclude cote uzuale TVA singulare
+                        .filter(n => !isNaN(n) && n > 0.5 && n < 50000 && n !== 19.00 && n !== 9.00 && n !== 5.00);
                     if (candidateNumbers.length > 0) {
                         amount = Math.max(...candidateNumbers);
                     }
@@ -12180,14 +12182,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // D. Extragere Metodă de Plată
-        if (/(?:NUMERAR|CASH|REST\s*DAT|REST\s*NUMERAR|REST\s*LEI)/i.test(rawToScan)) {
+        // 6. Denumire Societate Comercială din antet (dacă nu e în catalog)
+        if (!matchedMerchant && lines.length > 0) {
+            for (let i = 0; i < Math.min(lines.length, 5); i++) {
+                const line = lines[i];
+                const scMatch = line.match(/(?:S\.?C\.?\s+)?([A-Z0-9\s.-]{3,35})\s+(?:S\.?R\.?L\.?|S\.?A\.?|S\.?C\.?S\.?)/i);
+                if (scMatch && scMatch[1]) {
+                    const cleanName = scMatch[1].trim();
+                    if (cleanName.length >= 3 && !/^(BON|FISCAL|CUI|CIF|DATA|CASA|FACTURA)/i.test(cleanName)) {
+                        matchedMerchant = {
+                            name: cleanName,
+                            domain: isUtilityInvoice ? 'utilities' : 'general',
+                            catGuess: isUtilityInvoice ? 'Facturi' : 'Cumpărături',
+                            color: '#2563eb',
+                            logo: isUtilityInvoice ? '📄' : '🏬'
+                        };
+                        break;
+                    }
+                }
+            }
+
+            if (!matchedMerchant) {
+                const firstValidLine = lines.find(l => l.length >= 3 && l.length <= 32 && !/^(BON|FISCAL|CUI|CIF|STR\.|TEL|DATA|\d+)/i.test(l));
+                if (firstValidLine) {
+                    matchedMerchant = {
+                        name: firstValidLine.slice(0, 28),
+                        domain: isUtilityInvoice ? 'utilities' : 'general',
+                        catGuess: isUtilityInvoice ? 'Facturi' : 'Cumpărături',
+                        color: '#2563eb',
+                        logo: isUtilityInvoice ? '📄' : '🧾'
+                    };
+                }
+            }
+        }
+
+        // 7. Metodă de plată (implicit Card, Cash dacă se detectează chitanță/numerar)
+        if (/(?:NUMERAR|CASH|REST\s*DAT|REST\s*NUMERAR|CHITANTA\s*NUMERAR)/i.test(rawToScan)) {
             account = 'cash';
-        } else if (/(?:CARD|MASTERCARD|VISA|POS|CONTACTLESS|TRANZACTIE\s*APROBATA|CHITANTA\s*POS|DEBIT|CREDIT|CARD\s*BANCAR)/i.test(rawToScan)) {
+        } else if (/(?:CARD|MASTERCARD|VISA|POS|CONTACTLESS|TRANZACTIE\s*APROBATA|DEBIT|CREDIT|CARD\s*BANCAR)/i.test(rawToScan)) {
             account = 'card';
         }
 
-        // E. Extragere Dată din text
+        // 8. Extragere Dată Emiterii / Document
         const dateMatch = rawToScan.match(/\b(0[1-9]|[12][0-9]|3[01])[.\/-](0[1-9]|1[0-2])[.\/-](20\d\d|\d\d)\b/);
         if (dateMatch) {
             let day = dateMatch[1];
@@ -12200,8 +12236,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // F. Notiță descriptivă
-        if (matchedMerchant) {
+        // 9. Notiță descriptivă inteligentă
+        if (isUtilityInvoice) {
+            const providerName = matchedMerchant ? matchedMerchant.name : 'Factură utilități';
+            let invDetails = [];
+            if (invoiceNumber) invDetails.push(`nr. ${invoiceNumber}`);
+            if (dueDate) invDetails.push(`scad. ${dueDate}`);
+            note = `Factură: ${providerName}${invDetails.length > 0 ? ' (' + invDetails.join(', ') + ')' : ''}`;
+        } else if (matchedMerchant) {
             note = `Bon: ${matchedMerchant.name}`;
         } else if (lines.length > 0) {
             note = `Bon: ${lines[0].slice(0, 25)}`;
@@ -12209,16 +12251,16 @@ document.addEventListener('DOMContentLoaded', () => {
             note = 'Bon scanat';
         }
 
-        // G. Dacă nu s-a putut extrage nici magazinul și nici suma, returnăm null
         if (!matchedMerchant && (!amount || amount <= 0)) {
             return null;
         }
 
-        const matchedCategory = findBestMatchingCategory(matchedMerchant);
+        const matchedCategory = findBestMatchingCategory(matchedMerchant, isUtilityInvoice);
 
         return {
-            merchant: matchedMerchant || { name: 'Comerciant Bon', logo: '🧾', color: '#2563eb' },
+            merchant: matchedMerchant || { name: isUtilityInvoice ? 'Factură' : 'Comerciant Bon', logo: isUtilityInvoice ? '📄' : '🧾', color: '#2563eb' },
             amount: (amount && amount > 0) ? amount.toFixed(2) : '0.00',
+            hasExplicitSum: hasExplicitSum,
             account: account,
             date: date,
             category: matchedCategory,
@@ -12227,7 +12269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function findBestMatchingCategory(merchantObj) {
+    function findBestMatchingCategory(merchantObj, isUtilityInvoice = false) {
         const database = appData || { categories: DEFAULT_CATEGORIES };
         if (!merchantObj || !database.categories || database.categories.length === 0) {
             return (database && database.categories && database.categories[0]) || DEFAULT_CATEGORIES[0];
@@ -12285,10 +12327,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (found) return found;
         }
 
-        if (domain === 'tech' || domain === 'shopping' || domain === 'fashion' || domain === 'sport') {
+        if (isUtilityInvoice) {
             found = database.categories.find(c => {
                 const cName = (c.name || '').toLowerCase();
-                return cName.includes('cumpărături') || cName.includes('cumparaturi') || cName.includes('haine') || cName.includes('sport') || cName.includes('electronice') || cName.includes('shopping');
+                return cName.includes('factur') || cName.includes('utilit') || cName.includes('energie') || cName.includes('curent') || cName.includes('gaz') || cName.includes('apa');
             });
             if (found) return found;
         }
