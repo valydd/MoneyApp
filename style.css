@@ -4919,11 +4919,31 @@ body.dark-theme .tx-secondary-val {
     max-height: 100vh;
     border-radius: 0;
     margin: 0;
-    padding: 14px 16px;
+    padding: 10px 10px 14px 10px;
     display: flex;
     flex-direction: column;
     border: none;
     box-sizing: border-box;
+    overflow-x: hidden !important;
+}
+
+#modalBillsAnalytics,
+#modalBillsAnalytics * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#modalBillsAnalytics {
+    overflow-x: hidden !important;
+}
+
+#modalBillsAnalytics .bills-content-scroll {
+    overflow-y: auto;
+    overflow-x: hidden !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex: 1;
 }
 
 @media (min-width: 600px) {
@@ -4942,6 +4962,7 @@ body.dark-theme .tx-secondary-val {
         border-radius: var(--radius-lg);
         margin: auto;
         border: 1px solid var(--border-color);
+        padding: 14px 16px;
     }
 }
 
