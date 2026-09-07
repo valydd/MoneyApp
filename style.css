@@ -843,7 +843,7 @@ body.dark-theme .tab-btn.active svg {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12));
     border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: var(--radius-md);
-    padding: 16px 12px 14px 12px;
+    padding: 8px 12px 14px 12px;
     margin-bottom: 4px;
     text-align: center;
     position: relative;
@@ -1152,6 +1152,7 @@ body.light-theme .btn-bal-summary {
     display: flex !important;
     justify-content: flex-end !important;
     align-items: center !important;
+    padding-right: 3px !important;
 }
 
 .overview-chart-box .section-title,
@@ -3716,7 +3717,7 @@ body.dark-theme .tx-secondary-val {
     }
 
     .balance-card {
-        padding: 15px 12px 13px 12px !important;
+        padding: 8px 12px 13px 12px !important;
         margin-bottom: 4px !important;
         border-radius: 12px;
     }
@@ -3950,7 +3951,7 @@ body.dark-theme .tx-secondary-val {
     }
 
     .balance-card {
-        padding: 14px 18px !important;
+        padding: 8px 18px 14px 18px !important;
         border-radius: var(--radius-md) !important;
     }
 
@@ -4663,9 +4664,10 @@ body.dark-theme .tx-secondary-val {
    MODAL EXPORT: 4 Optiuni pe un singur rand, fereastra mai lunga
    ========================================================================== */
 .export-modal-box {
-    max-width: 520px !important;
-    width: 95% !important;
-    max-height: 88vh !important;
+    max-width: 540px !important;
+    width: 96% !important;
+    height: 88vh !important;
+    max-height: 94vh !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 14px 12px 14px 12px !important;
@@ -4676,16 +4678,18 @@ body.dark-theme .tx-secondary-val {
     margin: 8px 0 10px 0 !important;
     display: flex !important;
     flex-direction: column !important;
+    min-height: 0 !important;
 }
 
 .export-textarea {
     width: 100% !important;
-    height: 380px !important;
-    min-height: 280px !important;
-    max-height: 60vh !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 380px !important;
+    max-height: none !important;
     font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-    font-size: 0.74rem;
-    line-height: 1.48;
+    font-size: 0.76rem;
+    line-height: 1.5;
     padding: 10px 12px;
     border: 1.5px solid var(--border-color);
     border-radius: var(--radius-md);
