@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=394">
+    <link rel="stylesheet" href="style.css?v=395">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.58</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.59</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -220,19 +220,27 @@
         <!-- TAB 2: TRANZACTII (ISTORIC) -->
         <section id="tab-transactions" class="tab-content">
             <div class="card-section">
-                <!-- Randul 1: Titlu Istoric Tranzacții -->
+                <!-- Randul 1: Titlu Istoric Tranzacții + Căutare după descriere în același rând -->
                 <div class="section-header tx-section-header">
                     <div class="section-title" data-i18n="history_title">Istoric Tranzacții</div>
-                </div>
-
-                <!-- Randul 2: Căutare după descriere (stânga) + Casetă Total Bonuri Căutate (dreapta) -->
-                <div class="tx-search-total-row">
                     <div class="tx-search-input-wrap">
                         <input type="text" class="form-control" id="searchTxInput" data-i18n-placeholder="search_placeholder" placeholder="Caută după descriere...">
                     </div>
-                    <div class="tx-search-total-box" id="txSearchTotalBox" title="Totalul sumelor tranzacțiilor afișate">
-                        <span class="tx-search-total-label">Total:</span>
-                        <span class="tx-search-total-val" id="txSearchTotalVal">0,00 RON</span>
+                </div>
+
+                <!-- Randul 2: Total Cheltuit (C) și Total Venit (V) -->
+                <div class="tx-totals-summary-row">
+                    <div class="tx-total-box tx-total-box-expense" title="Total Cheltuieli afișate">
+                        <span class="tx-total-label label-expense">C:</span>
+                        <span class="tx-total-val val-expense" id="txTotalExpenseVal">
+                            <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
+                        </span>
+                    </div>
+                    <div class="tx-total-box tx-total-box-income" title="Total Venituri afișate">
+                        <span class="tx-total-label label-income">V:</span>
+                        <span class="tx-total-val val-income" id="txTotalIncomeVal">
+                            <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
+                        </span>
                     </div>
                 </div>
 
@@ -1042,9 +1050,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.58.apk" download="MoneyApp_v3.3.58.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.59.apk" download="MoneyApp_v3.3.59.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.58.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.59.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1752,9 +1760,10 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=394"></script>
+    <script src="app.js?v=395"></script>
 </body>
 </html>
+
 
 
 

@@ -1,9 +1,9 @@
-const CACHE_NAME = 'moneyapp-v394';
+const CACHE_NAME = 'moneyapp-v395';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=394',
-  './app.js?v=394',
+  './style.css?v=395',
+  './app.js?v=395',
   './chart.min.js',
   './chartjs-plugin-datalabels.min.js',
   './qrcode.min.js',
