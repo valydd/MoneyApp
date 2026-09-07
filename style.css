@@ -1568,6 +1568,14 @@ body.dark-theme .chart-center-curr {
     z-index: 1050;
 }
 
+#modalCategoryForm, #modalMerchantCatConfig {
+    z-index: 1100;
+}
+
+#modalReceiptScanner {
+    z-index: 2200;
+}
+
 .bills-legend-square-card:active {
     transform: scale(0.96);
 }
