@@ -1187,14 +1187,14 @@ body.light-theme .btn-bal-summary {
     color: var(--text-muted) !important;
 }
 
-/* Butonul Export Categorii de deasupra graficului - identic cu butoanele din Fond Disponibil, putin mai lat */
+/* Butonul Export Categorii de deasupra graficului - nuante de gri deschis */
 .btn-chart-export-summary {
     width: 36px;
     height: 24px;
     border-radius: 5px;
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.32) 0%, rgba(59, 130, 246, 0.03) 100%);
-    border: none;
-    border-top: 1px solid #3b82f6;
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.22) 0%, rgba(148, 163, 184, 0.03) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid #94a3b8;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1207,16 +1207,16 @@ body.light-theme .btn-bal-summary {
 }
 
 body.light-theme .btn-chart-export-summary {
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.20) 0%, rgba(37, 99, 235, 0.02) 100%);
-    border: none;
-    border-top: 1px solid #2563eb;
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.24) 0%, rgba(148, 163, 184, 0.03) 100%);
+    border: 1px solid #e2e8f0;
+    border-top: 1px solid #94a3b8;
     box-shadow: none;
 }
 
 .btn-chart-export-summary svg {
     width: 12px;
     height: 12px;
-    fill: #94a3b8;
+    fill: #cbd5e1;
     transition: transform 0.15s ease;
 }
 
