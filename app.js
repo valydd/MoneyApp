@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.39";
+const APP_VERSION = "3.3.40";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.39.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.40.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -474,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.39.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.40.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -742,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.39.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.40.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1000,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.39.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.40.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1260,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.39.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.40.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1521,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.39.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.40.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -6792,8 +6792,20 @@ const BILL_TYPES = [
     }
 ];
 
+function isBillCategory(catId) {
+    if (!catId) return false;
+    if (catId === 'cat-2') return true;
+    const cat = appData.categories.find(c => c.id === catId);
+    if (!cat) return false;
+    const catName = normalizeDiacritics(cat.name || '').toLowerCase();
+    return catName.includes('factur') || catName.includes('utilitat') || catName.includes('intretinere') || catName.includes('abonament');
+}
+
 function classifyBillTransaction(tx) {
     if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return null;
+
+    // Se iau în considerare exclusiv tranzacțiile din categoria de Facturi & Utilități
+    if (!isBillCategory(tx.categoryId)) return null;
 
     const cat = appData.categories.find(c => c.id === tx.categoryId);
     const catName = cat ? normalizeDiacritics(cat.name || '').toLowerCase() : '';
@@ -6802,8 +6814,6 @@ function classifyBillTransaction(tx) {
     const merchantName = normalizeDiacritics(mc.merchant || '').toLowerCase();
     const comment = normalizeDiacritics(mc.comment || '').toLowerCase();
     const combined = `${catName} ${desc} ${merchantName} ${comment}`;
-
-    const isBillsCategory = catName.includes('factur') || catName.includes('utilitat') || catName.includes('intretinere') || (cat && cat.id === 'cat-2');
 
     // Căutare în fiecare tip de factură specific
     for (const bType of BILL_TYPES) {
@@ -6816,12 +6826,7 @@ function classifyBillTransaction(tx) {
         }
     }
 
-    // Dacă este în categoria de facturi sau descrierea/comentariul conține cuvinte cheie generale de facturi
-    if (isBillsCategory || combined.includes('factur') || combined.includes('utilitat') || combined.includes('abonament')) {
-        return BILL_TYPES.find(b => b.key === 'other_bills');
-    }
-
-    return null;
+    return BILL_TYPES.find(b => b.key === 'other_bills') || BILL_TYPES[BILL_TYPES.length - 1];
 }
 
 function isBillTransaction(tx) {
@@ -7015,10 +7020,10 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
     const curYear = selectedYear || new Date().getFullYear();
     const monthNames = I18N_DICTIONARY[lang]?.monthsShort || I18N_DICTIONARY['ro'].monthsShort;
 
-    // Matrice [tip_factura][luna 0..11]
+    // Matrice [tip_factura][luna 0..11] - inițializată cu null pentru a uni punctele direct fără cădere la 0
     const monthlyTypeSumsRon = {};
     BILL_TYPES.forEach(bt => {
-        monthlyTypeSumsRon[bt.key] = new Array(12).fill(0);
+        monthlyTypeSumsRon[bt.key] = new Array(12).fill(null);
     });
 
     appData.transactions.forEach(t => {
@@ -7028,7 +7033,7 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
             const bType = classifyBillTransaction(t);
             if (bType && monthlyTypeSumsRon[bType.key]) {
                 const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-                monthlyTypeSumsRon[bType.key][m - 1] += amtRon;
+                monthlyTypeSumsRon[bType.key][m - 1] = (monthlyTypeSumsRon[bType.key][m - 1] || 0) + amtRon;
             }
         }
     });
@@ -7037,22 +7042,23 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
     const activeDatasets = [];
     BILL_TYPES.forEach(bt => {
         const arrRon = monthlyTypeSumsRon[bt.key];
-        const hasData = arrRon.some(v => v > 0);
+        const hasData = arrRon.some(v => v !== null && v > 0);
         if (hasData) {
-            const arrDisp = arrRon.map(v => convertFromRon(v, mainCurr));
+            const arrDisp = arrRon.map(v => v !== null ? convertFromRon(v, mainCurr) : null);
             activeDatasets.push({
                 label: bt.name,
                 data: arrDisp,
                 borderColor: bt.color,
                 backgroundColor: bt.color + '22',
-                borderWidth: 2.8,
+                borderWidth: 3,
                 pointBackgroundColor: bt.color,
                 pointBorderColor: '#ffffff',
-                pointBorderWidth: 1.5,
-                pointRadius: 3.5,
-                pointHoverRadius: 6,
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
                 fill: false,
-                tension: 0.35
+                tension: 0.25,
+                spanGaps: true
             });
         }
     });
@@ -7093,7 +7099,7 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
             labels: monthNames,
             datasets: activeDatasets.length > 0 ? activeDatasets : [{
                 label: lang === 'ro' ? 'Facturi' : 'Bills',
-                data: new Array(12).fill(0),
+                data: new Array(12).fill(null),
                 borderColor: '#64748b',
                 borderWidth: 2,
                 pointRadius: 0
@@ -7103,7 +7109,7 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
             responsive: true,
             maintainAspectRatio: false,
             interaction: {
-                mode: 'index',
+                mode: 'nearest',
                 intersect: false
             },
             scales: {
@@ -7112,11 +7118,12 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
                     ticks: { color: 'var(--text-muted)', font: { size: 10 } }
                 },
                 y: {
+                    beginAtZero: false,
                     grid: { color: 'rgba(148, 163, 184, 0.12)' },
                     ticks: {
                         color: 'var(--text-muted)',
                         font: { size: 10 },
-                        callback: (v) => v + ' ' + mainCurr
+                        callback: (v) => (v !== null && v !== undefined) ? v + ' ' + mainCurr : ''
                     }
                 }
             },
@@ -7124,7 +7131,10 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.raw, mainCurr)}`
+                        label: (ctx) => {
+                            if (ctx.raw === null || ctx.raw === undefined) return '';
+                            return ` ${ctx.dataset.label}: ${formatMoney(ctx.raw, mainCurr)}`;
+                        }
                     }
                 },
                 datalabels: { display: false }
@@ -7257,28 +7267,29 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
         row.style.display = 'flex';
         row.style.justifyContent = 'space-between';
         row.style.alignItems = 'center';
+        row.style.gap = '8px';
 
         row.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
                 <div style="width: 30px; height: 30px; border-radius: 7px; background: ${bt.color}18; border: 1px solid ${bt.color}40; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; flex-shrink: 0;">
                     ${bt.icon}
                 </div>
-                <div style="min-width: 0;">
+                <div style="min-width: 0; flex: 1;">
                     <div style="font-weight: 700; font-size: 0.84rem; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${escapeHtml(nameText)}
                     </div>
-                    <div style="font-size: 0.68rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 1px;">
+                    <div style="font-size: 0.68rem; color: var(--text-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 1px;">
                         <span>📅 ${formatDateDisplay(tx.date)}</span>
                         <span>•</span>
                         <span style="color: ${bt.color}; font-weight: 600;">${escapeHtml(bt.name.replace(/^[^\w\s]+/, '').trim())}</span>
                         <span>•</span>
                         <span>${payMethod}</span>
                     </div>
-                    ${commentText ? `<div style="font-size: 0.66rem; color: var(--text-dim); margin-top: 2px;">💬 ${escapeHtml(commentText)}</div>` : ''}
+                    ${commentText ? `<div style="font-size: 0.66rem; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">💬 ${escapeHtml(commentText)}</div>` : ''}
                 </div>
             </div>
-            <div style="text-align: right; flex-shrink: 0; margin-left: 8px;">
-                <span class="expense-color" style="font-weight: 800; font-size: 0.90rem;">-${amtDisp}</span>
+            <div style="text-align: right; flex-shrink: 0; margin-left: auto;">
+                <span class="expense-color" style="font-weight: 800; font-size: 0.90rem; white-space: nowrap;">-${amtDisp}</span>
             </div>
         `;
 

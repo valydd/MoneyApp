@@ -5665,13 +5665,6 @@ body.dark-theme .tx-secondary-val {
 }
 
 /* Facturi & Utilități Modal & Componente */
-#modalBillsAnalytics .modal-box {
-    max-width: 520px;
-    max-height: 92vh;
-    display: flex;
-    flex-direction: column;
-}
-
 .bills-breakdown-card:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
