@@ -731,10 +731,10 @@ body.dark-theme .app-version-badge {
     fill: currentColor;
 }
 
-/* Navigation Tabs: 4 butoane distincte, cu redimensionare dinamica activ/inactiv */
+/* Navigation Tabs: 3 butoane distincte ocupand tot randul */
 .nav-tabs {
     display: flex !important;
-    gap: 4px; /* Distanta clara intre butoane sa fie distincte si sa nu se atinga */
+    gap: 6px; /* Distanta clara intre cele 3 butoane */
     margin-bottom: 6px;
     margin-top: 2px;
     background: transparent !important;
@@ -744,47 +744,45 @@ body.dark-theme .app-version-badge {
     box-sizing: border-box;
 }
 
-/* Butoanele INACTIVE: mai compacte, font mai mic sa incapa cuvinte lungi precum Transactions / Statistics */
+/* Butoanele INACTIVE: se intind pe tot randul ocupand locul liber ramas */
 .tab-btn {
-    flex: 0.88 1 0;
+    flex: 1 1 0;
     min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    padding: 5px 2px;
-    font-size: 0.63rem;
-    letter-spacing: -0.3px;
-    font-weight: 500;
+    gap: 4px;
+    padding: 6px 4px;
+    font-size: 0.74rem;
+    letter-spacing: -0.2px;
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: clip;
-    /* Fiecare buton are contur fin si fundal propriu distinct */
     border: 1px solid var(--border-color) !important;
     background: var(--card-bg) !important;
     color: var(--text-muted);
-    border-radius: 7px !important;
+    border-radius: 8px !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     cursor: pointer;
     transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-btn svg {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     fill: currentColor;
     flex-shrink: 0;
     transition: transform 0.2s ease;
 }
 
-/* Butonul ACTIV: ramane la marimea standard mai mare, cu nume mai mare si stil fin business */
+/* Butonul ACTIV: evidentiat cu stil fin business */
 .tab-btn.active {
-    flex: 1.38 1 0;
-    padding: 5px 5px;
-    font-size: 0.75rem;
+    flex: 1.22 1 0;
+    padding: 6px 8px;
+    font-size: 0.79rem;
     font-weight: 700;
     letter-spacing: -0.15px;
-    /* Culoare fin business: albastru/indigo business nobil cu contur fin */
     background: #f8fafc !important;
     color: #1d4ed8 !important;
     border: 1.5px solid #2563eb !important;
@@ -792,8 +790,8 @@ body.dark-theme .app-version-badge {
 }
 
 .tab-btn.active svg {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
     fill: #1d4ed8 !important;
 }
 
@@ -1139,6 +1137,7 @@ body.light-theme .btn-bal-summary {
 
 .overview-chart-box .section-title,
 .overview-chart-box .section-title-btn,
+.overview-chart-box #btnNavToCategories,
 .section-title-btn {
     font-size: 0.68rem !important;
     font-weight: 800 !important;
@@ -1159,12 +1158,58 @@ body.light-theme .btn-bal-summary {
     line-height: 1;
 }
 
-.overview-chart-box .section-title-btn span {
+.overview-chart-box .section-title-btn span,
+.overview-chart-box #btnNavToCategories span {
     font-size: 0.68rem !important;
     font-weight: 800 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     color: var(--text-muted) !important;
+}
+
+/* Butonul Export Categorii de deasupra graficului - identic cu butoanele din Fond Disponibil */
+.btn-chart-export-summary {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.02) 100%);
+    border: none;
+    border-top: 1.5px solid #3b82f6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+    flex-shrink: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+body.light-theme .btn-chart-export-summary {
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.02) 100%);
+    border: none;
+    border-top: 1.5px solid #2563eb;
+    box-shadow: none;
+}
+
+.btn-chart-export-summary svg {
+    width: 12px;
+    height: 12px;
+    fill: #3b82f6;
+    transition: transform 0.15s ease;
+}
+
+body.light-theme .btn-chart-export-summary svg {
+    fill: #2563eb;
+}
+
+.btn-chart-export-summary:hover svg {
+    transform: translateY(1px);
+}
+
+.btn-chart-export-summary:active {
+    transform: scale(0.92);
 }
 
 .overview-chart-box #btnOpenOverviewPeriod {
@@ -1186,12 +1231,19 @@ body.light-theme .btn-bal-summary {
     color: var(--text-muted) !important;
 }
 
-.section-title-btn:hover {
+.section-title-btn:hover,
+.overview-chart-box #btnNavToCategories:hover {
     background: var(--input-bg);
     color: var(--accent) !important;
 }
 
-.section-title-btn:active {
+.section-title-btn:hover span,
+.overview-chart-box #btnNavToCategories:hover span {
+    color: var(--accent) !important;
+}
+
+.section-title-btn:active,
+.overview-chart-box #btnNavToCategories:active {
     transform: scale(0.97);
 }
 
@@ -3580,31 +3632,31 @@ body.dark-theme .tx-secondary-val {
     .nav-tabs {
         margin-bottom: 6px;
         padding: 0;
-        gap: 3.5px;
+        gap: 4px;
         width: 100%;
         box-sizing: border-box;
     }
 
     .tab-btn {
-        flex: 0.88 1 0;
+        flex: 1 1 0;
         min-width: 0;
-        padding: 5px 1px;
-        font-size: 0.61rem;
-        letter-spacing: -0.35px;
-        gap: 2px;
-        border-radius: 7px !important;
+        padding: 5px 2px;
+        font-size: 0.69rem;
+        letter-spacing: -0.25px;
+        gap: 3px;
+        border-radius: 8px !important;
     }
 
     .tab-btn svg {
-        width: 9.5px;
-        height: 9.5px;
+        width: 10.5px;
+        height: 10.5px;
         flex-shrink: 0;
     }
 
     .tab-btn.active {
-        flex: 1.38 1 0;
+        flex: 1.22 1 0;
+        font-size: 0.75rem;
         padding: 5px 4px;
-        font-size: 0.73rem;
         letter-spacing: -0.15px;
     }
 
