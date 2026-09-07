@@ -914,7 +914,7 @@ body.light-theme .balance-title-converted {
     border-radius: 5px;
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.02) 100%);
     border: none;
-    border-top: 1.5px solid #3b82f6;
+    border-top: 1px solid #3b82f6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -929,7 +929,7 @@ body.light-theme .balance-title-converted {
 body.light-theme .btn-bal-summary {
     background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.02) 100%);
     border: none;
-    border-top: 1.5px solid #2563eb;
+    border-top: 1px solid #2563eb;
     box-shadow: none;
 }
 
@@ -1187,14 +1187,14 @@ body.light-theme .btn-bal-summary {
     color: var(--text-muted) !important;
 }
 
-/* Butonul Export Categorii de deasupra graficului - identic cu butoanele din Fond Disponibil */
+/* Butonul Export Categorii de deasupra graficului - identic cu butoanele din Fond Disponibil, putin mai lat */
 .btn-chart-export-summary {
-    width: 24px;
+    width: 36px;
     height: 24px;
     border-radius: 5px;
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.02) 100%);
     border: none;
-    border-top: 1.5px solid #3b82f6;
+    border-top: 1px solid #3b82f6;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1209,7 +1209,7 @@ body.light-theme .btn-bal-summary {
 body.light-theme .btn-chart-export-summary {
     background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.02) 100%);
     border: none;
-    border-top: 1.5px solid #2563eb;
+    border-top: 1px solid #2563eb;
     box-shadow: none;
 }
 
@@ -5232,12 +5232,22 @@ body.dark-theme .tx-secondary-val {
 
 .source-box.source-card {
     border-top: 1px solid #2563eb;
-    background: rgba(37, 99, 235, 0.04);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0.02) 100%);
+}
+
+body.light-theme .source-box.source-card {
+    border-top: 1px solid #2563eb;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.16) 0%, rgba(37, 99, 235, 0.01) 100%);
 }
 
 .source-box.source-cash {
     border-top: 1px solid #10b981;
-    background: rgba(16, 185, 129, 0.04);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.22) 0%, rgba(16, 185, 129, 0.02) 100%);
+}
+
+body.light-theme .source-box.source-cash {
+    border-top: 1px solid #10b981;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.01) 100%);
 }
 
 .source-badge {
