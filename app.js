@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.42";
+const APP_VERSION = "3.3.43";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.42.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.43.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -474,7 +474,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.42.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.43.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -742,7 +742,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.42.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.43.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1000,7 +1000,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.42.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.43.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1260,7 +1260,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.42.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.43.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1521,7 +1521,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.42.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.43.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -7109,13 +7109,10 @@ function renderBillsAnalytics() {
     // 3. Randare Clasament & Breakdown pe Tipuri de Facturi
     renderBillsBreakdownList(billTypeList, totalBillsSpendRon, mainCurr, lang);
 
-    // 4. Randare Comparații Lunare & Variații Consum pe Tipuri
-    renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear);
+    // 4. Diagnostic & Evaluare Creșteri / Anomalii (afișat doar dacă e cazul)
+    renderBillsDiagnostic(billTypeList, totalBillsSpendRon, mainCurr, lang, selectedYear);
 
-    // 5. Randare Soluții & Recomandări Practice de Reducere Facturi
-    renderBillsOptimizationTips(billTypeList, mainCurr, lang);
-
-    // 6. Randare Listă Tranzacții Facturi Filtrate
+    // 5. Randare Listă Tranzacții Facturi Filtrate
     renderBillsTransactionsList(billsTxs, mainCurr, lang);
 }
 
@@ -7257,17 +7254,19 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
     });
 }
 
-function renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear) {
-    const container = document.getElementById('billsComparisonList');
+function renderBillsDiagnostic(billTypeList, totalBillsSpendRon, mainCurr, lang, selectedYear) {
+    const container = document.getElementById('billsDiagnosticList');
+    const badgeEl = document.getElementById('billsDiagnosticBadge');
     if (!container) return;
     container.innerHTML = '';
 
     if (billTypeList.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.75rem;">Nu există date comparative pentru perioada selectată.</div>`;
+        if (badgeEl) badgeEl.textContent = '';
+        container.innerHTML = `<div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.75rem;">Nu există date suficiente pentru evaluare în această perioadă.</div>`;
         return;
     }
 
-    const curYear = selectedYear || new Date().getFullYear();
+    const alerts = [];
 
     billTypeList.forEach(item => {
         const bt = item.billType;
@@ -7283,8 +7282,7 @@ function renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear) {
         });
 
         const sortedMonths = Object.keys(monthlyMap).sort();
-        let diffHtml = '';
-        let trendBadge = '';
+        const sharePct = totalBillsSpendRon > 0 ? ((item.totalRon / totalBillsSpendRon) * 100) : 0;
 
         if (sortedMonths.length >= 2) {
             const latestM = sortedMonths[sortedMonths.length - 1];
@@ -7293,90 +7291,100 @@ function renderBillsComparisons(billTypeList, mainCurr, lang, selectedYear) {
             const prevAmt = monthlyMap[prevM];
             const diffRon = latestAmt - prevAmt;
             const diffPct = prevAmt > 0 ? ((diffRon / prevAmt) * 100) : 0;
-            const diffDisp = formatMoney(convertFromRon(Math.abs(diffRon), mainCurr), mainCurr);
 
-            if (diffRon > 1) {
-                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#ef4444; background:rgba(239,68,68,0.12); padding:2px 6px; border-radius:4px;">📈 +${diffPct.toFixed(1)}% (+${diffDisp})</span>`;
-                diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Consum/cost crescut în <strong>${latestM}</strong> față de <strong>${prevM}</strong>.</div>`;
-            } else if (diffRon < -1) {
-                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#10b981; background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px;">📉 -${Math.abs(diffPct).toFixed(1)}% (-${diffDisp})</span>`;
-                diffHtml = `<div style="font-size:0.70rem; color:#10b981; margin-top:2px;">Economie realizată în <strong>${latestM}</strong> față de <strong>${prevM}</strong>!</div>`;
-            } else {
-                trendBadge = `<span style="font-size:0.68rem; font-weight:800; color:#3b82f6; background:rgba(59,130,246,0.12); padding:2px 6px; border-radius:4px;">⚖️ Stabil (±0%)</span>`;
-                diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Cost constant între ultimele 2 luni înregistrate.</div>`;
+            // Detectăm creștere semnificativă (ex: >= 15% și cel puțin 20 RON)
+            if (diffPct >= 15 && diffRon >= 20) {
+                const diffDisp = formatMoney(convertFromRon(diffRon, mainCurr), mainCurr);
+                const latestDisp = formatMoney(convertFromRon(latestAmt, mainCurr), mainCurr);
+                const prevDisp = formatMoney(convertFromRon(prevAmt, mainCurr), mainCurr);
+
+                const optSolution = BILL_OPTIMIZATION_SOLUTIONS[bt.key] || BILL_OPTIMIZATION_SOLUTIONS['other_bills'];
+                const targetedTip = optSolution && optSolution.solutions && optSolution.solutions[0] ? optSolution.solutions[0] : 'Verifică dacă a existat o regularizare sau un consum sezonier ridicat.';
+
+                alerts.push({
+                    type: 'growth',
+                    severity: diffPct >= 30 ? 'high' : 'medium',
+                    billType: bt,
+                    badgeText: `⚠️ Creștere +${diffPct.toFixed(0)}% (+${diffDisp})`,
+                    badgeBg: diffPct >= 30 ? '#ef4444' : '#f59e0b',
+                    title: `${bt.name} - Creștere cost în ${latestM}`,
+                    evaluation: `Factura a urcat de la <strong>${prevDisp}</strong> (${prevM}) la <strong>${latestDisp}</strong> (${latestM}), o creștere de <strong>+${diffPct.toFixed(1)}%</strong> (+${diffDisp}).`,
+                    solution: targetedTip
+                });
             }
-        } else if (sortedMonths.length === 1) {
-            const m = sortedMonths[0];
-            const amtDisp = formatMoney(convertFromRon(monthlyMap[m], mainCurr), mainCurr);
-            trendBadge = `<span style="font-size:0.68rem; font-weight:700; color:#6366f1; background:rgba(99,102,241,0.12); padding:2px 6px; border-radius:4px;">📅 ${m}</span>`;
-            diffHtml = `<div style="font-size:0.70rem; color:var(--text-muted); margin-top:2px;">Valoare înregistrată: <strong>${amtDisp}</strong>.</div>`;
         }
 
-        const avgRon = item.count > 0 ? (item.totalRon / item.count) : 0;
-        const avgDisp = formatMoney(convertFromRon(avgRon, mainCurr), mainCurr);
-        const maxDisp = formatMoney(convertFromRon(item.highestRon, mainCurr), mainCurr);
+        // Pondere foarte mare din total (peste 35% din toate facturile) dacă nu a fost deja semnalată creștere
+        if (sharePct >= 35 && !alerts.some(a => a.billType.key === bt.key)) {
+            const totalDisp = formatMoney(convertFromRon(item.totalRon, mainCurr), mainCurr);
+            const optSolution = BILL_OPTIMIZATION_SOLUTIONS[bt.key] || BILL_OPTIMIZATION_SOLUTIONS['other_bills'];
+            const targetedTip = optSolution && optSolution.solutions && optSolution.solutions[0] ? optSolution.solutions[0] : 'Optimizează consumul de bază pentru reducerea cheltuielilor fixe.';
 
+            alerts.push({
+                type: 'share',
+                severity: 'info',
+                billType: bt,
+                badgeText: `📊 Cost Principal (${sharePct.toFixed(0)}%)`,
+                badgeBg: '#6366f1',
+                title: `${bt.name} - Pondere majoră în facturi`,
+                evaluation: `Această utilitate reprezintă <strong>${sharePct.toFixed(1)}%</strong> din totalul cheltuielilor tale cu facturile (${totalDisp}).`,
+                solution: targetedTip
+            });
+        }
+    });
+
+    if (badgeEl) {
+        if (alerts.length > 0) {
+            badgeEl.textContent = `${alerts.length} ${alerts.length === 1 ? 'situație identificată' : 'situații identificate'}`;
+            badgeEl.style.color = '#ef4444';
+        } else {
+            badgeEl.textContent = 'Consum optim';
+            badgeEl.style.color = '#10b981';
+        }
+    }
+
+    if (alerts.length === 0) {
+        // Cazul în care NU sunt creșteri sau anomalii: afișăm doar o notă scurtă pozitivă
+        container.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.35rem; flex-shrink: 0;">✅</span>
+                <div>
+                    <div style="font-weight: 800; font-size: 0.82rem; color: #10b981;">Consum & Costuri Stabile</div>
+                    <div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 1px;">Toate facturile sunt în parametri normali și constanți. Nu au fost detectate creșteri anormale de consum sau costuri excesive.</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // Afișăm exclusiv alertele / evaluările pentru utilitățile care chiar necesită atenție
+    alerts.forEach(al => {
         const card = document.createElement('div');
         card.style.background = 'var(--item-bg)';
-        card.style.border = '1px solid var(--border-color)';
+        card.style.border = al.severity === 'high' ? '1.5px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border-color)';
         card.style.borderRadius = '8px';
-        card.style.padding = '8px 10px';
+        card.style.padding = '10px 12px';
+        card.style.boxShadow = al.severity === 'high' ? '0 2px 8px rgba(239, 68, 68, 0.08)' : 'none';
 
         card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1.05rem;">${bt.icon}</span>
-                    <strong style="font-size: 0.82rem; color: var(--text-color);">${escapeHtml(bt.name)}</strong>
+                    <span style="font-size: 1.1rem;">${al.billType.icon}</span>
+                    <strong style="font-size: 0.84rem; color: var(--text-color);">${escapeHtml(al.title)}</strong>
                 </div>
-                ${trendBadge}
+                <span style="font-size: 0.68rem; font-weight: 800; color: #ffffff; background: ${al.badgeBg}; padding: 2px 7px; border-radius: 4px;">
+                    ${escapeHtml(al.badgeText)}
+                </span>
             </div>
-            ${diffHtml}
-            <div style="display: flex; gap: 10px; margin-top: 5px; font-size: 0.68rem; color: var(--text-dim); border-top: 1px dashed var(--border-color); padding-top: 4px;">
-                <span>Medie/plată: <strong>${avgDisp}</strong></span>
-                <span>•</span>
-                <span>Vârf maxim: <strong>${maxDisp}</strong></span>
-                <span>•</span>
-                <span>Total: <strong>${formatMoney(convertFromRon(item.totalRon, mainCurr), mainCurr)}</strong></span>
+            <div style="font-size: 0.72rem; color: var(--text-color); background: var(--input-bg); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; border: 1px solid var(--border-color); line-height: 1.35;">
+                <strong>📋 Evaluare:</strong> ${al.evaluation}
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; padding-left: 2px;">
+                <strong style="color: #10b981;">💡 Soluție recomandată:</strong> ${al.solution}
             </div>
         `;
 
         container.appendChild(card);
-    });
-}
-
-function renderBillsOptimizationTips(billTypeList, mainCurr, lang) {
-    const container = document.getElementById('billsOptimizationTipsList');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const activeKeys = billTypeList.map(item => item.billType.key);
-    const keysToShow = activeKeys.length > 0 ? activeKeys : ['electricity', 'gas_heating', 'water_sewerage'];
-
-    keysToShow.forEach(key => {
-        const itemConfig = BILL_OPTIMIZATION_SOLUTIONS[key] || BILL_OPTIMIZATION_SOLUTIONS['other_bills'];
-        if (!itemConfig) return;
-
-        const tipCard = document.createElement('div');
-        tipCard.style.background = 'var(--item-bg)';
-        tipCard.style.border = '1px solid var(--border-color)';
-        tipCard.style.borderRadius = '8px';
-        tipCard.style.padding = '8px 10px';
-
-        let solutionsHtml = itemConfig.solutions.map(sol => `
-            <li style="margin-bottom: 4px; line-height: 1.35;">${sol}</li>
-        `).join('');
-
-        tipCard.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                <span style="font-size: 1.05rem;">${itemConfig.icon}</span>
-                <strong style="font-size: 0.82rem; color: var(--text-color);">${escapeHtml(itemConfig.title)}</strong>
-            </div>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.72rem; color: var(--text-muted);">
-                ${solutionsHtml}
-            </ul>
-        `;
-
-        container.appendChild(tipCard);
     });
 }
 

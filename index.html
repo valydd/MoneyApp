@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=378">
+    <link rel="stylesheet" href="style.css?v=379">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.42</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.43</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -1392,32 +1392,14 @@
                     </div>
                 </div>
 
-                <!-- COMPARAȚII LUNARE & VARIAȚIE CONSUM PE TIPURI -->
-                <div class="bills-comparison-section" style="margin-bottom: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                        <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-color); display: flex; align-items: center; gap: 6px;">
-                            <span>📊</span>
-                            <span>Comparații Lunare & Variații Consum</span>
-                        </div>
+                <!-- DIAGNOSTIC INTELIGENT: EVALUARE & SOLUȚII DOAR PENTRU CREȘTERI SAU ANOMALII -->
+                <div class="bills-diagnostic-section" style="margin-bottom: 12px;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🔍 Diagnostic & Evaluare Consum</span>
+                        <span id="billsDiagnosticBadge" style="font-size: 0.68rem; font-weight: 700;"></span>
                     </div>
-                    <div style="font-size: 0.70rem; color: var(--text-muted); margin-bottom: 8px;">Diferențe de cost față de luna precedentă și medii pe fiecare utilitate</div>
-                    <div id="billsComparisonList" style="display: flex; flex-direction: column; gap: 6px;">
-                        <!-- Populate dynamically -->
-                    </div>
-                </div>
-
-                <!-- SOLUȚII & RECOMANDĂRI PRACTICE PENTRU SCĂDEREA FACTURILOR -->
-                <div class="bills-tips-section" style="margin-bottom: 12px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px 12px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;">
-                        <div style="font-size: 0.82rem; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 6px;">
-                            <span>💡</span>
-                            <span>Soluții Reducere Consum & Costuri</span>
-                        </div>
-                        <span id="billsSavingPotentialBadge" style="font-size: 0.66rem; font-weight: 800; color: #059669; background: rgba(16, 185, 129, 0.16); padding: 2px 6px; border-radius: 4px;">-15% ~ -25%</span>
-                    </div>
-                    <div style="font-size: 0.69rem; color: var(--text-muted); margin-bottom: 8px;">Recomandări concrete pentru scăderea consumului pe tipurile tale de utilități</div>
-                    <div id="billsOptimizationTipsList" style="display: flex; flex-direction: column; gap: 6px;">
-                        <!-- Populate dynamically -->
+                    <div id="billsDiagnosticList" style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Populate dynamically: generat doar dacă e cazul! -->
                     </div>
                 </div>
 
@@ -1782,6 +1764,6 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=378"></script>
+    <script src="app.js?v=379"></script>
 </body>
 </html>
