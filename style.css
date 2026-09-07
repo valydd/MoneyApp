@@ -843,8 +843,8 @@ body.dark-theme .tab-btn.active svg {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12));
     border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: var(--radius-md);
-    padding: 5px 10px 5px 10px;
-    margin-bottom: 4px;
+    padding: 9px 11px 9px 11px;
+    margin-bottom: 3px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -1017,7 +1017,7 @@ body.light-theme .btn-bal-summary {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .quick-actions .btn {
@@ -3709,8 +3709,8 @@ body.dark-theme .tx-secondary-val {
     }
 
     .quick-actions {
-        margin-bottom: 6px;
-        gap: 8px;
+        margin-bottom: 3px;
+        gap: 6px;
     }
 
     .btn {
@@ -3860,13 +3860,13 @@ body.dark-theme .tx-secondary-val {
     #tab-overview.active {
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
+        gap: 4px !important;
     }
 
     .overview-left-col {
         display: flex !important;
         flex-direction: column !important;
-        gap: 8px !important;
+        gap: 4px !important;
     }
 
     /* Lista de categorii in mod portret nu este restrictionata in inaltime, afisand toate categoriile */
