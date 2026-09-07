@@ -1126,13 +1126,32 @@ body.light-theme .btn-bal-summary {
     background: var(--item-bg) !important;
 }
 
-.overview-chart-box .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    margin-bottom: 6px;
-    gap: 8px;
+.overview-chart-box .section-header,
+.overview-donut-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    justify-content: unset !important;
+    width: 100% !important;
+    margin-bottom: 6px !important;
+}
+
+.overview-donut-header #btnNavToCategories {
+    justify-self: start !important;
+}
+
+.overview-donut-header #btnExportAllCategories,
+.overview-chart-box .btn-chart-export-summary {
+    justify-self: center !important;
+    margin: 0 auto !important;
+}
+
+.overview-donut-header .period-select-wrap {
+    justify-self: end !important;
+    text-align: right !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
 }
 
 .overview-chart-box .section-title,
@@ -1213,14 +1232,27 @@ body.light-theme .btn-chart-export-summary svg {
 }
 
 .overview-chart-box #btnOpenOverviewPeriod {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     font-size: 0.68rem !important;
     font-weight: 800 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     color: var(--text-muted) !important;
-    height: 24px;
-    padding: 0 8px;
-    line-height: 1;
+    height: auto !important;
+    padding: 2px 0 !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    cursor: pointer !important;
+    text-align: right !important;
+}
+
+.overview-chart-box #btnOpenOverviewPeriod:hover,
+.overview-chart-box #btnOpenOverviewPeriod:hover #overviewPeriodCurrentLabel {
+    color: var(--accent) !important;
 }
 
 .overview-chart-box #overviewPeriodCurrentLabel {
@@ -1229,6 +1261,7 @@ body.light-theme .btn-chart-export-summary svg {
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     color: var(--text-muted) !important;
+    text-align: right !important;
 }
 
 .section-title-btn:hover,
