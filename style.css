@@ -2736,11 +2736,11 @@ body.light-theme .tx-total-label.label-expense {
 }
 
 .tx-total-label.label-income {
-    color: #3b82f6;
+    color: #10b981;
 }
 
 body.light-theme .tx-total-label.label-income {
-    color: #2563eb;
+    color: #059669;
 }
 
 .tx-total-val {
@@ -2760,11 +2760,11 @@ body.light-theme .tx-total-val.val-expense {
 }
 
 .tx-total-val.val-income {
-    color: #3b82f6;
+    color: #10b981;
 }
 
 body.light-theme .tx-total-val.val-income {
-    color: #2563eb;
+    color: #059669;
 }
 
 .tx-total-val .bal-int {
