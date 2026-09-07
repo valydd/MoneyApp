@@ -1325,7 +1325,7 @@ body.light-theme .btn-chart-export-summary svg {
     position: relative;
     width: 100% !important;
     max-width: 100% !important;
-    height: 270px !important;
+    height: 296px !important;
     margin: 2px auto 4px auto !important;
     display: flex;
     align-items: center;
@@ -3776,7 +3776,7 @@ body.dark-theme .tx-secondary-val {
     .overview-chart-box .chart-wrapper {
         width: 100% !important;
         max-width: 100% !important;
-        height: 270px !important;
+        height: 296px !important;
         margin: 2px auto 4px auto !important;
     }
 
