@@ -4822,6 +4822,16 @@ function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {
         }
     });
 
+function getChartTextColor() {
+    const isLight = document.body.classList.contains('light-theme');
+    return isLight ? '#64748b' : '#94a3b8';
+}
+
+function getChartGridColor() {
+    const isLight = document.body.classList.contains('light-theme');
+    return isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
+}
+
     const monthsIncomeDisp = monthsIncomeRon.map(v => convertFromRon(v, mainCurr));
     const monthsExpenseDisp = monthsExpenseRon.map(v => convertFromRon(v, mainCurr));
 
@@ -4829,6 +4839,8 @@ function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {
     const canvas = document.getElementById('statsMonthlyBarChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
 
     if (monthlyBarChartInstance) {
         monthlyBarChartInstance.destroy();
@@ -4863,12 +4875,12 @@ function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { color: 'var(--text-muted)', font: { size: 10 } }
+                    ticks: { color: chartTextColor, font: { size: 10 } }
                 },
                 y: {
-                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    grid: { color: chartGridColor },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 10 },
                         callback: (v) => v + ' ' + curSymbol
                     }
@@ -5114,6 +5126,9 @@ function renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang) {
     };
     const dayLabels = dayLabelsMap[activeLang] || dayLabelsMap['ro'];
 
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
     if (statsWeekdayChartInstance) {
         statsWeekdayChartInstance.destroy();
     }
@@ -5136,12 +5151,12 @@ function renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang) {
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { color: 'var(--text-muted)', font: { size: 10 } }
+                    ticks: { color: chartTextColor, font: { size: 10 } }
                 },
                 y: {
-                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    grid: { color: chartGridColor },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 10 },
                         callback: (v) => v + ' ' + curSymbol
                     }
@@ -5246,6 +5261,9 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
     const bgColors = hourlySumsRon.map(val => (val > 0 && val === peakSumRon) ? '#f59e0b' : 'rgba(245, 158, 11, 0.55)');
     const hoverColors = hourlySumsRon.map(val => (val > 0 && val === peakSumRon) ? '#d97706' : '#f59e0b');
 
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
     if (statsHourlyChartInstance) {
         statsHourlyChartInstance.destroy();
     }
@@ -5270,7 +5288,7 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
                 x: {
                     grid: { display: false },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 9 },
                         maxRotation: 0,
                         autoSkip: true,
@@ -5278,9 +5296,9 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
                     }
                 },
                 y: {
-                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    grid: { color: chartGridColor },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 10 },
                         callback: (v) => v + ' ' + curSymbol
                     }
@@ -5365,6 +5383,9 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
     const bgColors = monthDaySumsRon.map(val => (val > 0 && val === peakSumRon) ? '#8b5cf6' : 'rgba(139, 92, 246, 0.55)');
     const hoverColors = monthDaySumsRon.map(val => (val > 0 && val === peakSumRon) ? '#7c3aed' : '#8b5cf6');
 
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
     if (statsMonthDaysChartInstance) {
         statsMonthDaysChartInstance.destroy();
     }
@@ -5389,7 +5410,7 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
                 x: {
                     grid: { display: false },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 9 },
                         maxRotation: 0,
                         autoSkip: true,
@@ -5397,9 +5418,9 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
                     }
                 },
                 y: {
-                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    grid: { color: chartGridColor },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 10 },
                         callback: (v) => v + ' ' + curSymbol
                     }
@@ -7976,6 +7997,9 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
     }
 
     const ctx = canvas.getContext('2d');
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
     if (billsTrendChartInstance) {
         try { billsTrendChartInstance.destroy(); } catch (e) {}
         billsTrendChartInstance = null;
@@ -8004,13 +8028,13 @@ function renderBillsTrendChart(mainCurr, lang, selectedYear) {
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { color: 'var(--text-muted)', font: { size: 10 } }
+                    ticks: { color: chartTextColor, font: { size: 10 } }
                 },
                 y: {
                     beginAtZero: false,
-                    grid: { color: 'rgba(148, 163, 184, 0.12)' },
+                    grid: { color: chartGridColor },
                     ticks: {
-                        color: 'var(--text-muted)',
+                        color: chartTextColor,
                         font: { size: 10 },
                         callback: (v) => (v !== null && v !== undefined) ? v + ' ' + mainCurr : ''
                     }
