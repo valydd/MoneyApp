@@ -238,6 +238,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '3 Luni',
         stat_pill_year: 'Anul Curent',
         stat_pill_all: 'Tot',
+        stat_group_income: 'Venituri & Câștiguri',
+        stat_group_expense: 'Cheltuieli & Plăți',
+        stat_group_savings: 'Economii & Rezervă',
+        stat_group_activity: 'Activitate, Magazine & Cumpărături',
         stat_income: 'Venituri',
         stat_expense: 'Cheltuieli',
         stat_daily_avg: 'Medie Plăți/zi',
@@ -512,6 +516,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '3 Months',
         stat_pill_year: 'Current Year',
         stat_pill_all: 'All Time',
+        stat_group_income: 'Income & Earnings',
+        stat_group_expense: 'Expenses & Outflows',
+        stat_group_savings: 'Savings & Reserve',
+        stat_group_activity: 'Activity, Stores & Purchases',
         stat_income: 'Income',
         stat_expense: 'Expenses',
         stat_daily_avg: 'Daily Expenses',
@@ -780,6 +788,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '3 Monate',
         stat_pill_year: 'Aktuelles Jahr',
         stat_pill_all: 'Gesamt',
+        stat_group_income: 'Einnahmen & Erträge',
+        stat_group_expense: 'Ausgaben & Zahlungen',
+        stat_group_savings: 'Ersparnisse & Rücklagen',
+        stat_group_activity: 'Aktivität, Geschäfte & Einkäufe',
         stat_income: 'Einnahmen',
         stat_expense: 'Ausgaben',
         stat_daily_avg: 'Tagesausgaben',
@@ -1043,6 +1055,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '3 Ay',
         stat_pill_year: 'Bu Yıl',
         stat_pill_all: 'Tümü',
+        stat_group_income: 'Gelirler ve Kazançlar',
+        stat_group_expense: 'Giderler ve Harcamalar',
+        stat_group_savings: 'Tasarruf ve Rezerv',
+        stat_group_activity: 'Aktivite, Mağazalar ve Alışverişler',
         stat_income: 'Gelirler',
         stat_expense: 'Giderler',
         stat_daily_avg: 'Günlük Gider',
@@ -1310,6 +1326,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '3ヶ月',
         stat_pill_year: '今年',
         stat_pill_all: 'すべて',
+        stat_group_income: '収入と収益',
+        stat_group_expense: '支出とお支払い',
+        stat_group_savings: '貯蓄と準備金',
+        stat_group_activity: 'アクティビティ・店舗・購入品',
         stat_income: '総収入',
         stat_expense: '総支出',
         stat_daily_avg: '1日平均支出',
@@ -1577,6 +1597,10 @@ const I18N_DICTIONARY = {
         stat_pill_3months: '近3个月',
         stat_pill_year: '今年',
         stat_pill_all: '全部',
+        stat_group_income: '收入与盈利',
+        stat_group_expense: '支出与付款',
+        stat_group_savings: '储蓄与储备金',
+        stat_group_activity: '活动、商户与购物明细',
         stat_income: '总收入',
         stat_expense: '总支出',
         stat_daily_avg: '日均支出',
@@ -4671,6 +4695,55 @@ function renderStatsTab() {
         }
     }
 
+    // 15. Actualizare date sintetice pe cele 5 Carduri Principale de Categorie (Expandabile)
+    const grpIncVal = document.getElementById('statGroupIncomeVal');
+    const grpIncSub = document.getElementById('statGroupIncomeSub');
+    if (grpIncVal) grpIncVal.innerHTML = formatKpiMoneyHtml(convertFromRon(totIncomeRon, mainCurr), mainCurr);
+    if (grpIncSub) {
+        const dIncDisp = convertFromRon(dailyIncomeRon, mainCurr);
+        grpIncSub.textContent = `${incomeCount} ${activeLang === 'ro' ? 'încasări' : 'income'} • ${activeLang === 'ro' ? 'Medie' : 'Avg'}: ${formatMoney(dIncDisp, mainCurr)}${dayUnit}`;
+    }
+
+    const grpExpVal = document.getElementById('statGroupExpenseVal');
+    const grpExpSub = document.getElementById('statGroupExpenseSub');
+    if (grpExpVal) grpExpVal.innerHTML = formatKpiMoneyHtml(convertFromRon(totExpenseRon, mainCurr), mainCurr);
+    if (grpExpSub) {
+        const dExpDisp = convertFromRon(dailyAvgRon, mainCurr);
+        grpExpSub.textContent = `${expenseCount} ${activeLang === 'ro' ? 'plăți' : 'payments'} • ${activeLang === 'ro' ? 'Ritm' : 'Pace'}: ${formatMoney(dExpDisp, mainCurr)}${dayUnit}`;
+    }
+
+    const grpSavVal = document.getElementById('statGroupSavingsVal');
+    const grpSavSub = document.getElementById('statGroupSavingsSub');
+    if (grpSavVal) {
+        const savDisp = convertFromRon(netSavingsRon, mainCurr);
+        grpSavVal.innerHTML = formatKpiMoneyHtml(savDisp, mainCurr);
+        grpSavVal.className = 'stats-cat-group-val ' + (netSavingsRon >= 0 ? 'income-color' : 'expense-color');
+    }
+    if (grpSavSub) {
+        const daysRunway = calculateGlobalRunwayDays();
+        const runwayText = daysRunway >= 999 ? '∞' : (daysRunway >= 60 ? `~${(daysRunway/30.4).toFixed(1)} ${activeLang === 'ro' ? 'Luni' : 'Mo'}` : `${daysRunway} ${activeLang === 'ro' ? 'zile' : 'days'}`);
+        grpSavSub.textContent = `${activeLang === 'ro' ? 'Rată' : 'Rate'}: ${savingsRate}% • ${activeLang === 'ro' ? 'Autonomie' : 'Runway'}: ${runwayText}`;
+    }
+
+    const grpBillsVal = document.getElementById('statGroupBillsVal');
+    const grpBillsSub = document.getElementById('statGroupBillsSub');
+    if (grpBillsVal) grpBillsVal.innerHTML = formatKpiMoneyHtml(convertFromRon(totBillsRon, mainCurr), mainCurr);
+    if (grpBillsSub) {
+        const billsPct = totExpenseRon > 0 ? ((totBillsRon / totExpenseRon) * 100).toFixed(1) : '0';
+        grpBillsSub.textContent = `${billsCount} ${activeLang === 'ro' ? 'facturi' : 'bills'} • ${billsPct}% ${activeLang === 'ro' ? 'din cheltuieli' : 'of spend'}`;
+    }
+
+    const grpActVal = document.getElementById('statGroupActivityVal');
+    const grpActSub = document.getElementById('statGroupActivitySub');
+    if (grpActVal) {
+        const totTx = expenseCount + incomeCount;
+        grpActVal.innerHTML = `${totTx} <span class="b-kpi-curr">${activeLang === 'ro' ? 'tranzacții' : 'tx'}</span>`;
+    }
+    if (grpActSub) {
+        const ticketDisp = convertFromRon(avgTicketRon, mainCurr);
+        grpActSub.textContent = `${activeLang === 'ro' ? 'Coș' : 'Ticket'}: ${formatMoney(ticketDisp, mainCurr)} • ${sortedStoreKeys.length} ${activeLang === 'ro' ? 'magazine' : 'stores'}`;
+    }
+
     // 3. GRAFIC 1: Distribuție pe Zilele Săptămânii (plasat deasupra Cashflow)
     renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang);
 
@@ -4686,6 +4759,13 @@ function renderStatsTab() {
     // 7. TABEL 5: Raport Sintetic P&L
     renderStatsPlTable(mainCurr, activeLang);
 }
+
+function toggleStatsCatGroup(groupId) {
+    const el = document.getElementById(groupId);
+    if (!el) return;
+    el.classList.toggle('expanded');
+}
+window.toggleStatsCatGroup = toggleStatsCatGroup;
 
 // Grafic 1: Cashflow (Venituri vs Cheltuieli)
 function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {

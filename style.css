@@ -5647,6 +5647,138 @@ body.light-theme .b-kpi-theme-activity:hover {
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.18) !important;
 }
 
+/* ==========================================================================
+   5 Carduri Principale Expandabile pe Categorii în Statistici
+   ========================================================================== */
+.stats-category-groups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.stats-cat-group-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stats-cat-group-card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.stats-cat-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    gap: 10px;
+    transition: background 0.15s ease;
+}
+
+.stats-cat-group-header:active {
+    opacity: 0.85;
+}
+
+.stats-cat-group-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.stats-cat-group-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.stats-cat-group-titles {
+    min-width: 0;
+}
+
+.stats-cat-group-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stats-cat-group-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stats-cat-group-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.stats-cat-group-val {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.stats-cat-group-chevron {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-muted);
+    transition: transform 0.25s ease, background 0.2s ease, color 0.2s ease;
+}
+
+body.light-theme .stats-cat-group-chevron {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.stats-cat-group-card.expanded .stats-cat-group-chevron {
+    transform: rotate(180deg);
+    color: var(--text-color);
+}
+
+.stats-cat-group-body {
+    display: none;
+    padding: 0 10px 10px 10px;
+    animation: fadeInCatBody 0.22s ease forwards;
+}
+
+.stats-cat-group-card.expanded .stats-cat-group-body {
+    display: block;
+}
+
+.stats-cat-group-body .business-kpi-grid {
+    margin-bottom: 0;
+}
+
+@keyframes fadeInCatBody {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Stiluri Modal Detalii KPI */
 .kpi-detail-hero {
     background: var(--input-bg);
