@@ -9294,12 +9294,16 @@ function addCustomShoppingItem(name, catId = null) {
 
     const descInput = document.getElementById('expenseDesc');
     if (descInput) {
-        descInput.value = cleanName;
+        let curItems = descInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (!curItems.some(i => i.toLowerCase() === cleanName.toLowerCase())) {
+            curItems.push(cleanName);
+        }
+        descInput.value = curItems.join(', ');
     }
 
     const activeCatId = catId || document.getElementById('selectedExpenseCategoryId')?.value;
     updateFoodMerchantsQuickPicker(activeCatId);
-    showToast(`Articolul "${cleanName}" a fost selectat!`, 'success');
+    showToast(`Articolul "${cleanName}" a fost adăugat la selecție!`, 'success');
 }
 
 // Ștergere articol de cumpărături (personalizat sau din listă)
@@ -9318,8 +9322,10 @@ function deleteCustomShoppingItem(name) {
     }
 
     const descInput = document.getElementById('expenseDesc');
-    if (descInput && descInput.value.trim().toLowerCase() === lower) {
-        descInput.value = '';
+    if (descInput && descInput.value) {
+        let curItems = descInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        curItems = curItems.filter(i => i.toLowerCase() !== lower);
+        descInput.value = curItems.join(', ');
     }
 
     saveData();
@@ -9459,16 +9465,20 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         });
     }
 
-    // 2. Randare Coloana Cumpărături / Articole (Stânga) & Buton de Ștergere
+    // 2. Randare Coloana Cumpărături / Articole (Stânga - Suport Selecție Multiplă) & Buton de Ștergere
     if (itemsListEl) {
         const descInput = document.getElementById('expenseDesc');
-        const currentDesc = descInput ? descInput.value.trim().toLowerCase() : '';
+        const getSelectedItems = () => {
+            if (!descInput || !descInput.value) return [];
+            return descInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        };
 
         itemsListEl.innerHTML = '';
         items.forEach(item => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            const isMatch = currentDesc && currentDesc === item.name.toLowerCase();
+            const selectedItems = getSelectedItems();
+            const isMatch = selectedItems.some(s => s.toLowerCase() === item.name.toLowerCase());
             btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
             btn.title = item.name;
 
@@ -9486,19 +9496,42 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
                     deleteCustomShoppingItem(item.name);
                     return;
                 }
-                const curSel = descInput ? descInput.value.trim().toLowerCase() : '';
-                if (curSel === item.name.toLowerCase()) {
-                    if (descInput) descInput.value = '';
+                
+                let curItems = getSelectedItems();
+                const existingIdx = curItems.findIndex(s => s.toLowerCase() === item.name.toLowerCase());
+                if (existingIdx !== -1) {
+                    // Dacă era deja selectat, îl debifăm (toggle off)
+                    curItems.splice(existingIdx, 1);
                     btn.classList.remove('active');
                 } else {
-                    if (descInput) descInput.value = item.name;
-                    itemsListEl.querySelectorAll('.merchant-popover-btn').forEach(b => b.classList.remove('active'));
+                    // Dacă nu era selectat, îl adăugăm pe același bon (multi-select)
+                    curItems.push(item.name);
                     btn.classList.add('active');
+                }
+                if (descInput) {
+                    descInput.value = curItems.join(', ');
                 }
             });
 
             itemsListEl.appendChild(btn);
         });
+
+        // Sincronizare automată când utilizatorul editează manual câmpul de descriere
+        if (descInput && !descInput.dataset.multiSyncBound) {
+            descInput.dataset.multiSyncBound = 'true';
+            descInput.addEventListener('input', () => {
+                const curItems = descInput.value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+                itemsListEl.querySelectorAll('.merchant-popover-btn').forEach(btn => {
+                    const nameSpan = btn.querySelector('.merchant-btn-name span:last-child');
+                    const btnName = nameSpan ? nameSpan.textContent.trim().toLowerCase() : '';
+                    if (btnName && curItems.includes(btnName)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            });
+        }
     }
 
     // 3. Legare buton deschidere adaugare articol (Stânga Jos)
