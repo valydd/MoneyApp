@@ -2378,6 +2378,26 @@ function applyTheme(theme) {
     }
 }
 
+function getChartTextColor() {
+    try {
+        if (typeof document !== 'undefined' && document.body) {
+            const isLight = document.body.classList.contains('light-theme');
+            return isLight ? '#64748b' : '#94a3b8';
+        }
+    } catch (e) {}
+    return '#94a3b8';
+}
+
+function getChartGridColor() {
+    try {
+        if (typeof document !== 'undefined' && document.body) {
+            const isLight = document.body.classList.contains('light-theme');
+            return isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
+        }
+    } catch (e) {}
+    return 'rgba(255, 255, 255, 0.08)';
+}
+
 function isTxSuspended(tx) {
     return !!(tx && (tx.isSuspended === true || tx.isSuspended === 'true' || tx.suspended === true));
 }
@@ -4821,16 +4841,6 @@ function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {
             else if (t.type === 'expense') monthsExpenseRon[mIndex] += amtRon;
         }
     });
-
-function getChartTextColor() {
-    const isLight = document.body.classList.contains('light-theme');
-    return isLight ? '#64748b' : '#94a3b8';
-}
-
-function getChartGridColor() {
-    const isLight = document.body.classList.contains('light-theme');
-    return isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.08)';
-}
 
     const monthsIncomeDisp = monthsIncomeRon.map(v => convertFromRon(v, mainCurr));
     const monthsExpenseDisp = monthsExpenseRon.map(v => convertFromRon(v, mainCurr));
