@@ -10657,7 +10657,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
                 return true;
             }
-            if (target.closest && target.closest('input, textarea, select')) {
+            if (target.closest && target.closest('input, textarea, select, .no-swipe, [data-no-swipe]')) {
                 return true;
             }
             return false;
@@ -10705,24 +10705,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Prag swipe orizontal clar: minim 35px, orizontal dominant fata de vertical, timp sub 800ms
-            if (absX < 35 || absX < absY * 1.15 || deltaTime > 800) {
+            // Detectie swipe orizontal usor si fluid:
+            // 1. Prag distanta lejera (minim 28px) si timp relaxat (pana la 1200ms)
+            // 2. Componenta orizontala dominanta (absX > absY * 0.7) pentru a tolera curbura degetului
+            // 3. Sau flick scurt si rapid (sub 350ms, absX >= 22px si absX > absY)
+            const isFlick = deltaTime < 350 && absX >= 22 && absX > absY;
+            const isStandardSwipe = absX >= 28 && absX > absY * 0.7 && deltaTime <= 1200;
+
+            if (!isFlick && !isStandardSwipe) {
                 return;
             }
 
-            const winWidth = window.innerWidth || document.documentElement.clientWidth || 360;
-            const isEdgeSwipe = touchStartX <= 42 || touchStartX >= (winWidth - 42);
-
-            // A. GEST LA MARGINEA ECRANULUI (Edge Swipe -> Inapoi la pagina anterioara / Panou / Iesire)
-            if (isEdgeSwipe) {
-                navigateBack();
-                return;
-            }
-
-            // B. GEST PE ECRAN (Screen Swipe -> Trecere intre cele 4 pagini)
+            // Daca exista un modal deschis, swipe spre dreapta il inchide
             const activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) {
-                if (deltaX > 35) {
+                if (deltaX > 28) {
                     closeModal(activeModal.id);
                 }
                 return;
@@ -10733,13 +10730,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentIndex = TABS_ORDER.indexOf(activeTabId);
             if (currentIndex === -1) return;
 
-            if (deltaX < -35) {
-                // Swipe Stanga -> Pagina urmatoare (Panou -> Tranzactii -> Statistici -> Categorii)
+            if (deltaX < 0) {
+                // Swipe Stanga (degetul merge spre stanga) -> Pagina urmatoare (Panou -> Tranzactii -> Statistici)
                 if (currentIndex < TABS_ORDER.length - 1) {
                     switchTab(TABS_ORDER[currentIndex + 1]);
                 }
-            } else if (deltaX > 35) {
-                // Swipe Dreapta -> Pagina anterioara (Categorii -> Statistici -> Tranzactii -> Panou)
+            } else if (deltaX > 0) {
+                // Swipe Dreapta (degetul merge spre dreapta) -> Pagina anterioara (Statistici -> Tranzactii -> Panou)
                 if (currentIndex > 0) {
                     switchTab(TABS_ORDER[currentIndex - 1]);
                 }
