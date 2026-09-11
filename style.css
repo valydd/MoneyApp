@@ -5520,12 +5520,131 @@ body.light-theme .source-box.source-cash {
 .b-kpi-badge-click {
     font-size: 0.72rem;
     margin-left: auto;
-    opacity: 0.6;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    opacity: 0.75;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 5px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 .b-kpi-card-clickable:hover .b-kpi-badge-click {
     opacity: 1;
-    transform: scale(1.15);
+    transform: scale(1.12);
+    background: rgba(255, 255, 255, 0.16);
+}
+
+/* Nuanțe Pale / Pastelate pentru Cardurile KPI din Statistici (Dark Mode) */
+.b-kpi-theme-income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.13), rgba(5, 150, 105, 0.05)) !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+.b-kpi-theme-income:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.08)) !important;
+    border-color: rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18) !important;
+}
+
+.b-kpi-theme-expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(220, 38, 38, 0.05)) !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+.b-kpi-theme-expense:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(220, 38, 38, 0.08)) !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18) !important;
+}
+
+.b-kpi-theme-savings {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.13), rgba(14, 165, 233, 0.05)) !important;
+    border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+.b-kpi-theme-savings:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(14, 165, 233, 0.08)) !important;
+    border-color: rgba(59, 130, 246, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.18) !important;
+}
+
+.b-kpi-theme-bills {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(217, 119, 6, 0.05)) !important;
+    border: 1px solid rgba(245, 158, 11, 0.38) !important;
+}
+.b-kpi-theme-bills:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.20), rgba(217, 119, 6, 0.09)) !important;
+    border-color: rgba(245, 158, 11, 0.65) !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18) !important;
+}
+
+.b-kpi-theme-activity {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.13), rgba(168, 85, 247, 0.05)) !important;
+    border: 1px solid rgba(139, 92, 246, 0.35) !important;
+}
+.b-kpi-theme-activity:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(168, 85, 247, 0.08)) !important;
+    border-color: rgba(139, 92, 246, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.18) !important;
+}
+
+/* Nuanțe Pale / Pastelate Deschise pentru Light Theme */
+body.light-theme .b-kpi-badge-click {
+    background: rgba(0, 0, 0, 0.06);
+}
+body.light-theme .b-kpi-card-clickable:hover .b-kpi-badge-click {
+    background: rgba(0, 0, 0, 0.12);
+}
+
+body.light-theme .b-kpi-theme-income {
+    background: linear-gradient(135deg, #e6f9f0, #f2fbf7) !important;
+    border: 1px solid #a7f3d0 !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08) !important;
+}
+body.light-theme .b-kpi-theme-income:hover {
+    background: linear-gradient(135deg, #d1fae5, #ecfdf5) !important;
+    border-color: #6ee7b7 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18) !important;
+}
+
+body.light-theme .b-kpi-theme-expense {
+    background: linear-gradient(135deg, #fef2f2, #fff7f7) !important;
+    border: 1px solid #fecaca !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.08) !important;
+}
+body.light-theme .b-kpi-theme-expense:hover {
+    background: linear-gradient(135deg, #fee2e2, #fef2f2) !important;
+    border-color: #fca5a5 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18) !important;
+}
+
+body.light-theme .b-kpi-theme-savings {
+    background: linear-gradient(135deg, #edf5ff, #f6faff) !important;
+    border: 1px solid #bfdbfe !important;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.08) !important;
+}
+body.light-theme .b-kpi-theme-savings:hover {
+    background: linear-gradient(135deg, #dbeafe, #eff6ff) !important;
+    border-color: #93c5fd !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.18) !important;
+}
+
+body.light-theme .b-kpi-theme-bills {
+    background: linear-gradient(135deg, #fff9eb, #fffdf5) !important;
+    border: 1px solid #fde68a !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08) !important;
+}
+body.light-theme .b-kpi-theme-bills:hover {
+    background: linear-gradient(135deg, #fef3c7, #fffbeb) !important;
+    border-color: #fcd34d !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18) !important;
+}
+
+body.light-theme .b-kpi-theme-activity {
+    background: linear-gradient(135deg, #f5f3ff, #faf8ff) !important;
+    border: 1px solid #ddd6fe !important;
+    box-shadow: 0 2px 6px rgba(139, 92, 246, 0.08) !important;
+}
+body.light-theme .b-kpi-theme-activity:hover {
+    background: linear-gradient(135deg, #ede9fe, #f5f3ff) !important;
+    border-color: #c4b5fd !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.18) !important;
 }
 
 /* Stiluri Modal Detalii KPI */

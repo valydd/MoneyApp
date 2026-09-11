@@ -308,8 +308,8 @@
 
                 <!-- 6 Carduri KPI Financiare Executive -->
                 <div class="business-kpi-grid">
-                    <!-- 1. Venituri -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatIncome" role="button" tabindex="0" title="Apasă pentru detalii complete despre venituri și surse de încasare">
+                    <!-- 1. Venituri (Grup Venituri - Verde Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-income" id="cardStatIncome" role="button" tabindex="0" title="Apasă pentru detalii complete despre venituri și surse de încasare">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">📈</span>
                             <span class="b-kpi-label" data-i18n="stat_income">Venituri</span>
@@ -319,8 +319,8 @@
                         <div class="b-kpi-sub" id="statKpiIncomeSub">Încasări totale</div>
                     </div>
 
-                    <!-- 2. Cheltuieli -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatExpense" role="button" tabindex="0" title="Apasă pentru detalii complete despre cheltuieli și plăți">
+                    <!-- 2. Cheltuieli (Grup Cheltuieli - Roșu Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-expense" id="cardStatExpense" role="button" tabindex="0" title="Apasă pentru detalii complete despre cheltuieli și plăți">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">📉</span>
                             <span class="b-kpi-label" data-i18n="stat_expense">Cheltuieli</span>
@@ -330,8 +330,52 @@
                         <div class="b-kpi-sub" id="statKpiExpenseSub">Total plăți</div>
                     </div>
 
-                    <!-- 3. Economii Nete -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatSavings" role="button" tabindex="0" title="Apasă pentru bilanț și diagnostic financiar">
+                    <!-- 3. Medie Venit/zi (Grup Venituri - Verde Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-income" id="cardStatDailyIncome" role="button" tabindex="0" title="Apasă pentru ritmul zilnic de câștig și proiecții">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">💰</span>
+                            <span class="b-kpi-label" data-i18n="stat_daily_income">Medie Venit/zi</span>
+                            <span class="b-kpi-badge-click" title="Detalii">💰</span>
+                        </div>
+                        <div class="b-kpi-value income-color" id="statKpiDailyIncome">0 RON/zi</div>
+                        <div class="b-kpi-sub" data-i18n="stat_income_pace">Ritm de câștig</div>
+                    </div>
+
+                    <!-- 4. Medie Cheltuieli/zi (Grup Cheltuieli - Roșu Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-expense" id="cardStatDailyAvg" role="button" tabindex="0" title="Apasă pentru analiza ritmului zilnic de cheltuire">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">⏱️</span>
+                            <span class="b-kpi-label" data-i18n="stat_daily_avg">Medie Plăți/zi</span>
+                            <span class="b-kpi-badge-click" title="Detalii">⏱️</span>
+                        </div>
+                        <div class="b-kpi-value" id="statKpiDailyAvg">0 RON/zi</div>
+                        <div class="b-kpi-sub" data-i18n="stat_daily_sub">Ritmul de cheltuire</div>
+                    </div>
+
+                    <!-- 5. Vârf Încasare (Grup Venituri - Verde Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-income" id="cardStatPeakInc" role="button" tabindex="0" title="Apasă pentru topul celor mai mari încasări">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">🌟</span>
+                            <span class="b-kpi-label" data-i18n="stat_peak_inc">Vârf Încasare</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🌟</span>
+                        </div>
+                        <div class="b-kpi-value income-color" id="statKpiPeakIncomeVal">0 RON</div>
+                        <div class="b-kpi-sub" id="statKpiPeakIncomeDesc">-</div>
+                    </div>
+
+                    <!-- 6. Vârf Cheltuială (Grup Cheltuieli - Roșu Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-expense" id="cardStatPeakExp" role="button" tabindex="0" title="Apasă pentru topul celor mai mari cheltuieli">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">⚡</span>
+                            <span class="b-kpi-label" data-i18n="stat_peak_exp">Vârf Cheltuială</span>
+                            <span class="b-kpi-badge-click" title="Detalii">⚡</span>
+                        </div>
+                        <div class="b-kpi-value expense-color" id="statKpiPeakVal">0 RON</div>
+                        <div class="b-kpi-sub" id="statKpiPeakDesc">-</div>
+                    </div>
+
+                    <!-- 7. Economii Nete (Grup Economii & Rezervă - Albastru Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatSavings" role="button" tabindex="0" title="Apasă pentru bilanț și diagnostic financiar">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">💎</span>
                             <span class="b-kpi-label" data-i18n="net_savings">Sold Net</span>
@@ -341,8 +385,8 @@
                         <div class="b-kpi-sub" id="statKpiSavingsSub">Diferență Venit - Cheltuieli</div>
                     </div>
 
-                    <!-- 4. Rata de Economisire -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatRate" role="button" tabindex="0" title="Apasă pentru analiza ratei de economisire și scor financiar">
+                    <!-- 8. Rata de Economisire (Grup Economii & Rezervă - Albastru Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRate" role="button" tabindex="0" title="Apasă pentru analiza ratei de economisire și scor financiar">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">🎯</span>
                             <span class="b-kpi-label" data-i18n="savings_rate">Economisire</span>
@@ -354,85 +398,8 @@
                         </div>
                     </div>
 
-                    <!-- 5. Medie Cheltuieli/zi (Burn Rate) -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatDailyAvg" role="button" tabindex="0" title="Apasă pentru analiza ritmului zilnic de cheltuire">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">⏱️</span>
-                            <span class="b-kpi-label" data-i18n="stat_daily_avg">Medie Plăți/zi</span>
-                            <span class="b-kpi-badge-click" title="Detalii">⏱️</span>
-                        </div>
-                        <div class="b-kpi-value" id="statKpiDailyAvg">0 RON/zi</div>
-                        <div class="b-kpi-sub" data-i18n="stat_daily_sub">Ritmul de cheltuire</div>
-                    </div>
-
-                    <!-- 6. Cheltuiala Maxima (Peak Expense) -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatPeakExp" role="button" tabindex="0" title="Apasă pentru topul celor mai mari cheltuieli">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">⚡</span>
-                            <span class="b-kpi-label" data-i18n="stat_peak_exp">Vârf Cheltuială</span>
-                            <span class="b-kpi-badge-click" title="Detalii">⚡</span>
-                        </div>
-                        <div class="b-kpi-value expense-color" id="statKpiPeakVal">0 RON</div>
-                        <div class="b-kpi-sub" id="statKpiPeakDesc">-</div>
-                    </div>
-
-                    <!-- 7. Medie Venit/zi (Daily Income Rate) -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatDailyIncome" role="button" tabindex="0" title="Apasă pentru ritmul zilnic de câștig și proiecții">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">💰</span>
-                            <span class="b-kpi-label" data-i18n="stat_daily_income">Medie Venit/zi</span>
-                            <span class="b-kpi-badge-click" title="Detalii">💰</span>
-                        </div>
-                        <div class="b-kpi-value income-color" id="statKpiDailyIncome">0 RON/zi</div>
-                        <div class="b-kpi-sub" data-i18n="stat_income_pace">Ritm de câștig</div>
-                    </div>
-
-                    <!-- 8. Vârf Încasare (Peak Income) -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatPeakInc" role="button" tabindex="0" title="Apasă pentru topul celor mai mari încasări">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">🌟</span>
-                            <span class="b-kpi-label" data-i18n="stat_peak_inc">Vârf Încasare</span>
-                            <span class="b-kpi-badge-click" title="Detalii">🌟</span>
-                        </div>
-                        <div class="b-kpi-value income-color" id="statKpiPeakIncomeVal">0 RON</div>
-                        <div class="b-kpi-sub" id="statKpiPeakIncomeDesc">-</div>
-                    </div>
-
-                    <!-- 9. Coș Mediu per Plată (Average Ticket) - Interactiv pentru Analiză Magazine -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatAvgTicket" role="button" tabindex="0" title="Apasă pentru analiza inteligentă a magazinelor de mâncare & supermarketuri">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">🛒</span>
-                            <span class="b-kpi-label" data-i18n="stat_avg_ticket">Coș Mediu Bon</span>
-                            <span class="b-kpi-badge-click" title="Analiză Magazine">📊</span>
-                        </div>
-                        <div class="b-kpi-value" id="statKpiAvgTicket">0 RON/plată</div>
-                        <div class="b-kpi-sub" id="statKpiAvgTicketSub">Medie per tranzacție</div>
-                    </div>
-
-                    <!-- 10. Facturi & Utilități -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">⚡</span>
-                            <span class="b-kpi-label" data-i18n="stat_bills_title">Facturi & Utilități</span>
-                            <span class="b-kpi-badge-click" title="Detalii">🔍</span>
-                        </div>
-                        <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
-                        <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
-                    </div>
-
-                    <!-- 11. Volum & Activitate Tranzacții -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatTotalTxCountCard" role="button" tabindex="0" title="Apasă pentru statistici complete de activitate și volum tranzacții">
-                        <div class="b-kpi-header">
-                            <span class="b-kpi-icon">🧾</span>
-                            <span class="b-kpi-label" data-i18n="stat_activity_vol">Volum Activitate</span>
-                            <span class="b-kpi-badge-click" title="Detalii">🔍</span>
-                        </div>
-                        <div class="b-kpi-value" id="statKpiTotalTxCount">0 tranzacții</div>
-                        <div class="b-kpi-sub" id="statKpiActivitySub">Plăți și încasări</div>
-                    </div>
-
-                    <!-- 12. Autonomie Financiară (Runway) -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatRunway" role="button" tabindex="0" title="Apasă pentru analiza detaliată a autonomiei financiare">
+                    <!-- 9. Autonomie Financiară (Grup Economii & Rezervă - Albastru Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRunway" role="button" tabindex="0" title="Apasă pentru analiza detaliată a autonomiei financiare">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">🛡️</span>
                             <span class="b-kpi-label" data-i18n="stat_runway">Autonomie</span>
@@ -442,8 +409,41 @@
                         <div class="b-kpi-sub" id="statKpiRunwaySub">Zile de rezervă</div>
                     </div>
 
-                    <!-- 13. Ponderea Cheltuielilor pe Magazine -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatStoresShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al cheltuielilor pe magazine">
+                    <!-- 10. Facturi & Utilități (Grup Facturi - Portocaliu Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-bills" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">⚡</span>
+                            <span class="b-kpi-label" data-i18n="stat_bills_title">Facturi & Utilități</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🔍</span>
+                        </div>
+                        <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
+                        <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
+                    </div>
+
+                    <!-- 11. Volum & Activitate Tranzacții (Grup Activitate & Magazine - Violet Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-activity" id="cardStatTotalTxCountCard" role="button" tabindex="0" title="Apasă pentru statistici complete de activitate și volum tranzacții">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">🧾</span>
+                            <span class="b-kpi-label" data-i18n="stat_activity_vol">Volum Activitate</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🔍</span>
+                        </div>
+                        <div class="b-kpi-value" id="statKpiTotalTxCount">0 tranzacții</div>
+                        <div class="b-kpi-sub" id="statKpiActivitySub">Plăți și încasări</div>
+                    </div>
+
+                    <!-- 12. Coș Mediu per Plată (Grup Activitate & Magazine - Violet Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-activity" id="cardStatAvgTicket" role="button" tabindex="0" title="Apasă pentru analiza inteligentă a magazinelor de mâncare & supermarketuri">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">🛒</span>
+                            <span class="b-kpi-label" data-i18n="stat_avg_ticket">Coș Mediu Bon</span>
+                            <span class="b-kpi-badge-click" title="Analiză Magazine">📊</span>
+                        </div>
+                        <div class="b-kpi-value" id="statKpiAvgTicket">0 RON/plată</div>
+                        <div class="b-kpi-sub" id="statKpiAvgTicketSub">Medie per tranzacție</div>
+                    </div>
+
+                    <!-- 13. Ponderea Cheltuielilor pe Magazine (Grup Activitate & Magazine - Violet Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-activity" id="cardStatStoresShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al cheltuielilor pe magazine">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">🏪</span>
                             <span class="b-kpi-label" data-i18n="stat_top_stores_title">Magazine</span>
@@ -453,8 +453,8 @@
                         <div class="b-kpi-sub" id="statKpiStoresSub" data-i18n="stat_top_stores_sub">Pondere & clasament</div>
                     </div>
 
-                    <!-- 14. Ponderea Cheltuielilor pe Cumpărături -->
-                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatPurchasesShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al articolelor cumpărate">
+                    <!-- 14. Ponderea Cheltuielilor pe Cumpărături (Grup Activitate & Magazine - Violet Pal) -->
+                    <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-activity" id="cardStatPurchasesShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al articolelor cumpărate">
                         <div class="b-kpi-header">
                             <span class="b-kpi-icon">🛍️</span>
                             <span class="b-kpi-label" data-i18n="stat_top_purchases_title">Cumpărături</span>
