@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=405">
+    <link rel="stylesheet" href="style.css?v=406">
 </head>
 <body>
     <div class="container">
@@ -419,97 +419,7 @@
                         </div>
                     </div>
 
-                    <!-- 3. CATEGORIA: ECONOMII & SĂNĂTATE FINANCIARĂ (Albastru Pal) -->
-                    <div class="stats-cat-group-card b-kpi-theme-savings" id="groupStatSavings">
-                        <div class="stats-cat-group-header" role="button" tabindex="0" onclick="toggleStatsCatGroup('groupStatSavings')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStatsCatGroup('groupStatSavings');}">
-                            <div class="stats-cat-group-left">
-                                <div class="stats-cat-group-icon">💎</div>
-                                <div class="stats-cat-group-titles">
-                                    <div class="stats-cat-group-name" data-i18n="stat_group_savings">Economii & Rezervă</div>
-                                    <div class="stats-cat-group-sub" id="statGroupSavingsSub">Sold net, rată & autonomie</div>
-                                </div>
-                            </div>
-                            <div class="stats-cat-group-right">
-                                <div class="stats-cat-group-val" id="statGroupSavingsVal">0 RON</div>
-                                <div class="stats-cat-group-chevron">
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stats-cat-group-body">
-                            <div class="business-kpi-grid">
-                                <!-- 7. Economii Nete -->
-                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatSavings" role="button" tabindex="0" title="Apasă pentru bilanț și diagnostic financiar">
-                                    <div class="b-kpi-header">
-                                        <span class="b-kpi-icon">💎</span>
-                                        <span class="b-kpi-label" data-i18n="net_savings">Sold Net</span>
-                                        <span class="b-kpi-badge-click" title="Detalii">📊</span>
-                                    </div>
-                                    <div class="b-kpi-value" id="statKpiSavings">0 RON</div>
-                                    <div class="b-kpi-sub" id="statKpiSavingsSub">Diferență Venit - Cheltuieli</div>
-                                </div>
-
-                                <!-- 8. Rata de Economisire -->
-                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRate" role="button" tabindex="0" title="Apasă pentru analiza ratei de economisire și scor financiar">
-                                    <div class="b-kpi-header">
-                                        <span class="b-kpi-icon">🎯</span>
-                                        <span class="b-kpi-label" data-i18n="savings_rate">Economisire</span>
-                                        <span class="b-kpi-badge-click" title="Detalii">🎯</span>
-                                    </div>
-                                    <div class="b-kpi-value" id="statKpiRate">0%</div>
-                                    <div class="b-kpi-health-bar">
-                                        <div class="b-kpi-health-fill" id="statKpiRateFill" style="width: 0%;"></div>
-                                    </div>
-                                </div>
-
-                                <!-- 9. Autonomie Financiară -->
-                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRunway" role="button" tabindex="0" title="Apasă pentru analiza detaliată a autonomiei financiare">
-                                    <div class="b-kpi-header">
-                                        <span class="b-kpi-icon">🛡️</span>
-                                        <span class="b-kpi-label" data-i18n="stat_runway">Autonomie</span>
-                                        <span class="b-kpi-badge-click" title="Detalii">🛡️</span>
-                                    </div>
-                                    <div class="b-kpi-value" id="statKpiRunway" style="color: #60a5fa;">0 Zile</div>
-                                    <div class="b-kpi-sub" id="statKpiRunwaySub">Zile de rezervă</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4. CATEGORIA: FACTURI & UTILITĂȚI (Portocaliu Pal) -->
-                    <div class="stats-cat-group-card b-kpi-theme-bills" id="groupStatBills">
-                        <div class="stats-cat-group-header" role="button" tabindex="0" onclick="toggleStatsCatGroup('groupStatBills')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStatsCatGroup('groupStatBills');}">
-                            <div class="stats-cat-group-left">
-                                <div class="stats-cat-group-icon">⚡</div>
-                                <div class="stats-cat-group-titles">
-                                    <div class="stats-cat-group-name" data-i18n="stat_bills_title">Facturi & Utilități</div>
-                                    <div class="stats-cat-group-sub" id="statGroupBillsSub">Cost total utilități & recurență</div>
-                                </div>
-                            </div>
-                            <div class="stats-cat-group-right">
-                                <div class="stats-cat-group-val expense-color" id="statGroupBillsVal">0 RON</div>
-                                <div class="stats-cat-group-chevron">
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stats-cat-group-body">
-                            <div class="business-kpi-grid" style="grid-template-columns: 1fr;">
-                                <!-- 10. Facturi & Utilități -->
-                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-bills" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
-                                    <div class="b-kpi-header">
-                                        <span class="b-kpi-icon">⚡</span>
-                                        <span class="b-kpi-label" data-i18n="stat_bills_title">Facturi & Utilități</span>
-                                        <span class="b-kpi-badge-click" title="Detalii">🔍</span>
-                                    </div>
-                                    <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
-                                    <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 5. CATEGORIA: ACTIVITATE, MAGAZINE & CUMPĂRĂTURI (Violet Pal) -->
+                    <!-- 3. CATEGORIA: ACTIVITATE, MAGAZINE & CUMPĂRĂTURI (Violet Pal) -->
                     <div class="stats-cat-group-card b-kpi-theme-activity" id="groupStatActivity">
                         <div class="stats-cat-group-header" role="button" tabindex="0" onclick="toggleStatsCatGroup('groupStatActivity')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStatsCatGroup('groupStatActivity');}">
                             <div class="stats-cat-group-left">
@@ -570,6 +480,96 @@
                                     </div>
                                     <div class="b-kpi-value" id="statKpiPurchasesVal">0 Articole</div>
                                     <div class="b-kpi-sub" id="statKpiPurchasesSub" data-i18n="stat_top_purchases_sub">Pondere & articole</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. CATEGORIA: FACTURI & UTILITĂȚI (Portocaliu Pal) -->
+                    <div class="stats-cat-group-card b-kpi-theme-bills" id="groupStatBills">
+                        <div class="stats-cat-group-header" role="button" tabindex="0" onclick="toggleStatsCatGroup('groupStatBills')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStatsCatGroup('groupStatBills');}">
+                            <div class="stats-cat-group-left">
+                                <div class="stats-cat-group-icon">⚡</div>
+                                <div class="stats-cat-group-titles">
+                                    <div class="stats-cat-group-name" data-i18n="stat_bills_title">Facturi & Utilități</div>
+                                    <div class="stats-cat-group-sub" id="statGroupBillsSub">Cost total utilități & recurență</div>
+                                </div>
+                            </div>
+                            <div class="stats-cat-group-right">
+                                <div class="stats-cat-group-val expense-color" id="statGroupBillsVal">0 RON</div>
+                                <div class="stats-cat-group-chevron">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-cat-group-body">
+                            <div class="business-kpi-grid" style="grid-template-columns: 1fr;">
+                                <!-- 10. Facturi & Utilități -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-bills" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">⚡</span>
+                                        <span class="b-kpi-label" data-i18n="stat_bills_title">Facturi & Utilități</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">🔍</span>
+                                    </div>
+                                    <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
+                                    <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. CATEGORIA: ECONOMII & SĂNĂTATE FINANCIARĂ (Albastru Pal) -->
+                    <div class="stats-cat-group-card b-kpi-theme-savings" id="groupStatSavings">
+                        <div class="stats-cat-group-header" role="button" tabindex="0" onclick="toggleStatsCatGroup('groupStatSavings')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStatsCatGroup('groupStatSavings');}">
+                            <div class="stats-cat-group-left">
+                                <div class="stats-cat-group-icon">💎</div>
+                                <div class="stats-cat-group-titles">
+                                    <div class="stats-cat-group-name" data-i18n="stat_group_savings">Economii & Rezervă</div>
+                                    <div class="stats-cat-group-sub" id="statGroupSavingsSub">Sold net, rată & autonomie</div>
+                                </div>
+                            </div>
+                            <div class="stats-cat-group-right">
+                                <div class="stats-cat-group-val" id="statGroupSavingsVal">0 RON</div>
+                                <div class="stats-cat-group-chevron">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-cat-group-body">
+                            <div class="business-kpi-grid">
+                                <!-- 7. Economii Nete -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatSavings" role="button" tabindex="0" title="Apasă pentru bilanț și diagnostic financiar">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">💎</span>
+                                        <span class="b-kpi-label" data-i18n="net_savings">Sold Net</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">📊</span>
+                                    </div>
+                                    <div class="b-kpi-value" id="statKpiSavings">0 RON</div>
+                                    <div class="b-kpi-sub" id="statKpiSavingsSub">Diferență Venit - Cheltuieli</div>
+                                </div>
+
+                                <!-- 8. Rata de Economisire -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRate" role="button" tabindex="0" title="Apasă pentru analiza ratei de economisire și scor financiar">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">🎯</span>
+                                        <span class="b-kpi-label" data-i18n="savings_rate">Economisire</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">🎯</span>
+                                    </div>
+                                    <div class="b-kpi-value" id="statKpiRate">0%</div>
+                                    <div class="b-kpi-health-bar">
+                                        <div class="b-kpi-health-fill" id="statKpiRateFill" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- 9. Autonomie Financiară -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatRunway" role="button" tabindex="0" title="Apasă pentru analiza detaliată a autonomiei financiare">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">🛡️</span>
+                                        <span class="b-kpi-label" data-i18n="stat_runway">Autonomie</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">🛡️</span>
+                                    </div>
+                                    <div class="b-kpi-value" id="statKpiRunway" style="color: #60a5fa;">0 Zile</div>
+                                    <div class="b-kpi-sub" id="statKpiRunwaySub">Zile de rezervă</div>
                                 </div>
                             </div>
                         </div>
@@ -1882,7 +1882,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=405"></script>
+    <script src="app.js?v=406"></script>
 </body>
 </html>
 
