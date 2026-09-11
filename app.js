@@ -4559,6 +4559,100 @@ function renderStatsTab() {
         kpiBillsSub.textContent = `${billsCount} ${activeLang === 'ro' ? 'facturi' : 'bills'} • ${billsPct}% ${activeLang === 'ro' ? 'din cheltuieli' : 'of spend'}`;
     }
 
+    // 13. Ponderea Cheltuielilor pe Magazine (Calcul Card KPI)
+    const storeSums = {};
+    const storeCounts = {};
+    const storeMeta = {};
+    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        let detected = detectMerchantFromTransaction(t);
+        let storeName = '';
+        let storeIcon = '🏪';
+        let storeColor = '#6366f1';
+
+        if (detected && detected.name) {
+            storeName = detected.name;
+            storeIcon = detected.icon || '🏪';
+            storeColor = detected.color || '#6366f1';
+        } else if (t.merchant && t.merchant.trim()) {
+            storeName = t.merchant.trim();
+            const cat = appData.categories.find(c => c.id === t.categoryId);
+            if (cat) {
+                storeIcon = cat.icon || '🏪';
+                storeColor = cat.color || '#6366f1';
+            }
+        } else {
+            const cat = appData.categories.find(c => c.id === t.categoryId);
+            storeName = cat ? cat.name : (activeLang === 'ro' ? 'Alte magazine' : 'Other stores');
+            storeIcon = cat ? (cat.icon || '🏪') : '🏪';
+            storeColor = cat ? (cat.color || '#64748b') : '#64748b';
+        }
+
+        const key = storeName.toLowerCase().trim();
+        storeSums[key] = (storeSums[key] || 0) + amtRon;
+        storeCounts[key] = (storeCounts[key] || 0) + 1;
+        if (!storeMeta[key]) {
+            storeMeta[key] = { name: storeName, icon: storeIcon, color: storeColor };
+        }
+    });
+    const sortedStoreKeys = Object.keys(storeSums).sort((a, b) => storeSums[b] - storeSums[a]);
+    const kpiStoresEl = document.getElementById('statKpiStoresVal');
+    const kpiStoresSub = document.getElementById('statKpiStoresSub');
+    if (kpiStoresEl) {
+        kpiStoresEl.innerHTML = `${sortedStoreKeys.length} <span class="b-kpi-curr">${activeLang === 'ro' ? 'Magazine' : 'Stores'}</span>`;
+    }
+    if (kpiStoresSub) {
+        if (sortedStoreKeys.length > 0) {
+            const topKey = sortedStoreKeys[0];
+            const topStore = storeMeta[topKey];
+            const topAmt = storeSums[topKey];
+            const topPct = totExpenseRon > 0 ? ((topAmt / totExpenseRon) * 100).toFixed(0) : '0';
+            kpiStoresSub.textContent = `Top: ${topStore.icon} ${topStore.name} (${topPct}%)`;
+        } else {
+            kpiStoresSub.textContent = activeLang === 'ro' ? 'Fără magazine' : 'No stores';
+        }
+    }
+
+    // 14. Ponderea Cheltuielilor pe Cumpărături (Calcul Card KPI)
+    const itemSums = {};
+    const itemCounts = {};
+    const itemMeta = {};
+    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        const cat = appData.categories.find(c => c.id === t.categoryId);
+        let itemName = (t.description || '').trim();
+        let itemIcon = cat ? (cat.icon || '🛍️') : '🛍️';
+        let itemColor = cat ? (cat.color || '#3b82f6') : '#3b82f6';
+
+        if (!itemName) {
+            itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
+        }
+
+        const key = itemName.toLowerCase().trim();
+        itemSums[key] = (itemSums[key] || 0) + amtRon;
+        itemCounts[key] = (itemCounts[key] || 0) + 1;
+        if (!itemMeta[key]) {
+            itemMeta[key] = { name: itemName, icon: itemIcon, color: itemColor };
+        }
+    });
+    const sortedItemKeys = Object.keys(itemSums).sort((a, b) => itemSums[b] - itemSums[a]);
+    const kpiPurchasesEl = document.getElementById('statKpiPurchasesVal');
+    const kpiPurchasesSub = document.getElementById('statKpiPurchasesSub');
+    if (kpiPurchasesEl) {
+        kpiPurchasesEl.innerHTML = `${sortedItemKeys.length} <span class="b-kpi-curr">${activeLang === 'ro' ? 'Articole' : 'Items'}</span>`;
+    }
+    if (kpiPurchasesSub) {
+        if (sortedItemKeys.length > 0) {
+            const topKey = sortedItemKeys[0];
+            const topItem = itemMeta[topKey];
+            const topAmt = itemSums[topKey];
+            const topPct = totExpenseRon > 0 ? ((topAmt / totExpenseRon) * 100).toFixed(0) : '0';
+            kpiPurchasesSub.textContent = `Top: ${topItem.icon} ${topItem.name} (${topPct}%)`;
+        } else {
+            kpiPurchasesSub.textContent = activeLang === 'ro' ? 'Fără articole' : 'No items';
+        }
+    }
+
     // 3. GRAFIC 1: Distribuție pe Zilele Săptămânii (plasat deasupra Cashflow)
     renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang);
 
@@ -4571,11 +4665,7 @@ function renderStatsTab() {
     // 6. GRAFIC 4: Evoluție Cashflow (Venituri vs Cheltuieli)
     renderStatsCashflowChart(mainCurr, activeLang, curSymbol);
 
-    // 7. GRAFIC 5: Clasament Magazine & Clasament Cumpărături (Bare Progresive)
-    renderStatsTopStores(filteredTxs, mainCurr, totExpenseRon);
-    renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon);
-
-    // 8. TABEL 6: Raport Sintetic P&L
+    // 7. TABEL 5: Raport Sintetic P&L
     renderStatsPlTable(mainCurr, activeLang);
 }
 
@@ -6483,6 +6573,244 @@ function openKpiDetailModal(metricKey) {
                     </div>
                 </div>
             </div>` : ''}
+        `;
+    } else if (metricKey === 'stores') {
+        if (modalIconEl) modalIconEl.textContent = '🏪';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Ponderea Cheltuielilor pe Magazine' : 'Store Expense Breakdown';
+        if (modalSubEl) modalSubEl.textContent = activeLang === 'ro' ? 'Clasament după magazine și pondere din cheltuieli' : 'Ranking by stores and share of total expenses';
+
+        const storeSums = {};
+        const storeCounts = {};
+        const storeMeta = {};
+        filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+            const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+            let detected = detectMerchantFromTransaction(t);
+            let storeName = '';
+            let storeIcon = '🏪';
+            let storeColor = '#6366f1';
+
+            if (detected && detected.name) {
+                storeName = detected.name;
+                storeIcon = detected.icon || '🏪';
+                storeColor = detected.color || '#6366f1';
+            } else if (t.merchant && t.merchant.trim()) {
+                storeName = t.merchant.trim();
+                const cat = appData.categories.find(c => c.id === t.categoryId);
+                if (cat) {
+                    storeIcon = cat.icon || '🏪';
+                    storeColor = cat.color || '#6366f1';
+                }
+            } else {
+                const cat = appData.categories.find(c => c.id === t.categoryId);
+                storeName = cat ? cat.name : (activeLang === 'ro' ? 'Alte magazine' : 'Other stores');
+                storeIcon = cat ? (cat.icon || '🏪') : '🏪';
+                storeColor = cat ? (cat.color || '#64748b') : '#64748b';
+            }
+
+            const key = storeName.toLowerCase().trim();
+            storeSums[key] = (storeSums[key] || 0) + amtRon;
+            storeCounts[key] = (storeCounts[key] || 0) + 1;
+            if (!storeMeta[key]) {
+                storeMeta[key] = { name: storeName, icon: storeIcon, color: storeColor };
+            }
+        });
+
+        const sortedStoreKeys = Object.keys(storeSums).sort((a, b) => storeSums[b] - storeSums[a]);
+        const totalStoresCount = sortedStoreKeys.length;
+        const topStoreKey = sortedStoreKeys[0];
+        const topStoreInfo = topStoreKey ? storeMeta[topStoreKey] : null;
+        const topStoreSum = topStoreKey ? storeSums[topStoreKey] : 0;
+        const topStorePct = totExpenseRon > 0 && topStoreKey ? ((topStoreSum / totExpenseRon) * 100).toFixed(1) : 0;
+        const avgPerStoreRon = totalStoresCount > 0 ? (totExpenseRon / totalStoresCount) : 0;
+
+        let mostFrequentStoreKey = null;
+        let mostFrequentStoreCount = 0;
+        sortedStoreKeys.forEach(k => {
+            if (storeCounts[k] > mostFrequentStoreCount) {
+                mostFrequentStoreCount = storeCounts[k];
+                mostFrequentStoreKey = k;
+            }
+        });
+        const freqStoreInfo = mostFrequentStoreKey ? storeMeta[mostFrequentStoreKey] : null;
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #6366f1;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Total Cheltuit în Magazine' : 'Total Spent in Stores'}</div>
+                <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                <div class="kpi-detail-hero-sub">${totalStoresCount} ${activeLang === 'ro' ? 'magazine diferite' : 'distinct stores'} • ${expenseCount} ${activeLang === 'ro' ? 'plăți' : 'payments'}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Top Magazin (Valoare)' : 'Top Store (Value)'}</div>
+                    <div class="kpi-detail-mini-val">${topStoreInfo ? `${topStoreInfo.icon} ${escapeHtml(topStoreInfo.name)}` : '-'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Pondere Top Magazin' : 'Top Store Share'}</div>
+                    <div class="kpi-detail-mini-val">${topStorePct}% (${formatMoney(convertFromRon(topStoreSum, mainCurr), mainCurr)})</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Cel Mai Frecvent' : 'Most Frequent Store'}</div>
+                    <div class="kpi-detail-mini-val">${freqStoreInfo ? `${freqStoreInfo.icon} ${escapeHtml(freqStoreInfo.name)} (${mostFrequentStoreCount}x)` : '-'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Medie per Magazin' : 'Average per Store'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(avgPerStoreRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                ${totalStoresCount > 0 
+                    ? `🏪 Ai efectuat cumpărături în <strong>${totalStoresCount}</strong> locații/magazine diferite. Magazinul principal <strong>${topStoreInfo ? escapeHtml(topStoreInfo.name) : ''}</strong> concentrează <strong>${topStorePct}%</strong> din totalul cheltuielilor tale.` 
+                    : `ℹ️ Nu există tranzacții pe magazine înregistrate în această perioadă.`}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>🏪 ${activeLang === 'ro' ? 'Clasament Detaliat Magazine' : 'Detailed Store Ranking'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">${totalStoresCount} ${activeLang === 'ro' ? 'magazine' : 'stores'}</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                ${totalStoresCount === 0 ? `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">Nu există cheltuieli pe magazine în această perioadă.</div>` : ''}
+                ${sortedStoreKeys.map((key, idx) => {
+                    const info = storeMeta[key];
+                    const sumRon = storeSums[key];
+                    const count = storeCounts[key];
+                    const sumDisp = convertFromRon(sumRon, mainCurr);
+                    const pct = totExpenseRon > 0 ? ((sumRon / totExpenseRon) * 100).toFixed(1) : 0;
+                    const maxVal = storeSums[sortedStoreKeys[0]] || 1;
+                    const relativeBarPct = Math.min(100, Math.max(6, (sumRon / maxVal) * 100));
+                    const countLabel = activeLang === 'ro' ? `${count} ${count === 1 ? 'plată' : 'plăți'}` : `${count} tx`;
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon">${info.icon || '🏪'}</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">#${idx + 1} ${escapeHtml(info.name)}</div>
+                                    <div class="kpi-detail-row-meta">${countLabel} • ${pct}% din total cheltuieli</div>
+                                    <div class="kpi-detail-progress-track">
+                                        <div class="kpi-detail-progress-bar" style="width: ${relativeBarPct}%; background: ${info.color || '#6366f1'};"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt expense-color">${formatMoney(sumDisp, mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    } else if (metricKey === 'purchases') {
+        if (modalIconEl) modalIconEl.textContent = '🛍️';
+        if (modalTitleEl) modalTitleEl.textContent = activeLang === 'ro' ? 'Ponderea Cheltuielilor pe Cumpărături' : 'Purchases & Items Breakdown';
+        if (modalSubEl) modalSubEl.textContent = activeLang === 'ro' ? 'Clasament după descrierea cumpărăturilor și articole' : 'Ranking by purchase descriptions and items';
+
+        const itemSums = {};
+        const itemCounts = {};
+        const itemMeta = {};
+        filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+            const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+            const cat = appData.categories.find(c => c.id === t.categoryId);
+            let itemName = (t.description || '').trim();
+            let itemIcon = cat ? (cat.icon || '🛍️') : '🛍️';
+            let itemColor = cat ? (cat.color || '#3b82f6') : '#3b82f6';
+
+            if (!itemName) {
+                itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
+            }
+
+            const key = itemName.toLowerCase().trim();
+            itemSums[key] = (itemSums[key] || 0) + amtRon;
+            itemCounts[key] = (itemCounts[key] || 0) + 1;
+            if (!itemMeta[key]) {
+                itemMeta[key] = { name: itemName, icon: itemIcon, color: itemColor };
+            }
+        });
+
+        const sortedItemKeys = Object.keys(itemSums).sort((a, b) => itemSums[b] - itemSums[a]);
+        const totalItemsCount = sortedItemKeys.length;
+        const topItemKey = sortedItemKeys[0];
+        const topItemInfo = topItemKey ? itemMeta[topItemKey] : null;
+        const topItemSum = topItemKey ? itemSums[topItemKey] : 0;
+        const topItemPct = totExpenseRon > 0 && topItemKey ? ((topItemSum / totExpenseRon) * 100).toFixed(1) : 0;
+        const avgPerItemRon = totalItemsCount > 0 ? (totExpenseRon / totalItemsCount) : 0;
+
+        let mostFrequentItemKey = null;
+        let mostFrequentItemCount = 0;
+        sortedItemKeys.forEach(k => {
+            if (itemCounts[k] > mostFrequentItemCount) {
+                mostFrequentItemCount = itemCounts[k];
+                mostFrequentItemKey = k;
+            }
+        });
+        const freqItemInfo = mostFrequentItemKey ? itemMeta[mostFrequentItemKey] : null;
+
+        html += `
+            <div class="kpi-detail-hero" style="border-left: 4px solid #8b5cf6;">
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Total Cheltuit pe Articole / Cumpărături' : 'Total Spent on Items / Purchases'}</div>
+                <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(totExpenseRon, mainCurr), mainCurr)}</div>
+                <div class="kpi-detail-hero-sub">${totalItemsCount} ${activeLang === 'ro' ? 'articole / descrieri unice' : 'unique purchase items'} • ${expenseCount} ${activeLang === 'ro' ? 'plăți' : 'payments'}</div>
+            </div>
+
+            <div class="kpi-detail-mini-grid">
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Top Cumpărătură (Valoare)' : 'Top Item (Value)'}</div>
+                    <div class="kpi-detail-mini-val">${topItemInfo ? `${topItemInfo.icon} ${escapeHtml(topItemInfo.name)}` : '-'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Pondere Top Cumpărătură' : 'Top Item Share'}</div>
+                    <div class="kpi-detail-mini-val">${topItemPct}% (${formatMoney(convertFromRon(topItemSum, mainCurr), mainCurr)})</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Cea Mai Frecventă' : 'Most Frequent Purchase'}</div>
+                    <div class="kpi-detail-mini-val">${freqItemInfo ? `${freqItemInfo.icon} ${escapeHtml(freqItemInfo.name)} (${mostFrequentItemCount}x)` : '-'}</div>
+                </div>
+                <div class="kpi-detail-mini-card">
+                    <div class="kpi-detail-mini-label">${activeLang === 'ro' ? 'Medie per Articol' : 'Average per Item'}</div>
+                    <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(avgPerItemRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-detail-advice-card">
+                ${totalItemsCount > 0 
+                    ? `🛍️ Ai înregistrat <strong>${totalItemsCount}</strong> articole / cumpărături diferite. Articolul principal <strong>${topItemInfo ? escapeHtml(topItemInfo.name) : ''}</strong> însumează <strong>${topItemPct}%</strong> din totalul cheltuielilor tale.` 
+                    : `ℹ️ Nu există cumpărături înregistrate în această perioadă.`}
+            </div>
+
+            <div class="kpi-detail-section-title">
+                <span>🛍️ ${activeLang === 'ro' ? 'Clasament Detaliat Cumpărături' : 'Detailed Purchases Ranking'}</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">${totalItemsCount} ${activeLang === 'ro' ? 'articole' : 'items'}</span>
+            </div>
+            <div style="margin-bottom: 14px;">
+                ${totalItemsCount === 0 ? `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">Nu există cumpărături înregistrate în această perioadă.</div>` : ''}
+                ${sortedItemKeys.map((key, idx) => {
+                    const info = itemMeta[key];
+                    const sumRon = itemSums[key];
+                    const count = itemCounts[key];
+                    const sumDisp = convertFromRon(sumRon, mainCurr);
+                    const pct = totExpenseRon > 0 ? ((sumRon / totExpenseRon) * 100).toFixed(1) : 0;
+                    const maxVal = itemSums[sortedItemKeys[0]] || 1;
+                    const relativeBarPct = Math.min(100, Math.max(6, (sumRon / maxVal) * 100));
+                    const countLabel = `x${count} ${activeLang === 'ro' ? (count === 1 ? 'achiziție' : 'achiziții') : 'times'}`;
+                    return `
+                        <div class="kpi-detail-row-item">
+                            <div class="kpi-detail-row-left">
+                                <div class="kpi-detail-row-icon">${info.icon || '🛍️'}</div>
+                                <div class="kpi-detail-row-info">
+                                    <div class="kpi-detail-row-name">#${idx + 1} ${escapeHtml(info.name)}</div>
+                                    <div class="kpi-detail-row-meta">${countLabel} • ${pct}% din total cheltuieli</div>
+                                    <div class="kpi-detail-progress-track">
+                                        <div class="kpi-detail-progress-bar" style="width: ${relativeBarPct}%; background: ${info.color || '#8b5cf6'};"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kpi-detail-row-right">
+                                <div class="kpi-detail-row-amt expense-color">${formatMoney(sumDisp, mainCurr)}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
         `;
     }
 
@@ -11597,7 +11925,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'cardStatAvgTicket', action: () => openMerchantAnalyticsModal(currentStatsPeriod) },
         { id: 'cardStatRunway', action: () => openKpiDetailModal('runway') },
         { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') },
-        { id: 'cardStatBillsAnalytics', action: () => openBillsAnalyticsModal(currentStatsPeriod) }
+        { id: 'cardStatBillsAnalytics', action: () => openBillsAnalyticsModal(currentStatsPeriod) },
+        { id: 'cardStatStoresShare', action: () => openKpiDetailModal('stores') },
+        { id: 'cardStatPurchasesShare', action: () => openKpiDetailModal('purchases') }
     ];
 
     kpiCardsConfig.forEach(({ id, action }) => {

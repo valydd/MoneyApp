@@ -441,6 +441,28 @@
                         <div class="b-kpi-value" id="statKpiRunway" style="color: #60a5fa;">0 Zile</div>
                         <div class="b-kpi-sub" id="statKpiRunwaySub">Zile de rezervă</div>
                     </div>
+
+                    <!-- 13. Ponderea Cheltuielilor pe Magazine -->
+                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatStoresShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al cheltuielilor pe magazine">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">🏪</span>
+                            <span class="b-kpi-label" data-i18n="stat_top_stores_title">Magazine</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🏪</span>
+                        </div>
+                        <div class="b-kpi-value" id="statKpiStoresVal">0 Magazine</div>
+                        <div class="b-kpi-sub" id="statKpiStoresSub" data-i18n="stat_top_stores_sub">Pondere & clasament</div>
+                    </div>
+
+                    <!-- 14. Ponderea Cheltuielilor pe Cumpărături -->
+                    <div class="b-kpi-card b-kpi-card-clickable" id="cardStatPurchasesShare" role="button" tabindex="0" title="Apasă pentru clasamentul detaliat al articolelor cumpărate">
+                        <div class="b-kpi-header">
+                            <span class="b-kpi-icon">🛍️</span>
+                            <span class="b-kpi-label" data-i18n="stat_top_purchases_title">Cumpărături</span>
+                            <span class="b-kpi-badge-click" title="Detalii">🛍️</span>
+                        </div>
+                        <div class="b-kpi-value" id="statKpiPurchasesVal">0 Articole</div>
+                        <div class="b-kpi-sub" id="statKpiPurchasesSub" data-i18n="stat_top_purchases_sub">Pondere & articole</div>
+                    </div>
                 </div>
 
                 <!-- GRAFIC 1: Distribuție Cheltuieli pe Zilele Săptămânii (Plasat deasupra Cashflow) -->
@@ -502,33 +524,7 @@
                     </div>
                 </div>
 
-                <!-- CARD NOU 1: Clasament Cheltuieli pe Magazine (Bare Orizontale Progresive) -->
-                <div class="business-chart-card">
-                    <div class="b-chart-header">
-                        <div>
-                            <div class="b-chart-title" data-i18n="stat_top_stores_title">Ponderea Cheltuielilor pe Magazine</div>
-                            <div class="b-chart-sub" data-i18n="stat_top_stores_sub">Clasament după magazine și procent din cheltuieli</div>
-                        </div>
-                        <span id="statsTopStoresCount" style="font-size: 0.72rem; font-weight: 700; color: var(--accent);"></span>
-                    </div>
-                    <div class="stats-top-cat-list" id="statsTopStoresList">
-                        <!-- Generat dinamic in app.js -->
-                    </div>
-                </div>
 
-                <!-- CARD NOU 2: Clasament Cheltuieli pe Cumpărături (Bare Orizontale Progresive) -->
-                <div class="business-chart-card">
-                    <div class="b-chart-header">
-                        <div>
-                            <div class="b-chart-title" data-i18n="stat_top_purchases_title">Ponderea Cheltuielilor pe Cumpărături</div>
-                            <div class="b-chart-sub" data-i18n="stat_top_purchases_sub">Clasament după descrierea cumpărăturilor și articole</div>
-                        </div>
-                        <span id="statsTopPurchasesCount" style="font-size: 0.72rem; font-weight: 700; color: var(--accent);"></span>
-                    </div>
-                    <div class="stats-top-cat-list" id="statsTopPurchasesList">
-                        <!-- Generat dinamic in app.js -->
-                    </div>
-                </div>
 
                 <!-- TABEL 4: Situație Sintetică Tip P&L (Profit & Loss) -->
                 <div class="business-chart-card">
