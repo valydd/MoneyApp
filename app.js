@@ -56,7 +56,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.64";
+const APP_VERSION = "3.3.65";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -206,7 +206,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.64.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.65.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -251,6 +251,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: 'Volum & Activitate Tranzacții',
         stat_cashflow_title: 'Evoluție Cashflow & Trend Financiar',
         stat_cashflow_sub: 'Comparație Venituri vs Cheltuieli',
+        stat_top_stores_title: 'Ponderea Cheltuielilor pe Magazine',
+        stat_top_stores_sub: 'Clasament după magazine și procent din cheltuieli',
+        stat_top_purchases_title: 'Ponderea Cheltuielilor pe Cumpărături',
+        stat_top_purchases_sub: 'Clasament după descrierea cumpărăturilor și articole',
         stat_top_categories_title: 'Ponderea Cheltuielilor pe Categorii',
         stat_top_categories_sub: 'Clasament după valoare și procent din buget',
         stat_weekday_title: 'Distribuție pe Zilele Săptămânii',
@@ -476,7 +480,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.64.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.65.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -521,6 +525,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: 'Transaction Volume & Activity',
         stat_cashflow_title: 'Cashflow Evolution & Financial Trend',
         stat_cashflow_sub: 'Income vs Expenses comparison',
+        stat_top_stores_title: 'Expense Share by Store',
+        stat_top_stores_sub: 'Ranking by merchant and percentage of spend',
+        stat_top_purchases_title: 'Expense Share by Purchases',
+        stat_top_purchases_sub: 'Ranking by purchase description and items',
         stat_top_categories_title: 'Expense Share by Category',
         stat_top_categories_sub: 'Ranked by value and budget share',
         stat_weekday_title: 'Weekday Spending Distribution',
@@ -746,7 +754,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.64.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.65.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -785,6 +793,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: 'Transaktionsvolumen & Aktivität',
         stat_cashflow_title: 'Cashflow-Entwicklung & Trend',
         stat_cashflow_sub: 'Vergleich Einnahmen vs. Ausgaben',
+        stat_top_stores_title: 'Ausgaben nach Geschäften',
+        stat_top_stores_sub: 'Rangliste nach Händler und Ausgabenanteil',
+        stat_top_purchases_title: 'Ausgaben nach Einkäufen',
+        stat_top_purchases_sub: 'Rangliste nach Einkaufsbeschreibung und Artikeln',
         stat_top_categories_title: 'Ausgaben nach Kategorien',
         stat_top_categories_sub: 'Rangliste nach Wert und Budgetanteil',
         stat_weekday_title: 'Verteilung nach Wochentagen',
@@ -1006,7 +1018,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.64.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.65.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1044,6 +1056,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: 'İşlem Hacmi ve Faaliyet',
         stat_cashflow_title: 'Nakit Akışı & Finansal Trend',
         stat_cashflow_sub: 'Gelir ve Gider Karşılaştırması',
+        stat_top_stores_title: 'Mağazalara Göre Harcama Dağılımı',
+        stat_top_stores_sub: 'Mağazaya ve harcama yüzdesine göre sıralama',
+        stat_top_purchases_title: 'Alışverişlere Göre Harcama Dağılımı',
+        stat_top_purchases_sub: 'Alışveriş açıklamasına ve ürünlere göre sıralama',
         stat_top_categories_title: 'Kategorilere Göre Harcama Dağılımı',
         stat_top_categories_sub: 'Bütçe payı ve tutara göre sıralama',
         stat_weekday_title: 'Haftanın Günlerine Göre Dağılım',
@@ -1268,7 +1284,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.64.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.65.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1307,6 +1323,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: '取引件数と活動量',
         stat_cashflow_title: '収支推移＆財務トレンド',
         stat_cashflow_sub: '収入と支出の比較',
+        stat_top_stores_title: '店舗別支出割合',
+        stat_top_stores_sub: '店舗別の支出金額と割合ランキング',
+        stat_top_purchases_title: '品目・買い物別支出割合',
+        stat_top_purchases_sub: '買い物内容・品目別の支出ランキング',
         stat_top_categories_title: 'カテゴリ別支出内訳',
         stat_top_categories_sub: '支出額と予算シェアのランキング',
         stat_weekday_title: '曜日別の支出分布',
@@ -1531,7 +1551,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.64.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.65.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1570,6 +1590,10 @@ const I18N_DICTIONARY = {
         stat_activity_vol: '交易活跃度与总量',
         stat_cashflow_title: '收支走势与财务趋势',
         stat_cashflow_sub: '收入与支出动态对比',
+        stat_top_stores_title: '各商店支出占比',
+        stat_top_stores_sub: '按商店和支出比例排名',
+        stat_top_purchases_title: '各项购物支出占比',
+        stat_top_purchases_sub: '按购物明细和项目排名',
         stat_top_categories_title: '各类别支出占比分析',
         stat_top_categories_sub: '按金额与预算占比排序',
         stat_weekday_title: '星期支出分布',
@@ -4547,8 +4571,9 @@ function renderStatsTab() {
     // 6. GRAFIC 4: Evoluție Cashflow (Venituri vs Cheltuieli)
     renderStatsCashflowChart(mainCurr, activeLang, curSymbol);
 
-    // 7. GRAFIC 5: Clasament Categorii (Bare Progresive)
-    renderStatsTopCategories(filteredTxs, mainCurr, totExpenseRon);
+    // 7. GRAFIC 5: Clasament Magazine & Clasament Cumpărături (Bare Progresive)
+    renderStatsTopStores(filteredTxs, mainCurr, totExpenseRon);
+    renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon);
 
     // 8. TABEL 6: Raport Sintetic P&L
     renderStatsPlTable(mainCurr, activeLang);
@@ -4645,46 +4670,87 @@ function renderStatsCashflowChart(mainCurr, activeLang, curSymbol) {
     });
 }
 
-// Grafic 2: Top Categorii de Cheltuieli (Bare Orizontale Progresive)
-function renderStatsTopCategories(filteredTxs, mainCurr, totExpenseRon) {
-    const listEl = document.getElementById('statsTopCategoriesList');
-    const countEl = document.getElementById('statsTopCatCount');
+// Card 1: Top Magazine de Cheltuieli (Bare Orizontale Progresive)
+function renderStatsTopStores(filteredTxs, mainCurr, totExpenseRon) {
+    const listEl = document.getElementById('statsTopStoresList');
+    const countEl = document.getElementById('statsTopStoresCount');
     if (!listEl) return;
     listEl.innerHTML = '';
 
-    const catSums = {};
-    filteredTxs.filter(t => t.type === 'expense').forEach(t => {
+    const activeLang = getLanguageForCurrency();
+    const storeSums = {};
+    const storeCounts = {};
+    const storeMeta = {};
+
+    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
         const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-        catSums[t.categoryId] = (catSums[t.categoryId] || 0) + amtRon;
+        let detected = detectMerchantFromTransaction(t);
+        let storeName = '';
+        let storeIcon = '🏪';
+        let storeColor = '#6366f1';
+
+        if (detected && detected.name) {
+            storeName = detected.name;
+            storeIcon = detected.icon || '🏪';
+            storeColor = detected.color || '#6366f1';
+        } else if (t.merchant && t.merchant.trim()) {
+            storeName = t.merchant.trim();
+            const cat = appData.categories.find(c => c.id === t.categoryId);
+            if (cat) {
+                storeIcon = cat.icon || '🏪';
+                storeColor = cat.color || '#6366f1';
+            }
+        } else {
+            const cat = appData.categories.find(c => c.id === t.categoryId);
+            storeName = cat ? cat.name : (activeLang === 'ro' ? 'Alte magazine' : 'Other stores');
+            storeIcon = cat ? (cat.icon || '🏪') : '🏪';
+            storeColor = cat ? (cat.color || '#64748b') : '#64748b';
+        }
+
+        const key = storeName.toLowerCase().trim();
+        storeSums[key] = (storeSums[key] || 0) + amtRon;
+        storeCounts[key] = (storeCounts[key] || 0) + 1;
+        if (!storeMeta[key]) {
+            storeMeta[key] = {
+                name: storeName,
+                icon: storeIcon,
+                color: storeColor
+            };
+        }
     });
 
-    const sortedCatIds = Object.keys(catSums).sort((a, b) => catSums[b] - catSums[a]);
+    const sortedStoreKeys = Object.keys(storeSums).sort((a, b) => storeSums[b] - storeSums[a]);
 
     if (countEl) {
-        countEl.textContent = sortedCatIds.length > 0 ? `${sortedCatIds.length} ${t('expenses_by_cat')}` : '';
+        const storeWord = activeLang === 'ro' ? 'magazine' : (activeLang === 'de' ? 'Geschäfte' : (activeLang === 'tr' ? 'mağaza' : 'stores'));
+        countEl.textContent = sortedStoreKeys.length > 0 ? `${sortedStoreKeys.length} ${storeWord}` : '';
     }
 
-    if (sortedCatIds.length === 0) {
-        listEl.innerHTML = `<div style="text-align:center; padding: 20px 10px; color: var(--text-muted); font-size: 0.8rem;">Nu există cheltuieli înregistrate în această perioadă.</div>`;
+    if (sortedStoreKeys.length === 0) {
+        const emptyMsg = activeLang === 'ro' ? 'Nu există cheltuieli pe magazine în această perioadă.' : 'No store expenses recorded for this period.';
+        listEl.innerHTML = `<div style="text-align:center; padding: 20px 10px; color: var(--text-muted); font-size: 0.8rem;">${emptyMsg}</div>`;
         return;
     }
 
-    const maxVal = catSums[sortedCatIds[0]] || 1;
+    const maxVal = storeSums[sortedStoreKeys[0]] || 1;
 
-    sortedCatIds.slice(0, 8).forEach(catId => {
-        const cat = appData.categories.find(c => c.id === catId) || { name: 'Altele', icon: '🏷️', color: '#64748b' };
-        const sumRon = catSums[catId];
+    sortedStoreKeys.slice(0, 10).forEach(key => {
+        const info = storeMeta[key];
+        const sumRon = storeSums[key];
+        const count = storeCounts[key];
         const sumDisp = convertFromRon(sumRon, mainCurr);
         const pct = totExpenseRon > 0 ? ((sumRon / totExpenseRon) * 100).toFixed(1) : 0;
         const relativeBarPct = Math.min(100, Math.max(6, (sumRon / maxVal) * 100));
+        const countLabel = activeLang === 'ro' ? `${count} ${count === 1 ? 'plată' : 'plăți'}` : `${count} tx`;
 
         const row = document.createElement('div');
         row.className = 'top-cat-row';
         row.innerHTML = `
             <div class="top-cat-meta">
                 <div class="top-cat-name-box">
-                    <span style="font-size: 1.1rem; line-height: 1;">${cat.icon || '🏷️'}</span>
-                    <span>${escapeHtml(cat.name)}</span>
+                    <span style="font-size: 1.1rem; line-height: 1;">${info.icon || '🏪'}</span>
+                    <span>${escapeHtml(info.name)}</span>
+                    <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 500;">(${countLabel})</span>
                 </div>
                 <div class="top-cat-val-box">
                     <span class="top-cat-sum">${formatKpiMoneyHtml(sumDisp, mainCurr)}</span>
@@ -4692,7 +4758,88 @@ function renderStatsTopCategories(filteredTxs, mainCurr, totExpenseRon) {
                 </div>
             </div>
             <div class="top-cat-bar-bg">
-                <div class="top-cat-bar-fill" style="width: ${relativeBarPct}%; background-color: ${cat.color || 'var(--accent)'};"></div>
+                <div class="top-cat-bar-fill" style="width: ${relativeBarPct}%; background-color: ${info.color || 'var(--accent)'};"></div>
+            </div>
+        `;
+        listEl.appendChild(row);
+    });
+}
+
+// Card 2: Top Cumpărături / Articole (Bare Orizontale Progresive)
+function renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon) {
+    const listEl = document.getElementById('statsTopPurchasesList');
+    const countEl = document.getElementById('statsTopPurchasesCount');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    const activeLang = getLanguageForCurrency();
+    const itemSums = {};
+    const itemCounts = {};
+    const itemMeta = {};
+
+    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        const cat = appData.categories.find(c => c.id === t.categoryId);
+        let itemName = (t.description || '').trim();
+        let itemIcon = cat ? (cat.icon || '🛍️') : '🛍️';
+        let itemColor = cat ? (cat.color || '#3b82f6') : '#3b82f6';
+
+        if (!itemName) {
+            itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
+        }
+
+        const key = itemName.toLowerCase().trim();
+        itemSums[key] = (itemSums[key] || 0) + amtRon;
+        itemCounts[key] = (itemCounts[key] || 0) + 1;
+        if (!itemMeta[key]) {
+            itemMeta[key] = {
+                name: itemName,
+                icon: itemIcon,
+                color: itemColor
+            };
+        }
+    });
+
+    const sortedItemKeys = Object.keys(itemSums).sort((a, b) => itemSums[b] - itemSums[a]);
+
+    if (countEl) {
+        const itemWord = activeLang === 'ro' ? 'articole' : (activeLang === 'de' ? 'Artikel' : (activeLang === 'tr' ? 'ürün' : 'items'));
+        countEl.textContent = sortedItemKeys.length > 0 ? `${sortedItemKeys.length} ${itemWord}` : '';
+    }
+
+    if (sortedItemKeys.length === 0) {
+        const emptyMsg = activeLang === 'ro' ? 'Nu există cumpărături înregistrate în această perioadă.' : 'No purchases recorded for this period.';
+        listEl.innerHTML = `<div style="text-align:center; padding: 20px 10px; color: var(--text-muted); font-size: 0.8rem;">${emptyMsg}</div>`;
+        return;
+    }
+
+    const maxVal = itemSums[sortedItemKeys[0]] || 1;
+
+    sortedItemKeys.slice(0, 10).forEach(key => {
+        const info = itemMeta[key];
+        const sumRon = itemSums[key];
+        const count = itemCounts[key];
+        const sumDisp = convertFromRon(sumRon, mainCurr);
+        const pct = totExpenseRon > 0 ? ((sumRon / totExpenseRon) * 100).toFixed(1) : 0;
+        const relativeBarPct = Math.min(100, Math.max(6, (sumRon / maxVal) * 100));
+        const countLabel = activeLang === 'ro' ? `x${count}` : `x${count}`;
+
+        const row = document.createElement('div');
+        row.className = 'top-cat-row';
+        row.innerHTML = `
+            <div class="top-cat-meta">
+                <div class="top-cat-name-box">
+                    <span style="font-size: 1.1rem; line-height: 1;">${info.icon || '🛍️'}</span>
+                    <span>${escapeHtml(info.name)}</span>
+                    <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">(${countLabel})</span>
+                </div>
+                <div class="top-cat-val-box">
+                    <span class="top-cat-sum">${formatKpiMoneyHtml(sumDisp, mainCurr)}</span>
+                    <span class="top-cat-pct">${pct}%</span>
+                </div>
+            </div>
+            <div class="top-cat-bar-bg">
+                <div class="top-cat-bar-fill" style="width: ${relativeBarPct}%; background-color: ${info.color || 'var(--accent)'};"></div>
             </div>
         `;
         listEl.appendChild(row);
@@ -9303,12 +9450,14 @@ function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.scrollTop = 0;
-        const box = modal.querySelector('.modal-box');
+        const box = modal.querySelector('.modal-box') || modal.querySelector('.modal-fullscreen-box');
         if (box) box.scrollTop = 0;
         window.scrollTo(0, 0);
         if (document.documentElement) document.documentElement.scrollTop = 0;
         if (document.body) document.body.scrollTop = 0;
         modal.classList.add('active');
+        document.body.classList.add('modal-open');
+        if (document.documentElement) document.documentElement.classList.add('modal-open');
     }
 }
 
@@ -9322,8 +9471,10 @@ function closeModal(modalId) {
     } else {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
     }
-    if (!document.querySelector('.modal-overlay.active')) {
+    const hasActiveModal = !!document.querySelector('.modal-overlay.active');
+    if (!hasActiveModal) {
         document.body.classList.remove('modal-open');
+        if (document.documentElement) document.documentElement.classList.remove('modal-open');
     }
 }
 
@@ -10184,11 +10335,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Apasare pe scutul de Autonomie din antet -> Deschidere tab Statistici
+    // Apăsare pe scutul de Autonomie din antet -> Deschidere card / modal Autonomie Financiară
     const headerRunwayWidget = document.getElementById('headerRunwayWidget');
     if (headerRunwayWidget) {
-        headerRunwayWidget.addEventListener('click', () => {
-            switchTab('tab-stats');
+        headerRunwayWidget.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openKpiDetailModal('runway');
         });
     }
 
@@ -11430,19 +11583,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
         e.target.value = '';
     });
-
-    // Click pe Widgetul de Autonomie Financiara din Antet
-    const headerRunwayEl = document.getElementById('headerRunwayWidget');
-    if (headerRunwayEl) {
-        headerRunwayEl.addEventListener('click', () => {
-            const days = calculateGlobalRunwayDays();
-            const activeLang = getLanguageForCurrency();
-            const unit = activeLang === 'ro' ? 'zile' : (activeLang === 'de' ? 'Tage' : (activeLang === 'tr' ? 'gün' : 'days'));
-            showToast(`🛡️ Autonomie: mai ai rezervă pentru ~${days} ${unit} la ritmul actual de cheltuieli!`, 'info');
-            const statsTabBtn = document.querySelector('.tab-btn[data-tab="tab-stats"]');
-            if (statsTabBtn) statsTabBtn.click();
-        });
-    }
 
     // Interactivitate Carduri KPI Statistici (Deschidere Modale cu Detalii Complete)
     const kpiCardsConfig = [

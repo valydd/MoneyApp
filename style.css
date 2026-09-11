@@ -84,6 +84,15 @@ body {
     touch-action: pan-y;
 }
 
+/* Blocare scroll pe fundal când este deschis un modal / pagină suprapusă */
+body.modal-open, html.modal-open {
+    overflow: hidden !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
+}
+
 .container {
     width: 100%;
     max-width: 520px;
@@ -1553,7 +1562,12 @@ body.dark-theme .chart-center-curr {
     justify-content: center;
     z-index: 1000;
     padding: 6px 10px;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -1597,6 +1611,9 @@ body.dark-theme .chart-center-curr {
     max-width: 460px;
     max-height: calc(100vh - 12px);
     overflow-y: auto;
+    overscroll-behavior: contain !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
     padding: 14px;
     margin-top: 2px;
     margin-bottom: 0;
@@ -5061,6 +5078,9 @@ body.dark-theme .tx-secondary-val {
     border: none;
     box-sizing: border-box;
     overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch;
 }
 
 #modalBillsAnalytics,
