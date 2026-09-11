@@ -4563,6 +4563,8 @@ function renderStatsTab() {
     const storeSums = {};
     const storeCounts = {};
     const storeMeta = {};
+    const hasDiacriticsCheck = (s) => /[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(s || '');
+
     filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
         const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
         let detected = detectMerchantFromTransaction(t);
@@ -4588,11 +4590,19 @@ function renderStatsTab() {
             storeColor = cat ? (cat.color || '#64748b') : '#64748b';
         }
 
-        const key = storeName.toLowerCase().trim();
+        const key = normalizeDiacritics(storeName) || storeName.toLowerCase().trim();
         storeSums[key] = (storeSums[key] || 0) + amtRon;
         storeCounts[key] = (storeCounts[key] || 0) + 1;
         if (!storeMeta[key]) {
             storeMeta[key] = { name: storeName, icon: storeIcon, color: storeColor };
+        } else {
+            if (hasDiacriticsCheck(storeName) && !hasDiacriticsCheck(storeMeta[key].name)) {
+                storeMeta[key].name = storeName;
+            }
+            if (storeIcon && storeIcon !== '🏪' && storeIcon !== '🌐' && (storeMeta[key].icon === '🏪' || storeMeta[key].icon === '🌐')) {
+                storeMeta[key].icon = storeIcon;
+                storeMeta[key].color = storeColor;
+            }
         }
     });
     const sortedStoreKeys = Object.keys(storeSums).sort((a, b) => storeSums[b] - storeSums[a]);
@@ -4628,11 +4638,19 @@ function renderStatsTab() {
             itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
         }
 
-        const key = itemName.toLowerCase().trim();
+        const key = normalizeDiacritics(itemName) || itemName.toLowerCase().trim();
         itemSums[key] = (itemSums[key] || 0) + amtRon;
         itemCounts[key] = (itemCounts[key] || 0) + 1;
         if (!itemMeta[key]) {
             itemMeta[key] = { name: itemName, icon: itemIcon, color: itemColor };
+        } else {
+            if (hasDiacriticsCheck(itemName) && !hasDiacriticsCheck(itemMeta[key].name)) {
+                itemMeta[key].name = itemName;
+            }
+            if (itemIcon && itemIcon !== '🛍️' && itemIcon !== '🌐' && (itemMeta[key].icon === '🛍️' || itemMeta[key].icon === '🌐')) {
+                itemMeta[key].icon = itemIcon;
+                itemMeta[key].color = itemColor;
+            }
         }
     });
     const sortedItemKeys = Object.keys(itemSums).sort((a, b) => itemSums[b] - itemSums[a]);
@@ -4797,7 +4815,7 @@ function renderStatsTopStores(filteredTxs, mainCurr, totExpenseRon) {
             storeColor = cat ? (cat.color || '#64748b') : '#64748b';
         }
 
-        const key = storeName.toLowerCase().trim();
+        const key = normalizeDiacritics(storeName) || storeName.toLowerCase().trim();
         storeSums[key] = (storeSums[key] || 0) + amtRon;
         storeCounts[key] = (storeCounts[key] || 0) + 1;
         if (!storeMeta[key]) {
@@ -4806,6 +4824,14 @@ function renderStatsTopStores(filteredTxs, mainCurr, totExpenseRon) {
                 icon: storeIcon,
                 color: storeColor
             };
+        } else {
+            if (/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(storeName) && !/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(storeMeta[key].name)) {
+                storeMeta[key].name = storeName;
+            }
+            if (storeIcon && storeIcon !== '🏪' && storeIcon !== '🌐' && (storeMeta[key].icon === '🏪' || storeMeta[key].icon === '🌐')) {
+                storeMeta[key].icon = storeIcon;
+                storeMeta[key].color = storeColor;
+            }
         }
     });
 
@@ -4878,7 +4904,7 @@ function renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon) {
             itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
         }
 
-        const key = itemName.toLowerCase().trim();
+        const key = normalizeDiacritics(itemName) || itemName.toLowerCase().trim();
         itemSums[key] = (itemSums[key] || 0) + amtRon;
         itemCounts[key] = (itemCounts[key] || 0) + 1;
         if (!itemMeta[key]) {
@@ -4887,6 +4913,14 @@ function renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon) {
                 icon: itemIcon,
                 color: itemColor
             };
+        } else {
+            if (/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(itemName) && !/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(itemMeta[key].name)) {
+                itemMeta[key].name = itemName;
+            }
+            if (itemIcon && itemIcon !== '🛍️' && itemIcon !== '🌐' && (itemMeta[key].icon === '🛍️' || itemMeta[key].icon === '🌐')) {
+                itemMeta[key].icon = itemIcon;
+                itemMeta[key].color = itemColor;
+            }
         }
     });
 
@@ -6607,11 +6641,19 @@ function openKpiDetailModal(metricKey) {
                 storeColor = cat ? (cat.color || '#64748b') : '#64748b';
             }
 
-            const key = storeName.toLowerCase().trim();
+            const key = normalizeDiacritics(storeName) || storeName.toLowerCase().trim();
             storeSums[key] = (storeSums[key] || 0) + amtRon;
             storeCounts[key] = (storeCounts[key] || 0) + 1;
             if (!storeMeta[key]) {
                 storeMeta[key] = { name: storeName, icon: storeIcon, color: storeColor };
+            } else {
+                if (/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(storeName) && !/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(storeMeta[key].name)) {
+                    storeMeta[key].name = storeName;
+                }
+                if (storeIcon && storeIcon !== '🏪' && storeIcon !== '🌐' && (storeMeta[key].icon === '🏪' || storeMeta[key].icon === '🌐')) {
+                    storeMeta[key].icon = storeIcon;
+                    storeMeta[key].color = storeColor;
+                }
             }
         });
 
@@ -6719,11 +6761,19 @@ function openKpiDetailModal(metricKey) {
                 itemName = cat ? cat.name : (activeLang === 'ro' ? 'Diverse cumpărături' : 'Misc Purchases');
             }
 
-            const key = itemName.toLowerCase().trim();
+            const key = normalizeDiacritics(itemName) || itemName.toLowerCase().trim();
             itemSums[key] = (itemSums[key] || 0) + amtRon;
             itemCounts[key] = (itemCounts[key] || 0) + 1;
             if (!itemMeta[key]) {
                 itemMeta[key] = { name: itemName, icon: itemIcon, color: itemColor };
+            } else {
+                if (/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(itemName) && !/[ăâîșşțţĂÂÎȘŞȚŢáéíóúäöüß]/i.test(itemMeta[key].name)) {
+                    itemMeta[key].name = itemName;
+                }
+                if (itemIcon && itemIcon !== '🛍️' && itemIcon !== '🌐' && (itemMeta[key].icon === '🛍️' || itemMeta[key].icon === '🌐')) {
+                    itemMeta[key].icon = itemIcon;
+                    itemMeta[key].color = itemColor;
+                }
             }
         });
 
