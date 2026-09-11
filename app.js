@@ -229,6 +229,8 @@ const I18N_DICTIONARY = {
         export_btn_download: '💾 .txt',
         export_copied_toast: 'Text copiat în clipboard!',
         export_downloaded_toast: 'Fișier descărcat cu succes!',
+        export_box_title: 'Export Raport Cheltuieli',
+        export_box_sub: 'Categorii & cheltuieli detaliate',
         currency_modal_title: 'Alege Moneda Principală',
         currency_modal_desc: 'Selectați moneda în care doriți să opereze <strong>MoneyApp</strong>. Toate datele, soldul, cheltuielile, veniturile și graficele vor fi recalculate și afișate automat în moneda aleasă.',
         currency_ref_label: 'Monedă de Referință',
@@ -507,6 +509,8 @@ const I18N_DICTIONARY = {
         export_btn_download: '💾 .txt',
         export_copied_toast: 'Text copied to clipboard!',
         export_downloaded_toast: 'File downloaded successfully!',
+        export_box_title: 'Export Expense Report',
+        export_box_sub: 'Detailed categories & expenses',
         currency_modal_title: 'Choose Main Currency',
         currency_modal_desc: 'Select the currency in which <strong>MoneyApp</strong> should operate. All data, balance, expenses, income and charts will be automatically recalculated and displayed in the chosen currency.',
         currency_ref_label: 'Reference Currency',
@@ -779,6 +783,8 @@ const I18N_DICTIONARY = {
         lbl_recommended_colors: 'Empfohlene Schnellfarben:',
         btn_save_category: 'Kategorie speichern',
         lbl_registered_expenses: 'registrierte Ausgaben',
+        export_box_title: 'Ausgabenbericht exportieren',
+        export_box_sub: 'Detaillierte Kategorien & Ausgaben',
         currency_modal_title: 'Hauptwährung Wählen',
         currency_modal_desc: 'Wählen Sie die Währung, in der <strong>MoneyApp</strong> operieren soll. Alle Daten, Salden, Ausgaben, Einnahmen und Diagramme werden automatisch neu berechnet.',
         currency_ref_label: 'Referenzwährung',
@@ -1046,6 +1052,8 @@ const I18N_DICTIONARY = {
         lbl_recommended_colors: 'Önerilen hızlı renkler:',
         btn_save_category: 'Kategoriyi Kaydet',
         lbl_registered_expenses: 'kayıtlı harcama',
+        export_box_title: 'Gider Raporunu Dışa Aktar',
+        export_box_sub: 'Detaylı kategoriler ve harcamalar',
         currency_modal_title: 'Ana Para Birimini Seçin',
         currency_modal_desc: '<strong>MoneyApp</strong> için ana para birimini seçin. Tüm veriler, bakiye, harcamalar ve grafikler seçilen para biriminde otomatik olarak güncellenecektir.',
         currency_ref_label: 'Referans Para Birimi',
@@ -1317,6 +1325,8 @@ const I18N_DICTIONARY = {
         lbl_recommended_colors: 'おすすめのカラーパレット:',
         btn_save_category: 'カテゴリを保存',
         lbl_registered_expenses: '件の登録された支出',
+        export_box_title: '支出レポートをエクスポート',
+        export_box_sub: 'カテゴリーと詳細な支出明細',
         currency_modal_title: '主要通貨を選択',
         currency_modal_desc: '<strong>MoneyApp</strong>で使用する通貨を選択してください。すべての残高、支出、収入、チャートが自動的に再計算されます。',
         currency_ref_label: '基準通貨',
@@ -1588,6 +1598,8 @@ const I18N_DICTIONARY = {
         lbl_recommended_colors: '推荐快速颜色:',
         btn_save_category: '保存类别',
         lbl_registered_expenses: '笔已记录支出',
+        export_box_title: '导出支出报表',
+        export_box_sub: '分类及逐笔详细支出',
         currency_modal_title: '选择主货币',
         currency_modal_desc: '选择<strong>MoneyApp</strong>运行的主货币。所有数据、余额、支出、收入和图表将自动以所选货币重新计算和显示。',
         currency_ref_label: '基准货币',
@@ -3420,7 +3432,7 @@ function getPeriodReadableName(periodKey) {
     }
 }
 
-// 1. Export TOATE Categoriile (de la butonul "Categorii" de deasupra graficului)
+// 1. Export TOATE Categoriile cu Cheltuieli Detaliate (de la căsuța de Export de sub lista de categorii)
 function openExportAllCategoriesModal() {
     const periodKey = document.getElementById('overviewPeriod')?.value || 'current-month';
     const periodTx = filterTransactionsByPeriod(appData.transactions, periodKey);
@@ -3457,20 +3469,43 @@ function openExportAllCategoriesModal() {
     text += `${t('export_lbl_date', lang)}: ${nowStr}\n`;
     text += `${t('currency_label', lang)}: ${mainCurr}\n\n`;
     text += `TOTAL: ${formatMoney(grandTotalCurr, mainCurr)}\n`;
+    text += `${t('stat_activity_vol', lang)}: ${expenseTx.length} ${t('ops_suffix', lang)}\n`;
     text += `───────────────────────────────\n`;
-    text += `${t('categories_list_title', lang).toUpperCase()}:\n`;
+    text += `${t('categories_list_title', lang).toUpperCase()}:\n\n`;
 
     if (activeCatList.length === 0) {
-        text += `${t('empty_category_expenses', lang)}\n`;
+        text += `${t('empty_category_expenses', lang)}\n\n`;
     } else {
         activeCatList.forEach((item, idx) => {
             const pct = grandTotalCurr > 0 ? ((item.total / grandTotalCurr) * 100).toFixed(1) : '0.0';
             const countStr = item.count ? `${item.count} ${t('ops_suffix', lang)}` : '';
-            text += `${idx + 1}. ${item.category.name}: ${formatMoney(item.total, mainCurr)} (${pct}%${countStr ? ' • ' + countStr : ''})\n`;
+            const catIcon = item.category.icon ? `${item.category.icon} ` : '🏷️ ';
+            
+            text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `${catIcon}${idx + 1}. ${item.category.name.toUpperCase()}: ${formatMoney(item.total, mainCurr)} (${pct}% • ${countStr})\n`;
+            text += `───────────────────────────────\n`;
+
+            // Cheltuieli detaliate pentru această categorie
+            const catTxs = expenseTx.filter(t => t.categoryId === item.category.id);
+            catTxs.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
+
+            if (catTxs.length === 0) {
+                text += `   • ${t('empty_category_expenses', lang)}\n`;
+            } else {
+                catTxs.forEach(tx => {
+                    const d = new Date(tx.date);
+                    const dateStr = !isNaN(d.getTime()) ? d.toLocaleDateString(localeMap[lang] || 'en-US') : tx.date;
+                    const amt = convertFromRon(parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0, mainCurr);
+                    const desc = (tx.description || '').trim();
+                    const descStr = desc ? ` - ${desc}` : '';
+                    text += `   • ${dateStr}: ${formatMoney(amt, mainCurr)}${descStr}\n`;
+                });
+            }
+            text += `\n`;
         });
     }
 
-    text += `───────────────────────────────\n`;
+    text += `═══════════════════════════════\n`;
     text += `${t('export_lbl_generated', lang)} MoneyApp v${APP_VERSION}\n`;
 
     const title = `${t('export_btn', lang)}: ${t('expenses_by_cat', lang)}`;
@@ -10822,13 +10857,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Buton Export toate Categoriile (butonul cu format ca cel din Fond Disponibil, așezat la mijloc)
+    // Căsuță Card Export toate Categoriile & Cheltuieli Detaliate (sub lista de categorii)
     const btnExportAll = document.getElementById('btnExportAllCategories');
     if (btnExportAll) {
         btnExportAll.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             openExportAllCategoriesModal();
+        });
+        btnExportAll.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openExportAllCategoriesModal();
+            }
         });
     }
 

@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=407">
+    <link rel="stylesheet" href="style.css?v=408">
 </head>
 <body>
     <div class="container">
@@ -180,12 +180,7 @@
                         <span data-i18n="tab_categories">Categorii</span>
                     </button>
 
-                    <!-- 2. Buton Export Categorii (Format ca butoanele din Fond Disponibil, asezat la mijloc) -->
-                    <button type="button" class="btn-bal-summary btn-chart-export-summary" id="btnExportAllCategories" title="Apasă pentru a exporta lista cu categoriile și cheltuielile">
-                        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:currentColor;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                    </button>
-
-                    <!-- 3. Buton Selector Perioadă (Luna Aceasta) -->
+                    <!-- 2. Buton Selector Perioadă (Luna Aceasta) -->
                     <div class="period-select-wrap">
                         <input type="hidden" id="overviewPeriod" value="current-month">
                         <button type="button" class="btn-tx-filter-trigger" id="btnOpenOverviewPeriod" title="Alege perioada de afișare">
@@ -213,7 +208,24 @@
                         <span data-i18n="categories_list_title">Listă Categorii & Cheltuieli</span>
                     </div>
                 </div>
-                <div class="category-breakdown" id="overviewCategoryList">
+                <div class="category-breakdown" id="overviewCategoryList"></div>
+
+                <!-- Căsuță Card Export sub lista de categorii -->
+                <div class="overview-export-box" id="btnExportAllCategories" role="button" tabindex="0" title="Apasă pentru a exporta raportul detaliat al categoriilor și cheltuielilor">
+                    <div class="overview-export-box-left">
+                        <div class="overview-export-box-icon">
+                            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </div>
+                        <div class="overview-export-box-content">
+                            <div class="overview-export-box-title" data-i18n="export_box_title">Export Raport Cheltuieli</div>
+                            <div class="overview-export-box-sub" data-i18n="export_box_sub">Categorii & cheltuieli detaliate</div>
+                        </div>
+                    </div>
+                    <div class="overview-export-box-btn">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        <span data-i18n="export_btn">Export</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1882,7 +1894,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=407"></script>
+    <script src="app.js?v=408"></script>
 </body>
 </html>
 
