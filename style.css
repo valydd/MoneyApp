@@ -1677,19 +1677,21 @@ body.dark-theme .chart-center-curr {
     margin-bottom: 6px;
 }
 
-.form-control {
+.form-control, .form-input {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     background: var(--input-bg);
     border: 1px solid var(--input-border);
     color: var(--text-color);
-    padding: 10px 12px;
+    padding: 9px 11px;
     border-radius: var(--radius-sm);
-    font-size: 0.95rem;
+    font-size: 0.90rem;
     outline: none;
     transition: border-color 0.2s ease;
 }
 
-.form-control:focus {
+.form-control:focus, .form-input:focus {
     border-color: var(--accent);
 }
 
@@ -6380,4 +6382,19 @@ body.dark-theme .overview-export-box {
     color: #ef4444;
     border-color: #ef4444;
     background: rgba(239, 68, 68, 0.10);
+}
+
+#depositsFormBox {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#depositsFormBox input,
+#depositsFormBox select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
 }
