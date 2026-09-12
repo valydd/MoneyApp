@@ -57,7 +57,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.71";
+const APP_VERSION = "3.3.72";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -207,7 +207,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.71.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.72.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -522,7 +522,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.71.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.72.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -837,7 +837,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.71.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.72.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1142,7 +1142,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.71.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.72.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1449,7 +1449,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.71.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.72.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1757,7 +1757,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.71.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.72.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -8879,11 +8879,34 @@ function editDepositItem(id) {
 }
 window.editDepositItem = editDepositItem;
 
+function getDepositCurrencyLabel(currCode, lang) {
+    if (lang === 'ro') {
+        if (currCode === 'RON') return 'Depozite Lei';
+        if (currCode === 'EUR') return 'Depozite Euro';
+        if (currCode === 'USD') return 'Depozite USD';
+        if (currCode === 'GBP') return 'Depozite Lire';
+        if (currCode === 'CHF') return 'Depozite CHF';
+        if (currCode === 'MDL') return 'Depozite MDL';
+        return `Depozite ${currCode}`;
+    } else if (lang === 'de') {
+        return `Einlagen ${currCode === 'EUR' ? 'Euro' : (currCode === 'RON' ? 'Lei' : currCode)}`;
+    } else if (lang === 'tr') {
+        return `Mevduat ${currCode === 'TRY' ? 'TL' : (currCode === 'EUR' ? 'Euro' : currCode)}`;
+    } else if (lang === 'ja') {
+        return `${currCode} 預金`;
+    } else if (lang === 'zh') {
+        return `${currCode} 存款`;
+    } else {
+        return `Deposits ${currCode}`;
+    }
+}
+
 function renderDepositsPage() {
     const listContainer = document.getElementById('depositsListContainer');
     const grandTotalEl = document.getElementById('depositsGrandTotalDisplay');
     const countBadgeEl = document.getElementById('depositsCountBadge');
     const breakdownEl = document.getElementById('depositsBreakdownSummary');
+    const currSummaryEl = document.getElementById('depositsCurrenciesSummary');
     const panouCardValEl = document.getElementById('depositsPanouCardVal');
     const panouCashValEl = document.getElementById('depositsPanouCashVal');
 
@@ -9002,7 +9025,38 @@ function renderDepositsPage() {
         `;
     }
 
-    // 4. Actualizare Scut Autonomie pe baza Marelui Total
+    // 4. Afișare defalcare depozite per monedă (ex: Depozite Lei, Depozite Euro)
+    if (currSummaryEl) {
+        const depositsByCurrency = {};
+        deposits.forEach(d => {
+            const amt = parseFloat(d.amount) || 0;
+            const curr = d.currency || mainCurr;
+            depositsByCurrency[curr] = (depositsByCurrency[curr] || 0) + amt;
+        });
+
+        const currKeys = Object.keys(depositsByCurrency);
+        if (currKeys.length > 0) {
+            currKeys.sort((a, b) => {
+                const amtRonA = convertToRon(depositsByCurrency[a], a);
+                const amtRonB = convertToRon(depositsByCurrency[b], b);
+                return amtRonB - amtRonA;
+            });
+
+            const itemsHtml = currKeys.map(cCode => {
+                const totalAmt = depositsByCurrency[cCode];
+                const label = getDepositCurrencyLabel(cCode, activeLang);
+                return `<span style="white-space:nowrap;">${label}: <strong>${formatDepositMoneyHtml(totalAmt, cCode)}</strong></span>`;
+            }).join(' • ');
+
+            currSummaryEl.innerHTML = itemsHtml;
+            currSummaryEl.style.display = 'flex';
+        } else {
+            currSummaryEl.innerHTML = '';
+            currSummaryEl.style.display = 'none';
+        }
+    }
+
+    // 5. Actualizare Scut Autonomie pe baza Marelui Total
     updateDepositsRunwayWidget(grandPatrimoniuRon);
 }
 
