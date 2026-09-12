@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=411">
+    <link rel="stylesheet" href="style.css?v=412">
 </head>
 <body>
     <div class="container">
@@ -582,6 +582,17 @@
                                     </div>
                                     <div class="b-kpi-value" id="statKpiRunway" style="color: #60a5fa;">0 Zile</div>
                                     <div class="b-kpi-sub" id="statKpiRunwaySub">Zile de rezervă</div>
+                                </div>
+
+                                <!-- 10. Depozite & Patrimoniu -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-savings" id="cardStatDeposits" role="button" tabindex="0" title="Apasă pentru gestiunea depozitelor și calculul averii">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">🏦</span>
+                                        <span class="b-kpi-label" data-i18n="stat_deposits">Depozite</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">🏦</span>
+                                    </div>
+                                    <div class="b-kpi-value" id="statKpiDeposits">0 RON</div>
+                                    <div class="b-kpi-sub" id="statKpiDepositsSub">Total Depozite & Fonduri</div>
                                 </div>
                             </div>
                         </div>
@@ -1596,6 +1607,152 @@
         </div>
     </div>
 
+    <!-- MODAL DEPOZITE & PATRIMONIU / GESTIUNE FONDURI -->
+    <div class="modal-overlay" id="modalDeposits">
+        <div class="modal-box modal-fullscreen-box">
+            <!-- Modal Header with Title, Autonomy Shield Widget on the top right, and Close Button -->
+            <div class="modal-header" style="padding-bottom: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+                    <span style="font-size: 1.3rem;">🏦</span>
+                    <div style="min-width: 0;">
+                        <div style="font-size: 1.05rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_modal_title">Depozite & Fonduri</div>
+                        <div style="font-size: 0.70rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_modal_sub">Depozite, conturi, valută, acțiuni & disponibil</div>
+                    </div>
+                </div>
+                <!-- Autonomy Shield Widget in top corner of Deposits page -->
+                <div class="header-runway-widget" id="depositsRunwayWidget" title="Autonomie Financiară calculată pe baza Marelui Total (Depozite + Disponibil)" style="margin-right: 8px; cursor: default;">
+                    <div class="runway-shield-container">
+                        <svg class="runway-shield-svg" viewBox="0 0 44 50">
+                            <defs>
+                                <linearGradient id="shieldGradDeposits" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#10b981"/>
+                                    <stop offset="55%" stop-color="#059669"/>
+                                    <stop offset="100%" stop-color="#047857"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M22 3 L40 9 C40 27 31 41 22 47 C13 41 4 27 4 9 Z" fill="url(#shieldGradDeposits)" stroke="#34d399" stroke-width="2"/>
+                            <path d="M22 6 L37 11 C37 26 29 38 22 43 C15 38 7 26 7 11 Z" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1.2"/>
+                        </svg>
+                        <div class="runway-shield-content">
+                            <span class="runway-shield-days" id="depositsRunwayDays">--</span>
+                            <span class="runway-shield-unit" id="depositsRunwayUnit">ZILE</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="modal-close" data-close="modalDeposits">&times;</button>
+            </div>
+
+            <div class="deposits-content-scroll" style="overflow-y: auto; overflow-x: hidden; padding-right: 2px; flex: 1; width: 100%; box-sizing: border-box;">
+                
+                <!-- Hero Grand Total Card -->
+                <div class="deposits-hero-card" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%); color: #ffffff; border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 6px 16px rgba(13, 148, 136, 0.28);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; opacity: 0.95;" data-i18n="deposits_hero_total">💰 Total General (Depozite + Disponibil)</span>
+                        <span id="depositsCountBadge" style="background: rgba(255,255,255,0.25); padding: 3px 9px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; backdrop-filter: blur(4px);">0 Depozite</span>
+                    </div>
+                    <div id="depositsGrandTotalDisplay" style="font-size: 1.65rem; font-weight: 900; letter-spacing: -0.5px; margin: 2px 0;">0,00 RON</div>
+                    <div id="depositsBreakdownSummary" style="font-size: 0.72rem; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+                        <span>Depozite: 0 RON</span> • <span>Card: 0 RON</span> • <span>Cash: 0 RON</span>
+                    </div>
+                </div>
+
+                <!-- Buton Deschidere Formular Adaugare -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_list_title">📦 Depozite & Fonduri Salvate</div>
+                    <button type="button" id="btnToggleAddDeposit" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 4px;">
+                        <span>+ Adaugă Depozit</span>
+                    </button>
+                </div>
+
+                <!-- Formular Adaugare / Editare Depozit (Ascuns implicit) -->
+                <div id="depositsFormBox" style="display: none; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span id="depositFormTitle" style="font-size: 0.82rem; font-weight: 700; color: var(--accent);">+ Depozit / Fond Nou</span>
+                        <button type="button" id="btnCancelDepositForm" style="background: none; border: none; font-size: 1.1rem; color: var(--text-muted); cursor: pointer;">&times;</button>
+                    </div>
+                    <input type="hidden" id="depositEditId" value="">
+                    
+                    <div style="margin-bottom: 8px;">
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_name">Nume / Descriere Depozit</label>
+                        <input type="text" id="depositInputName" class="form-input" placeholder="ex: Depozit Bancar BCR, Card Lei, Cash Euro, Acțiuni..." style="font-size: 0.82rem; height: 38px;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div>
+                            <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_category">Tip / Categorie</label>
+                            <select id="depositInputCategory" class="form-input" style="font-size: 0.82rem; height: 38px;">
+                                <option value="deposit">🏦 Depozit Bancar</option>
+                                <option value="card">💳 Card / Cont Bancar</option>
+                                <option value="cash">💵 Cash / Valută</option>
+                                <option value="stocks">📈 Acțiuni / Fonduri</option>
+                                <option value="crypto">🪙 Cripto / Aur / Altele</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_currency">Monedă</label>
+                            <select id="depositInputCurrency" class="form-input" style="font-size: 0.82rem; height: 38px;">
+                                <!-- Populat dinamic in app.js -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_amount">Sumă Salvează în Depozit</label>
+                        <input type="number" step="any" id="depositInputAmount" class="form-input" placeholder="0.00" style="font-size: 0.95rem; font-weight: 700; height: 38px;">
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="btnSaveDeposit" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.80rem; font-weight: 700;">Salvează Depozit</button>
+                        <button type="button" id="btnCancelDeposit" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.80rem;">Anulează</button>
+                    </div>
+                </div>
+
+                <!-- Lista Depozitelor Adaugate (Una sub alta in ordine) -->
+                <div id="depositsListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+                    <!-- Randuri generate dinamic in app.js -->
+                </div>
+
+                <!-- Sectiune Disponibil din Panou (Card & Cash) -->
+                <div style="background: var(--input-bg); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;" data-i18n="deposits_panou_funds_title">
+                        ⚡ Fonduri Disponibile în Aplicație (Panou)
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.1rem;">💳</span>
+                                <div>
+                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_panou_card">Disponibil Card (Panou)</div>
+                                    <div style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="deposits_panou_card_sub">Sold tranzacții card</div>
+                                </div>
+                            </div>
+                            <div id="depositsPanouCardVal" style="font-size: 0.90rem; font-weight: 800; color: var(--accent);">0,00 RON</div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.1rem;">💵</span>
+                                <div>
+                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_panou_cash">Disponibil Cash (Panou)</div>
+                                    <div style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="deposits_panou_cash_sub">Sold tranzacții numerar</div>
+                                </div>
+                            </div>
+                            <div id="depositsPanouCashVal" style="font-size: 0.90rem; font-weight: 800; color: #10b981;">0,00 RON</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notificare Informativă privind izolarea calculelor -->
+                <div style="font-size: 0.68rem; color: var(--text-muted); text-align: center; line-height: 1.35; padding: 4px 8px; margin-bottom: 10px;" data-i18n="deposits_isolated_notice">
+                    ℹ️ Depozitele introduse aici sunt păstrate separat și servesc exclusiv evidenței patrimoniului tău. Ele nu influențează bugetul, tranzacțiile sau rapoartele lunare din aplicație.
+                </div>
+
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalDeposits" style="margin-top: 8px;" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
     <!-- MODAL 12: TRANSFER INTERN CARD ⇄ CASH -->
     <div class="modal-overlay" id="modalTransfer">
         <div class="modal-box" style="max-width: 440px;">
@@ -1894,7 +2051,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=411"></script>
+    <script src="app.js?v=412"></script>
 </body>
 </html>
 

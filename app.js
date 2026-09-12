@@ -39,6 +39,7 @@ const DEFAULT_CATEGORIES = [
 let appData = {
     categories: [...DEFAULT_CATEGORIES],
     transactions: [],
+    customDeposits: [],
     settings: {
         eurRate: 4.98,
         theme: 'dark',
@@ -254,6 +255,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: 'Vârf Încasare',
         stat_avg_ticket: 'Coș Mediu Bon',
         stat_runway: 'Autonomie',
+        stat_deposits: 'Depozite',
         stat_activity_vol: 'Volum & Activitate Tranzacții',
         stat_cashflow_title: 'Evoluție Cashflow & Trend Financiar',
         stat_cashflow_sub: 'Comparație Venituri vs Cheltuieli',
@@ -534,6 +536,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: 'Peak Income',
         stat_avg_ticket: 'Average Ticket',
         stat_runway: 'Runway',
+        stat_deposits: 'Deposits',
         stat_activity_vol: 'Transaction Volume & Activity',
         stat_cashflow_title: 'Cashflow Evolution & Financial Trend',
         stat_cashflow_sub: 'Income vs Expenses comparison',
@@ -808,6 +811,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: 'Höchste Einnahme',
         stat_avg_ticket: 'Ø Bon-Betrag',
         stat_runway: 'Reichweite',
+        stat_deposits: 'Einlagen',
         stat_activity_vol: 'Transaktionsvolumen & Aktivität',
         stat_cashflow_title: 'Cashflow-Entwicklung & Trend',
         stat_cashflow_sub: 'Vergleich Einnahmen vs. Ausgaben',
@@ -1077,6 +1081,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: 'En Yüksek Gelir',
         stat_avg_ticket: 'Ortalama Fiş',
         stat_runway: 'Mali Rezerv',
+        stat_deposits: 'Mevduat',
         stat_activity_vol: 'İşlem Hacmi ve Faaliyet',
         stat_cashflow_title: 'Nakit Akışı & Finansal Trend',
         stat_cashflow_sub: 'Gelir ve Gider Karşılaştırması',
@@ -1350,6 +1355,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: '最高収入額',
         stat_avg_ticket: '平均決済額',
         stat_runway: '資金持続日数',
+        stat_deposits: '預金',
         stat_activity_vol: '取引件数と活動量',
         stat_cashflow_title: '収支推移＆財務トレンド',
         stat_cashflow_sub: '収入と支出の比較',
@@ -1623,6 +1629,7 @@ const I18N_DICTIONARY = {
         stat_peak_inc: '最高单笔收入',
         stat_avg_ticket: '客单均额',
         stat_runway: '资金可持续天数',
+        stat_deposits: '存款',
         stat_activity_vol: '交易活跃度与总量',
         stat_cashflow_title: '收支走势与财务趋势',
         stat_cashflow_sub: '收入与支出动态对比',
@@ -2001,6 +2008,12 @@ function populateCurrencySelectors() {
         incSelect.innerHTML = optionsHtml;
         incSelect.value = curVal || mainCurr;
     }
+    const depSelect = document.getElementById('depositInputCurrency');
+    if (depSelect) {
+        const curVal = depSelect.value;
+        depSelect.innerHTML = optionsHtml;
+        depSelect.value = curVal || mainCurr;
+    }
     updateExpenseAmountPlaceholder();
 }
 
@@ -2286,6 +2299,9 @@ function loadData() {
                 if (Array.isArray(parsed.transactions)) {
                     appData.transactions = parsed.transactions;
                 }
+                if (Array.isArray(parsed.customDeposits)) {
+                    appData.customDeposits = parsed.customDeposits;
+                }
                 if (parsed.settings) {
                     appData.settings = { ...appData.settings, ...parsed.settings };
                 }
@@ -2513,20 +2529,8 @@ function updateBalanceCards() {
     updateHeaderRunwayWidget();
 }
 
-// Calcul Autonomie Financiară Globală (Banii actuali din cont / Ritmul de cheltuieli recent)
-function calculateGlobalRunwayDays() {
-    // 1. Sold curent total din cont (Venituri - Cheltuieli active)
-    let totalBalRon = 0;
-    appData.transactions.forEach(t => {
-        if (isTxSuspended(t)) return;
-        const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-        if (t.type === 'income') totalBalRon += a;
-        else if (t.type === 'expense') totalBalRon -= a;
-    });
-
-    if (totalBalRon <= 0) return 0;
-
-    // 2. Ritm de cheltuieli pe luna curentă
+// Helper: Ritm Zilnic Mediu de Cheltuieli (RON)
+function calculateDailyExpenseRateRon() {
     const today = new Date();
     const curYear = today.getFullYear();
     const curMonth = today.getMonth() + 1;
@@ -2542,7 +2546,6 @@ function calculateGlobalRunwayDays() {
 
     let dailyAvgRon = curMonthExpenseRon / daysElapsedInMonth;
 
-    // Dacă luna curentă are mai puțin de 3 zile sau 0 cheltuieli, verificăm ultimele 30 de zile pentru o medie stabilă
     if (dailyAvgRon <= 0 || daysElapsedInMonth < 3) {
         const thirtyDaysAgo = new Date(today);
         thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -2567,6 +2570,23 @@ function calculateGlobalRunwayDays() {
         }
     }
 
+    return dailyAvgRon;
+}
+
+// Calcul Autonomie Financiară Globală (Banii actuali din cont / Ritmul de cheltuieli recent)
+function calculateGlobalRunwayDays() {
+    // 1. Sold curent total din cont (Venituri - Cheltuieli active)
+    let totalBalRon = 0;
+    appData.transactions.forEach(t => {
+        if (isTxSuspended(t)) return;
+        const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        if (t.type === 'income') totalBalRon += a;
+        else if (t.type === 'expense') totalBalRon -= a;
+    });
+
+    if (totalBalRon <= 0) return 0;
+
+    const dailyAvgRon = calculateDailyExpenseRateRon();
     if (dailyAvgRon <= 0) {
         return 999;
     }
@@ -2604,6 +2624,46 @@ function updateHeaderRunwayWidget() {
 
     if (widgetEl) {
         widgetEl.title = `Autonomie Financiară: ~${days} ${unitText.toLowerCase()} de rezervă cu banii actuali din cont.`;
+    }
+}
+
+// Actualizare Widget Autonomie în Pagina Depozite (Calculat pe baza Marelui Total)
+function updateDepositsRunwayWidget(grandPatrimoniuRon) {
+    const daysEl = document.getElementById('depositsRunwayDays');
+    const unitEl = document.getElementById('depositsRunwayUnit');
+    const widgetEl = document.getElementById('depositsRunwayWidget');
+    if (!daysEl) return;
+
+    const dailyAvgRon = calculateDailyExpenseRateRon();
+    let days = 0;
+    if (dailyAvgRon > 0 && grandPatrimoniuRon > 0) {
+        days = Math.round(grandPatrimoniuRon / dailyAvgRon);
+    } else if (grandPatrimoniuRon > 0) {
+        days = 999;
+    }
+
+    const activeLang = getLanguageForCurrency();
+    const unitMap = {
+        ro: 'ZILE',
+        en: 'DAYS',
+        de: 'TAGE',
+        tr: 'GÜN',
+        ja: '日',
+        zh: '天'
+    };
+    const unitText = unitMap[activeLang] || 'ZILE';
+
+    if (days >= 999) {
+        daysEl.textContent = '999+';
+        daysEl.style.fontSize = '0.78rem';
+    } else {
+        daysEl.textContent = String(days);
+        daysEl.style.fontSize = '0.92rem';
+    }
+    if (unitEl) unitEl.textContent = unitText;
+
+    if (widgetEl) {
+        widgetEl.title = `Autonomie Patrimoniu Total: ~${days} ${unitText.toLowerCase()} de rezervă pe baza depozitelor și fondurilor disponibile.`;
     }
 }
 
@@ -4604,6 +4664,54 @@ function renderStatsTab() {
         } else {
             kpiRunwayEl.innerHTML = `${daysRunway} <span class="b-kpi-curr">${activeLang === 'ro' ? 'Zile' : 'Days'}</span>`;
             kpiRunwaySub.textContent = activeLang === 'ro' ? 'La ritmul curent' : 'At current rate';
+        }
+    }
+
+    // 10B. Depozite & Patrimoniu (Al 4-lea Card din Economii)
+    const kpiDepositsEl = document.getElementById('statKpiDeposits');
+    const kpiDepositsSub = document.getElementById('statKpiDepositsSub');
+    if (kpiDepositsEl) {
+        let customDepositsTotalRon = 0;
+        const depList = appData.customDeposits || [];
+        depList.forEach(d => {
+            customDepositsTotalRon += convertToRon(parseFloat(d.amount) || 0, d.currency);
+        });
+
+        // Balante disponibile din Panou (Card & Cash)
+        let totalIncRon = 0, totalExpRon = 0, cardIncRon = 0, cardExpRon = 0, cashIncRon = 0, cashExpRon = 0;
+        appData.transactions.forEach(tx => {
+            if (isTxSuspended(tx)) return;
+            const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+            const method = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
+            if (tx.type === 'income') {
+                totalIncRon += amtRon;
+                if (method === 'cash') cashIncRon += amtRon;
+                else cardIncRon += amtRon;
+            } else if (tx.type === 'expense') {
+                totalExpRon += amtRon;
+                if (method === 'cash') cashExpRon += amtRon;
+                else cardExpRon += amtRon;
+            } else if (tx.type === 'transfer') {
+                const dir = tx.transferDirection || 'card-to-cash';
+                if (dir === 'card-to-cash') {
+                    cardExpRon += amtRon;
+                    cashIncRon += amtRon;
+                } else if (dir === 'cash-to-card') {
+                    cashExpRon += amtRon;
+                    cardIncRon += amtRon;
+                }
+            }
+        });
+        const cardBalRon = cardIncRon - cardExpRon;
+        const cashBalRon = cashIncRon - cashExpRon;
+        const grandPatrimoniuRon = customDepositsTotalRon + cardBalRon + cashBalRon;
+        const grandPatrimoniuDisp = convertFromRon(grandPatrimoniuRon, mainCurr);
+
+        kpiDepositsEl.innerHTML = formatKpiMoneyHtml(grandPatrimoniuDisp, mainCurr);
+        if (kpiDepositsSub) {
+            const count = depList.length;
+            const countText = count === 1 ? '1 depozit' : `${count} depozite`;
+            kpiDepositsSub.textContent = activeLang === 'ro' ? `${countText} + disponibil` : `${count} deposits + avail`;
         }
     }
 
@@ -8312,6 +8420,317 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
 
         listEl.appendChild(row);
     });
+}
+
+// ==========================================
+// MODUL DEPOZITE & PATRIMONIU / GESTIUNE FONDURI
+// ==========================================
+
+const DEPOSIT_CATEGORY_ICONS = {
+    deposit: '🏦',
+    card: '💳',
+    cash: '💵',
+    stocks: '📈',
+    crypto: '🪙'
+};
+
+const DEPOSIT_CATEGORY_NAMES = {
+    ro: {
+        deposit: 'Depozit Bancar',
+        card: 'Card / Cont Bancar',
+        cash: 'Cash / Valută',
+        stocks: 'Acțiuni / Fonduri',
+        crypto: 'Cripto / Aur / Altele'
+    },
+    en: {
+        deposit: 'Bank Deposit',
+        card: 'Card / Bank Account',
+        cash: 'Cash / Foreign Currency',
+        stocks: 'Stocks / Funds',
+        crypto: 'Crypto / Gold / Other'
+    },
+    de: {
+        deposit: 'Bankeinlage',
+        card: 'Karte / Bankkonto',
+        cash: 'Bargeld / Währung',
+        stocks: 'Aktien / Fonds',
+        crypto: 'Krypto / Gold / Sonstiges'
+    },
+    tr: {
+        deposit: 'Banka Mevduatı',
+        card: 'Kart / Banka Hesabı',
+        cash: 'Nakit / Döviz',
+        stocks: 'Hisse / Fonlar',
+        crypto: 'Kripto / Altın / Diğer'
+    },
+    ja: {
+        deposit: '銀行預金',
+        card: 'カード・銀行口座',
+        cash: '現金・外貨',
+        stocks: '株式・投資信託',
+        crypto: '暗号資産・金・その他'
+    },
+    zh: {
+        deposit: '银行存款',
+        card: '银行卡/账户',
+        cash: '现金/外币',
+        stocks: '股票/基金',
+        crypto: '加密货币/黄金/其他'
+    }
+};
+
+function openDepositsModal() {
+    populateCurrencySelectors();
+    hideDepositForm();
+    renderDepositsPage();
+    openModal('modalDeposits');
+}
+window.openDepositsModal = openDepositsModal;
+
+function showDepositForm(editId = null) {
+    const formBox = document.getElementById('depositsFormBox');
+    const formTitle = document.getElementById('depositFormTitle');
+    const inputId = document.getElementById('depositEditId');
+    const inputName = document.getElementById('depositInputName');
+    const inputCategory = document.getElementById('depositInputCategory');
+    const inputCurrency = document.getElementById('depositInputCurrency');
+    const inputAmount = document.getElementById('depositInputAmount');
+    if (!formBox) return;
+
+    populateCurrencySelectors();
+
+    if (editId) {
+        const deposits = appData.customDeposits || [];
+        const item = deposits.find(d => d.id === editId);
+        if (item) {
+            if (formTitle) formTitle.textContent = '✏️ Editează Depozit';
+            if (inputId) inputId.value = item.id;
+            if (inputName) inputName.value = item.name || '';
+            if (inputCategory) inputCategory.value = item.category || 'deposit';
+            if (inputCurrency) inputCurrency.value = item.currency || getActiveCurrency();
+            if (inputAmount) inputAmount.value = item.amount || '';
+        }
+    } else {
+        if (formTitle) formTitle.textContent = '+ Depozit / Fond Nou';
+        if (inputId) inputId.value = '';
+        if (inputName) inputName.value = '';
+        if (inputCategory) inputCategory.value = 'deposit';
+        if (inputCurrency) inputCurrency.value = getActiveCurrency();
+        if (inputAmount) inputAmount.value = '';
+    }
+
+    formBox.style.display = 'block';
+    setTimeout(() => {
+        formBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (inputName) inputName.focus();
+    }, 50);
+}
+
+function hideDepositForm() {
+    const formBox = document.getElementById('depositsFormBox');
+    if (formBox) formBox.style.display = 'none';
+    const inputId = document.getElementById('depositEditId');
+    if (inputId) inputId.value = '';
+}
+
+function saveDepositItem() {
+    const inputId = document.getElementById('depositEditId');
+    const inputName = document.getElementById('depositInputName');
+    const inputCategory = document.getElementById('depositInputCategory');
+    const inputCurrency = document.getElementById('depositInputCurrency');
+    const inputAmount = document.getElementById('depositInputAmount');
+
+    const name = inputName ? inputName.value.trim() : '';
+    const category = inputCategory ? inputCategory.value : 'deposit';
+    const currency = inputCurrency ? inputCurrency.value : getActiveCurrency();
+    const rawAmt = inputAmount ? parseFloat(inputAmount.value) : 0;
+
+    if (!name) {
+        showToast('Introdu un nume sau o descriere pentru depozit!', 'warning');
+        if (inputName) inputName.focus();
+        return;
+    }
+
+    if (isNaN(rawAmt) || rawAmt <= 0) {
+        showToast('Introdu o sumă validă mai mare decât zero!', 'warning');
+        if (inputAmount) inputAmount.focus();
+        return;
+    }
+
+    if (!Array.isArray(appData.customDeposits)) {
+        appData.customDeposits = [];
+    }
+
+    const editId = inputId ? inputId.value : '';
+    const icon = DEPOSIT_CATEGORY_ICONS[category] || '🏦';
+
+    if (editId) {
+        const idx = appData.customDeposits.findIndex(d => d.id === editId);
+        if (idx !== -1) {
+            appData.customDeposits[idx] = {
+                ...appData.customDeposits[idx],
+                name,
+                category,
+                icon,
+                currency,
+                amount: rawAmt,
+                updatedAt: new Date().toISOString()
+            };
+            showToast('Depozitul a fost actualizat cu succes!', 'success');
+        }
+    } else {
+        const newDep = {
+            id: 'dep-' + Date.now(),
+            name,
+            category,
+            icon,
+            currency,
+            amount: rawAmt,
+            createdAt: new Date().toISOString()
+        };
+        appData.customDeposits.push(newDep);
+        showToast('Depozitul a fost adăugat cu succes!', 'success');
+    }
+
+    saveData();
+    hideDepositForm();
+    renderDepositsPage();
+    renderStatsTab();
+}
+
+function deleteDepositItem(id) {
+    if (!Array.isArray(appData.customDeposits)) return;
+    appData.customDeposits = appData.customDeposits.filter(d => d.id !== id);
+    saveData();
+    showToast('Depozitul a fost șters.', 'info');
+    renderDepositsPage();
+    renderStatsTab();
+}
+window.deleteDepositItem = deleteDepositItem;
+
+function editDepositItem(id) {
+    showDepositForm(id);
+}
+window.editDepositItem = editDepositItem;
+
+function renderDepositsPage() {
+    const listContainer = document.getElementById('depositsListContainer');
+    const grandTotalEl = document.getElementById('depositsGrandTotalDisplay');
+    const countBadgeEl = document.getElementById('depositsCountBadge');
+    const breakdownEl = document.getElementById('depositsBreakdownSummary');
+    const panouCardValEl = document.getElementById('depositsPanouCardVal');
+    const panouCashValEl = document.getElementById('depositsPanouCashVal');
+
+    const mainCurr = getActiveCurrency();
+    const activeLang = getLanguageForCurrency();
+    const catDict = DEPOSIT_CATEGORY_NAMES[activeLang] || DEPOSIT_CATEGORY_NAMES['ro'];
+
+    const deposits = appData.customDeposits || [];
+    let customDepositsTotalRon = 0;
+
+    // 1. Calcul disponibil Panou (Card & Cash)
+    let totalIncRon = 0, totalExpRon = 0, cardIncRon = 0, cardExpRon = 0, cashIncRon = 0, cashExpRon = 0;
+    appData.transactions.forEach(tx => {
+        if (isTxSuspended(tx)) return;
+        const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+        const method = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
+        if (tx.type === 'income') {
+            totalIncRon += amtRon;
+            if (method === 'cash') cashIncRon += amtRon;
+            else cardIncRon += amtRon;
+        } else if (tx.type === 'expense') {
+            totalExpRon += amtRon;
+            if (method === 'cash') cashExpRon += amtRon;
+            else cardExpRon += amtRon;
+        } else if (tx.type === 'transfer') {
+            const dir = tx.transferDirection || 'card-to-cash';
+            if (dir === 'card-to-cash') {
+                cardExpRon += amtRon;
+                cashIncRon += amtRon;
+            } else if (dir === 'cash-to-card') {
+                cashExpRon += amtRon;
+                cardIncRon += amtRon;
+            }
+        }
+    });
+
+    const cardBalRon = cardIncRon - cardExpRon;
+    const cashBalRon = cashIncRon - cashExpRon;
+    const cardBalDisp = convertFromRon(cardBalRon, mainCurr);
+    const cashBalDisp = convertFromRon(cashBalRon, mainCurr);
+
+    if (panouCardValEl) panouCardValEl.textContent = formatMoney(cardBalDisp, mainCurr);
+    if (panouCashValEl) panouCashValEl.textContent = formatMoney(cashBalDisp, mainCurr);
+
+    // 2. Randare lista depozite
+    if (listContainer) {
+        listContainer.innerHTML = '';
+        if (deposits.length === 0) {
+            listContainer.innerHTML = `
+                <div style="text-align: center; padding: 24px 12px; background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.80rem;">
+                    <div style="font-size: 1.8rem; margin-bottom: 6px;">🏦</div>
+                    <div style="font-weight: 600; color: var(--text-color); margin-bottom: 3px;">Nu ai adăugat încă niciun depozit.</div>
+                    <div style="font-size: 0.72rem;">Apasă pe butonul <strong>„+ Adaugă Depozit”</strong> de mai sus pentru a introduce conturi, valută, cash sau acțiuni.</div>
+                </div>
+            `;
+        } else {
+            deposits.forEach(d => {
+                const amtNum = parseFloat(d.amount) || 0;
+                const depCurr = d.currency || mainCurr;
+                const amtRon = convertToRon(amtNum, depCurr);
+                customDepositsTotalRon += amtRon;
+
+                const convMainAmt = convertFromRon(amtRon, mainCurr);
+                const isDifferentCurrency = (depCurr !== mainCurr);
+                const catName = catDict[d.category] || d.category;
+                const icon = d.icon || DEPOSIT_CATEGORY_ICONS[d.category] || '🏦';
+
+                const row = document.createElement('div');
+                row.className = 'deposit-card-item';
+                row.innerHTML = `
+                    <div class="deposit-item-left">
+                        <div class="deposit-item-icon">${icon}</div>
+                        <div class="deposit-item-info">
+                            <div class="deposit-item-name" title="${d.name}">${d.name}</div>
+                            <div class="deposit-item-cat-tag">${catName} • ${depCurr}</div>
+                        </div>
+                    </div>
+                    <div class="deposit-item-right">
+                        <div class="deposit-item-orig-val">${formatMoney(amtNum, depCurr)}</div>
+                        ${isDifferentCurrency ? `<div class="deposit-item-conv-val">≈ ${formatMoney(convMainAmt, mainCurr)}</div>` : ''}
+                    </div>
+                    <div class="deposit-item-actions">
+                        <button type="button" class="deposit-btn-action" title="Editează" onclick="editDepositItem('${d.id}')">✏️</button>
+                        <button type="button" class="deposit-btn-action deposit-btn-delete" title="Șterge" onclick="deleteDepositItem('${d.id}')">🗑️</button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+    }
+
+    // 3. Calcul Marele Total (Depozite + Disponibil Card + Disponibil Cash)
+    const grandPatrimoniuRon = customDepositsTotalRon + cardBalRon + cashBalRon;
+    const grandPatrimoniuDisp = convertFromRon(grandPatrimoniuRon, mainCurr);
+    const customDepositsDisp = convertFromRon(customDepositsTotalRon, mainCurr);
+
+    if (grandTotalEl) {
+        grandTotalEl.textContent = formatMoney(grandPatrimoniuDisp, mainCurr);
+    }
+    if (countBadgeEl) {
+        const count = deposits.length;
+        countBadgeEl.textContent = activeLang === 'ro' ? `${count} ${count === 1 ? 'Depozit' : 'Depozite'}` : `${count} Deposits`;
+    }
+    if (breakdownEl) {
+        breakdownEl.innerHTML = `
+            <span>Depozite: <strong>${formatMoney(customDepositsDisp, mainCurr)}</strong></span> • 
+            <span>Card: <strong>${formatMoney(cardBalDisp, mainCurr)}</strong></span> • 
+            <span>Cash: <strong>${formatMoney(cashBalDisp, mainCurr)}</strong></span>
+        `;
+    }
+
+    // 4. Actualizare Scut Autonomie pe baza Marelui Total
+    updateDepositsRunwayWidget(grandPatrimoniuRon);
 }
 
 // Render Categories Management Tab (cu suport Drag & Drop reordonare)
@@ -12159,6 +12578,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'cardStatPeakInc', action: () => openKpiDetailModal('peak_inc') },
         { id: 'cardStatAvgTicket', action: () => openMerchantAnalyticsModal(currentStatsPeriod) },
         { id: 'cardStatRunway', action: () => openKpiDetailModal('runway') },
+        { id: 'cardStatDeposits', action: () => openDepositsModal() },
         { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') },
         { id: 'cardStatBillsAnalytics', action: () => openBillsAnalyticsModal(currentStatsPeriod) },
         { id: 'cardStatStoresShare', action: () => openKpiDetailModal('stores') },
@@ -12177,6 +12597,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Ascultatori pentru Modalul de Depozite & Patrimoniu
+    const btnToggleAddDeposit = document.getElementById('btnToggleAddDeposit');
+    if (btnToggleAddDeposit) {
+        btnToggleAddDeposit.addEventListener('click', () => {
+            const formBox = document.getElementById('depositsFormBox');
+            if (formBox && formBox.style.display === 'block') {
+                hideDepositForm();
+            } else {
+                showDepositForm();
+            }
+        });
+    }
+
+    const btnCancelDepositForm = document.getElementById('btnCancelDepositForm');
+    if (btnCancelDepositForm) {
+        btnCancelDepositForm.addEventListener('click', hideDepositForm);
+    }
+
+    const btnCancelDeposit = document.getElementById('btnCancelDeposit');
+    if (btnCancelDeposit) {
+        btnCancelDeposit.addEventListener('click', hideDepositForm);
+    }
+
+    const btnSaveDeposit = document.getElementById('btnSaveDeposit');
+    if (btnSaveDeposit) {
+        btnSaveDeposit.addEventListener('click', saveDepositItem);
+    }
 
     // Ascultatori pentru tab-urile de perioada din modalul de Analiza Magazine
     document.querySelectorAll('.merchant-period-btn').forEach(btn => {

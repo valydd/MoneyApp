@@ -6250,5 +6250,116 @@ body.dark-theme .overview-export-box {
     background: rgba(37, 99, 235, 0.04) !important;
 }
 
+/* Depozite & Patrimoniu Modal Styles */
+.deposit-card-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: all 0.18s ease;
+}
 
+.deposit-card-item:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+}
 
+.deposit-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.deposit-item-icon {
+    font-size: 1.35rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(16, 185, 129, 0.12);
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.deposit-item-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.deposit-item-name {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deposit-item-cat-tag {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.deposit-item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.deposit-item-orig-val {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #10b981;
+}
+
+.deposit-item-conv-val {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: rgba(148, 163, 184, 0.12);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.deposit-item-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.deposit-btn-action {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 5px 7px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deposit-btn-action:hover {
+    color: var(--text-color);
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.deposit-btn-delete:hover {
+    color: #ef4444;
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+}
