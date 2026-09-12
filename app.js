@@ -57,7 +57,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.68";
+const APP_VERSION = "3.3.69";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -207,7 +207,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.68.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.69.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -521,7 +521,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.68.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.69.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -835,7 +835,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.68.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.69.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1139,7 +1139,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.68.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.69.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1445,7 +1445,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.68.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.69.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1752,7 +1752,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.68.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.69.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -2430,15 +2430,16 @@ function persistDatabaseToFile() {
         try {
             const payload = {
                 appName: "MoneyApp",
-                version: "2.6.9",
+                version: APP_VERSION,
                 savedAt: new Date().toISOString(),
                 categories: appData.categories,
                 transactions: appData.transactions,
+                customDeposits: appData.customDeposits || [],
                 settings: appData.settings
             };
             const jsonStr = JSON.stringify(payload, null, 2);
             window.AndroidBridge.persistDatabase(jsonStr);
-            console.log("MoneyApp: Baza de date a fost salvată pe disc (moneyapp_database.json & .bak)");
+            console.log("MoneyApp: Baza de date a fost salvată pe disc (moneyapp_database.json & .bak) cu depozite:", (appData.customDeposits || []).length);
         } catch (e) {
             console.error("MoneyApp: Eroare la scrierea bazei de date pe disc:", e);
         }
@@ -2454,12 +2455,26 @@ function initNativeDatabase() {
         const diskJson = window.AndroidBridge.readDatabase();
         if (diskJson && diskJson.trim().length > 0) {
             const parsed = JSON.parse(diskJson);
-            if (parsed && (Array.isArray(parsed.categories) || Array.isArray(parsed.transactions))) {
+            if (parsed && (Array.isArray(parsed.categories) || Array.isArray(parsed.transactions) || Array.isArray(parsed.customDeposits))) {
                 if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
                     appData.categories = parsed.categories;
                 }
                 if (Array.isArray(parsed.transactions)) {
                     appData.transactions = parsed.transactions;
+                }
+                if (Array.isArray(parsed.customDeposits)) {
+                    appData.customDeposits = parsed.customDeposits;
+                } else {
+                    // Dacă fișierul de pe disc a fost scris de o versiune anterioară fără depozite, verifică localStorage pentru a nu pierde depozitele existente!
+                    try {
+                        const lsStored = localStorage.getItem('moneyapp_data_v1');
+                        if (lsStored) {
+                            const lsParsed = JSON.parse(lsStored);
+                            if (Array.isArray(lsParsed.customDeposits) && lsParsed.customDeposits.length > 0) {
+                                appData.customDeposits = lsParsed.customDeposits;
+                            }
+                        }
+                    } catch (_) {}
                 }
                 if (parsed.settings) {
                     appData.settings = { ...appData.settings, ...parsed.settings };
@@ -2470,7 +2485,7 @@ function initNativeDatabase() {
                     localStorage.setItem('moneyapp_data_v1', JSON.stringify(appData));
                 } catch (lsErr) {}
 
-                console.log("MoneyApp: Bază de date recuperată de pe disc:", (appData.transactions || []).length, "tranzacții,", (appData.categories || []).length, "categorii");
+                console.log("MoneyApp: Bază de date recuperată de pe disc:", (appData.transactions || []).length, "tranzacții,", (appData.categories || []).length, "categorii,", (appData.customDeposits || []).length, "depozite");
                 return true;
             }
         }
@@ -12711,7 +12726,8 @@ document.addEventListener('DOMContentLoaded', () => {
             exportDate: new Date().toISOString(),
             settings: appData.settings,
             categories: appData.categories,
-            transactions: appData.transactions
+            transactions: appData.transactions,
+            customDeposits: appData.customDeposits || []
         };
 
         const jsonStr = JSON.stringify(exportPayload, null, 2);
@@ -12734,7 +12750,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('Fișierul complet (tranzacții, categorii, setări și temă) a fost descărcat!', 'success');
+        showToast('Fișierul complet (tranzacții, categorii, depozite, setări și temă) a fost descărcat!', 'success');
     });
 
     // Backup: Import JSON (Restaureaza date, categorii, setari si interfata instant)
@@ -12746,7 +12762,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             try {
                 const parsed = JSON.parse(event.target.result);
-                if (parsed.categories && (parsed.transactions || parsed.settings)) {
+                if (parsed.categories && (parsed.transactions || parsed.settings || parsed.customDeposits)) {
                     // Actualizare categorii
                     if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
                         appData.categories = parsed.categories;
@@ -12755,6 +12771,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Actualizare tranzactii
                     if (Array.isArray(parsed.transactions)) {
                         appData.transactions = parsed.transactions;
+                    }
+
+                    // Actualizare depozite
+                    if (Array.isArray(parsed.customDeposits)) {
+                        appData.customDeposits = parsed.customDeposits;
                     }
                     
                     // Actualizare setari
