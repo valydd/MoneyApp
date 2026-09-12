@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=413">
+    <link rel="stylesheet" href="style.css?v=414">
 </head>
 <body>
     <div class="container">
@@ -45,7 +45,7 @@
                     <div class="logo-meta-wrap">
                         <div style="display:flex; align-items:center; gap:6px;">
                             <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.66</span>
+                            <span id="appVersionBadge" class="app-version-badge">v3.3.67</span>
                         </div>
                         <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
@@ -1195,9 +1195,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.66.apk" download="MoneyApp_v3.3.66.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.67.apk" download="MoneyApp_v3.3.67.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.66.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.67.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1613,14 +1613,14 @@
             <!-- Modal Header with Title, Autonomy Shield Widget on the top right, and Close Button -->
             <div class="modal-header" style="padding-bottom: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
                 <div class="modal-title" style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
-                    <span style="font-size: 1.3rem;">🏦</span>
+                    <span style="font-size: 1.3rem; flex-shrink: 0;">🏦</span>
                     <div style="min-width: 0;">
                         <div style="font-size: 1.05rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_modal_title">Depozite & Fonduri</div>
-                        <div style="font-size: 0.70rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_modal_sub">Depozite, conturi, valută, acțiuni & disponibil</div>
+                        <div style="font-size: 0.70rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_modal_sub">Depozite bancare, valută, acțiuni & disponibil</div>
                     </div>
                 </div>
                 <!-- Autonomy Shield Widget in top corner of Deposits page -->
-                <div class="header-runway-widget" id="depositsRunwayWidget" title="Autonomie Financiară calculată pe baza Marelui Total (Depozite + Disponibil)" style="margin-right: 8px; cursor: default;">
+                <div class="header-runway-widget" id="depositsRunwayWidget" title="Autonomie Financiară calculată pe baza Marelui Total" style="margin-right: 8px; cursor: default; flex-shrink: 0;">
                     <div class="runway-shield-container">
                         <svg class="runway-shield-svg" viewBox="0 0 44 50">
                             <defs>
@@ -1647,20 +1647,20 @@
                 <!-- Hero Grand Total Card -->
                 <div class="deposits-hero-card" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%); color: #ffffff; border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 6px 16px rgba(13, 148, 136, 0.28);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; opacity: 0.95;" data-i18n="deposits_hero_total">💰 Total General (Depozite + Disponibil)</span>
+                        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; opacity: 0.95;" data-i18n="deposits_hero_total">Total General (Depozite + Disponibil)</span>
                         <span id="depositsCountBadge" style="background: rgba(255,255,255,0.25); padding: 3px 9px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; backdrop-filter: blur(4px);">0 Depozite</span>
                     </div>
-                    <div id="depositsGrandTotalDisplay" style="font-size: 1.65rem; font-weight: 900; letter-spacing: -0.5px; margin: 2px 0;">0,00 RON</div>
-                    <div id="depositsBreakdownSummary" style="font-size: 0.72rem; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+                    <div id="depositsGrandTotalDisplay" style="font-size: 1.60rem; font-weight: 900; letter-spacing: -0.5px; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0,00 RON</div>
+                    <div id="depositsBreakdownSummary" style="font-size: 0.72rem; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; line-height: 1.35;">
                         <span>Depozite: 0 RON</span> • <span>Card: 0 RON</span> • <span>Cash: 0 RON</span>
                     </div>
                 </div>
 
                 <!-- Buton Deschidere Formular Adaugare -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_list_title">📦 Depozite & Fonduri Salvate</div>
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_list_title">Depozite & Fonduri Salvate</div>
                     <button type="button" id="btnToggleAddDeposit" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 4px;">
-                        <span>+ Adaugă Depozit</span>
+                        <span data-i18n="deposits_btn_add">+ Adaugă Depozit</span>
                     </button>
                 </div>
 
@@ -1697,13 +1697,13 @@
                     </div>
 
                     <div style="margin-bottom: 12px;">
-                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_amount">Sumă Salvează în Depozit</label>
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px;" data-i18n="deposit_field_amount">Sumă în Depozit</label>
                         <input type="number" step="any" id="depositInputAmount" class="form-input" placeholder="0.00" style="font-size: 0.95rem; font-weight: 700; height: 38px;">
                     </div>
 
                     <div style="display: flex; gap: 8px;">
-                        <button type="button" id="btnSaveDeposit" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.80rem; font-weight: 700;">Salvează Depozit</button>
-                        <button type="button" id="btnCancelDeposit" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.80rem;">Anulează</button>
+                        <button type="button" id="btnSaveDeposit" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.80rem; font-weight: 700;" data-i18n="btn_save_deposit">Salvează Depozit</button>
+                        <button type="button" id="btnCancelDeposit" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.80rem;" data-i18n="btn_cancel">Anulează</button>
                     </div>
                 </div>
 
@@ -1712,32 +1712,32 @@
                     <!-- Randuri generate dinamic in app.js -->
                 </div>
 
-                <!-- Sectiune Disponibil din Panou (Card & Cash) -->
+                <!-- Sectiune Disponibil din Cont (Card & Cash) -->
                 <div style="background: var(--input-bg); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;" data-i18n="deposits_panou_funds_title">
-                        ⚡ Fonduri Disponibile în Aplicație (Panou)
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;" data-i18n="deposits_funds_title">
+                        ⚡ Fonduri Disponibile în Cont
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 1.1rem;">💳</span>
-                                <div>
-                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_panou_card">Disponibil Card (Panou)</div>
-                                    <div style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="deposits_panou_card_sub">Sold tranzacții card</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 9px 11px; border-radius: 6px; border: 1px solid var(--border-color); gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                                <span style="font-size: 1.15rem; flex-shrink: 0;">💳</span>
+                                <div style="min-width: 0;">
+                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_card_fund">Cont Card</div>
+                                    <div style="font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_card_fund_sub">Sold tranzacții card</div>
                                 </div>
                             </div>
-                            <div id="depositsPanouCardVal" style="font-size: 0.90rem; font-weight: 800; color: var(--accent);">0,00 RON</div>
+                            <div id="depositsPanouCardVal" style="font-size: 0.90rem; font-weight: 800; color: var(--accent); white-space: nowrap; flex-shrink: 0; text-align: right;">0,00 RON</div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 1.1rem;">💵</span>
-                                <div>
-                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color);" data-i18n="deposits_panou_cash">Disponibil Cash (Panou)</div>
-                                    <div style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="deposits_panou_cash_sub">Sold tranzacții numerar</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 9px 11px; border-radius: 6px; border: 1px solid var(--border-color); gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
+                                <span style="font-size: 1.15rem; flex-shrink: 0;">💵</span>
+                                <div style="min-width: 0;">
+                                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_cash_fund">Numerar Cash</div>
+                                    <div style="font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-i18n="deposits_cash_fund_sub">Sold numerar cash</div>
                                 </div>
                             </div>
-                            <div id="depositsPanouCashVal" style="font-size: 0.90rem; font-weight: 800; color: #10b981;">0,00 RON</div>
+                            <div id="depositsPanouCashVal" style="font-size: 0.90rem; font-weight: 800; color: #10b981; white-space: nowrap; flex-shrink: 0; text-align: right;">0,00 RON</div>
                         </div>
                     </div>
                 </div>
@@ -2051,7 +2051,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=413"></script>
+    <script src="app.js?v=414"></script>
 </body>
 </html>
 

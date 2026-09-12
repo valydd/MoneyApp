@@ -57,7 +57,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.66";
+const APP_VERSION = "3.3.67";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -207,7 +207,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.66.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.67.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -388,7 +388,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 Istoric Plăți Facturi',
         bills_empty: 'Nu există plăți de facturi înregistrate în această perioadă.',
         lbl_tx_total_expense_letter: 'C:',
-        lbl_tx_total_income_letter: 'V:'
+        lbl_tx_total_income_letter: 'V:',
+        stat_deposits_sub: 'Total Depozite & Fonduri',
+        deposits_modal_title: 'Depozite & Patrimoniu',
+        deposits_modal_sub: 'Evidență separată pentru depozite bancare, valută, cash, acțiuni și fonduri de economii',
+        deposits_hero_total: 'Total General (Depozite + Disponibil)',
+        deposits_list_title: 'Depozite & Fonduri Salvate',
+        deposits_btn_add: '+ Adaugă Depozit',
+        deposit_form_title_new: '+ Depozit / Fond Nou',
+        deposit_form_title_edit: '✏️ Editează Depozit',
+        deposit_field_name: 'Nume / Descriere Depozit',
+        deposit_placeholder_name: 'ex: Depozit Bancar BCR, Card Lei, Cash Euro, Acțiuni...',
+        deposit_field_category: 'Tip / Categorie',
+        deposit_field_currency: 'Monedă',
+        deposit_field_amount: 'Sumă în Depozit',
+        btn_save_deposit: 'Salvează Depozit',
+        deposits_funds_title: '⚡ Fonduri Disponibile în Cont',
+        deposits_card_fund: 'Cont Card',
+        deposits_card_fund_sub: 'Sold tranzacții card',
+        deposits_cash_fund: 'Numerar Cash',
+        deposits_cash_fund_sub: 'Sold numerar cash',
+        deposits_isolated_notice: 'ℹ️ Depozitele introduse aici sunt păstrate separat și servesc exclusiv evidenței patrimoniului tău. Ele nu influențează bugetul, tranzacțiile sau rapoartele lunare din aplicație.',
+        deposits_empty_title: 'Nu ai adăugat încă niciun depozit.',
+        deposits_empty_sub: 'Apasă pe butonul „+ Adaugă Depozit” de mai sus pentru a introduce conturi, valută, cash sau acțiuni.',
+        toast_deposit_saved: 'Depozitul a fost adăugat cu succes!',
+        toast_deposit_updated: 'Depozitul a fost actualizat cu succes!',
+        toast_deposit_deleted: 'Depozitul a fost șters.',
+        toast_deposit_name_req: 'Introdu un nume sau o descriere pentru depozit!',
+        toast_deposit_amount_req: 'Introdu o sumă validă mai mare decât zero!',
+        deposits_breakdown_dep: 'Depozite',
+        deposits_breakdown_card: 'Card',
+        deposits_breakdown_cash: 'Cash',
+        deposits_count_label: 'Depozite',
+        btn_edit: 'Editează',
+        btn_delete: 'Șterge'
     },
     en: {
         currency_label: 'Currency',
@@ -488,7 +521,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.66.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.67.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -669,7 +702,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 Bill Payment History',
         bills_empty: 'No bill payments recorded in this period.',
         lbl_tx_total_expense_letter: 'E:',
-        lbl_tx_total_income_letter: 'I:'
+        lbl_tx_total_income_letter: 'I:',
+        stat_deposits_sub: 'Total Deposits & Funds',
+        deposits_modal_title: 'Deposits & Wealth',
+        deposits_modal_sub: 'Separate tracking for bank deposits, foreign currency, cash, stocks, and savings funds',
+        deposits_hero_total: 'Grand Total (Deposits + Available)',
+        deposits_list_title: 'Saved Deposits & Funds',
+        deposits_btn_add: '+ Add Deposit',
+        deposit_form_title_new: '+ New Deposit / Fund',
+        deposit_form_title_edit: '✏️ Edit Deposit',
+        deposit_field_name: 'Deposit Name / Description',
+        deposit_placeholder_name: 'e.g., Bank Deposit, Card USD, Cash EUR, Stocks...',
+        deposit_field_category: 'Type / Category',
+        deposit_field_currency: 'Currency',
+        deposit_field_amount: 'Amount in Deposit',
+        btn_save_deposit: 'Save Deposit',
+        deposits_funds_title: '⚡ Available Account Funds',
+        deposits_card_fund: 'Card Account',
+        deposits_card_fund_sub: 'Card transaction balance',
+        deposits_cash_fund: 'Cash',
+        deposits_cash_fund_sub: 'Cash balance',
+        deposits_isolated_notice: 'ℹ️ Deposits recorded here are kept strictly separate for net worth tracking. They do not affect your regular budget, transactions, or monthly reports in the app.',
+        deposits_empty_title: 'No deposits added yet.',
+        deposits_empty_sub: 'Tap "+ Add Deposit" above to record accounts, foreign currencies, cash or stocks.',
+        toast_deposit_saved: 'Deposit added successfully!',
+        toast_deposit_updated: 'Deposit updated successfully!',
+        toast_deposit_deleted: 'Deposit deleted.',
+        toast_deposit_name_req: 'Please enter a name or description for the deposit!',
+        toast_deposit_amount_req: 'Please enter a valid amount greater than zero!',
+        deposits_breakdown_dep: 'Deposits',
+        deposits_breakdown_card: 'Card',
+        deposits_breakdown_cash: 'Cash',
+        deposits_count_label: 'Deposits',
+        btn_edit: 'Edit',
+        btn_delete: 'Delete'
     },
     de: {
         currency_label: 'Währung',
@@ -769,7 +835,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.66.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.67.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -943,7 +1009,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 Rechnungsverlauf',
         bills_empty: 'Keine Rechnungszahlungen in diesem Zeitraum erfasst.',
         lbl_tx_total_expense_letter: 'A:',
-        lbl_tx_total_income_letter: 'E:'
+        lbl_tx_total_income_letter: 'E:',
+        stat_deposits_sub: 'Gesamt Einlagen & Fonds',
+        deposits_modal_title: 'Einlagen & Vermögen',
+        deposits_modal_sub: 'Separate Erfassung von Bankeinlagen, Devisen, Bargeld, Aktien und Sparfonds',
+        deposits_hero_total: 'Gesamtsumme (Einlagen + Verfügbar)',
+        deposits_list_title: 'Gespeicherte Einlagen & Fonds',
+        deposits_btn_add: '+ Einlage hinzufügen',
+        deposit_form_title_new: '+ Neue Einlage / Fonds',
+        deposit_form_title_edit: '✏️ Einlage bearbeiten',
+        deposit_field_name: 'Name / Beschreibung der Einlage',
+        deposit_placeholder_name: 'z.B. Sparkonto, EUR-Bargeld, Aktien...',
+        deposit_field_category: 'Typ / Kategorie',
+        deposit_field_currency: 'Währung',
+        deposit_field_amount: 'Betrag der Einlage',
+        btn_save_deposit: 'Einlage speichern',
+        deposits_funds_title: '⚡ Verfügbares Kontoguthaben',
+        deposits_card_fund: 'Kartenguthaben',
+        deposits_card_fund_sub: 'Kartensaldo',
+        deposits_cash_fund: 'Bargeld',
+        deposits_cash_fund_sub: 'Bargeldsaldo',
+        deposits_isolated_notice: 'ℹ️ Die hier erfassten Einlagen werden getrennt verwaltet und dienen ausschließlich der Vermögensübersicht. Sie beeinflussen weder Budget noch Transaktionen oder Monatsberichte.',
+        deposits_empty_title: 'Noch keine Einlagen hinzugefügt.',
+        deposits_empty_sub: 'Tippen Sie oben auf „+ Einlage hinzufügen“, um Konten, Devisen, Bargeld oder Aktien zu erfassen.',
+        toast_deposit_saved: 'Einlage erfolgreich hinzugefügt!',
+        toast_deposit_updated: 'Einlage erfolgreich aktualisiert!',
+        toast_deposit_deleted: 'Einlage gelöscht.',
+        toast_deposit_name_req: 'Bitte geben Sie einen Namen oder eine Beschreibung für die Einlage ein!',
+        toast_deposit_amount_req: 'Bitte geben Sie einen gültigen Betrag größer als Null ein!',
+        deposits_breakdown_dep: 'Einlagen',
+        deposits_breakdown_card: 'Karte',
+        deposits_breakdown_cash: 'Bargeld',
+        deposits_count_label: 'Einlagen',
+        btn_edit: 'Bearbeiten',
+        btn_delete: 'Löschen'
     },
     tr: {
         currency_label: 'Para Birimi',
@@ -1040,7 +1139,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.66.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.67.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1213,7 +1312,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 Fatura Ödeme Geçmişi',
         bills_empty: 'Bu dönemde kayıtlı fatura ödemesi bulunamadı.',
         lbl_tx_total_expense_letter: 'H:',
-        lbl_tx_total_income_letter: 'G:'
+        lbl_tx_total_income_letter: 'G:',
+        stat_deposits_sub: 'Toplam Mevduat & Fonlar',
+        deposits_modal_title: 'Mevduat & Varlıklar',
+        deposits_modal_sub: 'Banka mevduatı, döviz, nakit, hisse senetleri ve birikim fonları için ayrı takip',
+        deposits_hero_total: 'Genel Toplam (Mevduat + Kullanılabilir)',
+        deposits_list_title: 'Kayıtlı Mevduat & Fonlar',
+        deposits_btn_add: '+ Mevduat Ekle',
+        deposit_form_title_new: '+ Yeni Mevduat / Fon',
+        deposit_form_title_edit: '✏️ Mevduatı Düzenle',
+        deposit_field_name: 'Mevduat Adı / Açıklaması',
+        deposit_placeholder_name: 'örn: Banka Mevduatı, Döviz Nakit, Hisse...',
+        deposit_field_category: 'Tür / Kategori',
+        deposit_field_currency: 'Para Birimi',
+        deposit_field_amount: 'Mevduat Tutarı',
+        btn_save_deposit: 'Mevduatı Kaydet',
+        deposits_funds_title: '⚡ Kullanılabilir Hesap Bakiyesi',
+        deposits_card_fund: 'Kart Bakiyesi',
+        deposits_card_fund_sub: 'Kart işlem bakiyesi',
+        deposits_cash_fund: 'Nakit',
+        deposits_cash_fund_sub: 'Nakit bakiyesi',
+        deposits_isolated_notice: 'ℹ️ Buraya eklenen mevduatlar ayrı tutulur ve yalnızca varlık takibi içindir. Uygulamadaki bütçenizi, işlemlerinizi veya aylık raporlarınızı etkilemez.',
+        deposits_empty_title: 'Henüz mevduat eklenmedi.',
+        deposits_empty_sub: 'Hesaplar, döviz, nakit veya hisse senetleri eklemek için yukarıdaki "+ Mevduat Ekle"ye dokunun.',
+        toast_deposit_saved: 'Mevduat başarıyla eklendi!',
+        toast_deposit_updated: 'Mevduat başarıyla güncellendi!',
+        toast_deposit_deleted: 'Mevduat silindi.',
+        toast_deposit_name_req: 'Lütfen mevduat için bir isim veya açıklama girin!',
+        toast_deposit_amount_req: 'Lütfen sıfırdan büyük geçerli bir tutar girin!',
+        deposits_breakdown_dep: 'Mevduat',
+        deposits_breakdown_card: 'Kart',
+        deposits_breakdown_cash: 'Nakit',
+        deposits_count_label: 'Mevduat',
+        btn_edit: 'Düzenle',
+        btn_delete: 'Sil'
     },
     ja: {
         currency_label: '通貨',
@@ -1313,7 +1445,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.66.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.67.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1487,7 +1619,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 請求書支払い履歴',
         bills_empty: 'この期間の請求書支払い記録はありません。',
         lbl_tx_total_expense_letter: '支:',
-        lbl_tx_total_income_letter: '収:'
+        lbl_tx_total_income_letter: '収:',
+        stat_deposits_sub: '預金・資産合計',
+        deposits_modal_title: '預金・個人資産',
+        deposits_modal_sub: '銀行預金、外貨、現金、株式、貯蓄ファンドの個別資産管理',
+        deposits_hero_total: '総合計（預金 ＋ 口座残高）',
+        deposits_list_title: '保存済み預金・ファンド一覧',
+        deposits_btn_add: '+ 預金を追加',
+        deposit_form_title_new: '+ 新規預金・ファンド',
+        deposit_form_title_edit: '✏️ 預金を編集',
+        deposit_field_name: '預金名・説明',
+        deposit_placeholder_name: '例: 定期預金、ドル現金、株式投資...',
+        deposit_field_category: 'タイプ・カテゴリ',
+        deposit_field_currency: '通貨',
+        deposit_field_amount: '預金金額',
+        btn_save_deposit: '預金を保存',
+        deposits_funds_title: '⚡ 利用可能な口座残高',
+        deposits_card_fund: 'カード口座',
+        deposits_card_fund_sub: 'カード取引残高',
+        deposits_cash_fund: '現金',
+        deposits_cash_fund_sub: '現金残高',
+        deposits_isolated_notice: 'ℹ️ ここに入力された預金は資産把握のために個別管理され、アプリ内の通常予算や支出取引、月次レポートには影響しません。',
+        deposits_empty_title: '預金はまだ追加されていません。',
+        deposits_empty_sub: '上記「+ 預金を追加」をタップして口座、外貨、現金、株式などを登録します。',
+        toast_deposit_saved: '預金が正常に追加されました！',
+        toast_deposit_updated: '預金が更新されました！',
+        toast_deposit_deleted: '預金を削除しました。',
+        toast_deposit_name_req: '預金名または説明を入力してください！',
+        toast_deposit_amount_req: '0より大きい有効な金額を入力してください！',
+        deposits_breakdown_dep: '預金',
+        deposits_breakdown_card: 'カード',
+        deposits_breakdown_cash: '現金',
+        deposits_count_label: '預金',
+        btn_edit: '編集',
+        btn_delete: '削除'
     },
     zh: {
         currency_label: '货币',
@@ -1587,7 +1752,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.66.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.67.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1761,7 +1926,40 @@ const I18N_DICTIONARY = {
         bills_history_title: '📋 账单缴费明细记录',
         bills_empty: '此期间内无账单缴费记录。',
         lbl_tx_total_expense_letter: '支:',
-        lbl_tx_total_income_letter: '收:'
+        lbl_tx_total_income_letter: '收:',
+        stat_deposits_sub: '存款与基金总额',
+        deposits_modal_title: '存款与个人财富',
+        deposits_modal_sub: '独立记录银行存款、外币、现金、股票及储蓄基金',
+        deposits_hero_total: '总资产（存款 + 可用资金）',
+        deposits_list_title: '已存入存款与基金列表',
+        deposits_btn_add: '+ 添加存款',
+        deposit_form_title_new: '+ 新增存款/基金',
+        deposit_form_title_edit: '✏️ 编辑存款',
+        deposit_field_name: '存款名称/描述',
+        deposit_placeholder_name: '例如：银行定期存款、欧元现金、股票基金...',
+        deposit_field_category: '类型/类别',
+        deposit_field_currency: '货币',
+        deposit_field_amount: '存款金额',
+        btn_save_deposit: '保存存款',
+        deposits_funds_title: '⚡ 账户可用资金',
+        deposits_card_fund: '银行卡',
+        deposits_card_fund_sub: '银行卡交易余额',
+        deposits_cash_fund: '现金',
+        deposits_cash_fund_sub: '现金余额',
+        deposits_isolated_notice: 'ℹ️ 此处录入的存款单独保存，仅用于个人财富与总资产统计，不会影响应用内的日常预算、交易明细或月度报告。',
+        deposits_empty_title: '尚未添加任何存款。',
+        deposits_empty_sub: '点击上方的“+ 添加存款”以录入账户、外币、现金或股票。',
+        toast_deposit_saved: '存款已成功添加！',
+        toast_deposit_updated: '存款已成功更新！',
+        toast_deposit_deleted: '存款已删除。',
+        toast_deposit_name_req: '请输入存款名称或描述！',
+        toast_deposit_amount_req: '请输入大于零的有效金额！',
+        deposits_breakdown_dep: '存款',
+        deposits_breakdown_card: '银行卡',
+        deposits_breakdown_cash: '现金',
+        deposits_count_label: '存款',
+        btn_edit: '编辑',
+        btn_delete: '删除'
     }
 };
 
@@ -4710,8 +4908,9 @@ function renderStatsTab() {
         kpiDepositsEl.innerHTML = formatKpiMoneyHtml(grandPatrimoniuDisp, mainCurr);
         if (kpiDepositsSub) {
             const count = depList.length;
-            const countText = count === 1 ? '1 depozit' : `${count} depozite`;
-            kpiDepositsSub.textContent = activeLang === 'ro' ? `${countText} + disponibil` : `${count} deposits + avail`;
+            const countSuffix = activeLang === 'ro' ? (count === 1 ? 'depozit' : 'depozite') : t('deposits_count_label').toLowerCase();
+            const availText = activeLang === 'ro' ? 'disponibil' : 'avail';
+            kpiDepositsSub.textContent = `${count} ${countSuffix} + ${availText}`;
         }
     }
 
@@ -8479,8 +8678,43 @@ const DEPOSIT_CATEGORY_NAMES = {
     }
 };
 
+function formatDepositMoneyHtml(amount, currency) {
+    const info = getCurrencyInfo(currency);
+    const num = Math.abs(parseFloat(amount) || 0);
+    const isNegative = parseFloat(amount) < 0;
+    const formattedNum = num.toLocaleString('ro-RO', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    const prefix = isNegative ? '-' : '';
+    const sym = info.symbol || currency;
+    const parts = formattedNum.split(',');
+    const intPart = parts[0];
+    const decPart = parts.length > 1 ? (',' + parts[1]) : ',00';
+    return `<span class="deposit-money-tag" style="white-space:nowrap; display:inline-flex; align-items:baseline; font-variant-numeric:tabular-nums;">${prefix}${intPart}<span style="font-weight:400; font-size:0.70em; opacity:0.85; margin-left:1.5px; white-space:nowrap;">${decPart} ${sym}</span></span>`;
+}
+
+function populateDepositCategoryOptions() {
+    const catSelect = document.getElementById('depositInputCategory');
+    if (!catSelect) return;
+    const activeLang = getLanguageForCurrency();
+    const catDict = DEPOSIT_CATEGORY_NAMES[activeLang] || DEPOSIT_CATEGORY_NAMES['ro'];
+    const currentVal = catSelect.value || 'deposit';
+    
+    catSelect.innerHTML = `
+        <option value="deposit">${DEPOSIT_CATEGORY_ICONS.deposit} ${catDict.deposit || 'Depozit Bancar'}</option>
+        <option value="card">${DEPOSIT_CATEGORY_ICONS.card} ${catDict.card || 'Card / Cont Bancar'}</option>
+        <option value="cash">${DEPOSIT_CATEGORY_ICONS.cash} ${catDict.cash || 'Cash / Valută'}</option>
+        <option value="stocks">${DEPOSIT_CATEGORY_ICONS.stocks} ${catDict.stocks || 'Acțiuni / Fonduri'}</option>
+        <option value="crypto">${DEPOSIT_CATEGORY_ICONS.crypto} ${catDict.crypto || 'Cripto / Aur / Altele'}</option>
+    `;
+    catSelect.value = currentVal;
+}
+
 function openDepositsModal() {
+    applyLanguage();
     populateCurrencySelectors();
+    populateDepositCategoryOptions();
     hideDepositForm();
     renderDepositsPage();
     openModal('modalDeposits');
@@ -8498,12 +8732,13 @@ function showDepositForm(editId = null) {
     if (!formBox) return;
 
     populateCurrencySelectors();
+    populateDepositCategoryOptions();
 
     if (editId) {
         const deposits = appData.customDeposits || [];
         const item = deposits.find(d => d.id === editId);
         if (item) {
-            if (formTitle) formTitle.textContent = '✏️ Editează Depozit';
+            if (formTitle) formTitle.textContent = t('deposit_form_title_edit');
             if (inputId) inputId.value = item.id;
             if (inputName) inputName.value = item.name || '';
             if (inputCategory) inputCategory.value = item.category || 'deposit';
@@ -8511,7 +8746,7 @@ function showDepositForm(editId = null) {
             if (inputAmount) inputAmount.value = item.amount || '';
         }
     } else {
-        if (formTitle) formTitle.textContent = '+ Depozit / Fond Nou';
+        if (formTitle) formTitle.textContent = t('deposit_form_title_new');
         if (inputId) inputId.value = '';
         if (inputName) inputName.value = '';
         if (inputCategory) inputCategory.value = 'deposit';
@@ -8546,13 +8781,13 @@ function saveDepositItem() {
     const rawAmt = inputAmount ? parseFloat(inputAmount.value) : 0;
 
     if (!name) {
-        showToast('Introdu un nume sau o descriere pentru depozit!', 'warning');
+        showToast(t('toast_deposit_name_req'), 'warning');
         if (inputName) inputName.focus();
         return;
     }
 
     if (isNaN(rawAmt) || rawAmt <= 0) {
-        showToast('Introdu o sumă validă mai mare decât zero!', 'warning');
+        showToast(t('toast_deposit_amount_req'), 'warning');
         if (inputAmount) inputAmount.focus();
         return;
     }
@@ -8576,7 +8811,7 @@ function saveDepositItem() {
                 amount: rawAmt,
                 updatedAt: new Date().toISOString()
             };
-            showToast('Depozitul a fost actualizat cu succes!', 'success');
+            showToast(t('toast_deposit_updated'), 'success');
         }
     } else {
         const newDep = {
@@ -8589,7 +8824,7 @@ function saveDepositItem() {
             createdAt: new Date().toISOString()
         };
         appData.customDeposits.push(newDep);
-        showToast('Depozitul a fost adăugat cu succes!', 'success');
+        showToast(t('toast_deposit_saved'), 'success');
     }
 
     saveData();
@@ -8602,7 +8837,7 @@ function deleteDepositItem(id) {
     if (!Array.isArray(appData.customDeposits)) return;
     appData.customDeposits = appData.customDeposits.filter(d => d.id !== id);
     saveData();
-    showToast('Depozitul a fost șters.', 'info');
+    showToast(t('toast_deposit_deleted'), 'info');
     renderDepositsPage();
     renderStatsTab();
 }
@@ -8628,7 +8863,7 @@ function renderDepositsPage() {
     const deposits = appData.customDeposits || [];
     let customDepositsTotalRon = 0;
 
-    // 1. Calcul disponibil Panou (Card & Cash)
+    // 1. Calcul disponibil Cont (Card & Cash)
     let totalIncRon = 0, totalExpRon = 0, cardIncRon = 0, cardExpRon = 0, cashIncRon = 0, cashExpRon = 0;
     appData.transactions.forEach(tx => {
         if (isTxSuspended(tx)) return;
@@ -8659,8 +8894,8 @@ function renderDepositsPage() {
     const cardBalDisp = convertFromRon(cardBalRon, mainCurr);
     const cashBalDisp = convertFromRon(cashBalRon, mainCurr);
 
-    if (panouCardValEl) panouCardValEl.textContent = formatMoney(cardBalDisp, mainCurr);
-    if (panouCashValEl) panouCashValEl.textContent = formatMoney(cashBalDisp, mainCurr);
+    if (panouCardValEl) panouCardValEl.innerHTML = formatDepositMoneyHtml(cardBalDisp, mainCurr);
+    if (panouCashValEl) panouCashValEl.innerHTML = formatDepositMoneyHtml(cashBalDisp, mainCurr);
 
     // 2. Randare lista depozite
     if (listContainer) {
@@ -8669,8 +8904,8 @@ function renderDepositsPage() {
             listContainer.innerHTML = `
                 <div style="text-align: center; padding: 24px 12px; background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.80rem;">
                     <div style="font-size: 1.8rem; margin-bottom: 6px;">🏦</div>
-                    <div style="font-weight: 600; color: var(--text-color); margin-bottom: 3px;">Nu ai adăugat încă niciun depozit.</div>
-                    <div style="font-size: 0.72rem;">Apasă pe butonul <strong>„+ Adaugă Depozit”</strong> de mai sus pentru a introduce conturi, valută, cash sau acțiuni.</div>
+                    <div style="font-weight: 600; color: var(--text-color); margin-bottom: 3px;">${t('deposits_empty_title')}</div>
+                    <div style="font-size: 0.72rem;">${t('deposits_empty_sub')}</div>
                 </div>
             `;
         } else {
@@ -8695,13 +8930,13 @@ function renderDepositsPage() {
                             <div class="deposit-item-cat-tag">${catName} • ${depCurr}</div>
                         </div>
                     </div>
-                    <div class="deposit-item-right">
-                        <div class="deposit-item-orig-val">${formatMoney(amtNum, depCurr)}</div>
-                        ${isDifferentCurrency ? `<div class="deposit-item-conv-val">≈ ${formatMoney(convMainAmt, mainCurr)}</div>` : ''}
+                    <div class="deposit-item-right" style="white-space:nowrap; text-align:right; flex-shrink:0;">
+                        <div class="deposit-item-orig-val" style="white-space:nowrap;">${formatDepositMoneyHtml(amtNum, depCurr)}</div>
+                        ${isDifferentCurrency ? `<div class="deposit-item-conv-val" style="white-space:nowrap; margin-top:2px;">≈ ${formatDepositMoneyHtml(convMainAmt, mainCurr)}</div>` : ''}
                     </div>
                     <div class="deposit-item-actions">
-                        <button type="button" class="deposit-btn-action" title="Editează" onclick="editDepositItem('${d.id}')">✏️</button>
-                        <button type="button" class="deposit-btn-action deposit-btn-delete" title="Șterge" onclick="deleteDepositItem('${d.id}')">🗑️</button>
+                        <button type="button" class="deposit-btn-action" title="${t('btn_edit')}" onclick="editDepositItem('${d.id}')">✏️</button>
+                        <button type="button" class="deposit-btn-action deposit-btn-delete" title="${t('btn_delete')}" onclick="deleteDepositItem('${d.id}')">🗑️</button>
                     </div>
                 `;
                 listContainer.appendChild(row);
@@ -8715,17 +8950,21 @@ function renderDepositsPage() {
     const customDepositsDisp = convertFromRon(customDepositsTotalRon, mainCurr);
 
     if (grandTotalEl) {
-        grandTotalEl.textContent = formatMoney(grandPatrimoniuDisp, mainCurr);
+        grandTotalEl.innerHTML = formatDepositMoneyHtml(grandPatrimoniuDisp, mainCurr);
     }
     if (countBadgeEl) {
         const count = deposits.length;
-        countBadgeEl.textContent = activeLang === 'ro' ? `${count} ${count === 1 ? 'Depozit' : 'Depozite'}` : `${count} Deposits`;
+        const countSuffix = activeLang === 'ro' ? (count === 1 ? 'Depozit' : 'Depozite') : t('deposits_count_label');
+        countBadgeEl.textContent = `${count} ${countSuffix}`;
     }
     if (breakdownEl) {
+        const lDep = t('deposits_breakdown_dep');
+        const lCard = t('deposits_breakdown_card');
+        const lCash = t('deposits_breakdown_cash');
         breakdownEl.innerHTML = `
-            <span>Depozite: <strong>${formatMoney(customDepositsDisp, mainCurr)}</strong></span> • 
-            <span>Card: <strong>${formatMoney(cardBalDisp, mainCurr)}</strong></span> • 
-            <span>Cash: <strong>${formatMoney(cashBalDisp, mainCurr)}</strong></span>
+            <span style="white-space:nowrap;">${lDep}: <strong>${formatDepositMoneyHtml(customDepositsDisp, mainCurr)}</strong></span> • 
+            <span style="white-space:nowrap;">${lCard}: <strong>${formatDepositMoneyHtml(cardBalDisp, mainCurr)}</strong></span> • 
+            <span style="white-space:nowrap;">${lCash}: <strong>${formatDepositMoneyHtml(cashBalDisp, mainCurr)}</strong></span>
         `;
     }
 
