@@ -57,7 +57,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.69";
+const APP_VERSION = "3.3.70";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -207,7 +207,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.69.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.70.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -402,6 +402,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: 'Tip / Categorie',
         deposit_field_currency: 'Monedă',
         deposit_field_amount: 'Sumă în Depozit',
+        deposit_field_date: 'Data Depozit',
         btn_save_deposit: 'Salvează Depozit',
         deposits_funds_title: '⚡ Fonduri Disponibile în Cont',
         deposits_card_fund: 'Cont Card',
@@ -521,7 +522,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.69.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.70.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -716,6 +717,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: 'Type / Category',
         deposit_field_currency: 'Currency',
         deposit_field_amount: 'Amount in Deposit',
+        deposit_field_date: 'Deposit Date',
         btn_save_deposit: 'Save Deposit',
         deposits_funds_title: '⚡ Available Account Funds',
         deposits_card_fund: 'Card Account',
@@ -835,7 +837,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.69.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.70.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -1023,6 +1025,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: 'Typ / Kategorie',
         deposit_field_currency: 'Währung',
         deposit_field_amount: 'Betrag der Einlage',
+        deposit_field_date: 'Einlagedatum',
         btn_save_deposit: 'Einlage speichern',
         deposits_funds_title: '⚡ Verfügbares Kontoguthaben',
         deposits_card_fund: 'Kartenguthaben',
@@ -1139,7 +1142,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.69.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.70.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1326,6 +1329,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: 'Tür / Kategori',
         deposit_field_currency: 'Para Birimi',
         deposit_field_amount: 'Mevduat Tutarı',
+        deposit_field_date: 'Mevduat Tarihi',
         btn_save_deposit: 'Mevduatı Kaydet',
         deposits_funds_title: '⚡ Kullanılabilir Hesap Bakiyesi',
         deposits_card_fund: 'Kart Bakiyesi',
@@ -1445,7 +1449,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.69.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.70.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1633,6 +1637,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: 'タイプ・カテゴリ',
         deposit_field_currency: '通貨',
         deposit_field_amount: '預金金額',
+        deposit_field_date: '預金日',
         btn_save_deposit: '預金を保存',
         deposits_funds_title: '⚡ 利用可能な口座残高',
         deposits_card_fund: 'カード口座',
@@ -1752,7 +1757,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.69.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.70.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1940,6 +1945,7 @@ const I18N_DICTIONARY = {
         deposit_field_category: '类型/类别',
         deposit_field_currency: '货币',
         deposit_field_amount: '存款金额',
+        deposit_field_date: '存款日期',
         btn_save_deposit: '保存存款',
         deposits_funds_title: '⚡ 账户可用资金',
         deposits_card_fund: '银行卡',
@@ -8744,6 +8750,7 @@ function showDepositForm(editId = null) {
     const inputCategory = document.getElementById('depositInputCategory');
     const inputCurrency = document.getElementById('depositInputCurrency');
     const inputAmount = document.getElementById('depositInputAmount');
+    const inputDate = document.getElementById('depositInputDate');
     if (!formBox) return;
 
     populateCurrencySelectors();
@@ -8759,6 +8766,7 @@ function showDepositForm(editId = null) {
             if (inputCategory) inputCategory.value = item.category || 'deposit';
             if (inputCurrency) inputCurrency.value = item.currency || getActiveCurrency();
             if (inputAmount) inputAmount.value = item.amount || '';
+            if (inputDate) inputDate.value = item.date || (item.createdAt ? item.createdAt.split('T')[0] : getTodayString());
         }
     } else {
         if (formTitle) formTitle.textContent = t('deposit_form_title_new');
@@ -8767,6 +8775,7 @@ function showDepositForm(editId = null) {
         if (inputCategory) inputCategory.value = 'deposit';
         if (inputCurrency) inputCurrency.value = getActiveCurrency();
         if (inputAmount) inputAmount.value = '';
+        if (inputDate) inputDate.value = getTodayString();
     }
 
     formBox.style.display = 'block';
@@ -8789,11 +8798,13 @@ function saveDepositItem() {
     const inputCategory = document.getElementById('depositInputCategory');
     const inputCurrency = document.getElementById('depositInputCurrency');
     const inputAmount = document.getElementById('depositInputAmount');
+    const inputDate = document.getElementById('depositInputDate');
 
     const name = inputName ? inputName.value.trim() : '';
     const category = inputCategory ? inputCategory.value : 'deposit';
     const currency = inputCurrency ? inputCurrency.value : getActiveCurrency();
     const rawAmt = inputAmount ? parseFloat(inputAmount.value) : 0;
+    const dateVal = (inputDate && inputDate.value) ? inputDate.value : getTodayString();
 
     if (!name) {
         showToast(t('toast_deposit_name_req'), 'warning');
@@ -8824,6 +8835,7 @@ function saveDepositItem() {
                 icon,
                 currency,
                 amount: rawAmt,
+                date: dateVal,
                 updatedAt: new Date().toISOString()
             };
             showToast(t('toast_deposit_updated'), 'success');
@@ -8836,6 +8848,7 @@ function saveDepositItem() {
             icon,
             currency,
             amount: rawAmt,
+            date: dateVal,
             createdAt: new Date().toISOString()
         };
         appData.customDeposits.push(newDep);
@@ -8934,6 +8947,8 @@ function renderDepositsPage() {
                 const isDifferentCurrency = (depCurr !== mainCurr);
                 const catName = catDict[d.category] || d.category;
                 const icon = d.icon || DEPOSIT_CATEGORY_ICONS[d.category] || '🏦';
+                const rawDate = d.date || (d.createdAt ? d.createdAt.split('T')[0] : '');
+                const dateFormatted = rawDate ? formatDateDisplay(rawDate) : '';
 
                 const row = document.createElement('div');
                 row.className = 'deposit-card-item';
@@ -8941,7 +8956,10 @@ function renderDepositsPage() {
                     <div class="deposit-item-icon">${icon}</div>
                     <div class="deposit-item-main">
                         <div class="deposit-item-name" title="${d.name}">${d.name}</div>
-                        <div class="deposit-item-cat-tag">${catName} • ${depCurr}</div>
+                        <div class="deposit-item-cat-tag">
+                            <span>${catName} • ${depCurr}</span>
+                            ${dateFormatted ? `<span class="deposit-item-date-tag">📅 ${dateFormatted}</span>` : ''}
+                        </div>
                         <div class="deposit-item-amounts-row">
                             <div class="deposit-item-orig-val">${formatDepositMoneyHtml(amtNum, depCurr)}</div>
                             ${isDifferentCurrency ? `<div class="deposit-item-conv-val">≈ ${formatDepositMoneyHtml(convMainAmt, mainCurr)}</div>` : ''}
