@@ -30,39 +30,42 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=419">
+    <link rel="stylesheet" href="style.css?v=480">
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <header class="header">
+        <!-- Header Principal -->
+        <header class="main-header header">
+            <!-- Rând 1: Logo, Titlu și Butoane Acțiuni -->
             <div class="header-top-row">
                 <div class="header-left-col">
-                    <div class="logo-badge-container" id="btnLogoMenu" role="button" tabindex="0" title="Apasă pentru a schimba moneda aplicației (EUR, USD, RON, etc.)">
-                        <img src="icon-192.png?v=680" class="logo-badge" alt="MoneyApp" style="object-fit: cover; border-radius: 8px;">
-                        <span class="logo-currency-indicator" id="logoCurrencyIndicator">RON</span>
+                    <div class="header-branding-block">
+                        <div class="logo-badge-container" id="btnLogoMenu" role="button" tabindex="0" title="Apasă pentru a schimba moneda aplicației (EUR, USD, RON, etc.)">
+                            <img src="icon-192.png?v=680" class="logo-badge" alt="MoneyApp">
+                            <span class="logo-currency-indicator" id="logoCurrencyIndicator">RON</span>
+                        </div>
+                        <div class="logo-meta-wrap">
+                            <div class="logo-title-row">
+                                <h1 class="app-title">MoneyApp</h1>
+                                <span id="appVersionBadge" class="app-version-badge">v3.4.25</span>
+                            </div>
+                            <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
+                        </div>
                     </div>
-                    <div class="logo-meta-wrap">
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <h1 class="app-title">MoneyApp</h1>
-                            <span id="appVersionBadge" class="app-version-badge">v3.3.72</span>
-                        </div>
-                        <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
-                        <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
-                        <div class="header-actions" id="headerActions">
-                            <button class="icon-btn" id="btnSettings" title="Convertor Valutar & Cursuri">
-                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                            </button>
-                            <button class="icon-btn" id="btnBackup" title="Salvare & Export Date">
-                                <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                            </button>
-                            <button class="icon-btn" id="btnThemeToggle" title="Comută Tema Luminos / Întunecat">
-                                <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
-                            </button>
-                            <button class="icon-btn" id="btnQrModal" title="Deschide sau Instalează pe Telefon">
-                                <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-5 0h2v3h-2v-3zm2 3h3v2h-3v-2zm3 3h3v3h-3v-3zm-3 0h3v-2h-3v2zm-2-2h2v2h-2v-2z"/></svg>
-                            </button>
-                        </div>
+                    <!-- Cele 4 butoane (valuta, salvare, tema, qr): MEREU JOS SUB MONEDA / SUBTITLU IN STANGA -->
+                    <div class="header-actions" id="headerActions">
+                        <button class="icon-btn" id="btnThemeToggle" title="Comută Tema Luminos / Întunecat">
+                            <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                        </button>
+                        <button class="icon-btn" id="btnSettings" title="Convertor Valutar & Cursuri">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        </button>
+                        <button class="icon-btn" id="btnBackup" title="Salvare & Export Date">
+                            <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                        </button>
+                        <button class="icon-btn" id="btnQrModal" title="Deschide sau Instalează pe Telefon">
+                            <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-5 0h2v3h-2v-3zm2 3h3v2h-3v-2zm3 3h3v3h-3v-3zm-3 0h3v-2h-3v2zm-2-2h2v2h-2v-2z"/></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -193,7 +196,7 @@
                 <div class="chart-wrapper">
                     <canvas id="overviewDonutChart"></canvas>
                     <div class="chart-center-info" id="donutCenterInfo">
-                        <div class="chart-center-label" data-i18n="total_month">Total Lună</div>
+                        <div class="chart-center-label" id="donutCenterLabel" data-i18n="total_month">Total Lună</div>
                         <div class="chart-center-val" id="donutTotalVal">0,00</div>
                         <div class="chart-center-curr" id="donutTotalCurr">RON</div>
                     </div>
@@ -232,67 +235,87 @@
         <!-- TAB 2: TRANZACTII (ISTORIC) -->
         <section id="tab-transactions" class="tab-content">
             <div class="card-section">
-                <!-- Randul 1: Titlu Istoric Tranzacții + Căutare după descriere în același rând -->
-                <div class="section-header tx-section-header">
-                    <div class="section-title" data-i18n="history_title">Istoric Tranzacții</div>
-                    <div class="tx-search-input-wrap">
-                        <input type="text" class="form-control" id="searchTxInput" data-i18n-placeholder="search_placeholder" placeholder="Caută după descriere...">
-                    </div>
-                </div>
-
-                <!-- Randul 2: Total Cheltuit (C) și Total Venit (V) -->
-                <div class="tx-totals-summary-row">
-                    <div class="tx-total-box tx-total-box-expense" title="Total Cheltuieli afișate">
-                        <span class="tx-total-label label-expense" data-i18n="lbl_tx_total_expense_letter">C:</span>
-                        <span class="tx-total-val val-expense" id="txTotalExpenseVal">
-                            <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
-                        </span>
-                    </div>
-                    <div class="tx-total-box tx-total-box-income" title="Total Venituri afișate">
-                        <span class="tx-total-label label-income" data-i18n="lbl_tx_total_income_letter">V:</span>
-                        <span class="tx-total-val val-income" id="txTotalIncomeVal">
-                            <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Randul 2: Buton Toate (putin mai lung) + Buton Moneda EUR + Buton Tranzactii Suspendate -->
-                <div class="tx-controls-row">
-                    <input type="hidden" id="filterTxType" value="all">
-                    <button type="button" class="btn-tx-filter-trigger" id="btnOpenTxFilter" title="Alege ce tranzacții să fie afișate">
-                        <span style="display: inline-flex; align-items: center; gap: 4px;">
-                            <span id="txFilterCurrentIcon">⚡</span>
-                            <span id="txFilterCurrentLabel" data-i18n="filter_all">Toate</span>
-                        </span>
-                        <svg viewBox="0 0 24 24" style="width: 12px; height: 12px; fill: currentColor; opacity: 0.7; flex-shrink: 0;"><path d="M7 10l5 5 5-5z"/></svg>
-                    </button>
-
-                    <div class="sec-curr-btn-wrap" title="Apasă pentru a alege ce monedă să apară în paranteză">
-                        <button type="button" class="btn-sec-curr" id="btnSecondaryCurrDisplay">
-                            <span class="sec-curr-icon">💱</span>
-                            <span class="sec-curr-code" id="secCurrDisplayCode">(Auto)</span>
-                            <svg viewBox="0 0 24 24" class="sec-curr-arrow"><path d="M7 10l5 5 5-5z"/></svg>
-                        </button>
-                        <select class="sec-curr-select-overlay" id="selectSecondaryCurrency" title="Alege moneda din paranteză">
-                            <option value="none">🚫 Fără paranteză</option>
-                            <option value="auto">⚡ Auto (Orig / RON)</option>
-                            <option value="RON">🇷🇴 RON (Lei)</option>
-                            <option value="EUR">🇪🇺 EUR (€)</option>
-                            <option value="USD">🇺🇸 USD ($)</option>
-                            <option value="GBP">🇬🇧 GBP (£)</option>
-                            <option value="CHF">🇨🇭 CHF</option>
-                            <option value="TRY">🇹🇷 TRY (₺)</option>
-                            <option value="JPY">🇯🇵 JPY (¥)</option>
-                            <option value="CNY">🇨🇳 CNY (¥)</option>
-                            <option value="INR">🇮🇳 INR (₹)</option>
-                            <option value="EGP">🇪🇬 EGP (E£)</option>
-                        </select>
+                <!-- Grilă Header Tranzacții: 3 rânduri stânga/dreapta + 1 rând căutare complet -->
+                <div class="tx-header-grid">
+                    <!-- Rândul 1: Istoric Tranzacții (stânga) | Buton Filtrare Toate (dreapta) -->
+                    <div class="tx-grid-row">
+                        <div class="tx-grid-left">
+                            <div class="section-title tx-main-title" data-i18n="history_title">Istoric Tranzacții</div>
+                        </div>
+                        <div class="tx-grid-right">
+                            <input type="hidden" id="filterTxType" value="all">
+                            <button type="button" class="btn-tx-filter-trigger tx-uniform-btn" id="btnOpenTxFilter" title="Alege ce tranzacții să fie afișate">
+                                <span class="tx-btn-inner-left">
+                                    <span id="txFilterCurrentIcon">⚡</span>
+                                    <span id="txFilterCurrentLabel" data-i18n="filter_all">Toate</span>
+                                </span>
+                                <svg viewBox="0 0 24 24" class="tx-uniform-arrow"><path d="M7 10l5 5 5-5z"/></svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="button" class="btn-suspended-tx" id="btnOpenSuspendedTx" title="Apasă pentru a vedea tranzacțiile suspendate">
-                        <span class="suspended-icon">⏸️</span>
-                        <span class="suspended-count-badge" id="suspendedTxCountBadge">0</span>
-                    </button>
+                    <!-- Rândul 2: Caseta Venituri (stânga) | Buton Conversie EUR (dreapta) -->
+                    <div class="tx-grid-row">
+                        <div class="tx-grid-left">
+                            <div class="tx-total-box tx-total-box-income" title="Total Venituri afișate">
+                                <span class="tx-total-label label-income" data-i18n="lbl_tx_total_income_letter">V:</span>
+                                <span class="tx-total-val val-income" id="txTotalIncomeVal">
+                                    <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="tx-grid-right">
+                            <div class="sec-curr-btn-wrap tx-uniform-btn-wrap" title="Apasă pentru a alege ce monedă să apară în paranteză">
+                                <button type="button" class="btn-sec-curr tx-uniform-btn" id="btnSecondaryCurrDisplay">
+                                    <span class="tx-btn-inner-left">
+                                        <span class="sec-curr-icon">💱</span>
+                                        <span class="sec-curr-code" id="secCurrDisplayCode">(EUR)</span>
+                                    </span>
+                                    <svg viewBox="0 0 24 24" class="tx-uniform-arrow"><path d="M7 10l5 5 5-5z"/></svg>
+                                </button>
+                                <select class="sec-curr-select-overlay" id="selectSecondaryCurrency" title="Alege moneda din paranteză">
+                                    <option value="none">🚫 Fără paranteză</option>
+                                    <option value="auto">⚡ Auto (Orig / RON)</option>
+                                    <option value="RON">🇷🇴 RON (Lei)</option>
+                                    <option value="EUR">🇪🇺 EUR (€)</option>
+                                    <option value="USD">🇺🇸 USD ($)</option>
+                                    <option value="GBP">🇬🇧 GBP (£)</option>
+                                    <option value="CHF">🇨🇭 CHF</option>
+                                    <option value="TRY">🇹🇷 TRY (₺)</option>
+                                    <option value="JPY">🇯🇵 JPY (¥)</option>
+                                    <option value="CNY">🇨🇳 CNY (¥)</option>
+                                    <option value="INR">🇮🇳 INR (₹)</option>
+                                    <option value="EGP">🇪🇬 EGP (E£)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rândul 3: Caseta Cheltuieli (stânga) | Buton Tranzacții Suspendate (dreapta) -->
+                    <div class="tx-grid-row">
+                        <div class="tx-grid-left">
+                            <div class="tx-total-box tx-total-box-expense" title="Total Cheltuieli afișate">
+                                <span class="tx-total-label label-expense" data-i18n="lbl_tx_total_expense_letter">C:</span>
+                                <span class="tx-total-val val-expense" id="txTotalExpenseVal">
+                                    <span class="bal-int">0</span><span class="bal-dec">,00</span> <span class="bal-curr">RON</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="tx-grid-right">
+                            <button type="button" class="btn-suspended-tx tx-uniform-btn" id="btnOpenSuspendedTx" title="Apasă pentru a vedea tranzacțiile suspendate">
+                                <span class="tx-btn-inner-left">
+                                    <span class="suspended-icon">⏸️</span>
+                                    <span class="suspended-text" data-i18n="lbl_suspended_short">Suspendate</span>
+                                </span>
+                                <span class="suspended-count-badge" id="suspendedTxCountBadge">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Rândul 4: Căutare după descriere pe tot rândul sub caseta cheltuieli -->
+                    <div class="tx-search-full-row">
+                        <input type="text" class="form-control tx-search-input-full" id="searchTxInput" data-i18n-placeholder="search_placeholder" placeholder="Caută după descriere, magazin sau sumă...">
+                    </div>
                 </div>
 
                 <div class="drilldown-list" id="allTransactionsList">
@@ -515,8 +538,8 @@
                             </div>
                         </div>
                         <div class="stats-cat-group-body">
-                            <div class="business-kpi-grid" style="grid-template-columns: 1fr;">
-                                <!-- 10. Facturi & Utilități -->
+                            <div class="business-kpi-grid bills-dual-card-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+                                <!-- Card 1: Facturi & Utilități -->
                                 <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-bills" id="cardStatBillsAnalytics" role="button" tabindex="0" title="Apasă pentru analiza completă a facturilor, evoluției lunare și utilităților">
                                     <div class="b-kpi-header">
                                         <span class="b-kpi-icon">⚡</span>
@@ -525,6 +548,17 @@
                                     </div>
                                     <div class="b-kpi-value expense-color" id="statKpiBillsTotal">0 RON</div>
                                     <div class="b-kpi-sub" id="statKpiBillsSub">Cost total utilități</div>
+                                </div>
+
+                                <!-- Card 2: Contoare & Consum -->
+                                <div class="b-kpi-card b-kpi-card-clickable b-kpi-theme-bills" id="cardStatUtilityMeters" role="button" tabindex="0" title="Apasă pentru contoare, citiri index, consum kWh/mc și preț pe unitate">
+                                    <div class="b-kpi-header">
+                                        <span class="b-kpi-icon">📊</span>
+                                        <span class="b-kpi-label">Contoare & Consum</span>
+                                        <span class="b-kpi-badge-click" title="Detalii">🔍</span>
+                                    </div>
+                                    <div class="b-kpi-value" id="statKpiMetersVal" style="color: #2563eb;">-</div>
+                                    <div class="b-kpi-sub" id="statKpiMetersSub">Index, kWh/mc & preț</div>
                                 </div>
                             </div>
                         </div>
@@ -673,7 +707,7 @@
                             <span>CSV</span>
                         </button>
                     </div>
-                    <div class="stats-table-wrap">
+                    <div class="stats-table-wrap no-swipe" data-no-swipe="true">
                         <table class="stats-pl-table">
                             <thead>
                                 <tr>
@@ -744,6 +778,21 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Casetele de Căutare sub liste, deasupra butonului Salvează (plutitoare peste tastatură la focus) -->
+                <div class="merchant-popover-bottom-searches-wrap" id="merchantPopoverBottomSearchesWrap">
+                <div class="merchant-popover-bottom-searches" id="merchantPopoverBottomSearches">
+                    <div class="merchant-col-search-wrap">
+                        <input type="text" id="searchShoppingItemsInput" class="merchant-col-search-input" placeholder="🔍 Caută articol..." data-i18n-placeholder="search_shopping_item_placeholder" autocomplete="off">
+                        <button type="button" class="merchant-col-search-clear" id="btnClearShoppingSearch" style="display:none;" title="Șterge căutarea">&times;</button>
+                    </div>
+                    <div class="merchant-col-search-wrap">
+                        <input type="text" id="searchMerchantsInput" class="merchant-col-search-input" placeholder="🔍 Caută magazin..." data-i18n-placeholder="search_merchant_placeholder" autocomplete="off">
+                        <button type="button" class="merchant-col-search-clear" id="btnClearMerchantSearch" style="display:none;" title="Șterge căutarea">&times;</button>
+                    </div>
+                </div>
+                </div>
+
                 <div class="merchant-popover-footer">
                     <button type="button" class="merchant-footer-add-btn" id="btnOpenAddShoppingItemModal" title="Adaugă articol de cumpărături nou">
                         <span>🛍️</span> <span>＋</span>
@@ -774,6 +823,68 @@
                 </div>
             </div>
 
+            <!-- Fereastră Plutitoare: Înregistrare Index & Contor Utilitate (Apare doar după alegerea magazinului și a facturii) -->
+            <div class="expense-utility-floating-overlay" id="expenseUtilityFloatingOverlay" style="display: none;">
+                <div class="expense-utility-prompt-card">
+                    <div class="utility-prompt-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.25rem;">⚡</span>
+                            <div>
+                                <div style="font-size: 0.92rem; font-weight: 800; color: var(--text-color);">Index & Contor Utilitate</div>
+                                <div style="font-size: 0.68rem; color: var(--text-muted);">Calcul automat consum pe zi, lună și an</div>
+                            </div>
+                        </div>
+                        <button type="button" class="utility-prompt-close" id="btnCloseExpenseUtilityPrompt" title="Închide">&times;</button>
+                    </div>
+
+                    <div class="utility-prompt-body">
+                        <!-- Magazin și Cumpărătură selectate anterior -->
+                        <div class="utility-selected-summary-box">
+                            <div class="utility-summary-chip">
+                                <span class="utility-chip-label">🏢 Furnizor:</span>
+                                <strong id="expenseUtilityPromptMerchant" class="utility-chip-val">-</strong>
+                            </div>
+                            <div class="utility-summary-chip">
+                                <span class="utility-chip-label">🛍️ Factură:</span>
+                                <strong id="expenseUtilityPromptItem" class="utility-chip-val">-</strong>
+                            </div>
+                        </div>
+
+                        <!-- Selector Tip Contor: Curent, Gaze, Apă -->
+                        <div style="margin-top: 8px; margin-bottom: 8px;">
+                            <label style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Tip Utilitate:</label>
+                            <div class="utility-type-tabs" id="expenseUtilityTypeTabsPrompt" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                                <button type="button" class="btn-utility-type-tab active" data-utility="electricity">⚡ Curent (kWh)</button>
+                                <button type="button" class="btn-utility-type-tab" data-utility="gas">🔥 Gaze (m³)</button>
+                                <button type="button" class="btn-utility-type-tab" data-utility="water">💧 Apă (m³)</button>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 6px; margin-bottom: 6px;">
+                            <div>
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 3px;">Index Nou Contor:</label>
+                                <input type="number" inputmode="decimal" step="0.01" class="form-control" id="expenseUtilityFloatingIndex" placeholder="ex: 14520" style="height: 38px; font-size: 0.88rem; font-weight: 700;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 3px;">Data Citirii:</label>
+                                <input type="date" class="form-control" id="expenseUtilityFloatingDate" style="height: 38px; font-size: 0.78rem;">
+                            </div>
+                        </div>
+
+                        <!-- Live calc preview calculat instant -->
+                        <div id="expenseUtilityFloatingLivePreview" style="display: none; font-size: 0.70rem; line-height: 1.35; color: var(--accent); background: rgba(37,99,235,0.08); padding: 6px 8px; border-radius: 5px; border: 1px solid rgba(37,99,235,0.2); margin-top: 4px;">
+                        </div>
+                    </div>
+
+                    <div class="utility-prompt-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnCancelExpenseUtilityPrompt" style="flex: 1; height: 36px; font-weight: 600;">Renunță</button>
+                        <button type="button" class="btn btn-accent btn-sm" id="btnSaveExpenseUtilityPrompt" style="flex: 1.4; height: 36px; font-weight: 700;">
+                            <span>✓</span> <span>Salvează</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal-header">
                 <div class="modal-title" id="modalExpenseTitle">
                     <span style="color:var(--danger)">▼</span> <span id="modalExpenseTitleText" data-i18n="modal_add_expense">Adaugă Cheltuială</span>
@@ -793,7 +904,7 @@
                         <input type="date" class="form-control" id="expenseDate" required>
                     </div>
                     <div class="form-group">
-                        <input type="time" class="form-control" id="expenseTime">
+                        <input type="time" class="form-control" id="expenseTime" step="60">
                     </div>
                 </div>
 
@@ -822,48 +933,80 @@
                     </div>
                 </div>
 
-                <!-- Câmpuri Articol & Magazin (Vizibile pentru editare directă sau completare rapidă din listă) -->
-                <div class="form-row-2fields" style="display: flex; gap: 6px; margin-bottom: 8px;">
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <input type="text" class="form-control" id="expenseDesc" data-i18n-placeholder="placeholder_article" placeholder="Articol" maxlength="50" style="padding: 7px 10px; font-size: 0.82rem; font-weight: 600;">
-                    </div>
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <input type="text" class="form-control" id="selectedExpenseMerchant" data-i18n-placeholder="placeholder_store" placeholder="Magazin" maxlength="50" style="padding: 7px 10px; font-size: 0.82rem; font-weight: 600;">
-                    </div>
-                </div>
-
-                <!-- Zona Categorie (4 coloane late, complete, aerisite) -->
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <label class="form-label" style="margin-bottom: 0;" data-i18n="lbl_category">Alege Categoria *</label>
-                        <button type="button" class="btn-config-merchant-cats" id="btnConfigMerchantCats" title="Alege la ce categorii să apară lista de magazine" data-i18n="btn_merchant_config">⚙️ Magazine</button>
-                    </div>
+                <!-- Zona Categorie (4 coloane late, complete, aerisite, ocupă tot spațiul liber) -->
+                <div class="form-group" style="margin-bottom: 6px;">
                     <div class="category-picker-grid" id="expenseCategoryPicker">
                         <!-- Populated with category cards: 4 coloane complete -->
                     </div>
                     <input type="hidden" id="selectedExpenseCategoryId" required>
                 </div>
 
-                <!-- Monedă (mutată jos pentru a lăsa categoriile sus vizibile deasupra tastaturii) -->
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <select class="form-control" id="expenseCurrencySelect" style="font-weight: 600; cursor: pointer; padding: 7px 10px; font-size: 0.82rem;">
-                    </select>
+                <!-- Casete Cumpărături și Magazine selectate din categorie (deasupra butonului Scanează) -->
+                <div class="expense-selected-summary-row" id="expenseSelectedSummaryRow">
+                    <div class="expense-selected-box" id="expenseBoxShopping">
+                        <div class="expense-selected-box-label" title="Apasă pentru a alege cumpărături din categorie">
+                            <span class="box-icon">🛍️</span>
+                            <span class="box-title" data-i18n="expense_box_shopping_title">Cumpărături</span>
+                        </div>
+                        <div class="expense-selected-input-wrap">
+                            <input type="text" id="expenseDesc" class="expense-selected-input" placeholder="Alege cumpărături..." autocomplete="off">
+                            <button type="button" class="expense-selected-clear-btn" id="btnClearExpenseDesc" title="Șterge" style="display:none;">&times;</button>
+                        </div>
+                    </div>
+                    <div class="expense-selected-box" id="expenseBoxMerchant">
+                        <div class="expense-selected-box-label" title="Apasă pentru a alege magazin din categorie">
+                            <span class="box-icon">🛒</span>
+                            <span class="box-title" data-i18n="expense_box_merchant_title">Magazine</span>
+                        </div>
+                        <div class="expense-selected-input-wrap">
+                            <input type="text" id="selectedExpenseMerchant" class="expense-selected-input" placeholder="Alege magazin..." autocomplete="off">
+                            <button type="button" class="expense-selected-clear-btn" id="btnClearExpenseMerchant" title="Șterge" style="display:none;">&times;</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 10px; display: flex; gap: 8px; align-items: stretch;">
-                    <label class="form-checkbox-label" style="display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 0.76rem; font-weight: 700; color: var(--text-color); background: var(--item-bg); padding: 7px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); flex: 1; min-height: 38px; box-sizing: border-box; margin: 0; user-select: none;">
-                        <input type="checkbox" id="expenseIsSuspended" style="width: 15px; height: 15px; accent-color: #f59e0b; cursor: pointer; margin: 0;">
-                        <span data-i18n="lbl_suspend_tx_short">⏸️ Suspendă</span>
-                    </label>
-                    <button type="button" class="btn-scan-receipt-trigger" id="btnOpenReceiptScanner" title="Scanează automat bonul sau factura cu camera telefonului" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 8px; font-size: 0.76rem; font-weight: 700; background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(37, 99, 235, 0.35); color: #2563eb; border-radius: var(--radius-sm); cursor: pointer; min-height: 38px; box-sizing: border-box; transition: all 0.2s ease;">
-                        <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-                        <span data-i18n="btn_scan_receipt">Scanează</span>
+                <!-- Butonul Scanează imediat sub casete -->
+                <div style="margin-top: 5px; margin-bottom: 5px;">
+                    <button type="button" class="btn expense-tool-btn tool-scan btn-expense-scan-standalone" id="btnOpenReceiptScanner" title="Scanează automat bonul sau factura cu camera">
+                        <svg viewBox="0 0 24 24" class="tool-svg"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+                        <span class="tool-text" data-i18n="btn_scan_receipt">Scanează</span>
                     </button>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <button type="button" class="btn btn-secondary" style="flex:1; padding: 9px 12px; font-size: 0.84rem;" data-close="modalExpense" data-i18n="btn_cancel">Anulează</button>
-                    <button type="submit" class="btn btn-expense" id="btnSubmitExpense" style="flex:2; padding: 9px 12px; font-size: 0.84rem;" data-i18n="btn_save">Salvează Cheltuiala</button>
+                <!-- Câmpuri Ascunse pentru Contor & Index Utilitate -->
+                <input type="hidden" id="expenseUtilityType" value="electricity">
+                <input type="hidden" id="expenseUtilityIndex" value="">
+                <input type="hidden" id="expenseUtilityIndexDate" value="">
+
+                <!-- Panou Unificat de Opțiuni & Instrumente: 3 coloane egale pe același rând -->
+                <div class="expense-tools-panel">
+                    <div class="expense-tools-row-3">
+                        <div class="expense-tools-col">
+                            <select class="form-control expense-tool-select" id="expenseCurrencySelect">
+                            </select>
+                        </div>
+                        <div class="expense-tools-col">
+                            <button type="button" class="expense-tool-btn tool-merchants" id="btnConfigMerchantCats" title="Alege la ce categorii să apară lista cu cumpărături și magazine">
+                                <span class="tool-icon">⚙️</span>
+                                <span class="tool-text" data-i18n="btn_categories_list">Listă Categorii</span>
+                            </button>
+                        </div>
+                        <div class="expense-tools-col">
+                            <button type="button" class="expense-tool-btn tool-added-merchants" id="btnOpenCustomMerchants" title="Vezi magazinele și cumpărăturile adăugate de tine">
+                                <span class="tool-icon">🛍️</span>
+                                <span class="tool-text" data-i18n="btn_added_merchants_items">Magazine și Cumpărături Noi</span>
+                            </button>
+                            <input type="hidden" id="expenseIsSuspended" value="false">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bara de Acțiuni: Butoanele Salvează și Anulează împart un rând și sunt mai înalte -->
+                <div class="expense-action-bar">
+                    <button type="button" class="btn btn-secondary btn-expense-cancel" data-close="modalExpense" data-i18n="btn_cancel">Anulează</button>
+                    <button type="submit" class="btn btn-expense btn-expense-save" id="btnSubmitExpense" data-i18n="btn_save">
+                        <span>✓</span> <span>Salvează</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -891,7 +1034,7 @@
                         <input type="date" class="form-control" id="incomeDate" required>
                     </div>
                     <div class="form-group">
-                        <input type="time" class="form-control" id="incomeTime">
+                        <input type="time" class="form-control" id="incomeTime" step="60">
                     </div>
                 </div>
 
@@ -1061,7 +1204,7 @@
 
     <!-- MODAL 5: CONVERTOR & SETARI CURS VALUTAR -->
     <div class="modal-overlay" id="modalSettings">
-        <div class="modal-box" style="max-width: 480px;">
+        <div class="modal-box" style="max-width: 480px; padding: 12px 14px 10px;">
             <div class="modal-header" style="margin-bottom: 6px; padding-bottom: 5px;">
                 <div class="modal-title" style="display: flex; align-items: center; gap: 6px; font-size: 1.02rem;">
                     <span>💱</span>
@@ -1140,6 +1283,20 @@
                         <button type="submit" class="btn btn-accent btn-sm btn-block" data-i18n="conv_save_rate" style="padding: 5px 8px; font-size: 0.75rem;">Salvează Cursul Euro</button>
                     </form>
                 </details>
+
+                <!-- Schimbare Limba Interfata cand EUR este moneda activa -->
+                <div id="detailsEurLanguageSection" style="margin-top: 6px; margin-bottom: 4px; display: none; padding: 8px 10px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm); align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.1rem;">🌐</span>
+                        <div>
+                            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-color);" id="convEurLanguageTitle">Limba EUR: Română</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted);" data-i18n="eur_lang_modal_title">Alege Limba pentru Euro (EUR)</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-accent btn-sm" id="btnChangeEurLangFromConverter" style="padding: 4px 8px; font-size: 0.72rem; white-space: nowrap;">
+                        <span data-i18n="eur_lang_change_btn">Schimbă limba</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Butonul Inchide ramane fixat la baza -->
@@ -1195,9 +1352,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.3.72.apk" download="MoneyApp_v3.3.72.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.25.apk" download="MoneyApp_v3.4.25.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.3.72.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.25.apk</span>
                 </a>
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
@@ -1239,22 +1396,15 @@
             <div class="modal-header" style="padding-bottom: 8px;">
                 <div class="modal-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
                     <span>⚙️</span>
-                    <span data-i18n="merchant_config_title">Setări Listă Magazine</span>
+                    <span data-i18n="categories_list_modal_title">Listă Categorii</span>
                 </div>
                 <button class="modal-close" data-close="modalMerchantCatConfig">&times;</button>
             </div>
             <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;" data-i18n="merchant_config_sub">
-                Bifați categoriile pentru care doriți să apară în dreapta lista verticală cu magazinele și furnizorii folosiți:
+                Bifați categoriile pentru care doriți să apară în dreapta lista verticală cu cumpărăturile și magazinele folosite:
             </div>
-            <div id="merchantCatConfigList" style="display: flex; flex-direction: column; gap: 7px; max-height: 42vh; overflow-y: auto; margin-bottom: 14px; padding-right: 4px;">
+            <div id="merchantCatConfigList" style="display: flex; flex-direction: column; gap: 7px; max-height: 55vh; overflow-y: auto; margin-bottom: 16px; padding-right: 4px;">
                 <!-- Populated dynamically with category checkboxes -->
-            </div>
-
-            <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;" data-i18n="merchant_custom_title">
-                🛒 Magazine Personalizate Adăugate:
-            </div>
-            <div id="merchantCustomListContainer" style="display: flex; flex-wrap: wrap; gap: 7px; max-height: 22vh; overflow-y: auto; margin-bottom: 16px; padding-right: 2px;">
-                <!-- Populated with custom store tags -->
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-color);">
@@ -1263,11 +1413,53 @@
         </div>
     </div>
 
+    <!-- MODAL MAGAZINE ADĂUGATE (DESCHIS DIN BUTONUL MAGAZINE ADĂUGATE) -->
+    <div class="modal-overlay" id="modalCustomMerchants">
+        <div class="modal-box modal-box-large" style="max-width: 520px; max-height: 92vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="padding-bottom: 8px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+                    <span>🛍️</span>
+                    <span data-i18n="custom_merchants_title">Magazine și Cumpărături Noi</span>
+                </div>
+                <button class="modal-close" data-close="modalCustomMerchants">&times;</button>
+            </div>
+            
+            <div style="overflow-y: auto; max-height: 68vh; padding-right: 4px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px;">
+                <!-- Secțiunea 1: Magazine Noi Adăugate -->
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <span>🏪</span>
+                        <span data-i18n="heading_my_merchants">Magazine Adăugate de Mine:</span>
+                    </div>
+                    <div id="customMerchantsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
+                        <!-- Populat dinamic via JS -->
+                    </div>
+                </div>
+
+                <!-- Secțiunea 2: Cumpărături Noi Adăugate -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <span>🛍️</span>
+                        <span data-i18n="heading_my_items">Cumpărături Adăugate de Mine:</span>
+                    </div>
+                    <div id="customItemsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
+                        <!-- Populat dinamic via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                <span id="customMerchantsTotalCount" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">0 magazine, 0 cumpărături</span>
+                <button type="button" class="btn btn-accent" data-close="modalCustomMerchants" style="padding: 9px 22px; font-size: 0.88rem; font-weight: 700;" data-i18n="btn_close">Gata / Închide</button>
+            </div>
+        </div>
+    </div>
+
 
 
     <!-- MODAL 9: SCHIMBARE MONEDA PRINCIPALA (ACTIVAT LA APASAREA PE M) -->
     <div class="modal-overlay" id="modalCurrencyPicker">
-        <div class="modal-box" style="max-width: 440px;">
+        <div class="modal-box" style="max-width: 480px; padding: 12px 14px 10px;">
             <div class="modal-header">
                 <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 1.25rem;">🌍</span>
@@ -1285,6 +1477,29 @@
             </div>
 
             <button type="button" class="btn btn-secondary btn-block" data-close="modalCurrencyPicker" style="margin-top: 14px;" data-i18n="btn_cancel">Anulează</button>
+        </div>
+    </div>
+
+    <!-- MODAL: ALEGE LIMBA PENTRU MONEDA EURO (TOP 10 LIMBI EUROPENE) -->
+    <div class="modal-overlay" id="modalEurLanguagePicker">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.25rem;">🇪🇺</span>
+                    <span data-i18n="eur_lang_modal_title">Alege Limba pentru Euro (EUR)</span>
+                </div>
+                <button class="modal-close" data-close="modalEurLanguagePicker">&times;</button>
+            </div>
+
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;" data-i18n="eur_lang_modal_desc">
+                Moneda Euro este utilizată pe scară largă în Europa. Alege limba în care dorești să fie tradusă aplicația:
+            </p>
+
+            <div class="currency-list-container" id="eurLanguageListContainer" style="max-height: 52vh; overflow-y: auto; padding-right: 4px;">
+                <!-- Populare dinamică via JS -->
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalEurLanguagePicker" style="margin-top: 14px;" data-i18n="btn_cancel">Anulează</button>
         </div>
     </div>
 
@@ -1322,15 +1537,15 @@
                 <button class="modal-close" data-close="modalTotalsSummary">&times;</button>
             </div>
 
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;" data-i18n="totals_modal_desc">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.3;" data-i18n="totals_modal_desc">
                 Sumarul general al tuturor veniturilor și cheltuielilor înregistrate:
             </p>
 
-            <div class="currency-list-container" id="totalsSummaryListContainer">
+            <div class="totals-summary-container" id="totalsSummaryListContainer">
                 <!-- Populare dinamică via JS -->
             </div>
 
-            <button type="button" class="btn btn-secondary btn-block" data-close="modalTotalsSummary" style="margin-top: 14px;" data-i18n="btn_close">Închide</button>
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalTotalsSummary" style="margin-top: 8px; padding: 9px;" data-i18n="btn_close">Închide</button>
         </div>
     </div>
 
@@ -1559,7 +1774,228 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-secondary btn-block" data-close="modalBillsAnalytics" style="margin-top: 10px;" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
+    <!-- MODAL 11D: ANALIZĂ CONTOARE & CONSUM UTILITĂȚI (CURENT, GAZE, APĂ) -->
+    <div class="modal-overlay" id="modalUtilityMetersAnalytics">
+        <div class="modal-box modal-fullscreen-box">
+            <div class="modal-header" style="padding-bottom: 6px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.3rem;">📊</span>
+                    <div>
+                        <div style="font-size: 1.02rem; font-weight: 700;">Contoare & Consum Utilități</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">Curent (kWh), Gaze (m³), Apă (m³) • Index, Medii & Preț</div>
+                    </div>
+                </div>
+                <button class="modal-close" data-close="modalUtilityMetersAnalytics">&times;</button>
+            </div>
+
+            <div class="bills-content-scroll" style="overflow-y: auto; overflow-x: hidden; padding-right: 2px; flex: 1; width: 100%; box-sizing: border-box;">
+                
+                <!-- Buton Adaugă Citire Index Nouă -->
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="btn btn-accent btn-block" id="btnOpenAddMeterReadingModal" style="height: 38px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span>＋</span> <span>Adaugă Citire Index Contor</span>
+                    </button>
+                </div>
+
+                <!-- Selector Perioadă Rapidă -->
+                <div class="meters-period-tabs" style="display: flex; gap: 4px; margin-bottom: 8px; background: var(--input-bg); padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); width: 100%; box-sizing: border-box;">
+                    <button type="button" class="meters-period-btn active" data-period="month" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:var(--accent); color:#ffffff; font-weight:700; cursor:pointer;">Luna Aceasta</button>
+                    <button type="button" class="meters-period-btn" data-period="3months" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">3 Luni</button>
+                    <button type="button" class="meters-period-btn" data-period="year" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">Anul Curent</button>
+                    <button type="button" class="meters-period-btn" data-period="all" style="flex:1; padding: 6px 2px; font-size: 0.74rem; border-radius: 6px; border:none; background:transparent; color:var(--text-muted); font-weight:600; cursor:pointer;">Tot</button>
+                </div>
+
+                <!-- Filtru Personalizat: Doar Anul / Doar Luna -->
+                <div class="meters-custom-filter-box" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; margin-bottom: 10px;">
+                    <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-color); margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📅 Filtru Detaliat An / Lună:</span>
+                        <button type="button" id="btnResetMetersCustomFilter" style="background: none; border: none; font-size: 0.68rem; color: var(--accent); font-weight: 600; cursor: pointer; padding: 0;">Resetează</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 6px; align-items: center;">
+                        <div>
+                            <select id="selectMetersFilterYear" class="form-control" style="height: 34px; font-size: 0.78rem; padding: 4px;">
+                                <!-- Populate years -->
+                            </select>
+                        </div>
+                        <div>
+                            <select id="selectMetersFilterMonth" class="form-control" style="height: 34px; font-size: 0.78rem; padding: 4px;">
+                                <option value="all">Toate lunile</option>
+                                <option value="01">01 - Ianuarie</option>
+                                <option value="02">02 - Februarie</option>
+                                <option value="03">03 - Martie</option>
+                                <option value="04">04 - Aprilie</option>
+                                <option value="05">05 - Mai</option>
+                                <option value="06">06 - Iunie</option>
+                                <option value="07">07 - Iulie</option>
+                                <option value="08">08 - August</option>
+                                <option value="09">09 - Septembrie</option>
+                                <option value="10">10 - Octombrie</option>
+                                <option value="11">11 - Noiembrie</option>
+                                <option value="12">12 - Decembrie</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-accent" id="btnApplyMetersCustomFilter" style="height: 34px; padding: 0 10px; font-size: 0.76rem; font-weight: 700;">
+                            ✓ Filtrează
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs Utilitate: Curent, Gaze, Apă, Toate -->
+                <div class="meters-utility-tabs" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 12px;">
+                    <button type="button" class="meters-type-btn active" data-type="all" style="padding: 7px 2px; font-size: 0.72rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); font-weight: 700; cursor: pointer;">🌐 Toate</button>
+                    <button type="button" class="meters-type-btn" data-type="electricity" style="padding: 7px 2px; font-size: 0.72rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">⚡ Curent</button>
+                    <button type="button" class="meters-type-btn" data-type="gas" style="padding: 7px 2px; font-size: 0.72rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">🔥 Gaze</button>
+                    <button type="button" class="meters-type-btn" data-type="water" style="padding: 7px 2px; font-size: 0.72rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">💧 Apă</button>
+                </div>
+
+                <!-- 4 KPI-uri sintetice Contoare -->
+                <div class="bills-kpi-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; width: 100%; box-sizing: border-box;">
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; min-width: 0; overflow: hidden;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">⚡ CONSUM TOTAL</div>
+                        <div id="metersKpiTotalConsumption" style="font-size: 1.05rem; font-weight: 800; color: var(--accent); margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0 unități</div>
+                        <div id="metersKpiTotalSub" style="font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">În perioada selectată</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; min-width: 0; overflow: hidden;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">📅 MEDIE ZILNICĂ & LUNĂ</div>
+                        <div id="metersKpiDailyMonthlyAvg" style="font-size: 1.02rem; font-weight: 800; color: #10b981; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0 / zi • 0 / lună</div>
+                        <div id="metersKpiAvgSub" style="font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ritm mediu ponderat</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; min-width: 0; overflow: hidden;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">🏷️ PREȚ MEDIU UNITAR</div>
+                        <div id="metersKpiUnitPrice" style="font-size: 1.05rem; font-weight: 800; color: #f59e0b; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0 RON / unitate</div>
+                        <div id="metersKpiPriceSub" style="font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Calculat din facturi</div>
+                    </div>
+                    <div class="bills-kpi-card" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 10px; min-width: 0; overflow: hidden;">
+                        <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">🔮 ESTIMARE VIITOARE</div>
+                        <div id="metersKpiForecast" style="font-size: 1.05rem; font-weight: 800; color: #8b5cf6; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">~0 RON / lună</div>
+                        <div id="metersKpiForecastSub" style="font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Cost estimat pe 30 zile</div>
+                    </div>
+                </div>
+
+                <!-- GRAFIC 1: EVOLUȚIE CONSUM (kWh & m³) -->
+                <div class="bills-chart-section" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 12px; width: 100%; box-sizing: border-box; overflow: hidden;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 5px;">
+                            <span>📈</span>
+                            <span>Evoluție Consum Lunar (kWh / m³)</span>
+                        </div>
+                        <span id="metersConsumptionChartBadge" style="font-size: 0.66rem; font-weight: 700; color: var(--accent); background: rgba(59, 130, 246, 0.12); padding: 2px 6px; border-radius: 4px;"></span>
+                    </div>
+                    <div style="width: 100%; height: 210px; position: relative; overflow: hidden;">
+                        <canvas id="chartMetersConsumption"></canvas>
+                    </div>
+                    <div id="chartMetersConsumptionLegend" style="display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 0.72rem;"></div>
+                </div>
+
+                <!-- GRAFIC 2: EVOLUȚIE PREȚ PE UNITATE (RON/kWh & RON/m³) -->
+                <div class="bills-chart-section" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 12px; width: 100%; box-sizing: border-box; overflow: hidden;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 5px;">
+                            <span>💰</span>
+                            <span>Evoluție Preț pe Unitate (RON / unitate)</span>
+                        </div>
+                        <span id="metersPriceChartBadge" style="font-size: 0.66rem; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.12); padding: 2px 6px; border-radius: 4px;"></span>
+                    </div>
+                    <div style="width: 100%; height: 200px; position: relative; overflow: hidden;">
+                        <canvas id="chartMetersUnitPrice"></canvas>
+                    </div>
+                    <div id="chartMetersUnitPriceLegend" style="display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 0.72rem;"></div>
+                </div>
+
+                <!-- DIAGNOSTIC & EVALUARE CONSUM -->
+                <div id="metersDiagnosticSection" style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🔍 Diagnostic & Ritm Consum</span>
+                        <span id="metersDiagnosticBadge" style="font-size: 0.68rem; font-weight: 700;"></span>
+                    </div>
+                    <div id="metersDiagnosticList" style="display: flex; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <!-- JURNAL & ISTORIC CITIRI CONTOARE -->
+                <div class="meters-history-section" style="margin-bottom: 10px; width: 100%; box-sizing: border-box;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📋 Istoric Citiri Index & Facturi</span>
+                        <span id="metersHistoryCount" style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted);">0 citiri</span>
+                    </div>
+
+                    <!-- Filtre Istoric: Toate, Cu Index, Fără Index -->
+                    <div id="metersHistoryFilterTabs" style="display: flex; gap: 4px; margin-bottom: 8px;">
+                        <button type="button" class="meters-hist-filter-btn active" data-hist-filter="all" style="flex: 1; padding: 5px 4px; font-size: 0.70rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--accent); color: #ffffff; font-weight: 700; cursor: pointer;">Toate (<span id="countHistAll">0</span>)</button>
+                        <button type="button" class="meters-hist-filter-btn" data-hist-filter="readings" style="flex: 1; padding: 5px 4px; font-size: 0.70rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">Cu index (<span id="countHistReadings">0</span>)</button>
+                        <button type="button" class="meters-hist-filter-btn" data-hist-filter="unindexed" style="flex: 1.1; padding: 5px 4px; font-size: 0.70rem; border-radius: 6px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer;">⚠️ Fără index (<span id="countHistUnindexed">0</span>)</button>
+                    </div>
+
+                    <div id="metersReadingsList" style="display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box;">
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalUtilityMetersAnalytics" style="margin-top: 10px;" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
+    <!-- MODAL 11E: ADĂUGARE / EDITARE CITIRE CONTOR (DIRECT) -->
+    <div class="modal-overlay" id="modalAddMeterReading">
+        <div class="modal-box" style="max-width: 440px; padding: 14px;">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <div class="modal-title" id="modalAddMeterReadingTitle" style="display: flex; align-items: center; gap: 8px;">
+                    <span>📊</span> <span id="meterReadingModalTitleText">Adaugă Citire Contor</span>
+                </div>
+                <button class="modal-close" data-close="modalAddMeterReading">&times;</button>
+            </div>
+
+            <form id="formMeterReading">
+                <input type="hidden" id="editMeterReadingId">
+                <input type="hidden" id="editMeterReadingTxId">
+
+                <!-- Selector Tip Utilitate -->
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Tip Utilitate:</label>
+                    <div class="utility-type-tabs" id="directMeterUtilityTabs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+                        <button type="button" class="btn-direct-util-tab active" data-utility="electricity">⚡ Curent (kWh)</button>
+                        <button type="button" class="btn-direct-util-tab" data-utility="gas">🔥 Gaze (m³)</button>
+                        <button type="button" class="btn-direct-util-tab" data-utility="water">💧 Apă (m³)</button>
+                    </div>
+                    <input type="hidden" id="directMeterUtilityType" value="electricity">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <div>
+                        <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Index Nou Contor:</label>
+                        <input type="number" inputmode="decimal" step="0.01" class="form-control" id="directMeterIndexValue" placeholder="ex: 14520" required style="height: 38px; font-size: 0.85rem; font-weight: 700;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Data Citirii:</label>
+                        <input type="date" class="form-control" id="directMeterReadingDate" required style="height: 38px; font-size: 0.80rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 8px;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Sumă Factură (RON, Opțional):</label>
+                    <input type="number" inputmode="decimal" step="0.01" class="form-control" id="directMeterAmount" placeholder="ex: 154.50" style="height: 38px; font-size: 0.85rem;">
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Furnizor / Notițe (Opțional):</label>
+                    <input type="text" class="form-control" id="directMeterNotes" placeholder="ex: Hidroelectrica / Citire autocitită" maxlength="50" style="height: 38px; font-size: 0.80rem;">
+                </div>
+
+                <!-- Preview Live Calcul Consum & Preț Direct -->
+                <div id="directMeterLiveCalc" style="display: none; font-size: 0.72rem; line-height: 1.35; color: var(--accent); background: rgba(37,99,235,0.08); padding: 7px 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid rgba(37,99,235,0.2);">
+                </div>
+
+                <div class="modal-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+                    <button type="button" class="btn btn-secondary" data-close="modalAddMeterReading" data-i18n="btn_cancel">Anulează</button>
+                    <button type="submit" class="btn btn-accent" id="btnSaveMeterReading" style="font-weight: 700;">
+                        <span>✓</span> <span>Salvează</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1648,10 +2084,14 @@
                 <div class="deposits-hero-card" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%); color: #ffffff; border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 6px 16px rgba(13, 148, 136, 0.28);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; opacity: 0.95;" data-i18n="deposits_hero_total">Total General (Depozite + Disponibil)</span>
-                        <span id="depositsCountBadge" style="background: rgba(255,255,255,0.25); padding: 3px 9px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; backdrop-filter: blur(4px);">0 Depozite</span>
+                        <div id="depositsCountBadge" style="background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.32); padding: 4px 10px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; backdrop-filter: blur(6px); min-width: 58px; flex-shrink: 0;">
+                            <span id="depositsCountLabel" style="font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.92; line-height: 1.1;" data-i18n="deposits_count_label">Depozite</span>
+                            <span id="depositsCountValue" style="font-size: 1.10rem; font-weight: 900; line-height: 1.1; margin-top: 1px;">0</span>
+                        </div>
                     </div>
-                    <div id="depositsGrandTotalDisplay" style="font-size: 1.60rem; font-weight: 900; letter-spacing: -0.5px; margin: 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0,00 RON</div>
-                    <div id="depositsBreakdownSummary" style="font-size: 0.72rem; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; line-height: 1.35;">
+                    <div id="depositsGrandTotalDisplay" style="font-size: 1.60rem; font-weight: 900; letter-spacing: -0.5px; margin: 4px 0 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0,00 RON</div>
+                    <div id="depositsGrandTotalConvertedDisplay" style="display: none; font-size: 0.96rem; font-weight: 700; color: #ffffff; opacity: 0.95; margin-top: -2px; margin-bottom: 6px; align-items: center; gap: 4px; line-height: 1.2;"></div>
+                    <div id="depositsBreakdownSummary" style="font-size: 0.72rem; opacity: 0.92; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.22); line-height: 1.35;">
                         <span>Depozite: 0 RON</span> • <span>Card: 0 RON</span> • <span>Cash: 0 RON</span>
                     </div>
                     <div id="depositsCurrenciesSummary" style="display: none; font-size: 0.72rem; opacity: 0.95; flex-wrap: wrap; gap: 6px; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.22); line-height: 1.35;">
@@ -1800,7 +2240,7 @@
                         <input type="date" class="form-control" id="transferDate" required>
                     </div>
                     <div class="form-group">
-                        <input type="time" class="form-control" id="transferTime">
+                        <input type="time" class="form-control" id="transferTime" step="60">
                     </div>
                 </div>
 
@@ -1873,58 +2313,131 @@
 
     <!-- MODAL 14: FILTRU PERIOADĂ GRAFIC DONUT -->
     <div class="modal-overlay" id="modalOverviewPeriodFilter">
-        <div class="modal-box" style="max-width: 380px;">
-            <div class="modal-header">
-                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1.2rem;">📅</span>
+        <div class="modal-box overview-period-modal-box">
+            <div class="modal-header" style="margin-bottom: 10px; padding-bottom: 8px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+                    <span style="font-size: 1.15rem;">📅</span>
                     <span data-i18n="filter_period_modal_title">Perioadă Afișare Grafic</span>
                 </div>
                 <button class="modal-close" data-close="modalOverviewPeriodFilter">&times;</button>
             </div>
 
-            <div class="tx-filter-options-grid" style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
-                <button type="button" class="btn-tx-filter-option active" data-period="current-month">
-                    <div class="tx-filter-opt-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">📅</div>
-                    <div class="tx-filter-opt-text">
-                        <div class="tx-filter-opt-title" data-i18n="period_current_month">Luna Aceasta</div>
-                        <div class="tx-filter-opt-desc" data-i18n="filter_period_current_month_desc">Cheltuielile efectuate în luna curentă</div>
-                    </div>
-                    <div class="tx-filter-opt-check">✓</div>
+            <!-- Grilă compactă 2x2 opțiuni standard -->
+            <div class="overview-presets-grid">
+                <button type="button" class="btn-tx-filter-option compact active" data-period="current-month">
+                    <span class="preset-icon">📅</span>
+                    <span class="preset-label" data-i18n="period_current_month">Luna Aceasta</span>
+                    <span class="preset-check">✓</span>
                 </button>
 
-                <button type="button" class="btn-tx-filter-option" data-period="last-month">
-                    <div class="tx-filter-opt-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">⏪</div>
-                    <div class="tx-filter-opt-text">
-                        <div class="tx-filter-opt-title" data-i18n="period_last_month">Luna Trecută</div>
-                        <div class="tx-filter-opt-desc" data-i18n="filter_period_last_month_desc">Cheltuielile din luna anterioară</div>
-                    </div>
-                    <div class="tx-filter-opt-check">✓</div>
+                <button type="button" class="btn-tx-filter-option compact" data-period="last-month">
+                    <span class="preset-icon">⏪</span>
+                    <span class="preset-label" data-i18n="period_last_month">Luna Trecută</span>
+                    <span class="preset-check">✓</span>
                 </button>
 
-                <button type="button" class="btn-tx-filter-option" data-period="current-year">
-                    <div class="tx-filter-opt-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">📊</div>
-                    <div class="tx-filter-opt-text">
-                        <div class="tx-filter-opt-title" data-i18n="period_current_year">Anul Acesta</div>
-                        <div class="tx-filter-opt-desc" data-i18n="filter_period_current_year_desc">Toate cheltuielile din anul curent</div>
-                    </div>
-                    <div class="tx-filter-opt-check">✓</div>
+                <button type="button" class="btn-tx-filter-option compact" data-period="current-year">
+                    <span class="preset-icon">📊</span>
+                    <span class="preset-label" data-i18n="period_current_year">Anul Acesta</span>
+                    <span class="preset-check">✓</span>
                 </button>
 
-                <button type="button" class="btn-tx-filter-option" data-period="all">
-                    <div class="tx-filter-opt-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">🌐</div>
-                    <div class="tx-filter-opt-text">
-                        <div class="tx-filter-opt-title" data-i18n="period_all">Toată Perioada</div>
-                        <div class="tx-filter-opt-desc" data-i18n="filter_period_all_desc">Istoric complet de la începutul utilizării</div>
-                    </div>
-                    <div class="tx-filter-opt-check">✓</div>
+                <button type="button" class="btn-tx-filter-option compact" data-period="all">
+                    <span class="preset-icon">🌐</span>
+                    <span class="preset-label" data-i18n="period_all">Toată Perioada</span>
+                    <span class="preset-check">✓</span>
                 </button>
             </div>
 
-            <button type="button" class="btn btn-secondary btn-block" data-close="modalOverviewPeriodFilter" data-i18n="btn_close">Închide</button>
+            <!-- Selector An & Lună Personalizată (Filtru Personalizat Avansat) -->
+            <div class="overview-custom-period-box" id="overviewCustomPeriodBox">
+                <div class="overview-custom-period-header">
+                    <div class="overview-custom-period-icon">⚙️</div>
+                    <div class="overview-custom-period-info">
+                        <div class="overview-custom-period-title">Filtru Personalizat Avansat</div>
+                        <div class="overview-custom-period-desc">Alege doar anul, doar luna sau combinația lună + an</div>
+                    </div>
+                </div>
+
+                <!-- Tab-uri rapide de selecție: 2 coloane sus + 1 rând dedicat complet -->
+                <div class="overview-period-tabs">
+                    <button type="button" class="overview-period-tab-btn" data-period-tab="year-only">📅 Doar Anul</button>
+                    <button type="button" class="overview-period-tab-btn" data-period-tab="month-only">🌙 Doar Luna</button>
+                    <button type="button" class="overview-period-tab-btn" data-period-tab="month-year">📆 Lună & An</button>
+                </div>
+
+                <!-- Tab 1: Doar Anul -->
+                <div class="overview-period-panel" id="panelPeriodYearOnly">
+                    <div class="overview-panel-field">
+                        <label class="overview-custom-label">Anul dorit (tot anul):</label>
+                        <select id="selectOverviewYearOnly" class="form-control overview-custom-select"></select>
+                    </div>
+                    <button type="button" class="btn btn-accent btn-block overview-panel-apply-btn" id="btnApplyYearOnly">
+                        ✓ Afișează
+                    </button>
+                    <div class="overview-picker-hint">Afișează toate cheltuielile din anul ales (ex: tot anul 2007).</div>
+                </div>
+
+                <!-- Tab 2: Doar Luna (din toți anii) -->
+                <div class="overview-period-panel" id="panelPeriodMonthOnly" style="display: none;">
+                    <div class="overview-panel-field">
+                        <label class="overview-custom-label">Luna dorită (din toți anii):</label>
+                        <select id="selectOverviewMonthOnly" class="form-control overview-custom-select">
+                            <option value="01">01 - Ianuarie</option>
+                            <option value="02">02 - Februarie</option>
+                            <option value="03">03 - Martie</option>
+                            <option value="04">04 - Aprilie</option>
+                            <option value="05">05 - Mai</option>
+                            <option value="06">06 - Iunie</option>
+                            <option value="07">07 - Iulie</option>
+                            <option value="08">08 - August</option>
+                            <option value="09">09 - Septembrie</option>
+                            <option value="10">10 - Octombrie</option>
+                            <option value="11">11 - Noiembrie</option>
+                            <option value="12">12 - Decembrie</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-accent btn-block overview-panel-apply-btn" id="btnApplyMonthOnly">
+                        ✓ Afișează
+                    </button>
+                    <div class="overview-picker-hint">Luna selectată cumulată din toți anii (ex: toate din August).</div>
+                </div>
+
+                <!-- Tab 3: Lună & An specific -->
+                <div class="overview-period-panel" id="panelPeriodMonthYear" style="display: none;">
+                    <div class="overview-month-year-grid">
+                        <div style="min-width: 0;">
+                            <label class="overview-custom-label">Luna:</label>
+                            <select id="selectOverviewMonthForYear" class="form-control overview-custom-select">
+                                <option value="01">01 - Ianuarie</option>
+                                <option value="02">02 - Februarie</option>
+                                <option value="03">03 - Martie</option>
+                                <option value="04">04 - Aprilie</option>
+                                <option value="05">05 - Mai</option>
+                                <option value="06">06 - Iunie</option>
+                                <option value="07">07 - Iulie</option>
+                                <option value="08">08 - August</option>
+                                <option value="09">09 - Septembrie</option>
+                                <option value="10">10 - Octombrie</option>
+                                <option value="11">11 - Noiembrie</option>
+                                <option value="12">12 - Decembrie</option>
+                            </select>
+                        </div>
+                        <div style="min-width: 0;">
+                            <label class="overview-custom-label">Anul:</label>
+                            <select id="selectOverviewYearForMonth" class="form-control overview-custom-select"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-accent btn-block overview-panel-apply-btn" id="btnApplyMonthYear">
+                        ✓ Afișează
+                    </button>
+                    <div class="overview-picker-hint">Doar cheltuielile din acea lună din anul specificat (ex: August 2007).</div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-secondary btn-block" data-close="modalOverviewPeriodFilter" data-i18n="btn_close" style="margin-top: 4px;">Închide</button>
         </div>
     </div>
-
-
 
     <!-- MODAL 15: SCANER INTELIGENT BONURI & FACTURI -->
     <div class="modal-overlay" id="modalReceiptScanner">
@@ -2059,7 +2572,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=419"></script>
+    <script src="app.js?v=480"></script>
 </body>
 </html>
 

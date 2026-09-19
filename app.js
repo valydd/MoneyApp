@@ -5,22 +5,43 @@
 
 // Culori presetate pentru categorii (Paletă extinsă de nuanțe moderne)
 const PRESET_COLORS = [
-    // Verde & Smarald
-    '#10b981', '#059669', '#047857', '#16a34a', '#22c55e', '#4ade80', '#84cc16', '#65a30d',
+    // Verde, Smarald & Mentă
+    '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7',
+    '#15803d', '#16a34a', '#22c55e', '#4ade80', '#86efac',
+    '#3f6212', '#4d7c0f', '#65a30d', '#84cc16', '#a3e635',
     // Cyan, Turcoaz & Aqua
-    '#14b8a6', '#0d9488', '#0f766e', '#06b6d4', '#0891b2', '#0284c7', '#38bdf8', '#0ea5e9',
-    // Albastru & Indigo & Navy
-    '#3b82f6', '#2563eb', '#1d4ed8', '#1e3a8a', '#6366f1', '#4f46e5', '#4338ca',
-    // Violet, Mov & Lavandă
-    '#8b5cf6', '#7c3aed', '#6d28d9', '#a855f7', '#9333ea', '#c084fc',
-    // Roz, Magenta, Fuchsia & Zmeură
-    '#ec4899', '#db2777', '#be185d', '#d946ef', '#c026d3', '#f43f5e', '#e11d48', '#9f1239',
-    // Roșu, Coral & Portocaliu
-    '#ef4444', '#dc2626', '#b91c1c', '#f87171', '#f97316', '#ea580c', '#c2410c', '#ff5722',
-    // Chihlimbar, Auriu & Cafea/Maro
-    '#f59e0b', '#d97706', '#b45309', '#eab308', '#ca8a04', '#854d0e', '#78350f',
-    // Ardezie, Oțel & Cărbune / Neutre
-    '#64748b', '#475569', '#334155', '#1e293b', '#71717a', '#52525b', '#78716c', '#57534e'
+    '#0f766e', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4',
+    '#0e7490', '#0891b2', '#06b6d4', '#22d3ee', '#67e8f9',
+    // Albastru, Azur & Cer
+    '#0369a1', '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc',
+    '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd',
+    '#1e3a8a', '#1e40af', '#172554', '#2979ff', '#1565c0',
+    // Indigo & Lavandă Regală
+    '#4338ca', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc',
+    '#3730a3', '#312e81', '#1e1b4b',
+    // Violet, Mov & Purpură
+    '#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd',
+    '#7e22ce', '#9333ea', '#a855f7', '#c084fc', '#e9d5ff',
+    '#581c87', '#6b21a8', '#3b0764',
+    // Fucsia, Magenta & Roz
+    '#a21caf', '#c026d3', '#d946ef', '#e879f9', '#f0abfc',
+    '#be185d', '#db2777', '#ec4899', '#f472b6', '#f9a8d4',
+    '#9f1239', '#be123c', '#e11d48', '#f43f5e', '#fb7185',
+    // Roșu, Rubin & Coral
+    '#991b1b', '#b91c1c', '#dc2626', '#ef4444', '#f87171',
+    '#7f1d1d', '#881337', '#c2410c', '#ea580c', '#f97316',
+    '#ff5722', '#ff7043', '#fb923c', '#fdba74',
+    // Auriu, Galben & Chihlimbar
+    '#9a3412', '#b45309', '#d97706', '#f59e0b', '#fbbf24',
+    '#a16207', '#ca8a04', '#eab308', '#facc15', '#fde047',
+    // Maro, Cafea & Ciocolată
+    '#451a03', '#78350f', '#854d0e', '#8d6e63', '#6d4c41',
+    '#5d4037', '#4e342e', '#3e2723', '#a2845e',
+    // Ardezie, Oțel & Neutre moderne
+    '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1',
+    '#27272a', '#3f3f46', '#52525b', '#71717a', '#a1a1aa',
+    '#1c1917', '#292524', '#44403c', '#57534e', '#78716c',
+    '#0f172a', '#1e293b', '#09090b', '#18181b', '#020617'
 ];
 
 const DEFAULT_CATEGORIES = [
@@ -57,7 +78,7 @@ let statsMonthDaysChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.3.72";
+const APP_VERSION = "3.4.17";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -108,6 +129,21 @@ const CURRENCY_TO_LANG = {
     'EGP': 'en'
 };
 
+// Top 10 cele mai vorbite limbi din Europa (plus turca ca optiune aditionala)
+const TOP_EUROPEAN_LANGUAGES = [
+    { code: 'en', name: 'English', localName: 'Engleză', flag: '🇬🇧', speakers: '~370M' },
+    { code: 'de', name: 'Deutsch', localName: 'Germană', flag: '🇩🇪', speakers: '~100M' },
+    { code: 'fr', name: 'Français', localName: 'Franceză', flag: '🇫🇷', speakers: '~80M' },
+    { code: 'it', name: 'Italiano', localName: 'Italiană', flag: '🇮🇹', speakers: '~65M' },
+    { code: 'es', name: 'Español', localName: 'Spaniolă', flag: '🇪🇸', speakers: '~47M' },
+    { code: 'ro', name: 'Română', localName: 'Română', flag: '🇷🇴', speakers: '~24M' },
+    { code: 'pl', name: 'Polski', localName: 'Poloneză', flag: '🇵🇱', speakers: '~40M' },
+    { code: 'nl', name: 'Nederlands', localName: 'Olandeză', flag: '🇳🇱', speakers: '~23M' },
+    { code: 'pt', name: 'Português', localName: 'Portugheză', flag: '🇵🇹', speakers: '~10M' },
+    { code: 'uk', name: 'Українська', localName: 'Ucraineană', flag: '🇺🇦', speakers: '~40M' },
+    { code: 'tr', name: 'Türkçe', localName: 'Turcă', flag: '🇹🇷', speakers: '~85M' }
+];
+
 const I18N_DICTIONARY = {
     ro: {
         currency_label: 'Monedă',
@@ -126,6 +162,9 @@ const I18N_DICTIONARY = {
         btn_income: 'Venit',
         expenses_by_cat: 'Categorii',
         total_month: 'Total Lună',
+        total_last_month: 'Luna Trecută',
+        total_year: 'Total An',
+        total_all: 'Total General',
         categories_list_title: 'Listă Categorii & Cheltuieli',
         period_current_month: 'Luna Aceasta',
         period_last_month: 'Luna Trecută',
@@ -158,7 +197,7 @@ const I18N_DICTIONARY = {
         btn_save: 'Salvează',
         btn_cancel: 'Anulează',
         history_title: 'Istoric Tranzacții',
-        search_placeholder: 'Caută după descriere...',
+        search_placeholder: 'Caută după descriere, magazin sau sumă...',
         filter_all: 'Toate',
         filter_expenses: 'Cheltuieli',
         filter_incomes: 'Venituri',
@@ -173,8 +212,35 @@ const I18N_DICTIONARY = {
         categories_desc: 'Puteți adăuga oricâte categorii doriți, fiecare având propria culoare și pictogramă.',
         no_expenses: 'Fără Cheltuieli',
         ops_suffix: 'op.',
-        months: ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'],
-        monthsShort: ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Noi', 'Dec'],
+                btn_categories_list: 'Listă Categorii',
+        btn_added_merchants_items: 'Magazine și Cumpărături Noi',
+        expense_box_shopping_title: 'Cumpărături',
+        expense_box_merchant_title: 'Magazine',
+        categories_list_modal_title: 'Listă Categorii',
+        custom_merchants_title: 'Magazine și Cumpărături Noi',
+        custom_merchants_sub: 'Toate magazinele și cumpărăturile noi adăugate de dumneavoastră:',
+        heading_my_merchants: 'Magazine Adăugate de Mine:',
+        heading_my_items: 'Cumpărături Adăugate de Mine:',
+        custom_merchants_empty: 'Niciun magazin nou adăugat încă.',
+        custom_items_empty: 'Niciun articol nou de cumpărături adăugat încă.',
+        custom_merchants_singular: 'magazin',
+        custom_merchants_plural: 'magazine',
+        custom_items_singular: 'cumpărătură',
+        custom_items_plural: 'cumpărături',
+        merchant_config_sub: 'Bifați categoriile pentru care doriți să apară lista cu cumpărături și magazine:',
+        search_shopping_item_placeholder: '🔍 Caută articol...',
+        search_merchant_placeholder: '🔍 Caută magazin...',
+        popover_header_title: '🛍️ Cumpărături <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Magazine',
+        popover_empty_items: 'Niciun articol găsit',
+        popover_empty_stores: 'Niciun magazin găsit',
+        prompt_add_item_title: '🛍️ Adaugă Articol Nou',
+        prompt_add_item_ph: 'Ex: Pâine, Suc, Lapte...',
+        prompt_add_merchant_title: '🛒 Adaugă Magazin Nou',
+        prompt_add_merchant_ph: 'Ex: eMAG, Penny, Piață...',
+        drag_reorder_hint: 'Ține apăsat și trage pentru a rearanja',
+                lbl_suspended_short: 'Suspendate',
+        months: ["Ianuarie","Februarie","Martie","Aprilie","Mai","Iunie","Iulie","August","Septembrie","Octombrie","Noiembrie","Decembrie"],
+        monthsShort: ["Ian","Feb","Mar","Apr","Mai","Iun","Iul","Aug","Sep","Oct","Noi","Dec"],
         year_prefix: 'Anul',
         backup_title: 'Salvare & Restaurare Date',
         backup_desc: 'Copia de siguranță conține absolut toate datele dvs.: tranzacțiile, categoriile personalizate, setările și tema interfeței (Dark/Light). La import, întreaga aplicație este restaurată identic.',
@@ -207,7 +273,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.72.apk',
+        btn_download_apk: 'Descarcă MoneyApp_v3.3.98.apk',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -282,7 +348,15 @@ const I18N_DICTIONARY = {
         prompt_placeholder_name: 'Introdu denumirea...',
         pay_method_card: 'Card',
         pay_method_cash: 'Cash',
-        btn_merchant_config: '⚙️ Magazine',
+        btn_merchant_config: '⚙️ Listă Categorii',
+        btn_categories_list: 'Listă Categorii',
+        btn_added_merchants: '🛍️ Magazine și Cumpărături Noi',
+        btn_added_merchants_items: 'Magazine și Cumpărături Noi',
+        custom_merchants_title: 'Magazine și Cumpărături Noi',
+        heading_my_merchants: 'Magazine Adăugate de Mine:',
+        heading_my_items: 'Cumpărături Adăugate de Mine:',
+        categories_list_modal_title: 'Listă Categorii',
+        custom_merchants_sub: 'Toate magazinele și furnizorii personalizați adăugați de dumneavoastră:',
         merchant_config_title: 'Setări Listă Magazine',
         merchant_config_sub: 'Bifați categoriile pentru care doriți să apară în dreapta lista verticală cu magazinele și furnizorii folosiți:',
         merchant_custom_title: '🛒 Magazine Personalizate Adăugate:',
@@ -355,7 +429,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: 'Fond Disponibil Net',
         totals_card_savings_rate: 'Rată Economisire & Activitate',
         totals_card_tx_count: 'tranzacții active',
-        lbl_suspend_tx_short: '⏸️ Suspendă',
+        lbl_suspend_tx_short: 'Suspendă',
         btn_scan_receipt: 'Scanează',
         scanner_modal_title: 'Scaner Bonuri & Facturi',
         scanner_status_ready: 'Îndreaptă camera spre bon sau cod QR',
@@ -422,7 +496,12 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: 'Cash',
         deposits_count_label: 'Depozite',
         btn_edit: 'Editează',
-        btn_delete: 'Șterge'
+        btn_delete: 'Șterge',
+        eur_lang_modal_title: 'Alege Limba pentru Euro (EUR)',
+        eur_lang_modal_desc: 'Moneda Euro este utilizată pe scară largă în Europa. Alege limba în care dorești să fie tradusă aplicația:',
+        eur_lang_active_badge: 'Activă',
+        eur_lang_change_btn: 'Schimbă limba',
+        eur_lang_current_label: 'Limba interfeței (EUR)'
     },
     en: {
         currency_label: 'Currency',
@@ -441,6 +520,9 @@ const I18N_DICTIONARY = {
         btn_income: 'Income',
         expenses_by_cat: 'Categories',
         total_month: 'Monthly Total',
+        total_last_month: 'Last Month',
+        total_year: 'Yearly Total',
+        total_all: 'All-Time Total',
         categories_list_title: 'Categories & Expenses Breakdown',
         period_current_month: 'This Month',
         period_last_month: 'Last Month',
@@ -473,7 +555,7 @@ const I18N_DICTIONARY = {
         btn_save: 'Save',
         btn_cancel: 'Cancel',
         history_title: 'Transaction History',
-        search_placeholder: 'Search description or category...',
+        search_placeholder: 'Search description, store or amount...',
         filter_all: 'All',
         filter_expenses: 'Expenses',
         filter_incomes: 'Income',
@@ -488,8 +570,35 @@ const I18N_DICTIONARY = {
         categories_desc: 'You can create custom categories, each with its own icon and color.',
         no_expenses: 'No Expenses',
         ops_suffix: 'tx',
-        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                btn_categories_list: 'Category List',
+        btn_added_merchants_items: 'New Stores & Items',
+        expense_box_shopping_title: 'Shopping',
+        expense_box_merchant_title: 'Stores',
+        categories_list_modal_title: 'Category List',
+        custom_merchants_title: 'New Stores & Items',
+        custom_merchants_sub: 'All custom stores and shopping items added by you:',
+        heading_my_merchants: 'Stores Added by Me:',
+        heading_my_items: 'Items Added by Me:',
+        custom_merchants_empty: 'No custom stores added yet.',
+        custom_items_empty: 'No custom shopping items added yet.',
+        custom_merchants_singular: 'store',
+        custom_merchants_plural: 'stores',
+        custom_items_singular: 'item',
+        custom_items_plural: 'items',
+        merchant_config_sub: 'Check the categories for which you want the shopping items and stores list to appear:',
+        search_shopping_item_placeholder: '🔍 Search item...',
+        search_merchant_placeholder: '🔍 Search store...',
+        popover_header_title: '🛍️ Shopping Items <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Stores',
+        popover_empty_items: 'No items found',
+        popover_empty_stores: 'No stores found',
+        prompt_add_item_title: '🛍️ Add New Item',
+        prompt_add_item_ph: 'Ex: Bread, Milk, Juice...',
+        prompt_add_merchant_title: '🛒 Add New Store',
+        prompt_add_merchant_ph: 'Ex: Walmart, Target, Local Market...',
+        drag_reorder_hint: 'Drag to reorder',
+                lbl_suspended_short: 'Suspended',
+        months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+        monthsShort: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
         year_prefix: 'Year',
         backup_title: 'Backup & Restore Data',
         backup_desc: 'The backup includes all your data: transactions, custom categories, settings, and UI theme (Dark/Light). When imported, the entire app is restored identically.',
@@ -522,7 +631,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.72.apk',
+        btn_download_apk: 'Download MoneyApp_v3.3.98.apk',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -670,7 +779,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: 'Net Available Fund',
         totals_card_savings_rate: 'Savings Rate & Activity',
         totals_card_tx_count: 'active transactions',
-        lbl_suspend_tx_short: '⏸️ Suspend',
+        lbl_suspend_tx_short: 'Suspend',
         btn_scan_receipt: 'Scan',
         scanner_modal_title: 'Receipt & Bill Scanner',
         scanner_status_ready: 'Point camera at receipt or QR code',
@@ -737,7 +846,12 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: 'Cash',
         deposits_count_label: 'Deposits',
         btn_edit: 'Edit',
-        btn_delete: 'Delete'
+        btn_delete: 'Delete',
+        eur_lang_modal_title: 'Choose Language for Euro (EUR)',
+        eur_lang_modal_desc: 'The Euro currency is widely used across Europe. Choose the language you want the app interface translated into:',
+        eur_lang_active_badge: 'Active',
+        eur_lang_change_btn: 'Change language',
+        eur_lang_current_label: 'Interface Language (EUR)'
     },
     de: {
         currency_label: 'Währung',
@@ -756,6 +870,9 @@ const I18N_DICTIONARY = {
         btn_income: 'Einnahme',
         expenses_by_cat: 'Ausgaben nach Kategorie',
         total_month: 'Monatssumme',
+        total_last_month: 'Letzter Monat',
+        total_year: 'Jahressumme',
+        total_all: 'Gesamtsumme',
         categories_list_title: 'Kategorien- & Ausgabenübersicht',
         period_current_month: 'Dieser Monat',
         period_last_month: 'Letzter Monat',
@@ -803,8 +920,33 @@ const I18N_DICTIONARY = {
         categories_desc: 'Fügen Sie beliebig viele Kategorien mit eigenen Farben und Symbolen hinzu.',
         no_expenses: 'Keine Ausgaben',
         ops_suffix: 'Vorg.',
-        months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-        monthsShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                btn_categories_list: 'Kategorieliste',
+        btn_added_merchants_items: 'Neue Geschäfte & Artikel',
+        categories_list_modal_title: 'Kategorieliste',
+        custom_merchants_title: 'Neue Geschäfte & Artikel',
+        custom_merchants_sub: 'Alle von Ihnen hinzugefügten Geschäfte und Einkaufsartikel:',
+        heading_my_merchants: 'Von mir hinzugefügte Geschäfte:',
+        heading_my_items: 'Von mir hinzugefügte Artikel:',
+        custom_merchants_empty: 'Noch keine benutzerdefinierten Geschäfte hinzugefügt.',
+        custom_items_empty: 'Noch keine benutzerdefinierten Einkaufsartikel hinzugefügt.',
+        custom_merchants_singular: 'Geschäft',
+        custom_merchants_plural: 'Geschäfte',
+        custom_items_singular: 'Artikel',
+        custom_items_plural: 'Artikel',
+        merchant_config_sub: 'Aktivieren Sie die Kategorien, für die Artikel und Geschäfte angezeigt werden sollen:',
+        search_shopping_item_placeholder: '🔍 Artikel suchen...',
+        search_merchant_placeholder: '🔍 Geschäft suchen...',
+        popover_header_title: '🛍️ Einkaufsartikel <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Geschäfte',
+        popover_empty_items: 'Keine Artikel gefunden',
+        popover_empty_stores: 'Keine Geschäfte gefunden',
+        prompt_add_item_title: '🛍️ Neuen Artikel hinzufügen',
+        prompt_add_item_ph: 'Z.B.: Brot, Milch, Saft...',
+        prompt_add_merchant_title: '🛒 Neues Geschäft hinzufügen',
+        prompt_add_merchant_ph: 'Z.B.: Aldi, Lidl, REWE...',
+        drag_reorder_hint: 'Ziehen zum Neuordnen',
+                lbl_suspended_short: 'Ausgesetzt',
+        months: ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],
+        monthsShort: ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"],
         year_prefix: 'Jahr',
         backup_title: 'Datensicherung & Wiederherstellung',
         backup_desc: 'Das Backup enthält alle Ihre Daten: Transaktionen, benutzerdefinierte Kategorien, Einstellungen und Oberflächendesign. Beim Import wird die App identisch wiederhergestellt.',
@@ -837,7 +979,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.72.apk herunterladen',
+        btn_download_apk: 'MoneyApp_v3.3.98.apk herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -979,7 +1121,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: 'Netto-Verfügbares Guthaben',
         totals_card_savings_rate: 'Sparquote & Aktivität',
         totals_card_tx_count: 'aktive Transaktionen',
-        lbl_suspend_tx_short: '⏸️ Aussetzen',
+        lbl_suspend_tx_short: 'Aussetzen',
         btn_scan_receipt: 'Scannen',
         scanner_modal_title: 'Beleg- & Rechnungsscanner',
         scanner_status_ready: 'Kamera auf Beleg oder QR-Code richten',
@@ -1045,7 +1187,2455 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: 'Bargeld',
         deposits_count_label: 'Einlagen',
         btn_edit: 'Bearbeiten',
-        btn_delete: 'Löschen'
+        btn_delete: 'Löschen',
+        eur_lang_modal_title: 'Sprache für Euro (EUR) wählen',
+        eur_lang_modal_desc: 'Der Euro ist in ganz Europa weit verbreitet. Wählen Sie die Sprache für die Benutzeroberfläche der App:',
+        eur_lang_active_badge: 'Aktiv',
+        eur_lang_change_btn: 'Sprache ändern',
+        eur_lang_current_label: 'Oberflächensprache (EUR)',
+        export_btn_copy: 'Text kopieren',
+        export_btn_whatsapp: 'Über WhatsApp senden',
+        export_btn_print: 'Drucken / PDF',
+        export_btn_download: 'Bericht herunterladen',
+        export_copied_toast: 'Bericht in die Zwischenablage kopiert!',
+        export_downloaded_toast: 'Berichtsdatei erfolgreich heruntergeladen!',
+        scanner_btn_capture: 'Foto aufnehmen'
+    },
+    fr: {
+        currency_label: 'Devise',
+        tab_overview: 'Aperçu',
+        tab_overview_full: 'Tableau de bord général',
+        tab_transactions: 'Transactions',
+        tab_transactions_full: 'Transactions (Historique)',
+        tab_stats: 'Statistiques',
+        tab_stats_full: 'Statistiques',
+        tab_categories: 'Catégories',
+        tab_categories_full: 'Catégories',
+        balance_title: 'Solde Disponible',
+        total_expenses: 'Dépenses Totales',
+        total_income: 'Revenus Totaux',
+        btn_expense: 'Dépense',
+        btn_income: 'Revenu',
+        expenses_by_cat: 'Catégories',
+        total_month: 'Total Mois',
+        total_last_month: 'Mois Dernier',
+        total_year: 'Total Année',
+        total_all: 'Total Général',
+        categories_list_title: 'Liste des Catégories & Dépenses',
+        period_current_month: 'Ce Mois-ci',
+        period_last_month: 'Le Mois Dernier',
+        period_current_year: 'Cette Année',
+        period_all: 'Toute la Période',
+        qr_title: 'Connecter un autre téléphone',
+        qr_desc: 'Scannez le QR ou installez',
+        btn_open_qr: 'Ouvrir QR',
+        btn_install_guide: 'Guide d\'installation',
+        modal_add_expense: 'Ajouter une Dépense',
+        modal_edit_expense: 'Modifier la Dépense',
+        modal_add_income: 'Ajouter un Revenu',
+        modal_edit_income: 'Modifier le Revenu',
+        lbl_amount: 'Montant',
+        lbl_date: 'Date',
+        lbl_category: 'Choisir la Catégorie',
+        lbl_note: 'Description / Note (optionnel)',
+        lbl_income_source: 'Source de Revenu / Note',
+        placeholder_amount: 'Montant (Ex : 45.50)',
+        placeholder_desc: 'Ex : Courses, Carburant',
+        placeholder_article: 'Article',
+        placeholder_store: 'Magasin',
+        placeholder_add_merchant: '+ Nouveau magasin...',
+        placeholder_income_amount: 'Revenu (Ex : 3500)',
+        placeholder_income_source: 'Ex : Salaire, Acompte, Prime, Loyer',
+        lbl_suspend_tx: '⏸️ Suspendre la transaction (exclure temporairement des calculs)',
+        suspended_tx_title: 'Transactions Suspendues',
+        suspended_tx_desc: 'Ces transactions sont temporairement exclues du solde, des graphiques et des rapports. Vous pouvez les réactiver, les modifier ou les supprimer à tout moment.',
+        no_suspended_tx: 'Aucune transaction suspendue.',
+        btn_save: 'Enregistrer',
+        btn_cancel: 'Annuler',
+        history_title: 'Historique des Transactions',
+        search_placeholder: 'Rechercher par note, montant, date...',
+        filter_all: 'Toutes',
+        filter_expenses: 'Dépenses',
+        filter_incomes: 'Revenus',
+        reports_title: 'Rapport Annuel & Évolution',
+        annual_income: 'Revenu Annuel',
+        annual_expenses: 'Dépenses Annuelles',
+        net_savings: 'Épargne Nette',
+        savings_rate: 'Taux d\'Épargne',
+        monthly_evolution: 'Évolution Mensuelle',
+        categories_title: 'Gestion des Catégories',
+        btn_new_category: '+ Nouvelle Catégorie',
+        categories_desc: 'Configurez les catégories pour organiser vos dépenses.',
+        no_expenses: 'Aucune dépense enregistrée pour cette période.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Liste des catégories',
+        btn_added_merchants_items: 'Nouveaux magasins et articles',
+        categories_list_modal_title: 'Liste des catégories',
+        custom_merchants_title: 'Nouveaux magasins et articles',
+        custom_merchants_sub: 'Tous les magasins et articles ajoutés par vous :',
+        heading_my_merchants: 'Magasins ajoutés par moi :',
+        heading_my_items: 'Articles ajoutés par moi :',
+        custom_merchants_empty: 'Aucun magasin personnalisé ajouté pour le moment.',
+        custom_items_empty: 'Aucun article de course personnalisé ajouté pour le moment.',
+        custom_merchants_singular: 'magasin',
+        custom_merchants_plural: 'magasins',
+        custom_items_singular: 'article',
+        custom_items_plural: 'articles',
+        merchant_config_sub: 'Cochez les catégories pour lesquelles vous souhaitez afficher les articles et magasins :',
+        search_shopping_item_placeholder: '🔍 Chercher article...',
+        search_merchant_placeholder: '🔍 Chercher magasin...',
+        popover_header_title: '🛍️ Articles de courses <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Magasins',
+        popover_empty_items: 'Aucun article trouvé',
+        popover_empty_stores: 'Aucun magasin trouvé',
+        prompt_add_item_title: '🛍️ Ajouter un nouvel article',
+        prompt_add_item_ph: 'Ex : Pain, Lait, Jus...',
+        prompt_add_merchant_title: '🛒 Ajouter un nouveau magasin',
+        prompt_add_merchant_ph: 'Ex : Carrefour, Leclerc, Marché...',
+        drag_reorder_hint: 'Glisser pour réorganiser',
+                lbl_suspended_short: 'Suspendues',
+        months: ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"],
+        monthsShort: ["Janv","Févr","Mars","Avr","Mai","Juin","Juil","Août","Sept","Oct","Nov","Déc"],
+        year_prefix: 'Année',
+        backup_title: 'Sauvegarde & Synchronisation',
+        backup_desc: 'Exportez ou importez vos données locales.',
+        btn_export_data: 'Exporter les Données (JSON)',
+        btn_import_data: 'Restaurer / Importer (JSON)',
+        btn_close: 'Fermer',
+        conv_title: 'Convertisseur & Devises Mondiales',
+        conv_active_label: 'Devise Principale Active',
+        conv_amount_label: 'Montant à Convertir',
+        conv_use_balance: 'Utiliser le Solde Disponible',
+        conv_results_title: 'Taux & Équivalents en Devises Mondiales',
+        conv_adjust_rate: '⚙️ Ajuster le Taux de Référence Euro (EUR/RON)',
+        conv_save_rate: 'Enregistrer le Taux',
+        conv_active_count: 'devises converties',
+        conv_status_title: 'Statut du Cursus de Change',
+        conv_btn_refresh: 'Actualiser les Taux (BCE)',
+        rates_updated_toast: 'Taux de change actualisés avec succès depuis la BCE !',
+        rates_offline_toast: 'Connexion indisponible. Utilisation des derniers taux enregistrés.',
+        rates_updated_at: 'Dernière mise à jour',
+        guide_modal_title: 'Guide d\'Installation de l\'App',
+        guide_step1: '<strong>Sur Téléphone Android (Google Chrome) :</strong><br>Ouvrez le lien dans Chrome, appuyez sur les <strong>3 points verticaux (⋮)</strong> en haut à droite et choisissez <strong>"Ajouter à l\'écran d\'accueil"</strong> (ou "Installer l\'application").',
+        guide_step2: '<strong>Sur iPhone / iPad (Safari) :</strong><br>Ouvrez la page dans Safari, appuyez sur le bouton <strong>Partager (carré avec flèche vers le haut)</strong> en bas, faites défiler et sélectionnez <strong>"Sur l\'écran d\'accueil"</strong>.',
+        guide_step3: '<strong>Sur Ordinateur (Google Chrome / Edge) :</strong><br>Cliquez sur l\'icône d\'installation dans la barre d\'adresse (à droite) ou appuyez sur <strong>Ctrl + D</strong> pour ajouter un favori.',
+        guide_step4: '<strong>Ou téléchargement direct en application Android (APK) :</strong><br>Vous pouvez télécharger directement le fichier installateur APK pour l\'installer ou le partager sur WhatsApp.',
+        guide_btn_apk: 'Télécharger APK Android',
+        guide_btn_gotit: 'Compris !',
+        qr_modal_title: 'Ouvrir sur un Autre Téléphone',
+        qr_modal_desc: 'Scannez le code QR avec l\'appareil photo de votre téléphone pour ouvrir instantanément l\'application sans installer depuis Google Play.',
+        qr_step1: 'Ouvrez l\'<strong>Appareil photo</strong> de votre téléphone.',
+        qr_step2: 'Pointez la caméra vers le <strong>code QR ci-dessus</strong>.',
+        qr_step3: 'Appuyez sur le <strong>lien qui apparaît</strong> pour ouvrir MoneyApp dans le <strong>Navigateur</strong> !',
+        qr_btn_copy: 'Copier le Lien',
+        btn_download_apk: 'Télécharger APK Android',
+        link_copied: 'Lien copié dans le presse-papiers !',
+        lbl_selected_period: 'Période Sélectionnée',
+        lbl_total_spent: 'Total Dépensé',
+        lbl_of_period_expenses: 'des dépenses de la période',
+        lbl_category_transactions: 'Transactions de cette catégorie',
+        btn_close_to_chart: 'Fermer',
+        empty_category_expenses: 'Aucune dépense enregistrée dans cette catégorie pour la période choisie.',
+        modal_add_category: 'Ajouter une Nouvelle Catégorie',
+        modal_edit_category: 'Modifier la Catégorie',
+        lbl_category_name: 'Nom de la Catégorie',
+        placeholder_category_name: 'Ex : Restaurant, Vacances, Santé',
+        lbl_category_icon: 'Icône (Emoji)',
+        lbl_category_color: 'Couleur',
+        lbl_recommended_colors: 'Couleurs Recommandées',
+        btn_save_category: 'Enregistrer la Catégorie',
+        lbl_registered_expenses: 'Dépenses Enregistrées',
+        export_btn_copy: 'Copier le Texte',
+        export_btn_whatsapp: 'Envoyer sur WhatsApp',
+        export_btn_print: 'Imprimer / PDF',
+        export_btn_download: 'Télécharger le Rapport',
+        export_copied_toast: 'Rapport copié dans le presse-papiers !',
+        export_downloaded_toast: 'Fichier rapport téléchargé avec succès !',
+        export_box_title: 'Options d\'Exportation Rapide',
+        export_box_sub: 'Partagez ou archivez le rapport financier actuel',
+        currency_modal_title: 'Choisir la Devise Principale',
+        currency_modal_desc: 'Sélectionnez la devise dans laquelle <strong>MoneyApp</strong> doit fonctionner. Toutes les données, le solde, les dépenses, les revenus et les graphiques seront automatiquement recalculés.',
+        currency_ref_label: 'Devise de référence',
+        currency_active_badge: 'Active',
+        stat_dashboard_sub: 'Analyse financière détaillée et indicateurs de performance',
+        stat_pill_month: 'Mois Actuel',
+        stat_pill_3months: 'Derniers 3 Mois',
+        stat_pill_year: 'Cette Année',
+        stat_pill_all: 'Tout l\'Historique',
+        stat_group_income: 'Revenus & Flux',
+        stat_group_expense: 'Dépenses & Habitudes',
+        stat_group_savings: 'Épargne & Sécurité',
+        stat_group_activity: 'Activité & Statistiques',
+        stat_income: 'Revenus Totaux',
+        stat_expense: 'Dépenses Totales',
+        stat_daily_avg: 'Moyenne Dépenses / Jour',
+        stat_daily_sub: 'dépensé en moyenne quotidiennement',
+        stat_peak_exp: 'Dépense Maximale',
+        stat_daily_income: 'Revenu Moyen Quotidien',
+        stat_income_pace: 'revenus générés en moyenne par jour',
+        stat_peak_inc: 'Revenu Maximal',
+        stat_avg_ticket: 'Montant Moyen par Achat',
+        stat_runway: 'Autonomie Financière Estimée',
+        stat_deposits: 'Fonds & Dépôts Séparés',
+        stat_activity_vol: 'Volume & Activité',
+        stat_cashflow_title: 'Flux de Trésorerie (Entrées vs Sorties)',
+        stat_cashflow_sub: 'Comparaison directe entre revenus et dépenses',
+        stat_top_stores_title: 'Top Magasins & Marchands',
+        stat_top_stores_sub: 'Où dépensez-vous le plus souvent votre argent',
+        stat_top_purchases_title: 'Top Achats & Articles',
+        stat_top_purchases_sub: 'Les achats et articles les plus coûteux',
+        stat_top_categories_title: 'Top Catégories de Dépenses',
+        stat_top_categories_sub: 'Répartition de vos dépenses par catégorie',
+        stat_weekday_title: 'Dépenses par Jour de la Semaine',
+        stat_weekday_sub: 'Identifiez les jours où vous dépensez le plus',
+        stat_hourly_title: 'Dépenses par Heure de la Journée',
+        stat_hourly_sub: 'Heures de paiement les plus fréquentes',
+        stat_month_days_title: 'Évolution Quotidienne du Mois',
+        stat_month_days_sub: 'Dépenses jour après jour tout au long du mois',
+        stat_table_title: 'Bilan Mensuel Récapitulatif',
+        stat_table_sub: 'Historique complet des revenus, dépenses et taux d\'épargne par mois',
+        th_period: 'Période',
+        th_income: 'Revenus',
+        th_expense: 'Dépenses',
+        th_net: 'Épargne Nette',
+        th_rate: 'Taux',
+        popover_header_title: 'Détails des Dépenses',
+        prompt_placeholder_name: 'Ex : Supermarché, Pharmacie, Restaurant',
+        pay_method_card: 'Carte',
+        pay_method_cash: 'Espèces',
+        btn_merchant_config: '⚙️ Configurer Magasins & Catégories',
+        merchant_config_title: 'Gestion des Magasins & Catégories',
+        merchant_config_sub: 'Associez automatiquement les magasins à des catégories',
+        merchant_custom_title: '🛒 Magasins Personnalisés Ajoutés :',
+        btn_done_save: 'Terminé / Enregistrer',
+        merchant_modal_title: 'Détails du Marchand / Magasin',
+        merchant_modal_sub: 'Historique complet des achats dans ce magasin',
+        merchant_kpi_total_food: 'Total Dépensé dans ce Magasin',
+        merchant_kpi_total_sub: 'sur la période sélectionnée',
+        merchant_kpi_top_store: 'Magasin Principal',
+        merchant_kpi_top_sub: 'du total des courses',
+        merchant_kpi_avg_ticket: 'Ticket Moyen',
+        merchant_kpi_avg_sub: 'par transaction',
+        merchant_kpi_freq_visits: 'Nombre de Visites',
+        merchant_kpi_freq_sub: 'achats enregistrés',
+        merchant_chart_title: 'Évolution des Dépenses dans ce Magasin',
+        merchant_ranking_title: 'Classement des Magasins',
+        merchant_ranking_sub: 'Classés par montant total dépensé',
+        merchant_all_receipts_trigger: 'Voir Tous les Tickets',
+        merchant_click_to_view_all: 'Cliquez pour ouvrir la liste complète',
+        merchant_stores_suffix: 'magasins',
+        merchant_receipts_suffix: 'tickets',
+        merchant_receipts_analyzed: 'tickets analysés',
+        merchant_visited_suffix: 'visités',
+        merchant_of_food_budget: 'du budget d\'alimentation',
+        merchant_no_purchases: 'Aucun achat enregistré pour ce marchand.',
+        food_basket_title: 'Panier de Courses & Alimentation',
+        food_basket_total_val: 'Total Dépenses Alimentation',
+        food_basket_search_placeholder: 'Rechercher un produit ou magasin...',
+        food_basket_show_all: 'Afficher Tout',
+        food_basket_filtered: 'Produits Filtrés',
+        food_basket_empty: 'Aucun achat alimentaire enregistré.',
+        transfer_modal_title: 'Transfert Interne (Carte ⇄ Espèces)',
+        transfer_lbl_direction: 'Sens du Transfert',
+        transfer_card_to_cash: '💳 Carte ➔ 💵 Espèces (Retrait DAB)',
+        transfer_cash_to_card: '💵 Espèces ➔ 💳 Carte (Dépôt Bancaire)',
+        transfer_placeholder_desc: 'Ex : Retrait DAB, Dépôt espèces...',
+        transfer_btn_save: 'Effectuer le Transfert',
+        filter_tx_modal_title: 'Filtrer les Transactions',
+        filter_all_tx_title: 'Toutes les Transactions',
+        filter_all_tx_desc: 'Afficher les dépenses, revenus et transferts',
+        filter_expenses_tx_title: 'Dépenses Uniquement',
+        filter_expenses_tx_desc: 'Afficher uniquement les paiements et sorties d\'argent',
+        filter_incomes_tx_title: 'Revenus Uniquement',
+        filter_incomes_tx_desc: 'Afficher uniquement les encaissements et salaires',
+        filter_transfers_tx_title: 'Transferts Uniquement',
+        filter_transfers_tx_desc: 'Afficher uniquement les mouvements internes Carte ⇄ Espèces',
+        filter_period_modal_title: 'Sélectionner la Période',
+        filter_period_current_month_desc: 'Du premier au dernier jour de ce mois',
+        filter_period_last_month_desc: 'Toutes les données du mois précédent',
+        filter_period_current_year_desc: 'De janvier jusqu\'à ce jour',
+        filter_period_all_desc: 'Historique complet sans filtre temporel',
+        export_header_categories: 'RÉCAPITULATIF PAR CATÉGORIES',
+        export_lbl_period: 'Période',
+        export_lbl_date: 'Date',
+        export_lbl_of_total: 'du total',
+        export_lbl_tx_history: 'HISTORIQUE DÉTAILLÉ DES OPÉRATIONS',
+        export_lbl_generated: 'Généré par MoneyApp le',
+        export_btn: 'Exporter le Rapport',
+        fund_curr_modal_title: 'Devise de Conversion du Fonds',
+        fund_curr_modal_desc: 'Choisissez la devise dans laquelle afficher la valeur convertie à côté du solde principal :',
+        fund_curr_none: '🚫 Aucune conversion',
+        fund_curr_none_desc: 'Désactiver l\'affichage de la devise secondaire',
+        badge_active: 'Active',
+        toast_fund_curr_disabled: 'Affichage de la devise secondaire désactivé.',
+        toast_fund_curr_set: 'Devise de conversion mise à jour avec succès !',
+        totals_modal_title: 'Bilan Global des Revenus & Dépenses',
+        totals_modal_desc: 'Synthèse globale de toutes les transactions financières enregistrées :',
+        totals_card_income: 'Total Revenus Enregistrés',
+        totals_card_expense: 'Total Dépenses Enregistrées',
+        totals_card_net_balance: 'Solde Net Cumulé',
+        totals_card_savings_rate: 'Taux Moyen d\'Épargne',
+        totals_card_tx_count: 'Nombre Total de Transactions',
+        lbl_suspend_tx_short: 'Suspendre',
+        btn_scan_receipt: '📷 Scanner Ticket',
+        scanner_modal_title: 'Scanner Intelligent de Tickets (OCR)',
+        scanner_status_ready: 'Prêt pour le scan de ticket...',
+        scanner_status_scanning: 'Analyse OCR en cours...',
+        scanner_status_detected: 'Ticket analysé avec succès !',
+        scanner_btn_upload_photo: '📁 Charger une Photo',
+        scanner_btn_capture: '📸 Prendre une Photo',
+        scanner_btn_live_cam: '🎥 Caméra en Direct',
+        scanner_result_title: 'Données Détectées sur le Ticket',
+        scanner_lbl_merchant: 'Magasin / Marchand',
+        scanner_lbl_amount: 'Montant Total',
+        scanner_lbl_category: 'Catégorie Suggérée',
+        scanner_lbl_payment_date: 'Date du Paiement',
+        scanner_btn_rescan: 'Re-scanner',
+        scanner_btn_apply: 'Remplir la Dépense',
+        scanner_err_camera: 'Impossible d\'accéder à la caméra de l\'appareil.',
+        scanner_err_no_data: 'Aucune donnée lisible n\'a été trouvée sur le ticket.',
+        stat_bills_title: 'Factures & Dépenses Récurrentes',
+        bills_modal_title: 'Gestion des Factures & Abonnements',
+        bills_modal_sub: 'Suivi des paiements réguliers et charges fixes',
+        bills_kpi_total: 'Total Factures Payées',
+        bills_kpi_total_sub: 'sur la période sélectionnée',
+        bills_kpi_avg: 'Moyenne Mensuelle Factures',
+        bills_kpi_avg_sub: 'coût régulier estimé',
+        bills_kpi_peak: 'Facture la Plus Élevée',
+        bills_kpi_share: 'Part des Factures',
+        bills_kpi_share_sub: 'du total des dépenses',
+        bills_chart_title: 'Évolution Mensuelle des Factures',
+        bills_breakdown_title: 'Répartition par Type de Facture',
+        bills_history_title: 'Historique des Factures Récentes',
+        bills_empty: 'Aucune facture récurrente enregistrée.',
+        lbl_tx_total_expense_letter: 'D :',
+        lbl_tx_total_income_letter: 'R :',
+        stat_deposits_sub: 'Épargne bloquée, comptes bancaires et investissements',
+        deposits_modal_title: 'Fonds & Dépôts Réservés',
+        deposits_modal_sub: 'Gestion des économies et comptes séparés',
+        deposits_hero_total: 'Total Épargne & Dépôts',
+        deposits_list_title: 'Liste des Comptes & Dépôts',
+        deposits_btn_add: '+ Ajouter un Dépôt',
+        deposit_form_title_new: 'Nouveau Dépôt / Fonds Réservé',
+        deposit_form_title_edit: 'Modifier le Dépôt / Fonds',
+        deposit_field_name: 'Nom ou Description du Compte',
+        deposit_placeholder_name: 'Ex : Livret A, Compte USD, Épargne...',
+        deposit_field_category: 'Catégorie de Fonds',
+        deposit_field_currency: 'Devise du Dépôt',
+        deposit_field_amount: 'Montant Actuel',
+        deposit_field_date: 'Date de Création / Mise à jour',
+        btn_save_deposit: 'Enregistrer le Dépôt',
+        deposits_funds_title: 'Répartition des Disponibilités',
+        deposits_card_fund: 'Fonds Carte / Banque',
+        deposits_card_fund_sub: 'disponible immédiatement',
+        deposits_cash_fund: 'Fonds Espèces / Portefeuille',
+        deposits_cash_fund_sub: 'liquide disponible',
+        deposits_isolated_notice: 'ℹ️ Ces dépôts sont suivis séparément et ne modifient pas le solde des opérations quotidiennes.',
+        deposits_empty_title: 'Aucun dépôt enregistré pour le moment.',
+        deposits_empty_sub: 'Ajoutez votre épargne, comptes d\'investissement ou réserves pour un suivi patrimonial complet.',
+        toast_deposit_saved: 'Dépôt enregistré avec succès !',
+        toast_deposit_updated: 'Dépôt mis à jour avec succès !',
+        toast_deposit_deleted: 'Dépôt supprimé avec succès.',
+        toast_deposit_name_req: 'Veuillez saisir un nom pour le dépôt !',
+        toast_deposit_amount_req: 'Veuillez saisir un montant valide supérieur à zéro !',
+        deposits_breakdown_dep: 'Dépôts',
+        deposits_breakdown_card: 'Carte',
+        deposits_breakdown_cash: 'Espèces',
+        deposits_count_label: 'dépôts',
+        btn_edit: 'Modifier',
+        btn_delete: 'Supprimer',
+        eur_lang_modal_title: 'Choisir la langue pour l\'Euro (EUR)',
+        eur_lang_modal_desc: 'L\'euro est largement utilisé en Europe. Choisissez la langue dans laquelle vous souhaitez traduire l\'application :',
+        eur_lang_active_badge: 'Active',
+        eur_lang_change_btn: 'Changer de langue',
+        eur_lang_current_label: 'Langue de l\'interface (EUR)'
+    },
+    es: {
+        currency_label: 'Moneda',
+        tab_overview: 'Panel',
+        tab_overview_full: 'Panel General',
+        tab_transactions: 'Transacciones',
+        tab_transactions_full: 'Transacciones (Historial)',
+        tab_stats: 'Estadísticas',
+        tab_stats_full: 'Estadísticas',
+        tab_categories: 'Categorías',
+        tab_categories_full: 'Categorías',
+        balance_title: 'Saldo Disponible',
+        total_expenses: 'Gastos Totales',
+        total_income: 'Ingresos Totales',
+        btn_expense: 'Gasto',
+        btn_income: 'Ingreso',
+        expenses_by_cat: 'Categorías',
+        total_month: 'Total Mes',
+        total_last_month: 'Mes Pasado',
+        total_year: 'Total Año',
+        total_all: 'Total General',
+        categories_list_title: 'Lista de Categorías y Gastos',
+        period_current_month: 'Este Mes',
+        period_last_month: 'El Mes Pasado',
+        period_current_year: 'Este Año',
+        period_all: 'Todo el Período',
+        qr_title: 'Conectar otro Teléfono',
+        qr_desc: 'Escanea el QR o instala',
+        btn_open_qr: 'Abrir QR',
+        btn_install_guide: 'Guía de Instalación',
+        modal_add_expense: 'Añadir Gasto',
+        modal_edit_expense: 'Modificar Gasto',
+        modal_add_income: 'Añadir Ingreso',
+        modal_edit_income: 'Modificar Ingreso',
+        lbl_amount: 'Importe',
+        lbl_date: 'Fecha',
+        lbl_category: 'Elegir Categoría',
+        lbl_note: 'Descripción / Nota (opcional)',
+        lbl_income_source: 'Fuente de Ingreso / Nota',
+        placeholder_amount: 'Importe (Ej: 45.50)',
+        placeholder_desc: 'Ej: Compras, Gasolina',
+        placeholder_article: 'Artículo',
+        placeholder_store: 'Tienda',
+        placeholder_add_merchant: '+ Nueva tienda...',
+        placeholder_income_amount: 'Ingreso (Ej: 3500)',
+        placeholder_income_source: 'Ej: Salario, Anticipo, Bono, Alquiler',
+        lbl_suspend_tx: '⏸️ Suspender transacción (excluir temporalmente de cálculos)',
+        suspended_tx_title: 'Transacciones Suspendidas',
+        suspended_tx_desc: 'Estas transacciones están excluidas temporalmente del saldo, gráficos e informes. Puedes reactivarlas, modificarlas o eliminarlas en cualquier momento.',
+        no_suspended_tx: 'No hay ninguna transacción suspendida.',
+        btn_save: 'Guardar',
+        btn_cancel: 'Cancelar',
+        history_title: 'Historial de Transacciones',
+        search_placeholder: 'Buscar por nota, importe, fecha...',
+        filter_all: 'Todas',
+        filter_expenses: 'Gastos',
+        filter_incomes: 'Ingresos',
+        reports_title: 'Informe Anual y Evolución',
+        annual_income: 'Ingresos Anuales',
+        annual_expenses: 'Gastos Anuales',
+        net_savings: 'Ahorro Neto',
+        savings_rate: 'Tasa de Ahorro',
+        monthly_evolution: 'Evolución Mensual',
+        categories_title: 'Gestión de Categorías',
+        btn_new_category: '+ Nueva Categoría',
+        categories_desc: 'Configura las categorías para organizar tus gastos.',
+        no_expenses: 'No hay gastos registrados en este período.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Lista de categorías',
+        btn_added_merchants_items: 'Nuevas tiendas y artículos',
+        categories_list_modal_title: 'Lista de categorías',
+        custom_merchants_title: 'Nuevas tiendas y artículos',
+        custom_merchants_sub: 'Todas las tiendas y artículos de compra añadidos por usted:',
+        heading_my_merchants: 'Tiendas agregadas por mí:',
+        heading_my_items: 'Artículos agregados por mí:',
+        custom_merchants_empty: 'No se han añadido tiendas personalizadas aún.',
+        custom_items_empty: 'No se han añadido artículos de compra personalizados aún.',
+        custom_merchants_singular: 'tienda',
+        custom_merchants_plural: 'tiendas',
+        custom_items_singular: 'artículo',
+        custom_items_plural: 'artículos',
+        merchant_config_sub: 'Marque las categorías para las que desea que aparezcan los artículos y tiendas:',
+        search_shopping_item_placeholder: '🔍 Buscar artículo...',
+        search_merchant_placeholder: '🔍 Buscar tienda...',
+        popover_header_title: '🛍️ Artículos de compra <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Tiendas',
+        popover_empty_items: 'No se encontraron artículos',
+        popover_empty_stores: 'No se encontraron tiendas',
+        prompt_add_item_title: '🛍️ Añadir nuevo artículo',
+        prompt_add_item_ph: 'Ej: Pan, Leche, Zumo...',
+        prompt_add_merchant_title: '🛒 Añadir nueva tienda',
+        prompt_add_merchant_ph: 'Ej: Mercadona, Carrefour, Mercado...',
+        drag_reorder_hint: 'Arrastrar para reordenar',
+                lbl_suspended_short: 'Suspendidas',
+        months: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+        monthsShort: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
+        year_prefix: 'Año',
+        backup_title: 'Copia de Seguridad y Sincronización',
+        backup_desc: 'Exporta o importa tus datos locales.',
+        btn_export_data: 'Exportar Datos (JSON)',
+        btn_import_data: 'Restaurar / Importar (JSON)',
+        btn_close: 'Cerrar',
+        conv_title: 'Conversor y Monedas Mundiales',
+        conv_active_label: 'Moneda Principal Activa',
+        conv_amount_label: 'Importe a Convertir',
+        conv_use_balance: 'Usar Saldo Disponible',
+        conv_results_title: 'Tipos de Cambio y Equivalentes Mundiales',
+        conv_adjust_rate: '⚙️ Ajustar Tipo de Referencia Euro (EUR/RON)',
+        conv_save_rate: 'Guardar Tipo de Cambio',
+        conv_active_count: 'monedas convertidas',
+        conv_status_title: 'Estado del Tipo de Cambio',
+        conv_btn_refresh: 'Actualizar Tipos (BCE)',
+        rates_updated_toast: '¡Tipos de cambio actualizados con éxito desde el BCE!',
+        rates_offline_toast: 'Conexión no disponible. Usando los últimos tipos guardados.',
+        rates_updated_at: 'Última actualización',
+        guide_modal_title: 'Guía de Instalación de la App',
+        guide_step1: '<strong>En Teléfono Android (Google Chrome):</strong><br>Abre el enlace en Chrome, toca los <strong>3 puntos verticales (⋮)</strong> en la esquina superior derecha y selecciona <strong>"Añadir a pantalla de inicio"</strong> (o "Instalar aplicación").',
+        guide_step2: '<strong>En iPhone / iPad (Safari):</strong><br>Abre la página en Safari, toca el botón <strong>Compartir (cuadrado con flecha hacia arriba)</strong> abajo, desplázate y selecciona <strong>"Añadir a pantalla de inicio"</strong>.',
+        guide_step3: '<strong>En Ordenador (Google Chrome / Edge):</strong><br>Haz clic en el icono de instalación en la barra de direcciones o pulsa <strong>Ctrl + D</strong> para guardar en marcadores.',
+        guide_step4: '<strong>O descarga directa como app de Android (APK):</strong><br>Puedes descargar directamente el instalador APK para instalarlo o compartirlo por WhatsApp.',
+        guide_btn_apk: 'Descargar APK Android',
+        guide_btn_gotit: '¡Entendido!',
+        qr_modal_title: 'Abrir en Otro Teléfono',
+        qr_modal_desc: 'Escanea el código QR con la cámara de tu teléfono para abrir la aplicación al instante sin instalar desde la tienda.',
+        qr_step1: 'Abre la <strong>Cámara</strong> en tu teléfono.',
+        qr_step2: 'Apunta con la cámara al <strong>código QR de arriba</strong>.',
+        qr_step3: 'Toca el <strong>enlace que aparece</strong> para abrir MoneyApp en el <strong>Navegador</strong>.',
+        qr_btn_copy: 'Copiar Enlace',
+        btn_download_apk: 'Descargar APK Android',
+        link_copied: '¡Enlace copiado al portapapeles!',
+        lbl_selected_period: 'Período Seleccionado',
+        lbl_total_spent: 'Total Gastado',
+        lbl_of_period_expenses: 'de los gastos del período',
+        lbl_category_transactions: 'Transacciones de esta categoría',
+        btn_close_to_chart: 'Cerrar',
+        empty_category_expenses: 'No hay gastos registrados en esta categoría para el período seleccionado.',
+        modal_add_category: 'Añadir Nueva Categoría',
+        modal_edit_category: 'Modificar Categoría',
+        lbl_category_name: 'Nombre de la Categoría',
+        placeholder_category_name: 'Ej: Restaurante, Vacaciones, Salud',
+        lbl_category_icon: 'Icono (Emoji)',
+        lbl_category_color: 'Color',
+        lbl_recommended_colors: 'Colores Recomendados',
+        btn_save_category: 'Guardar Categoría',
+        lbl_registered_expenses: 'Gastos Registrados',
+        export_btn_copy: 'Copiar Texto',
+        export_btn_whatsapp: 'Enviar por WhatsApp',
+        export_btn_print: 'Imprimir / PDF',
+        export_btn_download: 'Descargar Informe',
+        export_copied_toast: '¡Informe copiado al portapapeles!',
+        export_downloaded_toast: '¡Archivo de informe descargado con éxito!',
+        export_box_title: 'Opciones de Exportación Rápida',
+        export_box_sub: 'Comparte o archiva el informe financiero actual',
+        currency_modal_title: 'Elegir Moneda Principal',
+        currency_modal_desc: 'Selecciona la moneda principal en la que deseas que funcione <strong>MoneyApp</strong>. Todos los datos, saldos, gastos, ingresos y gráficos se recalcularán automáticamente.',
+        currency_ref_label: 'Moneda de referencia',
+        currency_active_badge: 'Activa',
+        stat_dashboard_sub: 'Análisis financiero detallado e indicadores clave de rendimiento',
+        stat_pill_month: 'Mes Actual',
+        stat_pill_3months: 'Últimos 3 Meses',
+        stat_pill_year: 'Este Año',
+        stat_pill_all: 'Todo el Historial',
+        stat_group_income: 'Ingresos y Flujo',
+        stat_group_expense: 'Gastos y Hábitos',
+        stat_group_savings: 'Ahorro y Seguridad',
+        stat_group_activity: 'Actividad y Métricas',
+        stat_income: 'Ingresos Totales',
+        stat_expense: 'Gastos Totales',
+        stat_daily_avg: 'Media de Gastos / Día',
+        stat_daily_sub: 'gastado de media cada día',
+        stat_peak_exp: 'Gasto Máximo',
+        stat_daily_income: 'Ingreso Medio Diario',
+        stat_income_pace: 'ingresos generados en promedio al día',
+        stat_peak_inc: 'Ingreso Máximo',
+        stat_avg_ticket: 'Importe Medio por Compra',
+        stat_runway: 'Autonomía Financiera Estimada',
+        stat_deposits: 'Fondos y Depósitos Separados',
+        stat_activity_vol: 'Volumen y Actividad',
+        stat_cashflow_title: 'Flujo de Caja (Entradas vs Salidas)',
+        stat_cashflow_sub: 'Comparación directa entre ingresos y gastos',
+        stat_top_stores_title: 'Top Tiendas y Comercios',
+        stat_top_stores_sub: 'Dónde gastas tu dinero con mayor frecuencia',
+        stat_top_purchases_title: 'Top Compras y Artículos',
+        stat_top_purchases_sub: 'Las compras y artículos de mayor valor',
+        stat_top_categories_title: 'Top Categorías de Gasto',
+        stat_top_categories_sub: 'Distribución de gastos por categoría',
+        stat_weekday_title: 'Gastos por Día de la Semana',
+        stat_weekday_sub: 'Identifica en qué días gastas más dinero',
+        stat_hourly_title: 'Gastos por Hora del Día',
+        stat_hourly_sub: 'Horas con mayor frecuencia de pagos',
+        stat_month_days_title: 'Evolución Diaria del Mes',
+        stat_month_days_sub: 'Gastos día a día a lo largo del mes',
+        stat_table_title: 'Balance Mensual Resumido',
+        stat_table_sub: 'Historial completo de ingresos, gastos y tasa de ahorro por mes',
+        th_period: 'Período',
+        th_income: 'Ingresos',
+        th_expense: 'Gastos',
+        th_net: 'Ahorro Neto',
+        th_rate: 'Tasa',
+        popover_header_title: 'Detalles de Gastos',
+        prompt_placeholder_name: 'Ej: Supermercado, Farmacia, Restaurante',
+        pay_method_card: 'Tarjeta',
+        pay_method_cash: 'Efectivo',
+        btn_merchant_config: '⚙️ Configurar Tiendas y Categorías',
+        merchant_config_title: 'Gestión de Tiendas y Categorías',
+        merchant_config_sub: 'Asocia automáticamente tiendas a categorías',
+        merchant_custom_title: '🛒 Tiendas Personalizadas Añadidas:',
+        btn_done_save: 'Listo / Guardar',
+        merchant_modal_title: 'Detalles del Comercio / Tienda',
+        merchant_modal_sub: 'Historial completo de compras en esta tienda',
+        merchant_kpi_total_food: 'Total Gastado en esta Tienda',
+        merchant_kpi_total_sub: 'en el período seleccionado',
+        merchant_kpi_top_store: 'Tienda Principal',
+        merchant_kpi_top_sub: 'del total de alimentación',
+        merchant_kpi_avg_ticket: 'Ticket Medio',
+        merchant_kpi_avg_sub: 'por transacción',
+        merchant_kpi_freq_visits: 'Número de Visitas',
+        merchant_kpi_freq_sub: 'compras registradas',
+        merchant_chart_title: 'Evolución del Gasto en esta Tienda',
+        merchant_ranking_title: 'Clasificación de Tiendas',
+        merchant_ranking_sub: 'Ordenadas por importe total gastado',
+        merchant_all_receipts_trigger: 'Ver Todos los Tickets',
+        merchant_click_to_view_all: 'Haz clic para abrir la lista completa',
+        merchant_stores_suffix: 'tiendas',
+        merchant_receipts_suffix: 'tickets',
+        merchant_receipts_analyzed: 'tickets analizados',
+        merchant_visited_suffix: 'visitadas',
+        merchant_of_food_budget: 'del presupuesto de alimentación',
+        merchant_no_purchases: 'No hay compras registradas para este comercio.',
+        food_basket_title: 'Cesta de la Compra y Alimentación',
+        food_basket_total_val: 'Total Gastos en Alimentación',
+        food_basket_search_placeholder: 'Buscar producto o tienda...',
+        food_basket_show_all: 'Mostrar Todo',
+        food_basket_filtered: 'Productos Filtrados',
+        food_basket_empty: 'No hay compras de alimentación registradas.',
+        transfer_modal_title: 'Transferencia Interna (Tarjeta ⇄ Efectivo)',
+        transfer_lbl_direction: 'Sentido de la Transferencia',
+        transfer_card_to_cash: '💳 Tarjeta ➔ 💵 Efectivo (Retirada Cajero)',
+        transfer_cash_to_card: '💵 Efectivo ➔ 💳 Tarjeta (Ingreso Bancario)',
+        transfer_placeholder_desc: 'Ej: Retirada de cajero, Depósito efectivo...',
+        transfer_btn_save: 'Realizar Transferencia',
+        filter_tx_modal_title: 'Filtrar Transacciones',
+        filter_all_tx_title: 'Todas las Transacciones',
+        filter_all_tx_desc: 'Ver gastos, ingresos y transferencias',
+        filter_expenses_tx_title: 'Solo Gastos',
+        filter_expenses_tx_desc: 'Mostrar únicamente pagos y salidas de dinero',
+        filter_incomes_tx_title: 'Solo Ingresos',
+        filter_incomes_tx_desc: 'Mostrar únicamente cobros y nóminas',
+        filter_transfers_tx_title: 'Solo Transferencias',
+        filter_transfers_tx_desc: 'Mostrar solo movimientos internos Tarjeta ⇄ Efectivo',
+        filter_period_modal_title: 'Seleccionar Período',
+        filter_period_current_month_desc: 'Desde el primer hasta el último día de este mes',
+        filter_period_last_month_desc: 'Todos los datos del mes anterior',
+        filter_period_current_year_desc: 'Desde enero hasta la fecha actual',
+        filter_period_all_desc: 'Historial completo sin filtro de fechas',
+        export_header_categories: 'RESUMEN POR CATEGORÍAS',
+        export_lbl_period: 'Período',
+        export_lbl_date: 'Fecha',
+        export_lbl_of_total: 'del total',
+        export_lbl_tx_history: 'HISTORIAL DETALLADO DE OPERACIONES',
+        export_lbl_generated: 'Generado por MoneyApp el',
+        export_btn: 'Exportar Informe',
+        fund_curr_modal_title: 'Moneda de Conversión del Fondo',
+        fund_curr_modal_desc: 'Elige la moneda en la que deseas mostrar la conversión junto al saldo principal:',
+        fund_curr_none: '🚫 Sin conversión',
+        fund_curr_none_desc: 'Desactivar la visualización de moneda secundaria',
+        badge_active: 'Activa',
+        toast_fund_curr_disabled: 'Visualización de moneda secundaria desactivada.',
+        toast_fund_curr_set: '¡Moneda de conversión actualizada con éxito!',
+        totals_modal_title: 'Resumen Global de Ingresos y Gastos',
+        totals_modal_desc: 'Resumen general de todas las operaciones registradas:',
+        totals_card_income: 'Total Ingresos Registrados',
+        totals_card_expense: 'Total Gastos Registrados',
+        totals_card_net_balance: 'Saldo Neto Acumulado',
+        totals_card_savings_rate: 'Tasa Media de Ahorro',
+        totals_card_tx_count: 'Número Total de Transacciones',
+        lbl_suspend_tx_short: 'Suspender',
+        btn_scan_receipt: '📷 Escanear Ticket',
+        scanner_modal_title: 'Escáner Inteligente de Tickets (OCR)',
+        scanner_status_ready: 'Listo para escanear ticket...',
+        scanner_status_scanning: 'Analizando con OCR...',
+        scanner_status_detected: '¡Ticket detectado con éxito!',
+        scanner_btn_upload_photo: '📁 Subir Foto',
+        scanner_btn_capture: '📸 Tomar Foto',
+        scanner_btn_live_cam: '🎥 Cámara en Vivo',
+        scanner_result_title: 'Datos Detectados en el Ticket',
+        scanner_lbl_merchant: 'Tienda / Comercio',
+        scanner_lbl_amount: 'Importe Total',
+        scanner_lbl_category: 'Categoría Sugerida',
+        scanner_lbl_payment_date: 'Fecha de Pago',
+        scanner_btn_rescan: 'Volver a Escanear',
+        scanner_btn_apply: 'Rellenar Gasto',
+        scanner_err_camera: 'No se pudo acceder a la cámara del dispositivo.',
+        scanner_err_no_data: 'No se encontraron datos legibles en el ticket.',
+        stat_bills_title: 'Facturas y Gastos Recurrentes',
+        bills_modal_title: 'Gestión de Facturas y Suscripciones',
+        bills_modal_sub: 'Seguimiento de recibos periódicos y gastos fijos',
+        bills_kpi_total: 'Total Facturas Pagadas',
+        bills_kpi_total_sub: 'en el período seleccionado',
+        bills_kpi_avg: 'Media Mensual Facturas',
+        bills_kpi_avg_sub: 'coste fijo recurrente estimado',
+        bills_kpi_peak: 'Factura Más Alta',
+        bills_kpi_share: 'Proporción de Facturas',
+        bills_kpi_share_sub: 'del total de gastos',
+        bills_chart_title: 'Evolución Mensual de Facturas',
+        bills_breakdown_title: 'Desglose por Tipo de Factura',
+        bills_history_title: 'Historial de Facturas Recientes',
+        bills_empty: 'No hay facturas recurrentes registradas.',
+        lbl_tx_total_expense_letter: 'G:',
+        lbl_tx_total_income_letter: 'I:',
+        stat_deposits_sub: 'Ahorros bloqueados, cuentas bancarias e inversiones',
+        deposits_modal_title: 'Fondos y Depósitos Reservados',
+        deposits_modal_sub: 'Gestión de ahorros y cuentas separadas',
+        deposits_hero_total: 'Total Ahorros y Depósitos',
+        deposits_list_title: 'Lista de Cuentas y Depósitos',
+        deposits_btn_add: '+ Añadir Depósito',
+        deposit_form_title_new: 'Nuevo Depósito / Fondo Reservado',
+        deposit_form_title_edit: 'Modificar Depósito / Fondo',
+        deposit_field_name: 'Nombre o Descripción de la Cuenta',
+        deposit_placeholder_name: 'Ej: Cuenta Ahorro, Depósito USD, Acciones...',
+        deposit_field_category: 'Categoría de Fondos',
+        deposit_field_currency: 'Moneda del Depósito',
+        deposit_field_amount: 'Importe Actual',
+        deposit_field_date: 'Fecha de Creación / Actualización',
+        btn_save_deposit: 'Guardar Depósito',
+        deposits_funds_title: 'Distribución de Fondos Disponibles',
+        deposits_card_fund: 'Fondos en Tarjeta / Banco',
+        deposits_card_fund_sub: 'disponible inmediatamente',
+        deposits_cash_fund: 'Fondos en Efectivo / Cartera',
+        deposits_cash_fund_sub: 'dinero en metálico',
+        deposits_isolated_notice: 'ℹ️ Estos depósitos se gestionan por separado y no modifican el saldo de operaciones diarias.',
+        deposits_empty_title: 'No hay depósitos registrados todavía.',
+        deposits_empty_sub: 'Añade tus ahorros, cuentas de inversión o reservas para un seguimiento patrimonial completo.',
+        toast_deposit_saved: '¡Depósito guardado con éxito!',
+        toast_deposit_updated: '¡Depósito actualizado con éxito!',
+        toast_deposit_deleted: 'Depósito eliminado con éxito.',
+        toast_deposit_name_req: '¡Por favor introduce un nombre para el depósito!',
+        toast_deposit_amount_req: '¡Por favor introduce un importe válido superior a cero!',
+        deposits_breakdown_dep: 'Depósitos',
+        deposits_breakdown_card: 'Tarjeta',
+        deposits_breakdown_cash: 'Efectivo',
+        deposits_count_label: 'depósitos',
+        btn_edit: 'Editar',
+        btn_delete: 'Eliminar',
+        eur_lang_modal_title: 'Elegir idioma para el Euro (EUR)',
+        eur_lang_modal_desc: 'El euro se utiliza ampliamente en Europa. Elige el idioma en el que deseas traducir la aplicación:',
+        eur_lang_active_badge: 'Activo',
+        eur_lang_change_btn: 'Cambiar idioma',
+        eur_lang_current_label: 'Idioma de la interfaz (EUR)'
+    },
+    it: {
+        currency_label: 'Valuta',
+        tab_overview: 'Pannello',
+        tab_overview_full: 'Pannello Generale',
+        tab_transactions: 'Transazioni',
+        tab_transactions_full: 'Transazioni (Cronologia)',
+        tab_stats: 'Statistiche',
+        tab_stats_full: 'Statistiche',
+        tab_categories: 'Categorie',
+        tab_categories_full: 'Categorie',
+        balance_title: 'Saldo Disponibile',
+        total_expenses: 'Spese Totali',
+        total_income: 'Entrate Totali',
+        btn_expense: 'Spesa',
+        btn_income: 'Entrata',
+        expenses_by_cat: 'Categorie',
+        total_month: 'Totale Mese',
+        total_last_month: 'Mese Scorso',
+        total_year: 'Totale Anno',
+        total_all: 'Totale Generale',
+        categories_list_title: 'Elenco Categorie e Spese',
+        period_current_month: 'Questo Mese',
+        period_last_month: 'Il Mese Scorso',
+        period_current_year: 'Quest\'Anno',
+        period_all: 'Tutto il Periodo',
+        qr_title: 'Connetti un altro Telefono',
+        qr_desc: 'Scansiona QR o installa',
+        btn_open_qr: 'Apri QR',
+        btn_install_guide: 'Guida all\'Installazione',
+        modal_add_expense: 'Aggiungi Spesa',
+        modal_edit_expense: 'Modifica Spesa',
+        modal_add_income: 'Aggiungi Entrata',
+        modal_edit_income: 'Modifica Entrata',
+        lbl_amount: 'Importo',
+        lbl_date: 'Data',
+        lbl_category: 'Scegli Categoria',
+        lbl_note: 'Descrizione / Nota (opzionale)',
+        lbl_income_source: 'Fonte di Entrata / Nota',
+        placeholder_amount: 'Importo (Es: 45.50)',
+        placeholder_desc: 'Es: Spesa, Carburante',
+        placeholder_article: 'Articolo',
+        placeholder_store: 'Negozio',
+        placeholder_add_merchant: '+ Nuovo negozio...',
+        placeholder_income_amount: 'Entrata (Es: 3500)',
+        placeholder_income_source: 'Es: Stipendio, Anticipo, Bonus, Affitto',
+        lbl_suspend_tx: '⏸️ Sospendi transazione (escludi temporaneamente dai calcoli)',
+        suspended_tx_title: 'Transazioni Sospese',
+        suspended_tx_desc: 'Queste transazioni sono temporaneamente escluse dal saldo, dai grafici e dai report. Puoi riattivarle, modificarle o eliminarle in qualsiasi momento.',
+        no_suspended_tx: 'Nessuna transazione sospesa.',
+        btn_save: 'Salva',
+        btn_cancel: 'Annulla',
+        history_title: 'Cronologia Transazioni',
+        search_placeholder: 'Cerca per nota, importo, data...',
+        filter_all: 'Tutte',
+        filter_expenses: 'Spese',
+        filter_incomes: 'Entrate',
+        reports_title: 'Report Annuale ed Evoluzione',
+        annual_income: 'Entrate Annuali',
+        annual_expenses: 'Spese Annuali',
+        net_savings: 'Risparmio Netto',
+        savings_rate: 'Tasso di Risparmio',
+        monthly_evolution: 'Evoluzione Mensile',
+        categories_title: 'Gestione Categorie',
+        btn_new_category: '+ Nuova Categoria',
+        categories_desc: 'Configura le categorie per organizzare le tue spese.',
+        no_expenses: 'Nessuna spesa registrata per questo periodo.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Elenco categorie',
+        btn_added_merchants_items: 'Nuovi negozi e articoli',
+        categories_list_modal_title: 'Elenco categorie',
+        custom_merchants_title: 'Nuovi negozi e articoli',
+        custom_merchants_sub: 'Tutti i negozi e articoli aggiunti da te:',
+        heading_my_merchants: 'Negozi aggiunti da me:',
+        heading_my_items: 'Articoli aggiunti da me:',
+        custom_merchants_empty: 'Nessun negozio personalizzato ancora aggiunto.',
+        custom_items_empty: 'Nessun articolo per la spesa personalizzato ancora aggiunto.',
+        custom_merchants_singular: 'negozio',
+        custom_merchants_plural: 'negozi',
+        custom_items_singular: 'articolo',
+        custom_items_plural: 'articoli',
+        merchant_config_sub: 'Seleziona le categorie per cui visualizzare articoli e negozi:',
+        search_shopping_item_placeholder: '🔍 Cerca articolo...',
+        search_merchant_placeholder: '🔍 Cerca negozio...',
+        popover_header_title: '🛍️ Articoli spesa <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Negozi',
+        popover_empty_items: 'Nessun articolo trovato',
+        popover_empty_stores: 'Nessun negozio trovato',
+        prompt_add_item_title: '🛍️ Aggiungi nuovo articolo',
+        prompt_add_item_ph: 'Es: Pane, Latte, Succo...',
+        prompt_add_merchant_title: '🛒 Aggiungi nuovo negozio',
+        prompt_add_merchant_ph: 'Es: Coop, Conad, Mercato...',
+        drag_reorder_hint: 'Trascina per riordinare',
+                lbl_suspended_short: 'Sospese',
+        months: ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],
+        monthsShort: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
+        year_prefix: 'Anno',
+        backup_title: 'Backup e Sincronizzazione',
+        backup_desc: 'Esporta o importa i tuoi dati locali.',
+        btn_export_data: 'Esporta Dati (JSON)',
+        btn_import_data: 'Ripristina / Importa (JSON)',
+        btn_close: 'Chiudi',
+        conv_title: 'Convertitore e Valute Mondiali',
+        conv_active_label: 'Valuta Principale Attiva',
+        conv_amount_label: 'Importo da Convertire',
+        conv_use_balance: 'Usa Saldo Disponibile',
+        conv_results_title: 'Tassi di Cambio ed Equivalenti Mondiali',
+        conv_adjust_rate: '⚙️ Regola Tasso di Riferimento Euro (EUR/RON)',
+        conv_save_rate: 'Salva Tasso di Cambio',
+        conv_active_count: 'valute convertite',
+        conv_status_title: 'Stato dei Tassi di Cambio',
+        conv_btn_refresh: 'Aggiorna Tassi (BCE)',
+        rates_updated_toast: 'Tassi di cambio aggiornati con successo dalla BCE!',
+        rates_offline_toast: 'Connessione non disponibile. Utilizzo degli ultimi tassi salvati.',
+        rates_updated_at: 'Ultimo aggiornamento',
+        guide_modal_title: 'Guida all\'Installazione dell\'App',
+        guide_step1: '<strong>Su Telefono Android (Google Chrome):</strong><br>Apri il link in Chrome, tocca i <strong>3 puntini verticali (⋮)</strong> in alto a destra e seleziona <strong>"Aggiungi a schermata Home"</strong> (o "Installa app").',
+        guide_step2: '<strong>Su iPhone / iPad (Safari):</strong><br>Apri la pagina in Safari, tocca il pulsante <strong>Condividi (quadrato con freccia verso l\'alto)</strong> in basso, scorri e seleziona <strong>"Aggiungi a schermata Home"</strong>.',
+        guide_step3: '<strong>Su Computer (Google Chrome / Edge):</strong><br>Fai clic sull\'icona di installazione nella barra degli indirizzi o premi <strong>Ctrl + D</strong> per salvare tra i preferiti.',
+        guide_step4: '<strong>Oppure scarica direttamente come app Android (APK):</strong><br>Puoi scaricare direttamente il file APK per installarlo o condividerlo su WhatsApp.',
+        guide_btn_apk: 'Scarica APK Android',
+        guide_btn_gotit: 'Ho capito!',
+        qr_modal_title: 'Apri su un Altro Telefono',
+        qr_modal_desc: 'Inquadra il codice QR con la fotocamera del tuo telefono per aprire subito l\'applicazione senza passare dallo store.',
+        qr_step1: 'Apri la <strong>Fotocamera</strong> sul tuo telefono.',
+        qr_step2: 'Inquadra il <strong>codice QR sopra</strong>.',
+        qr_step3: 'Tocca il <strong>link visualizzato</strong> per aprire MoneyApp nel <strong>Browser</strong>.',
+        qr_btn_copy: 'Copia Link',
+        btn_download_apk: 'Scarica APK Android',
+        link_copied: 'Link copiato negli appunti!',
+        lbl_selected_period: 'Periodo Selezionato',
+        lbl_total_spent: 'Totale Speso',
+        lbl_of_period_expenses: 'delle spese del periodo',
+        lbl_category_transactions: 'Transazioni di questa categoria',
+        btn_close_to_chart: 'Chiudi',
+        empty_category_expenses: 'Nessuna spesa registrata in questa categoria per il periodo selezionato.',
+        modal_add_category: 'Aggiungi Nuova Categoria',
+        modal_edit_category: 'Modifica Categoria',
+        lbl_category_name: 'Nome della Categoria',
+        placeholder_category_name: 'Es: Ristorante, Vacanze, Salute',
+        lbl_category_icon: 'Icona (Emoji)',
+        lbl_category_color: 'Colore',
+        lbl_recommended_colors: 'Colori Consigliati',
+        btn_save_category: 'Salva Categoria',
+        lbl_registered_expenses: 'Spese Registrate',
+        export_btn_copy: 'Copia Testo',
+        export_btn_whatsapp: 'Invia su WhatsApp',
+        export_btn_print: 'Stampa / PDF',
+        export_btn_download: 'Scarica Report',
+        export_copied_toast: 'Report copiato negli appunti!',
+        export_downloaded_toast: 'File del report scaricato con successo!',
+        export_box_title: 'Opzioni di Esportazione Rapida',
+        export_box_sub: 'Condividi o archivia il report finanziario corrente',
+        currency_modal_title: 'Scegli la Valuta Principale',
+        currency_modal_desc: 'Seleziona la valuta principale in cui desideri operare con <strong>MoneyApp</strong>. Tutti i dati, il saldo, le spese, le entrate e i grafici verranno ricalcolati automaticamente.',
+        currency_ref_label: 'Valuta di riferimento',
+        currency_active_badge: 'Attiva',
+        stat_dashboard_sub: 'Analisi finanziaria dettagliata e indicatori chiave di performance',
+        stat_pill_month: 'Mese Corrente',
+        stat_pill_3months: 'Ultimi 3 Mesi',
+        stat_pill_year: 'Quest\'Anno',
+        stat_pill_all: 'Tutta la Cronologia',
+        stat_group_income: 'Entrate e Flusso',
+        stat_group_expense: 'Spese e Abitudini',
+        stat_group_savings: 'Risparmio e Sicurezza',
+        stat_group_activity: 'Attività e Metriche',
+        stat_income: 'Entrate Totali',
+        stat_expense: 'Spese Totali',
+        stat_daily_avg: 'Media Spese / Giorno',
+        stat_daily_sub: 'speso in media ogni giorno',
+        stat_peak_exp: 'Spesa Massima',
+        stat_daily_income: 'Entrata Media Giornaliera',
+        stat_income_pace: 'entrate medie generate al giorno',
+        stat_peak_inc: 'Entrata Massima',
+        stat_avg_ticket: 'Importo Medio per Spesa',
+        stat_runway: 'Autonomia Finanziaria Stimata',
+        stat_deposits: 'Fondi e Depositi Separati',
+        stat_activity_vol: 'Volume e Attività',
+        stat_cashflow_title: 'Flusso di Cassa (Entrate vs Uscite)',
+        stat_cashflow_sub: 'Confronto diretto tra entrate e uscite',
+        stat_top_stores_title: 'Top Negozi e Commercianti',
+        stat_top_stores_sub: 'Dove spendi più frequentemente il tuo denaro',
+        stat_top_purchases_title: 'Top Acquisti e Articoli',
+        stat_top_purchases_sub: 'Gli acquisti e gli articoli più costosi',
+        stat_top_categories_title: 'Top Categorie di Spesa',
+        stat_top_categories_sub: 'Distribuzione delle spese per categoria',
+        stat_weekday_title: 'Spese per Giorno della Settimana',
+        stat_weekday_sub: 'Individua i giorni in cui spendi di più',
+        stat_hourly_title: 'Spese per Ora del Giorno',
+        stat_hourly_sub: 'Orari con la maggiore frequenza di pagamenti',
+        stat_month_days_title: 'Evoluzione Giornaliera del Mese',
+        stat_month_days_sub: 'Spese giorno per giorno nel corso del mese',
+        stat_table_title: 'Riepilogo Mensile',
+        stat_table_sub: 'Cronologia completa di entrate, spese e tasso di risparmio per mese',
+        th_period: 'Periodo',
+        th_income: 'Entrate',
+        th_expense: 'Spese',
+        th_net: 'Risparmio Netto',
+        th_rate: 'Tasso',
+        popover_header_title: 'Dettagli Spese',
+        prompt_placeholder_name: 'Es: Supermercato, Farmacia, Ristorante',
+        pay_method_card: 'Carta',
+        pay_method_cash: 'Contanti',
+        btn_merchant_config: '⚙️ Configura Negozi e Categorie',
+        merchant_config_title: 'Gestione Negozi e Categorie',
+        merchant_config_sub: 'Associa automaticamente i negozi alle categorie',
+        merchant_custom_title: '🛒 Negozi Personalizzati Aggiunti:',
+        btn_done_save: 'Fatto / Salva',
+        merchant_modal_title: 'Dettagli Commerciante / Negozio',
+        merchant_modal_sub: 'Cronologia completa degli acquisti in questo negozio',
+        merchant_kpi_total_food: 'Totale Speso in questo Negozio',
+        merchant_kpi_total_sub: 'nel periodo selezionato',
+        merchant_kpi_top_store: 'Negozio Principale',
+        merchant_kpi_top_sub: 'del totale spesa alimentare',
+        merchant_kpi_avg_ticket: 'Scontrino Medio',
+        merchant_kpi_avg_sub: 'per transazione',
+        merchant_kpi_freq_visits: 'Numero di Visite',
+        merchant_kpi_freq_sub: 'acquisti registrati',
+        merchant_chart_title: 'Evoluzione Spese in questo Negozio',
+        merchant_ranking_title: 'Classifica Negozi',
+        merchant_ranking_sub: 'Ordinati per importo totale speso',
+        merchant_all_receipts_trigger: 'Vedi Tutti gli Scontrini',
+        merchant_click_to_view_all: 'Clicca per aprire l\'elenco completo',
+        merchant_stores_suffix: 'negozi',
+        merchant_receipts_suffix: 'scontrini',
+        merchant_receipts_analyzed: 'scontrini analizzati',
+        merchant_visited_suffix: 'visitati',
+        merchant_of_food_budget: 'del budget alimentare',
+        merchant_no_purchases: 'Nessun acquisto registrato per questo negozio.',
+        food_basket_title: 'Carrello della Spesa e Alimentari',
+        food_basket_total_val: 'Totale Spese Alimentari',
+        food_basket_search_placeholder: 'Cerca prodotto o negozio...',
+        food_basket_show_all: 'Mostra Tutto',
+        food_basket_filtered: 'Prodotti Filtrati',
+        food_basket_empty: 'Nessun acquisto alimentare registrato.',
+        transfer_modal_title: 'Trasferimento Interno (Carta ⇄ Contanti)',
+        transfer_lbl_direction: 'Direzione Trasferimento',
+        transfer_card_to_cash: '💳 Carta ➔ 💵 Contanti (Prelievo Bancomat)',
+        transfer_cash_to_card: '💵 Contanti ➔ 💳 Carta (Versamento Bancario)',
+        transfer_placeholder_desc: 'Es: Prelievo bancomat, Deposito contanti...',
+        transfer_btn_save: 'Esegui Trasferimento',
+        filter_tx_modal_title: 'Filtra Transazioni',
+        filter_all_tx_title: 'Tutte le Transazioni',
+        filter_all_tx_desc: 'Visualizza spese, entrate e trasferimenti',
+        filter_expenses_tx_title: 'Solo Spese',
+        filter_expenses_tx_desc: 'Mostra solo pagamenti e uscite di denaro',
+        filter_incomes_tx_title: 'Solo Entrate',
+        filter_incomes_tx_desc: 'Mostra solo incassi e stipendi',
+        filter_transfers_tx_title: 'Solo Trasferimenti',
+        filter_transfers_tx_desc: 'Mostra solo movimenti interni Carta ⇄ Contanti',
+        filter_period_modal_title: 'Seleziona Periodo',
+        filter_period_current_month_desc: 'Dal primo all\'ultimo giorno di questo mese',
+        filter_period_last_month_desc: 'Tutti i dati del mese precedente',
+        filter_period_current_year_desc: 'Da gennaio fino ad oggi',
+        filter_period_all_desc: 'Cronologia completa senza filtri temporali',
+        export_header_categories: 'RIEPILOGO PER CATEGORIE',
+        export_lbl_period: 'Periodo',
+        export_lbl_date: 'Data',
+        export_lbl_of_total: 'del totale',
+        export_lbl_tx_history: 'CRONOLOGIA DETTAGLIATA DELLE OPERAZIONI',
+        export_lbl_generated: 'Generato da MoneyApp il',
+        export_btn: 'Esporta Report',
+        fund_curr_modal_title: 'Valuta di Conversione del Fondo',
+        fund_curr_modal_desc: 'Scegli la valuta in cui mostrare la conversione accanto al saldo principale:',
+        fund_curr_none: '🚫 Nessuna conversione',
+        fund_curr_none_desc: 'Disattiva la visualizzazione della seconda valuta',
+        badge_active: 'Attiva',
+        toast_fund_curr_disabled: 'Visualizzazione seconda valuta disattivata.',
+        toast_fund_curr_set: 'Valuta di conversione aggiornata con successo!',
+        totals_modal_title: 'Riepilogo Totale Entrate e Spese',
+        totals_modal_desc: 'Sintesi generale di tutte le transazioni registrate:',
+        totals_card_income: 'Totale Entrate Registrate',
+        totals_card_expense: 'Totale Spese Registrate',
+        totals_card_net_balance: 'Saldo Netto Complessivo',
+        totals_card_savings_rate: 'Tasso Medio di Risparmio',
+        totals_card_tx_count: 'Numero Totale di Transazioni',
+        lbl_suspend_tx_short: 'Sospendi',
+        btn_scan_receipt: '📷 Scansiona Scontrino',
+        scanner_modal_title: 'Scanner Intelligente Scontrini (OCR)',
+        scanner_status_ready: 'Pronto per la scansione dello scontrino...',
+        scanner_status_scanning: 'Analisi OCR in corso...',
+        scanner_status_detected: 'Scontrino analizzato con successo!',
+        scanner_btn_upload_photo: '📁 Carica Foto',
+        scanner_btn_capture: '📸 Scatta Foto',
+        scanner_btn_live_cam: '🎥 Fotocamera Live',
+        scanner_result_title: 'Dati Rilevati sullo Scontrino',
+        scanner_lbl_merchant: 'Negozio / Commerciante',
+        scanner_lbl_amount: 'Importo Totale',
+        scanner_lbl_category: 'Categoria Suggerita',
+        scanner_lbl_payment_date: 'Data Pagamento',
+        scanner_btn_rescan: 'Scansiona di Nuovo',
+        scanner_btn_apply: 'Inserisci Spesa',
+        scanner_err_camera: 'Impossibile accedere alla fotocamera del dispositivo.',
+        scanner_err_no_data: 'Nessun dato leggibile trovato sullo scontrino.',
+        stat_bills_title: 'Bollette e Spese Ricorrenti',
+        bills_modal_title: 'Gestione Bollette e Abbonamenti',
+        bills_modal_sub: 'Monitoraggio pagamenti periodici e costi fissi',
+        bills_kpi_total: 'Totale Bollette Pagate',
+        bills_kpi_total_sub: 'nel periodo selezionato',
+        bills_kpi_avg: 'Media Mensile Bollette',
+        bills_kpi_avg_sub: 'costo fisso ricorrente stimato',
+        bills_kpi_peak: 'Bolletta Più Alta',
+        bills_kpi_share: 'Quota Bollette',
+        bills_kpi_share_sub: 'del totale delle spese',
+        bills_chart_title: 'Evoluzione Mensile Bollette',
+        bills_breakdown_title: 'Distribuzione per Tipo di Bolletta',
+        bills_history_title: 'Cronologia Bollette Recenti',
+        bills_empty: 'Nessuna bolletta ricorrente registrata.',
+        lbl_tx_total_expense_letter: 'S:',
+        lbl_tx_total_income_letter: 'E:',
+        stat_deposits_sub: 'Risparmi bloccati, conti bancari e investimenti',
+        deposits_modal_title: 'Fondi e Depositi Riservati',
+        deposits_modal_sub: 'Gestione risparmi e conti separati',
+        deposits_hero_total: 'Totale Risparmi e Depositi',
+        deposits_list_title: 'Elenco Conti e Depositi',
+        deposits_btn_add: '+ Aggiungi Deposito',
+        deposit_form_title_new: 'Nuovo Deposito / Fondo Riservato',
+        deposit_form_title_edit: 'Modifica Deposito / Fondo',
+        deposit_field_name: 'Nome o Descrizione del Conto',
+        deposit_placeholder_name: 'Es: Conto Deposito, Fondo USD, Azioni...',
+        deposit_field_category: 'Categoria del Fondo',
+        deposit_field_currency: 'Valuta del Deposito',
+        deposit_field_amount: 'Importo Attuale',
+        deposit_field_date: 'Data di Creazione / Aggiornamento',
+        btn_save_deposit: 'Salva Deposito',
+        deposits_funds_title: 'Distribuzione Disponibilità',
+        deposits_card_fund: 'Fondi Carta / Banca',
+        deposits_card_fund_sub: 'disponibile immediatamente',
+        deposits_cash_fund: 'Fondi Contanti / Portafoglio',
+        deposits_cash_fund_sub: 'denaro liquido disponibile',
+        deposits_isolated_notice: 'ℹ️ Questi depositi sono gestiti separatamente e non modificano il saldo delle spese giornaliere.',
+        deposits_empty_title: 'Nessun deposito registrato al momento.',
+        deposits_empty_sub: 'Aggiungi i tuoi risparmi, conti di investimento o riserve per una visione patrimoniale completa.',
+        toast_deposit_saved: 'Deposito salvato con successo!',
+        toast_deposit_updated: 'Deposito aggiornato con successo!',
+        toast_deposit_deleted: 'Deposito eliminato con successo.',
+        toast_deposit_name_req: 'Inserisci un nome per il deposito!',
+        toast_deposit_amount_req: 'Inserisci un importo valido superiore a zero!',
+        deposits_breakdown_dep: 'Depositi',
+        deposits_breakdown_card: 'Carta',
+        deposits_breakdown_cash: 'Contanti',
+        deposits_count_label: 'depositi',
+        btn_edit: 'Modifica',
+        btn_delete: 'Elimina',
+        eur_lang_modal_title: 'Scegli la lingua per l\'Euro (EUR)',
+        eur_lang_modal_desc: 'L\'euro è ampiamente utilizzato in Europa. Scegli la lingua in cui desideri tradurre l\'applicazione:',
+        eur_lang_active_badge: 'Attiva',
+        eur_lang_change_btn: 'Cambia lingua',
+        eur_lang_current_label: 'Lingua dell\'interfaccia (EUR)'
+    },
+    pl: {
+        currency_label: 'Waluta',
+        tab_overview: 'Panel',
+        tab_overview_full: 'Panel Główny',
+        tab_transactions: 'Transakcje',
+        tab_transactions_full: 'Transakcje (Historia)',
+        tab_stats: 'Statystyki',
+        tab_stats_full: 'Statystyki',
+        tab_categories: 'Kategorie',
+        tab_categories_full: 'Kategorie',
+        balance_title: 'Dostępne Środki',
+        total_expenses: 'Wydatki Łącznie',
+        total_income: 'Przychody Łącznie',
+        btn_expense: 'Wydatek',
+        btn_income: 'Przychód',
+        expenses_by_cat: 'Kategorie',
+        total_month: 'Razem Miesiąc',
+        total_last_month: 'Poprzedni Miesiąc',
+        total_year: 'Razem Rok',
+        total_all: 'Suma Całkowita',
+        categories_list_title: 'Lista Kategorii i Wydatków',
+        period_current_month: 'Ten Miesiąc',
+        period_last_month: 'Poprzedni Miesiąc',
+        period_current_year: 'Ten Rok',
+        period_all: 'Cały Okres',
+        qr_title: 'Połącz z innym telefonem',
+        qr_desc: 'Zeskanuj QR lub zainstaluj',
+        btn_open_qr: 'Otwórz QR',
+        btn_install_guide: 'Instrukcja Instalacji',
+        modal_add_expense: 'Dodaj Wydatek',
+        modal_edit_expense: 'Edytuj Wydatek',
+        modal_add_income: 'Dodaj Przychód',
+        modal_edit_income: 'Edytuj Przychód',
+        lbl_amount: 'Kwota',
+        lbl_date: 'Data',
+        lbl_category: 'Wybierz Kategorię',
+        lbl_note: 'Opis / Notatka (opcjonalnie)',
+        lbl_income_source: 'Źródło Przychodu / Notatka',
+        placeholder_amount: 'Kwota (np. 45.50)',
+        placeholder_desc: 'np. Zakupy, Paliwo',
+        placeholder_article: 'Artykuł',
+        placeholder_store: 'Sklep',
+        placeholder_add_merchant: '+ Nowy sklep...',
+        placeholder_income_amount: 'Przychód (np. 3500)',
+        placeholder_income_source: 'np. Wynagrodzenie, Premia, Wynajem',
+        lbl_suspend_tx: '⏸️ Zawieś transakcję (wyklucz tymczasowo z obliczeń)',
+        suspended_tx_title: 'Zawieszone Transakcje',
+        suspended_tx_desc: 'Te transakcje są tymczasowo wykluczone z salda, wykresów i raportów. Możesz je w każdej chwili wznowić, edytować lub usunąć.',
+        no_suspended_tx: 'Brak zawieszonych transakcji.',
+        btn_save: 'Zapisz',
+        btn_cancel: 'Anuluj',
+        history_title: 'Historia Transakcji',
+        search_placeholder: 'Szukaj po notatce, kwocie, dacie...',
+        filter_all: 'Wszystkie',
+        filter_expenses: 'Wydatki',
+        filter_incomes: 'Przychody',
+        reports_title: 'Raport Roczny i Rozwój',
+        annual_income: 'Przychody Roczne',
+        annual_expenses: 'Wydatki Roczne',
+        net_savings: 'Oszczędności Netto',
+        savings_rate: 'Stopa Oszczędności',
+        monthly_evolution: 'Dynamika Miesięczna',
+        categories_title: 'Zarządzanie Kategoriami',
+        btn_new_category: '+ Nowa Kategoria',
+        categories_desc: 'Skonfiguruj kategorie, aby uporządkować swoje wydatki.',
+        no_expenses: 'Brak zarejestrowanych wydatków w tym okresie.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Lista kategorii',
+        btn_added_merchants_items: 'Nowe sklepy i artykuły',
+        categories_list_modal_title: 'Lista kategorii',
+        custom_merchants_title: 'Nowe sklepy i artykuły',
+        custom_merchants_sub: 'Wszystkie sklepy i artykuły dodane przez Ciebie:',
+        heading_my_merchants: 'Sklepy dodane przeze mnie:',
+        heading_my_items: 'Artykuły dodane przeze mnie:',
+        custom_merchants_empty: 'Nie dodano jeszcze żadnych sklepów.',
+        custom_items_empty: 'Nie dodano jeszcze żadnych artykułów.',
+        custom_merchants_singular: 'sklep',
+        custom_merchants_plural: 'sklepy',
+        custom_items_singular: 'artykuł',
+        custom_items_plural: 'artykuły',
+        merchant_config_sub: 'Zaznacz kategorie, dla których ma się wyświetlać lista artykułów i sklepów:',
+        search_shopping_item_placeholder: '🔍 Szukaj artykułu...',
+        search_merchant_placeholder: '🔍 Szukaj sklepu...',
+        popover_header_title: '🛍️ Artykuły <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Sklepy',
+        popover_empty_items: 'Nie znaleziono artykułów',
+        popover_empty_stores: 'Nie znaleziono sklepów',
+        prompt_add_item_title: '🛍️ Dodaj nowy artykuł',
+        prompt_add_item_ph: 'Np.: Chleb, Mleko, Sok...',
+        prompt_add_merchant_title: '🛒 Dodaj nowy sklep',
+        prompt_add_merchant_ph: 'Np.: Biedronka, Lidl, Bazar...',
+        drag_reorder_hint: 'Przeciągnij, aby zmienić kolejność',
+                lbl_suspended_short: 'Wstrzymane',
+        months: ["Styczeń","Luty","Marzec","Kwiecień","Maj","Czerwiec","Lipiec","Sierpień","Wrzesień","Październik","Listopad","Grudzień"],
+        monthsShort: ["Sty","Lut","Mar","Kwi","Maj","Cze","Lip","Sie","Wrz","Paź","Lis","Gru"],
+        year_prefix: 'Rok',
+        backup_title: 'Kopia Zapasowa i Synchronizacja',
+        backup_desc: 'Eksportuj lub importuj dane lokalne.',
+        btn_export_data: 'Eksportuj Dane (JSON)',
+        btn_import_data: 'Przywróć / Importuj (JSON)',
+        btn_close: 'Zamknij',
+        conv_title: 'Przelicznik i Waluty Świata',
+        conv_active_label: 'Aktywna Waluta Główna',
+        conv_amount_label: 'Kwota do Przeliczenia',
+        conv_use_balance: 'Użyj Dostępnego Salda',
+        conv_results_title: 'Kursy i Ekwiwalenty w Walutach Świata',
+        conv_adjust_rate: '⚙️ Dostosuj Kurs Referencyjny Euro (EUR/RON)',
+        conv_save_rate: 'Zapisz Kurs',
+        conv_active_count: 'przeliczonych walut',
+        conv_status_title: 'Status Kursów Walutowych',
+        conv_btn_refresh: 'Odśwież Kursy (EBC)',
+        rates_updated_toast: 'Kursy walut pomyślnie zaktualizowane z EBC!',
+        rates_offline_toast: 'Brak połączenia. Użyto ostatnich zapisanych kursów.',
+        rates_updated_at: 'Ostatnia aktualizacja',
+        guide_modal_title: 'Instrukcja Instalacji Aplikacji',
+        guide_step1: '<strong>Na telefonie z Androidem (Google Chrome):</strong><br>Otwórz link w Chrome, dotknij <strong>3 pionowych kropek (⋮)</strong> w prawym górnym rogu i wybierz <strong>"Dodaj do ekranu głównego"</strong> (lub "Zainstaluj aplikację").',
+        guide_step2: '<strong>Na iPhone / iPad (Safari):</strong><br>Otwórz stronę w Safari, dotknij przycisku <strong>Udostępnij (kwadrat ze strzałką w górę)</strong> na dole i wybierz <strong>"Do ekranu początkowego"</strong>.',
+        guide_step3: '<strong>Na komputerze (Google Chrome / Edge):</strong><br>Kliknij ikonę instalacji na pasku adresu lub naciśnij <strong>Ctrl + D</strong>, aby dodać zakładkę.',
+        guide_step4: '<strong>Lub bezpośrednie pobranie aplikacji Android (APK):</strong><br>Możesz bezpośrednio pobrać plik APK i zainstalować go lub przesłać przez WhatsApp.',
+        guide_btn_apk: 'Pobierz APK na Androida',
+        guide_btn_gotit: 'Rozumiem!',
+        qr_modal_title: 'Otwórz na Innym Telefonie',
+        qr_modal_desc: 'Zeskanuj kod QR aparatem telefonu, aby natychmiast otworzyć aplikację bez instalowania ze sklepu.',
+        qr_step1: 'Otwórz <strong>Aparat</strong> w telefonie.',
+        qr_step2: 'Skieruj aparat na <strong>powyższy kod QR</strong>.',
+        qr_step3: 'Dotknij <strong>pojawiającego się linku</strong>, aby otworzyć MoneyApp w <strong>Przeglądarce</strong>.',
+        qr_btn_copy: 'Kopiuj Link',
+        btn_download_apk: 'Pobierz APK na Androida',
+        link_copied: 'Link skopiowany do schowka!',
+        lbl_selected_period: 'Wybrany Okres',
+        lbl_total_spent: 'Łącznie Wydano',
+        lbl_of_period_expenses: 'wydatków w tym okresie',
+        lbl_category_transactions: 'Transakcje w tej kategorii',
+        btn_close_to_chart: 'Zamknij',
+        empty_category_expenses: 'Brak wydatków zarejestrowanych w tej kategorii w wybranym okresie.',
+        modal_add_category: 'Dodaj Nową Kategorię',
+        modal_edit_category: 'Edytuj Kategorię',
+        lbl_category_name: 'Nazwa Kategorii',
+        placeholder_category_name: 'np. Restauracja, Wakacje, Zdrowie',
+        lbl_category_icon: 'Ikona (Emoji)',
+        lbl_category_color: 'Kolor',
+        lbl_recommended_colors: 'Rekomendowane Kolory',
+        btn_save_category: 'Zapisz Kategorię',
+        lbl_registered_expenses: 'Zarejestrowane Wydatki',
+        export_btn_copy: 'Kopiuj Tekst',
+        export_btn_whatsapp: 'Wyślij przez WhatsApp',
+        export_btn_print: 'Drukuj / PDF',
+        export_btn_download: 'Pobierz Raport',
+        export_copied_toast: 'Raport skopiowany do schowka!',
+        export_downloaded_toast: 'Plik raportu pobrany pomyślnie!',
+        export_box_title: 'Opcje Szybkiego Eksportu',
+        export_box_sub: 'Udostępnij lub zarchiwizuj bieżący raport finansowy',
+        currency_modal_title: 'Wybierz Walutę Główną',
+        currency_modal_desc: 'Wybierz walutę główną, w której ma działać <strong>MoneyApp</strong>. Wszystkie dane, saldo, wydatki, przychody i wykresy zostaną automatycznie przeliczone.',
+        currency_ref_label: 'Waluta referencyjna',
+        currency_active_badge: 'Aktywna',
+        stat_dashboard_sub: 'Szczegółowa analiza finansowa i wskaźniki efektywności',
+        stat_pill_month: 'Bieżący Miesiąc',
+        stat_pill_3months: 'Ostatnie 3 Miesiące',
+        stat_pill_year: 'Ten Rok',
+        stat_pill_all: 'Cała Historia',
+        stat_group_income: 'Przychody i Przepływy',
+        stat_group_expense: 'Wydatki i Nawyki',
+        stat_group_savings: 'Oszczędności i Bezpieczeństwo',
+        stat_group_activity: 'Aktywność i Metryki',
+        stat_income: 'Przychody Łącznie',
+        stat_expense: 'Wydatki Łącznie',
+        stat_daily_avg: 'Średnia Wydatków / Dzień',
+        stat_daily_sub: 'wydawane średnio każdego dnia',
+        stat_peak_exp: 'Maksymalny Wydatek',
+        stat_daily_income: 'Średni Przychód Dzienny',
+        stat_income_pace: 'przychody generowane średnio dziennie',
+        stat_peak_inc: 'Maksymalny Przychód',
+        stat_avg_ticket: 'Średnia Wartość Zakupu',
+        stat_runway: 'Szacowana Poduszka Finansowa',
+        stat_deposits: 'Oddzielne Środki i Depozyty',
+        stat_activity_vol: 'Wolumen i Aktywność',
+        stat_cashflow_title: 'Przepływy Pieniężne (Wpływy vs Wydatki)',
+        stat_cashflow_sub: 'Bezpośrednie porównanie przychodów i wydatków',
+        stat_top_stores_title: 'Główne Sklepy i Miejsca',
+        stat_top_stores_sub: 'Gdzie najczęściej wydajesz pieniądze',
+        stat_top_purchases_title: 'Największe Zakupy i Artykuły',
+        stat_top_purchases_sub: 'Zakupy i artykuły o najwyższej wartości',
+        stat_top_categories_title: 'Główne Kategorie Wydatków',
+        stat_top_categories_sub: 'Rozkład wydatków według kategorii',
+        stat_weekday_title: 'Wydatki według Dni Tygodnia',
+        stat_weekday_sub: 'Sprawdź, w które dni wydajesz najwięcej',
+        stat_hourly_title: 'Wydatki według Pór Dnia',
+        stat_hourly_sub: 'Godziny z największą liczbą płatności',
+        stat_month_days_title: 'Dzienna Ewolucja w Miesiącu',
+        stat_month_days_sub: 'Wydatki dzień po dniu przez cały miesiąc',
+        stat_table_title: 'Miesięczne Podsumowanie',
+        stat_table_sub: 'Pełna historia przychodów, wydatków i stopy oszczędności według miesięcy',
+        th_period: 'Okres',
+        th_income: 'Przychody',
+        th_expense: 'Wydatki',
+        th_net: 'Oszczędności Netto',
+        th_rate: 'Stopa',
+        popover_header_title: 'Szczegóły Wydatków',
+        prompt_placeholder_name: 'np. Supermarket, Apteka, Restauracja',
+        pay_method_card: 'Karta',
+        pay_method_cash: 'Gotówka',
+        btn_merchant_config: '⚙️ Konfiguruj Sklepy i Kategorie',
+        merchant_config_title: 'Zarządzanie Sklepami i Kategoriami',
+        merchant_config_sub: 'Automatycznie przypisuj sklepy do kategorii',
+        merchant_custom_title: '🛒 Dodane Własne Sklepy:',
+        btn_done_save: 'Gotowe / Zapisz',
+        merchant_modal_title: 'Szczegóły Sklepu / Sprzedawcy',
+        merchant_modal_sub: 'Pełna historia zakupów w tym sklepie',
+        merchant_kpi_total_food: 'Łącznie Wydano w tym Sklepie',
+        merchant_kpi_total_sub: 'w wybranym okresie',
+        merchant_kpi_top_store: 'Główny Sklep',
+        merchant_kpi_top_sub: 'całości wydatków spożywczych',
+        merchant_kpi_avg_ticket: 'Średni Paragon',
+        merchant_kpi_avg_sub: 'na transakcję',
+        merchant_kpi_freq_visits: 'Liczba Wizyt',
+        merchant_kpi_freq_sub: 'zarejestrowanych zakupów',
+        merchant_chart_title: 'Rozwój Wydatków w tym Sklepie',
+        merchant_ranking_title: 'Ranking Sklepów',
+        merchant_ranking_sub: 'Uporządkowane według łącznej wydanej kwoty',
+        merchant_all_receipts_trigger: 'Zobacz Wszystkie Paragony',
+        merchant_click_to_view_all: 'Kliknij, aby otworzyć pełną listę',
+        merchant_stores_suffix: 'sklepy',
+        merchant_receipts_suffix: 'paragony',
+        merchant_receipts_analyzed: 'przeanalizowanych paragonów',
+        merchant_visited_suffix: 'odwiedzonych',
+        merchant_of_food_budget: 'budżetu na żywność',
+        merchant_no_purchases: 'Brak zarejestrowanych zakupów w tym sklepie.',
+        food_basket_title: 'Koszyk Zakupów i Żywność',
+        food_basket_total_val: 'Łączne Wydatki na Żywność',
+        food_basket_search_placeholder: 'Szukaj produktu lub sklepu...',
+        food_basket_show_all: 'Pokaż Wszystko',
+        food_basket_filtered: 'Filtrowane Produkty',
+        food_basket_empty: 'Brak zarejestrowanych zakupów spożywczych.',
+        transfer_modal_title: 'Przelew Wewnętrzny (Karta ⇄ Gotówka)',
+        transfer_lbl_direction: 'Kierunek Przelewu',
+        transfer_card_to_cash: '💳 Karta ➔ 💵 Gotówka (Wypłata z Bankomatu)',
+        transfer_cash_to_card: '💵 Gotówka ➔ 💳 Karta (Wpłata do Banku)',
+        transfer_placeholder_desc: 'np. Wypłata z bankomatu, Wpłata gotówki...',
+        transfer_btn_save: 'Wykonaj Przelew',
+        filter_tx_modal_title: 'Filtruj Transakcje',
+        filter_all_tx_title: 'Wszystkie Transakcje',
+        filter_all_tx_desc: 'Pokaż wydatki, przychody i przelewy',
+        filter_expenses_tx_title: 'Tylko Wydatki',
+        filter_expenses_tx_desc: 'Pokaż wyłącznie płatności i wypłaty środków',
+        filter_incomes_tx_title: 'Tylko Przychody',
+        filter_incomes_tx_desc: 'Pokaż wyłącznie wpływy i wynagrodzenia',
+        filter_transfers_tx_title: 'Tylko Przelewy',
+        filter_transfers_tx_desc: 'Pokaż wyłącznie ruchy wewnętrzne Karta ⇄ Gotówka',
+        filter_period_modal_title: 'Wybierz Okres',
+        filter_period_current_month_desc: 'Od pierwszego do ostatniego dnia tego miesiąca',
+        filter_period_last_month_desc: 'Wszystkie dane z poprzedniego miesiąca',
+        filter_period_current_year_desc: 'Od stycznia do dnia dzisiejszego',
+        filter_period_all_desc: 'Cała historia bez filtrów czasowych',
+        export_header_categories: 'PODSUMOWANIE WEDŁUG KATEGORII',
+        export_lbl_period: 'Okres',
+        export_lbl_date: 'Data',
+        export_lbl_of_total: 'całości',
+        export_lbl_tx_history: 'SZCZEGÓŁOWA HISTORIA OPERACJI',
+        export_lbl_generated: 'Wygenerowano przez MoneyApp dnia',
+        export_btn: 'Eksportuj Raport',
+        fund_curr_modal_title: 'Waluta Przeliczenia Środków',
+        fund_curr_modal_desc: 'Wybierz walutę, w której ma być pokazywany ekwiwalent obok salda głównego:',
+        fund_curr_none: '🚫 Bez przeliczenia',
+        fund_curr_none_desc: 'Wyłącz wyświetlanie dodatkowej waluty',
+        badge_active: 'Aktywna',
+        toast_fund_curr_disabled: 'Wyświetlanie dodatkowej waluty wyłączone.',
+        toast_fund_curr_set: 'Waluta przeliczenia zaktualizowana pomyślnie!',
+        totals_modal_title: 'Łączne Podsumowanie Przychodów i Wydatków',
+        totals_modal_desc: 'Ogólne podsumowanie wszystkich zarejestrowanych transakcji:',
+        totals_card_income: 'Łączne Zarejestrowane Przychody',
+        totals_card_expense: 'Łączne Zarejestrowane Wydatki',
+        totals_card_net_balance: 'Łączne Saldo Netto',
+        totals_card_savings_rate: 'Średnia Stopa Oszczędności',
+        totals_card_tx_count: 'Całkowita Liczba Transakcji',
+        lbl_suspend_tx_short: 'Zawieś',
+        btn_scan_receipt: '📷 Skanuj Paragon',
+        scanner_modal_title: 'Inteligentny Skaner Paragonów (OCR)',
+        scanner_status_ready: 'Gotowy do skanowania paragonu...',
+        scanner_status_scanning: 'Analiza OCR w toku...',
+        scanner_status_detected: 'Paragon pomyślnie przeanalizowany!',
+        scanner_btn_upload_photo: '📁 Prześlij Zdjęcie',
+        scanner_btn_capture: '📸 Zrób Zdjęcie',
+        scanner_btn_live_cam: '🎥 Kamera na Żywo',
+        scanner_result_title: 'Dane Wykryte na Paragonie',
+        scanner_lbl_merchant: 'Sklep / Sprzedawca',
+        scanner_lbl_amount: 'Kwota Łączna',
+        scanner_lbl_category: 'Sugerowana Kategoria',
+        scanner_lbl_payment_date: 'Data Płatności',
+        scanner_btn_rescan: 'Skanuj Ponownie',
+        scanner_btn_apply: 'Wypełnij Wydatek',
+        scanner_err_camera: 'Nie udało się uzyskać dostępu do aparatu urządzenia.',
+        scanner_err_no_data: 'Nie znaleziono czytelnych danych na paragonie.',
+        stat_bills_title: 'Rachunki i Wydatki Stałe',
+        bills_modal_title: 'Zarządzanie Rachunkami i Subskrypcjami',
+        bills_modal_sub: 'Śledzenie regularnych płatności i kosztów stałych',
+        bills_kpi_total: 'Łącznie Opłacone Rachunki',
+        bills_kpi_total_sub: 'w wybranym okresie',
+        bills_kpi_avg: 'Średnia Miesięczna Rachunków',
+        bills_kpi_avg_sub: 'szacowany regularny koszt',
+        bills_kpi_peak: 'Najwyższy Rachunek',
+        bills_kpi_share: 'Udział Rachunków',
+        bills_kpi_share_sub: 'w całości wydatków',
+        bills_chart_title: 'Miesięczna Ewolucja Rachunków',
+        bills_breakdown_title: 'Podział według Rodzaju Rachunku',
+        bills_history_title: 'Historia Ostatnich Rachunków',
+        bills_empty: 'Brak zarejestrowanych rachunków cyklicznych.',
+        lbl_tx_total_expense_letter: 'W:',
+        lbl_tx_total_income_letter: 'P:',
+        stat_deposits_sub: 'Oszczędności zablokowane, konta bankowe i inwestycje',
+        deposits_modal_title: 'Środki i Zarezerwowane Depozyty',
+        deposits_modal_sub: 'Zarządzanie oszczędnościami i osobnymi kontami',
+        deposits_hero_total: 'Łączne Oszczędności i Depozyty',
+        deposits_list_title: 'Lista Kont i Depozytów',
+        deposits_btn_add: '+ Dodaj Depozyt',
+        deposit_form_title_new: 'Nowy Depozyt / Środki Zarezerwowane',
+        deposit_form_title_edit: 'Edytuj Depozyt / Środki',
+        deposit_field_name: 'Nazwa lub Opis Konta',
+        deposit_placeholder_name: 'np. Konto Oszczędnościowe, Depozyt USD, Akcje...',
+        deposit_field_category: 'Kategoria Środków',
+        deposit_field_currency: 'Waluta Depozytu',
+        deposit_field_amount: 'Bieżąca Kwota',
+        deposit_field_date: 'Data Utworzenia / Aktualizacji',
+        btn_save_deposit: 'Zapisz Depozyt',
+        deposits_funds_title: 'Struktura Dostępnych Środków',
+        deposits_card_fund: 'Środki na Karcie / w Banku',
+        deposits_card_fund_sub: 'dostępne natychmiast',
+        deposits_cash_fund: 'Środki w Gotówce / Portfelu',
+        deposits_cash_fund_sub: 'dostępna gotówka',
+        deposits_isolated_notice: 'ℹ️ Te depozyty są śledzone osobno i nie wpływają na bieżące saldo operacji codziennych.',
+        deposits_empty_title: 'Brak zarejestrowanych depozytów.',
+        deposits_empty_sub: 'Dodaj swoje oszczędności, konta inwestycyjne lub rezerwy, aby uzyskać pełny obraz majątku.',
+        toast_deposit_saved: 'Depozyt pomyślnie zapisany!',
+        toast_deposit_updated: 'Depozyt pomyślnie zaktualizowany!',
+        toast_deposit_deleted: 'Depozyt pomyślnie usunięty.',
+        toast_deposit_name_req: 'Proszę podać nazwę depozytu!',
+        toast_deposit_amount_req: 'Proszę podać prawidłową kwotę większą od zera!',
+        deposits_breakdown_dep: 'Depozyty',
+        deposits_breakdown_card: 'Karta',
+        deposits_breakdown_cash: 'Gotówka',
+        deposits_count_label: 'depozytów',
+        btn_edit: 'Edytuj',
+        btn_delete: 'Usuń',
+        eur_lang_modal_title: 'Wybierz język dla Euro (EUR)',
+        eur_lang_modal_desc: 'Waluta Euro jest powszechnie używana w Europie. Wybierz język, na który chcesz przetłumaczyć aplikację:',
+        eur_lang_active_badge: 'Aktywny',
+        eur_lang_change_btn: 'Zmień język',
+        eur_lang_current_label: 'Język interfejsu (EUR)'
+    },
+    nl: {
+        currency_label: 'Valuta',
+        tab_overview: 'Overzicht',
+        tab_overview_full: 'Algemeen Dashboard',
+        tab_transactions: 'Transacties',
+        tab_transactions_full: 'Transacties (Geschiedenis)',
+        tab_stats: 'Statistieken',
+        tab_stats_full: 'Statistieken',
+        tab_categories: 'Categorieën',
+        tab_categories_full: 'Categorieën',
+        balance_title: 'Beschikbaar Saldo',
+        total_expenses: 'Totale Uitgaven',
+        total_income: 'Totale Inkomsten',
+        btn_expense: 'Uitgave',
+        btn_income: 'Inkomst',
+        expenses_by_cat: 'Categorieën',
+        total_month: 'Totaal Maand',
+        total_last_month: 'Vorige Maand',
+        total_year: 'Totaal Jaar',
+        total_all: 'Totaal Generaal',
+        categories_list_title: 'Lijst Categorieën & Uitgaven',
+        period_current_month: 'Deze Maand',
+        period_last_month: 'Vorige Maand',
+        period_current_year: 'Dit Jaar',
+        period_all: 'Hele Periode',
+        qr_title: 'Verbinden met andere Telefoon',
+        qr_desc: 'Scan QR of installeer',
+        btn_open_qr: 'Open QR',
+        btn_install_guide: 'Installatiehandleiding',
+        modal_add_expense: 'Uitgave Toevoegen',
+        modal_edit_expense: 'Uitgave Bewerken',
+        modal_add_income: 'Inkomst Toevoegen',
+        modal_edit_income: 'Inkomst Bewerken',
+        lbl_amount: 'Bedrag',
+        lbl_date: 'Datum',
+        lbl_category: 'Kies Categorie',
+        lbl_note: 'Beschrijving / Notitie (optioneel)',
+        lbl_income_source: 'Inkomstenbron / Notitie',
+        placeholder_amount: 'Bedrag (Bijv: 45.50)',
+        placeholder_desc: 'Bijv: Boodschappen, Brandstof',
+        placeholder_article: 'Artikel',
+        placeholder_store: 'Winkel',
+        placeholder_add_merchant: '+ Nieuwe winkel...',
+        placeholder_income_amount: 'Inkomst (Bijv: 3500)',
+        placeholder_income_source: 'Bijv: Salaris, Voorschot, Bonus, Huur',
+        lbl_suspend_tx: '⏸️ Transactie onderbreken (tijdelijk uitsluiten van berekeningen)',
+        suspended_tx_title: 'Onderbroken Transacties',
+        suspended_tx_desc: 'Deze transacties zijn tijdelijk uitgesloten van het saldo, grafieken en rapporten. U kunt ze op elk gewenst moment hervatten, bewerken of verwijderen.',
+        no_suspended_tx: 'Geen onderbroken transacties.',
+        btn_save: 'Opslaan',
+        btn_cancel: 'Annuleren',
+        history_title: 'Transactiegeschiedenis',
+        search_placeholder: 'Zoeken op notitie, bedrag, datum...',
+        filter_all: 'Alle',
+        filter_expenses: 'Uitgaven',
+        filter_incomes: 'Inkomsten',
+        reports_title: 'Jaarrapport & Ontwikkeling',
+        annual_income: 'Jaarlijkse Inkomsten',
+        annual_expenses: 'Jaarlijkse Uitgaven',
+        net_savings: 'Netto Besparingen',
+        savings_rate: 'Spaarpercentage',
+        monthly_evolution: 'Maandelijkse Evolutie',
+        categories_title: 'Categoriebeheer',
+        btn_new_category: '+ Nieuwe Categorie',
+        categories_desc: 'Stel categorieën in om uw uitgaven overzichtelijk te organiseren.',
+        no_expenses: 'Geen geregistreerde uitgaven voor deze periode.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Categorielijst',
+        btn_added_merchants_items: 'Nieuwe winkels en artikelen',
+        categories_list_modal_title: 'Categorielijst',
+        custom_merchants_title: 'Nieuwe winkels en artikelen',
+        custom_merchants_sub: 'Alle door u toegevoegde winkels en artikelen:',
+        heading_my_merchants: 'Door mij toegevoegde winkels:',
+        heading_my_items: 'Door mij toegevoegde artikelen:',
+        custom_merchants_empty: 'Nog geen aangepaste winkels toegevoegd.',
+        custom_items_empty: 'Nog geen aangepaste artikelen toegevoegd.',
+        custom_merchants_singular: 'winkel',
+        custom_merchants_plural: 'winkels',
+        custom_items_singular: 'artikel',
+        custom_items_plural: 'artikelen',
+        merchant_config_sub: 'Vink de categorieën aan waarvoor de lijst moet verschijnen:',
+        search_shopping_item_placeholder: '🔍 Artikel zoeken...',
+        search_merchant_placeholder: '🔍 Winkel zoeken...',
+        popover_header_title: '🛍️ Artikelen <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Winkels',
+        popover_empty_items: 'Geen artikelen gevonden',
+        popover_empty_stores: 'Geen winkels gevonden',
+        prompt_add_item_title: '🛍️ Nieuw artikel toevoegen',
+        prompt_add_item_ph: 'Bijv.: Brood, Melk, Sap...',
+        prompt_add_merchant_title: '🛒 Nieuwe winkel toevoegen',
+        prompt_add_merchant_ph: 'Bijv.: Albert Heijn, Jumbo...',
+        drag_reorder_hint: 'Slepen om te rangschikken',
+                lbl_suspended_short: 'Opgeschort',
+        months: ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"],
+        monthsShort: ["Jan","Feb","Mrt","Apr","Mei","Jun","Jul","Aug","Sep","Okt","Nov","Dec"],
+        year_prefix: 'Jaar',
+        backup_title: 'Back-up & Synchronisatie',
+        backup_desc: 'Exporteer of importeer uw lokale gegevens.',
+        btn_export_data: 'Gegevens Exporteren (JSON)',
+        btn_import_data: 'Herstellen / Importeren (JSON)',
+        btn_close: 'Sluiten',
+        conv_title: 'Valutacalculator & Wereldvaluta\'s',
+        conv_active_label: 'Actieve Hoofdvaluta',
+        conv_amount_label: 'Om te Rekenen Bedrag',
+        conv_use_balance: 'Beschikbaar Saldo Gebruiken',
+        conv_results_title: 'Wisselkoersen & Wereldwijde Tegenwaarden',
+        conv_adjust_rate: '⚙️ Pas Euro-referentiekoers aan (EUR/RON)',
+        conv_save_rate: 'Koers Opslaan',
+        conv_active_count: 'omgerekende valuta\'s',
+        conv_status_title: 'Status Wisselkoersen',
+        conv_btn_refresh: 'Koersen Vernieuwen (ECB)',
+        rates_updated_toast: 'Wisselkoersen succesvol bijgewerkt vanaf de ECB!',
+        rates_offline_toast: 'Geen verbinding. Laatst opgeslagen wisselkoersen gebruikt.',
+        rates_updated_at: 'Laatste update',
+        guide_modal_title: 'Installatiehandleiding App',
+        guide_step1: '<strong>Op Android-telefoon (Google Chrome):</strong><br>Open de link in Chrome, tik op de <strong>3 verticale stippen (⋮)</strong> rechtsboven en selecteer <strong>"Toevoegen aan startscherm"</strong> (of "App installeren").',
+        guide_step2: '<strong>Op iPhone / iPad (Safari):</strong><br>Open de pagina in Safari, tik op de knop <strong>Delen (vierkant met pijl omhoog)</strong> onderaan en kies <strong>"Zet op beginscherm"</strong>.',
+        guide_step3: '<strong>Op computer (Google Chrome / Edge):</strong><br>Klik op het installatiepictogram in de adresbalk of druk op <strong>Ctrl + D</strong> om een bladwijzer toe te voegen.',
+        guide_step4: '<strong>Of direct downloaden als Android-app (APK):</strong><br>U kunt het APK-bestand rechtstreeks downloaden om te installeren of te delen via WhatsApp.',
+        guide_btn_apk: 'Download Android APK',
+        guide_btn_gotit: 'Begrepen!',
+        qr_modal_title: 'Openen op een Andere Telefoon',
+        qr_modal_desc: 'Scan de QR-code met de camera van uw telefoon om de app direct te openen zonder app store installatie.',
+        qr_step1: 'Open de <strong>Camera</strong> op uw telefoon.',
+        qr_step2: 'Richt de camera op de <strong>bovenstaande QR-code</strong>.',
+        qr_step3: 'Tik op de <strong>link die verschijnt</strong> om MoneyApp te openen in de <strong>Browser</strong>.',
+        qr_btn_copy: 'Kopieer Link',
+        btn_download_apk: 'Download Android APK',
+        link_copied: 'Link gekopieerd naar klembord!',
+        lbl_selected_period: 'Geselecteerde Periode',
+        lbl_total_spent: 'Totaal Uitgegeven',
+        lbl_of_period_expenses: 'van de periodieke uitgaven',
+        lbl_category_transactions: 'Transacties in deze categorie',
+        btn_close_to_chart: 'Sluiten',
+        empty_category_expenses: 'Geen uitgaven geregistreerd in deze categorie voor de gekozen periode.',
+        modal_add_category: 'Nieuwe Categorie Toevoegen',
+        modal_edit_category: 'Categorie Bewerken',
+        lbl_category_name: 'Categorienaam',
+        placeholder_category_name: 'Bijv: Restaurant, Vakantie, Gezondheid',
+        lbl_category_icon: 'Pictogram (Emoji)',
+        lbl_category_color: 'Kleur',
+        lbl_recommended_colors: 'Aanbevolen Kleuren',
+        btn_save_category: 'Categorie Opslaan',
+        lbl_registered_expenses: 'Geregistreerde Uitgaven',
+        export_btn_copy: 'Tekst Kopiëren',
+        export_btn_whatsapp: 'Verzenden via WhatsApp',
+        export_btn_print: 'Afdrukken / PDF',
+        export_btn_download: 'Rapport Downloaden',
+        export_copied_toast: 'Rapport gekopieerd naar klembord!',
+        export_downloaded_toast: 'Rapportbestand succesvol gedownload!',
+        export_box_title: 'Snelle Exportopties',
+        export_box_sub: 'Deel of archiveer het huidige financiële rapport',
+        currency_modal_title: 'Kies Hoofdvaluta',
+        currency_modal_desc: 'Kies de hoofdvaluta waarin <strong>MoneyApp</strong> moet werken. Alle gegevens, saldo, uitgaven, inkomsten en grafieken worden automatisch omgerekend.',
+        currency_ref_label: 'Referentievaluta',
+        currency_active_badge: 'Actief',
+        stat_dashboard_sub: 'Gedetailleerde financiële analyse en prestatie-indicatoren',
+        stat_pill_month: 'Huidige Maand',
+        stat_pill_3months: 'Laatste 3 Maanden',
+        stat_pill_year: 'Dit Jaar',
+        stat_pill_all: 'Hele Geschiedenis',
+        stat_group_income: 'Inkomsten & Cashflow',
+        stat_group_expense: 'Uitgaven & Gewoonten',
+        stat_group_savings: 'Besparingen & Zekerheid',
+        stat_group_activity: 'Activiteit & Cijfers',
+        stat_income: 'Totale Inkomsten',
+        stat_expense: 'Totale Uitgaven',
+        stat_daily_avg: 'Gemiddelde Uitgaven / Dag',
+        stat_daily_sub: 'gemiddeld dagelijks uitgegeven',
+        stat_peak_exp: 'Piekuitgave',
+        stat_daily_income: 'Gemiddeld Dagelijks Inkomen',
+        stat_income_pace: 'gemiddeld gegenereerd per dag',
+        stat_peak_inc: 'Piekinkomst',
+        stat_avg_ticket: 'Gemiddeld Aankoopbedrag',
+        stat_runway: 'Geschatte Financiële Buffer',
+        stat_deposits: 'Aparte Fondsen & Deposito\'s',
+        stat_activity_vol: 'Volume & Activiteit',
+        stat_cashflow_title: 'Cashflow (Inkomsten vs Uitgaven)',
+        stat_cashflow_sub: 'Directe vergelijking tussen inkomsten en uitgaven',
+        stat_top_stores_title: 'Top Winkels & Bedrijven',
+        stat_top_stores_sub: 'Waar u uw geld het vaakst uitgeeft',
+        stat_top_purchases_title: 'Top Aankopen & Artikelen',
+        stat_top_purchases_sub: 'De aankopen en artikelen met de hoogste waarde',
+        stat_top_categories_title: 'Top Uitgavencategorieën',
+        stat_top_categories_sub: 'Verdeling van uw uitgaven per categorie',
+        stat_weekday_title: 'Uitgaven per Weekdag',
+        stat_weekday_sub: 'Ontdek op welke dagen u het meeste geld uitgeeft',
+        stat_hourly_title: 'Uitgaven per Uur van de Dag',
+        stat_hourly_sub: 'Uren met de hoogste betalingsfrequentie',
+        stat_month_days_title: 'Dagelijkse Evolutie in de Maand',
+        stat_month_days_sub: 'Uitgaven dag na dag gedurende de maand',
+        stat_table_title: 'Maandelijks Overzicht',
+        stat_table_sub: 'Volledige geschiedenis van inkomsten, uitgaven en spaarpercentage per maand',
+        th_period: 'Periode',
+        th_income: 'Inkomsten',
+        th_expense: 'Uitgaven',
+        th_net: 'Netto Besparing',
+        th_rate: 'Percentage',
+        popover_header_title: 'Uitgavendetails',
+        prompt_placeholder_name: 'Bijv: Supermarkt, Apotheek, Restaurant',
+        pay_method_card: 'Kaart',
+        pay_method_cash: 'Contant',
+        btn_merchant_config: '⚙️ Configureer Winkels & Categorieën',
+        merchant_config_title: 'Beheer van Winkels & Categorieën',
+        merchant_config_sub: 'Koppel winkels automatisch aan vaste categorieën',
+        merchant_custom_title: '🛒 Toegevoegde Eigen Winkels:',
+        btn_done_save: 'Klaar / Opslaan',
+        merchant_modal_title: 'Winkel- / Bedrijfsdetails',
+        merchant_modal_sub: 'Volledige aankoopgeschiedenis in deze winkel',
+        merchant_kpi_total_food: 'Totaal Uitgegeven in deze Winkel',
+        merchant_kpi_total_sub: 'in de geselecteerde periode',
+        merchant_kpi_top_store: 'Belangrijkste Winkel',
+        merchant_kpi_top_sub: 'van totale voedseluitgaven',
+        merchant_kpi_avg_ticket: 'Gemiddeld Bonbedrag',
+        merchant_kpi_avg_sub: 'per transactie',
+        merchant_kpi_freq_visits: 'Aantal Bezoeken',
+        merchant_kpi_freq_sub: 'geregistreerde aankopen',
+        merchant_chart_title: 'Ontwikkeling van Uitgaven in deze Winkel',
+        merchant_ranking_title: 'Rangschikking van Winkels',
+        merchant_ranking_sub: 'Gerangschikt op totaal uitgegeven bedrag',
+        merchant_all_receipts_trigger: 'Bekijk Alle Kassabonnen',
+        merchant_click_to_view_all: 'Klik om de volledige lijst te openen',
+        merchant_stores_suffix: 'winkels',
+        merchant_receipts_suffix: 'bonnen',
+        merchant_receipts_analyzed: 'geanalyseerde bonnen',
+        merchant_visited_suffix: 'bezocht',
+        merchant_of_food_budget: 'van het voedselbudget',
+        merchant_no_purchases: 'Geen aankopen geregistreerd voor deze winkel.',
+        food_basket_title: 'Boodschappenmand & Voeding',
+        food_basket_total_val: 'Totale Voedseluitgaven',
+        food_basket_search_placeholder: 'Zoek product of winkel...',
+        food_basket_show_all: 'Toon Alles',
+        food_basket_filtered: 'Gefilterde Producten',
+        food_basket_empty: 'Geen voedselaankopen geregistreerd.',
+        transfer_modal_title: 'Interne Overboeking (Kaart ⇄ Contant)',
+        transfer_lbl_direction: 'Richting van Overboeking',
+        transfer_card_to_cash: '💳 Kaart ➔ 💵 Contant (Geldopname Pinautomaat)',
+        transfer_cash_to_card: '💵 Contant ➔ 💳 Kaart (Storting Bankrekening)',
+        transfer_placeholder_desc: 'Bijv: Geldopname pinautomaat, Contante storting...',
+        transfer_btn_save: 'Overboeking Uitvoeren',
+        filter_tx_modal_title: 'Transacties Filteren',
+        filter_all_tx_title: 'Alle Transacties',
+        filter_all_tx_desc: 'Toon uitgaven, inkomsten en overboekingen',
+        filter_expenses_tx_title: 'Alleen Uitgaven',
+        filter_expenses_tx_desc: 'Toon alleen betalingen en geldopnames',
+        filter_incomes_tx_title: 'Alleen Inkomsten',
+        filter_incomes_tx_desc: 'Toon alleen inkomsten en salarisbetalingen',
+        filter_transfers_tx_title: 'Alleen Overboekingen',
+        filter_transfers_tx_desc: 'Toon alleen interne verschuivingen Kaart ⇄ Contant',
+        filter_period_modal_title: 'Periode Selecteren',
+        filter_period_current_month_desc: 'Van de eerste tot de laatste dag van deze maand',
+        filter_period_last_month_desc: 'Alle gegevens van de vorige maand',
+        filter_period_current_year_desc: 'Van januari tot heden',
+        filter_period_all_desc: 'Volledige geschiedenis zonder datumfilter',
+        export_header_categories: 'OVERZICHT PER CATEGORIE',
+        export_lbl_period: 'Periode',
+        export_lbl_date: 'Datum',
+        export_lbl_of_total: 'van het totaal',
+        export_lbl_tx_history: 'GEDETAILLEERDE TRANSACTIEGESCHIEDENIS',
+        export_lbl_generated: 'Gegenereerd door MoneyApp op',
+        export_btn: 'Rapport Exporteren',
+        fund_curr_modal_title: 'Conversievaluta van het Saldo',
+        fund_curr_modal_desc: 'Kies de valuta waarin de tegenwaarde naast het hoofdsaldo wordt getoond:',
+        fund_curr_none: '🚫 Geen conversie',
+        fund_curr_none_desc: 'Weergave van secundaire valuta uitschakelen',
+        badge_active: 'Actief',
+        toast_fund_curr_disabled: 'Weergave secundaire valuta uitgeschakeld.',
+        toast_fund_curr_set: 'Conversievaluta succesvol bijgewerkt!',
+        totals_modal_title: 'Totaaloverzicht Inkomsten & Uitgaven',
+        totals_modal_desc: 'Algemene samenvatting van alle geregistreerde transacties:',
+        totals_card_income: 'Totaal Geregistreerde Inkomsten',
+        totals_card_expense: 'Totaal Geregistreerde Uitgaven',
+        totals_card_net_balance: 'Cumulatief Netto Saldo',
+        totals_card_savings_rate: 'Gemiddeld Spaarpercentage',
+        totals_card_tx_count: 'Totaal Aantal Transacties',
+        lbl_suspend_tx_short: 'Onderbreken',
+        btn_scan_receipt: '📷 Kassabon Scannen',
+        scanner_modal_title: 'Slimme Kassabonscanner (OCR)',
+        scanner_status_ready: 'Klaar om kassabon te scannen...',
+        scanner_status_scanning: 'OCR-analyse bezig...',
+        scanner_status_detected: 'Kassabon succesvol geanalyseerd!',
+        scanner_btn_upload_photo: '📁 Foto Uploaden',
+        scanner_btn_capture: '📸 Foto Maken',
+        scanner_btn_live_cam: '🎥 Live Camera',
+        scanner_result_title: 'Gedetecteerde Gegevens op Bon',
+        scanner_lbl_merchant: 'Winkel / Handelaar',
+        scanner_lbl_amount: 'Totaalbedrag',
+        scanner_lbl_category: 'Voorgestelde Categorie',
+        scanner_lbl_payment_date: 'Betaaldatum',
+        scanner_btn_rescan: 'Opnieuw Scannen',
+        scanner_btn_apply: 'Uitgave Invullen',
+        scanner_err_camera: 'Geen toegang mogelijk tot camera van apparaat.',
+        scanner_err_no_data: 'Geen leesbare gegevens gevonden op de bon.',
+        stat_bills_title: 'Vaste Lasten & Terugkerende Rekeningen',
+        bills_modal_title: 'Beheer van Vaste Lasten & Abonnementen',
+        bills_modal_sub: 'Volg periodieke betalingen en vaste lasten op de voet',
+        bills_kpi_total: 'Totaal Betaalde Rekeningen',
+        bills_kpi_total_sub: 'in de geselecteerde periode',
+        bills_kpi_avg: 'Maandelijks Gemiddelde Rekeningen',
+        bills_kpi_avg_sub: 'geschatte vaste periodieke lasten',
+        bills_kpi_peak: 'Hoogste Rekening',
+        bills_kpi_share: 'Aandeel Vaste Lasten',
+        bills_kpi_share_sub: 'van totale uitgaven',
+        bills_chart_title: 'Maandelijkse Evolutie van Vaste Lasten',
+        bills_breakdown_title: 'Verdeling per Type Rekening',
+        bills_history_title: 'Geschiedenis Recente Rekeningen',
+        bills_empty: 'Geen terugkerende rekeningen geregistreerd.',
+        lbl_tx_total_expense_letter: 'U:',
+        lbl_tx_total_income_letter: 'I:',
+        stat_deposits_sub: 'Spaarreserves, bankrekeningen en beleggingen',
+        deposits_modal_title: 'Gereserveerde Fondsen & Deposito\'s',
+        deposits_modal_sub: 'Beheer van spaartegoeden en aparte rekeningen',
+        deposits_hero_total: 'Totaal Sparen & Deposito\'s',
+        deposits_list_title: 'Lijst van Rekeningen & Deposito\'s',
+        deposits_btn_add: '+ Deposito Toevoegen',
+        deposit_form_title_new: 'Nieuw Deposito / Gereserveerd Fonds',
+        deposit_form_title_edit: 'Deposito / Fonds Bewerken',
+        deposit_field_name: 'Naam of Rekeningbeschrijving',
+        deposit_placeholder_name: 'Bijv: Spaarrekening, USD-deposito, Aandelen...',
+        deposit_field_category: 'Fondscategorie',
+        deposit_field_currency: 'Valuta van Deposito',
+        deposit_field_amount: 'Huidig Saldo',
+        deposit_field_date: 'Aanmaak- / Bijwerkdatum',
+        btn_save_deposit: 'Deposito Opslaan',
+        deposits_funds_title: 'Verdeling Beschikbare Middelen',
+        deposits_card_fund: 'Fondsen Kaart / Bank',
+        deposits_card_fund_sub: 'direct beschikbaar',
+        deposits_cash_fund: 'Fondsen Contant / Portemonnee',
+        deposits_cash_fund_sub: 'beschikbaar contant geld',
+        deposits_isolated_notice: 'ℹ️ Deze deposito\'s worden apart bijgehouden en beïnvloeden het dagelijkse besteedbare saldo niet.',
+        deposits_empty_title: 'Nog geen deposito\'s geregistreerd.',
+        deposits_empty_sub: 'Voeg uw spaargeld, beleggingen of reserves toe voor een compleet vermogensoverzicht.',
+        toast_deposit_saved: 'Deposito succesvol opgeslagen!',
+        toast_deposit_updated: 'Deposito succesvol bijgewerkt!',
+        toast_deposit_deleted: 'Deposito succesvol verwijderd.',
+        toast_deposit_name_req: 'Voer een naam in voor het deposito!',
+        toast_deposit_amount_req: 'Voer een geldig bedrag groter dan nul in!',
+        deposits_breakdown_dep: 'Deposito\'s',
+        deposits_breakdown_card: 'Kaart',
+        deposits_breakdown_cash: 'Contant',
+        deposits_count_label: 'deposito\'s',
+        btn_edit: 'Bewerken',
+        btn_delete: 'Verwijderen',
+        eur_lang_modal_title: 'Kies taal voor Euro (EUR)',
+        eur_lang_modal_desc: 'De Euro wordt wijdverbreid gebruikt in Europa. Kies de taal waarin u de app wilt vertalen:',
+        eur_lang_active_badge: 'Actief',
+        eur_lang_change_btn: 'Taal wijzigen',
+        eur_lang_current_label: 'Interfacetaal (EUR)'
+    },
+    pt: {
+        currency_label: 'Moeda',
+        tab_overview: 'Painel',
+        tab_overview_full: 'Painel Geral',
+        tab_transactions: 'Transações',
+        tab_transactions_full: 'Transações (Histórico)',
+        tab_stats: 'Estatísticas',
+        tab_stats_full: 'Estatísticas',
+        tab_categories: 'Categorias',
+        tab_categories_full: 'Categorias',
+        balance_title: 'Saldo Disponível',
+        total_expenses: 'Despesas Totais',
+        total_income: 'Receitas Totais',
+        btn_expense: 'Despesa',
+        btn_income: 'Receita',
+        expenses_by_cat: 'Categorias',
+        total_month: 'Total Mês',
+        total_last_month: 'Mês Passado',
+        total_year: 'Total Ano',
+        total_all: 'Total Geral',
+        categories_list_title: 'Lista de Categorias e Despesas',
+        period_current_month: 'Este Mês',
+        period_last_month: 'Mês Passado',
+        period_current_year: 'Este Ano',
+        period_all: 'Todo o Período',
+        qr_title: 'Ligar a outro Telemóvel',
+        qr_desc: 'Leia o QR ou instale',
+        btn_open_qr: 'Abrir QR',
+        btn_install_guide: 'Guia de Instalação',
+        modal_add_expense: 'Adicionar Despesa',
+        modal_edit_expense: 'Editar Despesa',
+        modal_add_income: 'Adicionar Receita',
+        modal_edit_income: 'Editar Receita',
+        lbl_amount: 'Valor',
+        lbl_date: 'Data',
+        lbl_category: 'Escolher Categoria',
+        lbl_note: 'Descrição / Nota (opcional)',
+        lbl_income_source: 'Origem da Receita / Nota',
+        placeholder_amount: 'Valor (Ex: 45.50)',
+        placeholder_desc: 'Ex: Compras, Combustível',
+        placeholder_article: 'Artigo',
+        placeholder_store: 'Loja',
+        placeholder_add_merchant: '+ Nova loja...',
+        placeholder_income_amount: 'Receita (Ex: 3500)',
+        placeholder_income_source: 'Ex: Salário, Adiantamento, Bónus, Renda',
+        lbl_suspend_tx: '⏸️ Suspender transação (excluir temporariamente dos cálculos)',
+        suspended_tx_title: 'Transações Suspensas',
+        suspended_tx_desc: 'Estas transações estão temporariamente excluídas do saldo, gráficos e relatórios. Pode reativá-las, modificá-las ou eliminá-las a qualquer momento.',
+        no_suspended_tx: 'Nenhuma transação suspensa.',
+        btn_save: 'Guardar',
+        btn_cancel: 'Cancelar',
+        history_title: 'Histórico de Transações',
+        search_placeholder: 'Pesquisar por nota, valor, data...',
+        filter_all: 'Todas',
+        filter_expenses: 'Despesas',
+        filter_incomes: 'Receitas',
+        reports_title: 'Relatório Anual e Evolução',
+        annual_income: 'Receitas Anuais',
+        annual_expenses: 'Despesas Anuais',
+        net_savings: 'Poupança Líquida',
+        savings_rate: 'Taxa de Poupança',
+        monthly_evolution: 'Evolução Mensal',
+        categories_title: 'Gestão de Categorias',
+        btn_new_category: '+ Nova Categoria',
+        categories_desc: 'Configure categorias para organizar as suas despesas.',
+        no_expenses: 'Nenhuma despesa registada neste período.',
+        ops_suffix: 'op.',
+                btn_categories_list: 'Lista de categorias',
+        btn_added_merchants_items: 'Novas lojas e artigos',
+        categories_list_modal_title: 'Lista de categorias',
+        custom_merchants_title: 'Novas lojas e artigos',
+        custom_merchants_sub: 'Todas as lojas e artigos adicionados por você:',
+        heading_my_merchants: 'Lojas adicionadas por mim:',
+        heading_my_items: 'Artigos adicionados por mim:',
+        custom_merchants_empty: 'Nenhuma loja personalizada adicionada ainda.',
+        custom_items_empty: 'Nenhum artigo de compra personalizado adicionado ainda.',
+        custom_merchants_singular: 'loja',
+        custom_merchants_plural: 'lojas',
+        custom_items_singular: 'artigo',
+        custom_items_plural: 'artigos',
+        merchant_config_sub: 'Marque as categorias para as quais deseja exibir a lista:',
+        search_shopping_item_placeholder: '🔍 Buscar artigo...',
+        search_merchant_placeholder: '🔍 Buscar loja...',
+        popover_header_title: '🛍️ Artigos <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Lojas',
+        popover_empty_items: 'Nenhum artigo encontrado',
+        popover_empty_stores: 'Nenhuma loja encontrada',
+        prompt_add_item_title: '🛍️ Adicionar novo artigo',
+        prompt_add_item_ph: 'Ex: Pão, Leite, Sumo...',
+        prompt_add_merchant_title: '🛒 Adicionar nova loja',
+        prompt_add_merchant_ph: 'Ex: Continente, Pingo Doce...',
+        drag_reorder_hint: 'Arraste para reorganizar',
+                lbl_suspended_short: 'Suspensas',
+        months: ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],
+        monthsShort: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
+        year_prefix: 'Ano',
+        backup_title: 'Cópia de Segurança e Sincronização',
+        backup_desc: 'Exporte ou importe os seus dados locais.',
+        btn_export_data: 'Exportar Dados (JSON)',
+        btn_import_data: 'Restaurar / Importar (JSON)',
+        btn_close: 'Fechar',
+        conv_title: 'Conversor e Moedas Mundiais',
+        conv_active_label: 'Moeda Principal Ativa',
+        conv_amount_label: 'Valor a Converter',
+        conv_use_balance: 'Usar Saldo Disponível',
+        conv_results_title: 'Taxas de Câmbio e Equivalentes Globais',
+        conv_adjust_rate: '⚙️ Ajustar Taxa de Referência Euro (EUR/RON)',
+        conv_save_rate: 'Guardar Taxa',
+        conv_active_count: 'moedas convertidas',
+        conv_status_title: 'Estado das Taxas de Câmbio',
+        conv_btn_refresh: 'Atualizar Taxas (BCE)',
+        rates_updated_toast: 'Taxas de câmbio atualizadas com sucesso a partir do BCE!',
+        rates_offline_toast: 'Sem ligação. A utilizar as últimas taxas guardadas.',
+        rates_updated_at: 'Última atualização',
+        guide_modal_title: 'Guia de Instalação da Aplicação',
+        guide_step1: '<strong>No Telemóvel Android (Google Chrome):</strong><br>Abra o link no Chrome, toque nos <strong>3 pontos verticais (⋮)</strong> no canto superior direito e selecione <strong>"Adicionar ao ecrã principal"</strong> (ou "Instalar aplicação").',
+        guide_step2: '<strong>No iPhone / iPad (Safari):</strong><br>Abra a página no Safari, toque no botão <strong>Partilhar (quadrado com seta para cima)</strong> na parte inferior e escolha <strong>"Ecrã principal"</strong>.',
+        guide_step3: '<strong>No Computador (Google Chrome / Edge):</strong><br>Clique no ícone de instalação na barra de endereço ou prima <strong>Ctrl + D</strong> para adicionar aos marcadores.',
+        guide_step4: '<strong>Ou descarregamento direto da app Android (APK):</strong><br>Pode descarregar diretamente o instalador APK para instalar ou partilhar no WhatsApp.',
+        guide_btn_apk: 'Descarregar APK Android',
+        guide_btn_gotit: 'Entendido!',
+        qr_modal_title: 'Abrir noutro Telemóvel',
+        qr_modal_desc: 'Aponte a câmara do telemóvel para o código QR para abrir instantaneamente a aplicação sem instalar pela loja.',
+        qr_step1: 'Abra a <strong>Câmara</strong> no seu telemóvel.',
+        qr_step2: 'Aponte a câmara para o <strong>código QR acima</strong>.',
+        qr_step3: 'Toque no <strong>link que surge</strong> para abrir o MoneyApp no <strong>Navegador</strong>.',
+        qr_btn_copy: 'Copiar Link',
+        btn_download_apk: 'Descarregar APK Android',
+        link_copied: 'Link copiado para a área de transferência!',
+        lbl_selected_period: 'Período Selecionado',
+        lbl_total_spent: 'Total Gasto',
+        lbl_of_period_expenses: 'das despesas do período',
+        lbl_category_transactions: 'Transações desta categoria',
+        btn_close_to_chart: 'Fechar',
+        empty_category_expenses: 'Nenhuma despesa registada nesta categoria no período selecionado.',
+        modal_add_category: 'Adicionar Nova Categoria',
+        modal_edit_category: 'Editar Categoria',
+        lbl_category_name: 'Nome da Categoria',
+        placeholder_category_name: 'Ex: Restaurante, Férias, Saúde',
+        lbl_category_icon: 'Ícone (Emoji)',
+        lbl_category_color: 'Cor',
+        lbl_recommended_colors: 'Cores Recomendadas',
+        btn_save_category: 'Guardar Categoria',
+        lbl_registered_expenses: 'Despesas Registadas',
+        export_btn_copy: 'Copiar Texto',
+        export_btn_whatsapp: 'Enviar por WhatsApp',
+        export_btn_print: 'Imprimir / PDF',
+        export_btn_download: 'Descarregar Relatório',
+        export_copied_toast: 'Relatório copiado para a área de transferência!',
+        export_downloaded_toast: 'Ficheiro do relatório descarregado com sucesso!',
+        export_box_title: 'Opções de Exportação Rápida',
+        export_box_sub: 'Partilhe ou arquive o relatório financeiro atual',
+        currency_modal_title: 'Escolher Moeda Principal',
+        currency_modal_desc: 'Selecione a moeda principal em que deseja que o <strong>MoneyApp</strong> opere. Todos os dados, saldos, despesas, receitas e gráficos serão recalculados automaticamente.',
+        currency_ref_label: 'Moeda de referência',
+        currency_active_badge: 'Ativa',
+        stat_dashboard_sub: 'Análise financeira detalhada e indicadores chave de desempenho',
+        stat_pill_month: 'Mês Atual',
+        stat_pill_3months: 'Últimos 3 Meses',
+        stat_pill_year: 'Este Ano',
+        stat_pill_all: 'Todo o Histórico',
+        stat_group_income: 'Receitas e Fluxo',
+        stat_group_expense: 'Despesas e Hábitos',
+        stat_group_savings: 'Poupança e Segurança',
+        stat_group_activity: 'Atividade e Métricas',
+        stat_income: 'Receitas Totais',
+        stat_expense: 'Despesas Totais',
+        stat_daily_avg: 'Média de Gastos / Dia',
+        stat_daily_sub: 'gasto em média diariamente',
+        stat_peak_exp: 'Despesa Máxima',
+        stat_daily_income: 'Receita Média Diária',
+        stat_income_pace: 'receitas médias geradas por dia',
+        stat_peak_inc: 'Receita Máxima',
+        stat_avg_ticket: 'Valor Médio por Compra',
+        stat_runway: 'Autonomia Financeira Estimada',
+        stat_deposits: 'Fundos e Depósitos Separados',
+        stat_activity_vol: 'Volume e Atividade',
+        stat_cashflow_title: 'Fluxo de Caixa (Entradas vs Saídas)',
+        stat_cashflow_sub: 'Comparação direta entre receitas e despesas',
+        stat_top_stores_title: 'Principais Lojas e Estabelecimentos',
+        stat_top_stores_sub: 'Onde gasta o seu dinheiro com maior frequência',
+        stat_top_purchases_title: 'Principais Compras e Artigos',
+        stat_top_purchases_sub: 'As compras e artigos de maior valor',
+        stat_top_categories_title: 'Principais Categorias de Despesa',
+        stat_top_categories_sub: 'Distribuição dos seus gastos por categoria',
+        stat_weekday_title: 'Despesas por Dia da Semana',
+        stat_weekday_sub: 'Descubra em que dias gasta mais dinheiro',
+        stat_hourly_title: 'Despesas por Hora do Dia',
+        stat_hourly_sub: 'Horários com maior frequência de pagamentos',
+        stat_month_days_title: 'Evolução Diária do Mês',
+        stat_month_days_sub: 'Gastos dia a dia ao longo de todo o mês',
+        stat_table_title: 'Resumo Mensal Consolidado',
+        stat_table_sub: 'Histórico completo de receitas, despesas e taxa de poupança por mês',
+        th_period: 'Período',
+        th_income: 'Receitas',
+        th_expense: 'Despesas',
+        th_net: 'Poupança Líquida',
+        th_rate: 'Taxa',
+        popover_header_title: 'Detalhes das Despesas',
+        prompt_placeholder_name: 'Ex: Supermercado, Farmácia, Restaurante',
+        pay_method_card: 'Cartão',
+        pay_method_cash: 'Dinheiro',
+        btn_merchant_config: '⚙️ Configurar Lojas e Categorias',
+        merchant_config_title: 'Gestão de Lojas e Categorias',
+        merchant_config_sub: 'Associe automaticamente lojas a categorias fixas',
+        merchant_custom_title: '🛒 Lojas Personalizadas Adicionadas:',
+        btn_done_save: 'Concluído / Guardar',
+        merchant_modal_title: 'Detalhes da Loja / Comerciante',
+        merchant_modal_sub: 'Histórico completo de compras nesta loja',
+        merchant_kpi_total_food: 'Total Gasto nesta Loja',
+        merchant_kpi_total_sub: 'no período selecionado',
+        merchant_kpi_top_store: 'Loja Principal',
+        merchant_kpi_top_sub: 'do total de alimentação',
+        merchant_kpi_avg_ticket: 'Talão Médio',
+        merchant_kpi_avg_sub: 'por transação',
+        merchant_kpi_freq_visits: 'Número de Visitas',
+        merchant_kpi_freq_sub: 'compras registadas',
+        merchant_chart_title: 'Evolução dos Gastos nesta Loja',
+        merchant_ranking_title: 'Classificação de Lojas',
+        merchant_ranking_sub: 'Ordenadas pelo montante total gasto',
+        merchant_all_receipts_trigger: 'Ver Todos os Talões',
+        merchant_click_to_view_all: 'Clique para abrir a lista completa',
+        merchant_stores_suffix: 'lojas',
+        merchant_receipts_suffix: 'talões',
+        merchant_receipts_analyzed: 'talões analisados',
+        merchant_visited_suffix: 'visitadas',
+        merchant_of_food_budget: 'do orçamento de alimentação',
+        merchant_no_purchases: 'Nenhuma compra registada para este estabelecimento.',
+        food_basket_title: 'Cesto de Compras e Alimentação',
+        food_basket_total_val: 'Total de Gastos em Alimentação',
+        food_basket_search_placeholder: 'Pesquisar produto ou loja...',
+        food_basket_show_all: 'Mostrar Tudo',
+        food_basket_filtered: 'Produtos Filtrados',
+        food_basket_empty: 'Nenhuma compra de alimentação registada.',
+        transfer_modal_title: 'Transferência Interna (Cartão ⇄ Dinheiro)',
+        transfer_lbl_direction: 'Sentido da Transferência',
+        transfer_card_to_cash: '💳 Cartão ➔ 💵 Dinheiro (Levantamento Multibanco)',
+        transfer_cash_to_card: '💵 Dinheiro ➔ 💳 Cartão (Depósito Bancário)',
+        transfer_placeholder_desc: 'Ex: Levantamento Multibanco, Depósito em dinheiro...',
+        transfer_btn_save: 'Efetuar Transferência',
+        filter_tx_modal_title: 'Filtrar Transações',
+        filter_all_tx_title: 'Todas as Transações',
+        filter_all_tx_desc: 'Ver despesas, receitas e transferências',
+        filter_expenses_tx_title: 'Apenas Despesas',
+        filter_expenses_tx_desc: 'Mostrar somente pagamentos e saídas de dinheiro',
+        filter_incomes_tx_title: 'Apenas Receitas',
+        filter_incomes_tx_desc: 'Mostrar somente entradas e salários',
+        filter_transfers_tx_title: 'Apenas Transferências',
+        filter_transfers_tx_desc: 'Mostrar apenas movimentos internos Cartão ⇄ Dinheiro',
+        filter_period_modal_title: 'Selecionar Período',
+        filter_period_current_month_desc: 'Do primeiro ao último dia deste mês',
+        filter_period_last_month_desc: 'Todos os dados do mês anterior',
+        filter_period_current_year_desc: 'De janeiro até à data atual',
+        filter_period_all_desc: 'Histórico completo sem filtro de datas',
+        export_header_categories: 'RESUMO POR CATEGORIAS',
+        export_lbl_period: 'Período',
+        export_lbl_date: 'Data',
+        export_lbl_of_total: 'do total',
+        export_lbl_tx_history: 'HISTÓRICO DETALHADO DE OPERAÇÕES',
+        export_lbl_generated: 'Gerado pelo MoneyApp em',
+        export_btn: 'Exportar Relatório',
+        fund_curr_modal_title: 'Moeda de Conversão do Fundo',
+        fund_curr_modal_desc: 'Escolha a moeda na qual exibir o equivalente ao lado do saldo principal:',
+        fund_curr_none: '🚫 Sem conversão',
+        fund_curr_none_desc: 'Desativar exibição da moeda secundária',
+        badge_active: 'Ativa',
+        toast_fund_curr_disabled: 'Exibição da moeda secundária desativada.',
+        toast_fund_curr_set: 'Moeda de conversão atualizada com sucesso!',
+        totals_modal_title: 'Balanço Geral de Receitas e Despesas',
+        totals_modal_desc: 'Resumo consolidado de todas as transações registadas:',
+        totals_card_income: 'Total de Receitas Registadas',
+        totals_card_expense: 'Total de Despesas Registadas',
+        totals_card_net_balance: 'Saldo Líquido Acumulado',
+        totals_card_savings_rate: 'Taxa Média de Poupança',
+        totals_card_tx_count: 'Número Total de Transações',
+        lbl_suspend_tx_short: 'Suspender',
+        btn_scan_receipt: '📷 Digitalizar Talão',
+        scanner_modal_title: 'Scanner Inteligente de Talões (OCR)',
+        scanner_status_ready: 'Pronto para digitalizar o talão...',
+        scanner_status_scanning: 'Análise OCR em curso...',
+        scanner_status_detected: 'Talão analisado com sucesso!',
+        scanner_btn_upload_photo: '📁 Carregar Foto',
+        scanner_btn_capture: '📸 Tirar Foto',
+        scanner_btn_live_cam: '🎥 Câmara em Direto',
+        scanner_result_title: 'Dados Detetados no Talão',
+        scanner_lbl_merchant: 'Loja / Comerciante',
+        scanner_lbl_amount: 'Valor Total',
+        scanner_lbl_category: 'Categoria Sugerida',
+        scanner_lbl_payment_date: 'Data do Pagamento',
+        scanner_btn_rescan: 'Digitalizar Novamente',
+        scanner_btn_apply: 'Preencher Despesa',
+        scanner_err_camera: 'Não foi possível aceder à câmara do dispositivo.',
+        scanner_err_no_data: 'Não foram encontrados dados legíveis no talão.',
+        stat_bills_title: 'Faturas e Despesas Recorrentes',
+        bills_modal_title: 'Gestão de Faturas e Subscrições',
+        bills_modal_sub: 'Acompanhamento de pagamentos periódicos e custos fixos',
+        bills_kpi_total: 'Total de Faturas Pagas',
+        bills_kpi_total_sub: 'no período selecionado',
+        bills_kpi_avg: 'Média Mensal de Faturas',
+        bills_kpi_avg_sub: 'custo fixo periódico estimado',
+        bills_kpi_peak: 'Fatura Mais Elevada',
+        bills_kpi_share: 'Quota das Faturas',
+        bills_kpi_share_sub: 'do total de despesas',
+        bills_chart_title: 'Evolução Mensal de Faturas',
+        bills_breakdown_title: 'Distribuição por Tipo de Fatura',
+        bills_history_title: 'Histórico de Faturas Recentes',
+        bills_empty: 'Nenhuma fatura recorrente registada.',
+        lbl_tx_total_expense_letter: 'D:',
+        lbl_tx_total_income_letter: 'R:',
+        stat_deposits_sub: 'Poupanças a prazo, contas bancárias e investimentos',
+        deposits_modal_title: 'Fundos e Depósitos Reservados',
+        deposits_modal_sub: 'Gestão de poupanças e contas separadas',
+        deposits_hero_total: 'Total Poupanças e Depósitos',
+        deposits_list_title: 'Lista de Contas e Depósitos',
+        deposits_btn_add: '+ Adicionar Depósito',
+        deposit_form_title_new: 'Novo Depósito / Fundo Reservado',
+        deposit_form_title_edit: 'Editar Depósito / Fundo',
+        deposit_field_name: 'Nome ou Descrição da Conta',
+        deposit_placeholder_name: 'Ex: Conta Poupança, Depósito USD, Ações...',
+        deposit_field_category: 'Categoria do Fundo',
+        deposit_field_currency: 'Moeda do Depósito',
+        deposit_field_amount: 'Valor Atual',
+        deposit_field_date: 'Data de Criação / Atualização',
+        btn_save_deposit: 'Guardar Depósito',
+        deposits_funds_title: 'Distribuição de Fundos Disponíveis',
+        deposits_card_fund: 'Fundos em Cartão / Banco',
+        deposits_card_fund_sub: 'disponível imediatamente',
+        deposits_cash_fund: 'Fundos em Dinheiro / Carteira',
+        deposits_cash_fund_sub: 'dinheiro líquido disponível',
+        deposits_isolated_notice: 'ℹ️ Estes depósitos são acompanhados à parte e não afetam o saldo de despesas do dia a dia.',
+        deposits_empty_title: 'Ainda não existem depósitos registados.',
+        deposits_empty_sub: 'Adicione as suas poupanças, contas de investimento ou reservas para uma visão patrimonial completa.',
+        toast_deposit_saved: 'Depósito guardado com sucesso!',
+        toast_deposit_updated: 'Depósito atualizado com sucesso!',
+        toast_deposit_deleted: 'Depósito eliminado com sucesso.',
+        toast_deposit_name_req: 'Por favor, introduza um nome para o depósito!',
+        toast_deposit_amount_req: 'Por favor, introduza um valor válido superior a zero!',
+        deposits_breakdown_dep: 'Depósitos',
+        deposits_breakdown_card: 'Cartão',
+        deposits_breakdown_cash: 'Dinheiro',
+        deposits_count_label: 'depósitos',
+        btn_edit: 'Editar',
+        btn_delete: 'Eliminar',
+        eur_lang_modal_title: 'Escolher idioma para o Euro (EUR)',
+        eur_lang_modal_desc: 'O Euro é amplamente utilizado na Europa. Escolha o idioma para o qual deseja traduzir a aplicação:',
+        eur_lang_active_badge: 'Ativo',
+        eur_lang_change_btn: 'Mudar idioma',
+        eur_lang_current_label: 'Idioma da interface (EUR)'
+    },
+    uk: {
+        currency_label: 'Валюта',
+        tab_overview: 'Панель',
+        tab_overview_full: 'Головна Панель',
+        tab_transactions: 'Транзакції',
+        tab_transactions_full: 'Транзакції (Історія)',
+        tab_stats: 'Статистика',
+        tab_stats_full: 'Статистика',
+        tab_categories: 'Категорії',
+        tab_categories_full: 'Категорії',
+        balance_title: 'Доступний Баланс',
+        total_expenses: 'Загальні Витрати',
+        total_income: 'Загальні Доходи',
+        btn_expense: 'Витрата',
+        btn_income: 'Дохід',
+        expenses_by_cat: 'Категорії',
+        total_month: 'Разом за Місяць',
+        total_last_month: 'Минулий Місяць',
+        total_year: 'Разом за Рік',
+        total_all: 'Загальний Підсумок',
+        categories_list_title: 'Список Категорій та Витрат',
+        period_current_month: 'Цей Місяць',
+        period_last_month: 'Минулий Місяць',
+        period_current_year: 'Цей Рік',
+        period_all: 'Весь Період',
+        qr_title: 'Підключити інший телефон',
+        qr_desc: 'Скануйте QR або встановіть',
+        btn_open_qr: 'Відкрити QR',
+        btn_install_guide: 'Інструкція зі Встановлення',
+        modal_add_expense: 'Додати Витрату',
+        modal_edit_expense: 'Редагувати Витрату',
+        modal_add_income: 'Додати Дохід',
+        modal_edit_income: 'Редагувати Дохід',
+        lbl_amount: 'Сума',
+        lbl_date: 'Дата',
+        lbl_category: 'Обрати Категорію',
+        lbl_note: 'Опис / Примітка (необов\'язково)',
+        lbl_income_source: 'Джерело Доходу / Примітка',
+        placeholder_amount: 'Сума (напр. 45.50)',
+        placeholder_desc: 'напр. Продукти, Пальне',
+        placeholder_article: 'Товар',
+        placeholder_store: 'Магазин',
+        placeholder_add_merchant: '+ Новий магазин...',
+        placeholder_income_amount: 'Дохід (напр. 3500)',
+        placeholder_income_source: 'напр. Зарплата, Аванс, Премія, Оренда',
+        lbl_suspend_tx: '⏸️ Призупинити транзакцію (тимчасово виключити з розрахунків)',
+        suspended_tx_title: 'Призупинені Транзакції',
+        suspended_tx_desc: 'Ці транзакції тимчасово виключені з розрахунку балансу, графіків та звітів. Ви можете будь-коли відновити, змінити або видалити їх.',
+        no_suspended_tx: 'Немає призупинених транзакцій.',
+        btn_save: 'Зберегти',
+        btn_cancel: 'Скасувати',
+        history_title: 'Історія Транзакцій',
+        search_placeholder: 'Пошук за приміткою, сумою, датою...',
+        filter_all: 'Усі',
+        filter_expenses: 'Витрати',
+        filter_incomes: 'Доходи',
+        reports_title: 'Річний Звіт та Динаміка',
+        annual_income: 'Річний Дохід',
+        annual_expenses: 'Річні Витрати',
+        net_savings: 'Чисті Заощадження',
+        savings_rate: 'Рівень Заощаджень',
+        monthly_evolution: 'Щомісячна Динаміка',
+        categories_title: 'Керування Категоріями',
+        btn_new_category: '+ Нова Категорія',
+        categories_desc: 'Налаштуйте категорії для впорядкування ваших витрат.',
+        no_expenses: 'Немає зареєстрованих витрат за цей період.',
+        ops_suffix: 'оп.',
+                btn_categories_list: 'Список категорій',
+        btn_added_merchants_items: 'Нові магазини та товари',
+        categories_list_modal_title: 'Список категорій',
+        custom_merchants_title: 'Нові магазини та товари',
+        custom_merchants_sub: 'Усі додані вами магазини та товари:',
+        heading_my_merchants: 'Магазини, додані мною:',
+        heading_my_items: 'Товари, додані мною:',
+        custom_merchants_empty: 'Ще не додано жодного магазину.',
+        custom_items_empty: 'Ще не додано жодного товару.',
+        custom_merchants_singular: 'магазин',
+        custom_merchants_plural: 'магазини',
+        custom_items_singular: 'товар',
+        custom_items_plural: 'товари',
+        merchant_config_sub: 'Позначте категорії, для яких має з’являтися список товарів і магазинів:',
+        search_shopping_item_placeholder: '🔍 Шукати товар...',
+        search_merchant_placeholder: '🔍 Шукати магазин...',
+        popover_header_title: '🛍️ Товари <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Магазини',
+        popover_empty_items: 'Товарів не знайдено',
+        popover_empty_stores: 'Магазинів не знайдено',
+        prompt_add_item_title: '🛍️ Додати новий товар',
+        prompt_add_item_ph: 'Напр.: Хліб, Молоко, Сік...',
+        prompt_add_merchant_title: '🛒 Додати новий магазин',
+        prompt_add_merchant_ph: 'Напр.: Сільпо, АТБ...',
+        drag_reorder_hint: 'Потягніть для зміни порядку',
+                lbl_suspended_short: 'Призупинені',
+        months: ["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"],
+        monthsShort: ["Січ","Лют","Бер","Кві","Тра","Чер","Лип","Сер","Вер","Жов","Лис","Гру"],
+        year_prefix: 'Рік',
+        backup_title: 'Резервне Копіювання та Синхронізація',
+        backup_desc: 'Експортуйте або імпортуйте локальні дані.',
+        btn_export_data: 'Експортувати Дані (JSON)',
+        btn_import_data: 'Відновити / Імпортувати (JSON)',
+        btn_close: 'Закрити',
+        conv_title: 'Конвертер та Світові Валюти',
+        conv_active_label: 'Активна Основна Валюта',
+        conv_amount_label: 'Сума для Конвертації',
+        conv_use_balance: 'Використати Доступний Баланс',
+        conv_results_title: 'Курси та Еквіваленти у Світових Валютах',
+        conv_adjust_rate: '⚙️ Налаштувати Курс Євро (EUR/RON)',
+        conv_save_rate: 'Зберегти Курс',
+        conv_active_count: 'конвертованих валют',
+        conv_status_title: 'Статус Курсів Валют',
+        conv_btn_refresh: 'Оновити Курси (ЄЦБ)',
+        rates_updated_toast: 'Курси валют успішно оновлено від ЄЦБ!',
+        rates_offline_toast: 'Немає з\'єднання. Використано останні збережені курси.',
+        rates_updated_at: 'Останнє оновлення',
+        guide_modal_title: 'Інструкція зі Встановлення Застосунку',
+        guide_step1: '<strong>На телефоні Android (Google Chrome):</strong><br>Відкрийте посилання у Chrome, натисніть <strong>3 вертикальні крапки (⋮)</strong> у правому верхньому кутку та оберіть <strong>"Додати на головний екран"</strong> (або "Встановити додаток").',
+        guide_step2: '<strong>На iPhone / iPad (Safari):</strong><br>Відкрийте сторінку в Safari, натисніть кнопку <strong>Поділитися (квадрат зі стрілкою вгору)</strong> внизу та виберіть <strong>"На початковий екран"</strong>.',
+        guide_step3: '<strong>На комп\'ютері (Google Chrome / Edge):</strong><br>Натисніть піктограму встановлення в адресному рядку або натисніть <strong>Ctrl + D</strong> для збереження в закладки.',
+        guide_step4: '<strong>Або пряме завантаження додатка Android (APK):</strong><br>Ви можете завантажити APK-файл безпосередньо для встановлення або поділитися ним у WhatsApp.',
+        guide_btn_apk: 'Завантажити APK для Android',
+        guide_btn_gotit: 'Зрозуміло!',
+        qr_modal_title: 'Відкрити на Іншому Телефоні',
+        qr_modal_desc: 'Наведіть камеру телефону на QR-код, щоб миттєво відкрити додаток без завантаження з маркету.',
+        qr_step1: 'Відкрийте <strong>Камеру</strong> на телефоні.',
+        qr_step2: 'Наведіть камеру на <strong>QR-код вище</strong>.',
+        qr_step3: 'Торкніться <strong>посилання, що з\'явилося</strong>, щоб відкрити MoneyApp у <strong>Браузері</strong>.',
+        qr_btn_copy: 'Копіювати Посилання',
+        btn_download_apk: 'Завантажити APK для Android',
+        link_copied: 'Посилання скопійовано в буфер обміну!',
+        lbl_selected_period: 'Обраний Період',
+        lbl_total_spent: 'Усього Витрачено',
+        lbl_of_period_expenses: 'від витрат за період',
+        lbl_category_transactions: 'Транзакції в цій категорії',
+        btn_close_to_chart: 'Закрити',
+        empty_category_expenses: 'Немає витрат у цій категорії за обраний період.',
+        modal_add_category: 'Додати Нову Категорію',
+        modal_edit_category: 'Редагувати Категорію',
+        lbl_category_name: 'Назва Категорії',
+        placeholder_category_name: 'напр. Ресторан, Відпустка, Здоров\'я',
+        lbl_category_icon: 'Піктограма (Emoji)',
+        lbl_category_color: 'Колір',
+        lbl_recommended_colors: 'Рекомендовані Кольори',
+        btn_save_category: 'Зберегти Категорію',
+        lbl_registered_expenses: 'Зареєстровані Витрати',
+        export_btn_copy: 'Копіювати Текст',
+        export_btn_whatsapp: 'Надіслати у WhatsApp',
+        export_btn_print: 'Друк / PDF',
+        export_btn_download: 'Завантажити Звіт',
+        export_copied_toast: 'Звіт скопійовано в буфер обміну!',
+        export_downloaded_toast: 'Файл звіту успішно завантажено!',
+        export_box_title: 'Швидкий Експорт',
+        export_box_sub: 'Поділіться або збережіть поточний фінансовий звіт',
+        currency_modal_title: 'Обрати Основну Валюту',
+        currency_modal_desc: 'Оберіть основну валюту для роботи <strong>MoneyApp</strong>. Усі дані, баланс, витрати, доходи та графіки будуть автоматично перераховані.',
+        currency_ref_label: 'Базова валюта',
+        currency_active_badge: 'Активна',
+        stat_dashboard_sub: 'Детальний фінансовий аналіз та ключові показники',
+        stat_pill_month: 'Поточний Місяць',
+        stat_pill_3months: 'Останні 3 Місяці',
+        stat_pill_year: 'Цей Рік',
+        stat_pill_all: 'Уся Історія',
+        stat_group_income: 'Доходи та Потоки',
+        stat_group_expense: 'Витрати та Звички',
+        stat_group_savings: 'Заощадження та Безпека',
+        stat_group_activity: 'Активність та Показники',
+        stat_income: 'Загальні Доходи',
+        stat_expense: 'Загальні Витрати',
+        stat_daily_avg: 'Середні Витрати / День',
+        stat_daily_sub: 'витрачається в середньому щодня',
+        stat_peak_exp: 'Максимальна Витрата',
+        stat_daily_income: 'Середній Денний Дохід',
+        stat_income_pace: 'дохід у середньому за день',
+        stat_peak_inc: 'Максимальний Дохід',
+        stat_avg_ticket: 'Середній Чек Покупки',
+        stat_runway: 'Фінансова Подушка Безпеки',
+        stat_deposits: 'Окремі Кошти та Депозити',
+        stat_activity_vol: 'Обсяг та Активність',
+        stat_cashflow_title: 'Грошовий Потік (Надходження vs Витрати)',
+        stat_cashflow_sub: 'Пряме порівняння доходів та витрат',
+        stat_top_stores_title: 'Основні Магазини та Заклади',
+        stat_top_stores_sub: 'Де ви найчастіше витрачаєте кошти',
+        stat_top_purchases_title: 'Найбільші Покупки та Товари',
+        stat_top_purchases_sub: 'Найдорожчі покупки та позиції',
+        stat_top_categories_title: 'Основні Категорії Витрат',
+        stat_top_categories_sub: 'Розподіл витрат за категоріями',
+        stat_weekday_title: 'Витрати за Днями Тижня',
+        stat_weekday_sub: 'Дізнайтеся, в які дні витрачається найбільше',
+        stat_hourly_title: 'Витрати за Годинами Доби',
+        stat_hourly_sub: 'Години з найчастішими оплатами',
+        stat_month_days_title: 'Щоденна Динаміка Місяця',
+        stat_month_days_sub: 'Витрати день за днем протягом усього місяця',
+        stat_table_title: 'Місячний Підсумок',
+        stat_table_sub: 'Повна історія доходів, витрат та рівня заощаджень за місяцями',
+        th_period: 'Період',
+        th_income: 'Доходи',
+        th_expense: 'Витрати',
+        th_net: 'Чисті Заощадження',
+        th_rate: 'Рівень',
+        popover_header_title: 'Деталі Витрат',
+        prompt_placeholder_name: 'напр. Супермаркет, Аптека, Ресторан',
+        pay_method_card: 'Картка',
+        pay_method_cash: 'Готівка',
+        btn_merchant_config: '⚙️ Налаштувати Магазини та Категорії',
+        merchant_config_title: 'Керування Магазинами та Категоріями',
+        merchant_config_sub: 'Автоматично закріплюйте магазини за категоріями',
+        merchant_custom_title: '🛒 Додані Власні Магазини:',
+        btn_done_save: 'Готово / Зберегти',
+        merchant_modal_title: 'Деталі Магазину / Продавця',
+        merchant_modal_sub: 'Повна історія покупок у цьому магазині',
+        merchant_kpi_total_food: 'Усього Витрачено в Магазині',
+        merchant_kpi_total_sub: 'за обраний період',
+        merchant_kpi_top_store: 'Головний Магазин',
+        merchant_kpi_top_sub: 'від витрат на їжу',
+        merchant_kpi_avg_ticket: 'Середній Чек',
+        merchant_kpi_avg_sub: 'за транзакцію',
+        merchant_kpi_freq_visits: 'Кількість Візитів',
+        merchant_kpi_freq_sub: 'зареєстрованих покупок',
+        merchant_chart_title: 'Динаміка Витрат у цьому Магазині',
+        merchant_ranking_title: 'Рейтинг Магазинів',
+        merchant_ranking_sub: 'Упорядковано за загальною сумою витрат',
+        merchant_all_receipts_trigger: 'Переглянути Всі Чеки',
+        merchant_click_to_view_all: 'Натисніть для відкриття повного списку',
+        merchant_stores_suffix: 'магазинів',
+        merchant_receipts_suffix: 'чеків',
+        merchant_receipts_analyzed: 'проаналізованих чеків',
+        merchant_visited_suffix: 'відвідано',
+        merchant_of_food_budget: 'бюджету на харчування',
+        merchant_no_purchases: 'Немає покупок у цьому магазині.',
+        food_basket_title: 'Кошик Продуктів та Харчування',
+        food_basket_total_val: 'Усього Витрат на Харчування',
+        food_basket_search_placeholder: 'Пошук товару чи магазину...',
+        food_basket_show_all: 'Показати Все',
+        food_basket_filtered: 'Відфільтровані Товари',
+        food_basket_empty: 'Немає зареєстрованих покупок їжі.',
+        transfer_modal_title: 'Внутрішній Переказ (Картка ⇄ Готівка)',
+        transfer_lbl_direction: 'Напрямок Переказу',
+        transfer_card_to_cash: '💳 Картка ➔ 💵 Готівка (Зняття в Банкоматі)',
+        transfer_cash_to_card: '💵 Готівка ➔ 💳 Картка (Внесення на Рахунок)',
+        transfer_placeholder_desc: 'напр. Зняття готівки, Поповнення картки...',
+        transfer_btn_save: 'Здійснити Переказ',
+        filter_tx_modal_title: 'Фільтр Транзакцій',
+        filter_all_tx_title: 'Усі Транзакції',
+        filter_all_tx_desc: 'Показати витрати, доходи та перекази',
+        filter_expenses_tx_title: 'Тільки Витрати',
+        filter_expenses_tx_desc: 'Показати лише оплати та списання коштів',
+        filter_incomes_tx_title: 'Тільки Доходи',
+        filter_incomes_tx_desc: 'Показати лише надходження та зарплату',
+        filter_transfers_tx_title: 'Тільки Перекази',
+        filter_transfers_tx_desc: 'Показати лише переміщення Картка ⇄ Готівка',
+        filter_period_modal_title: 'Обрати Період',
+        filter_period_current_month_desc: 'З першого до останнього дня цього місяця',
+        filter_period_last_month_desc: 'Усі дані за попередній місяць',
+        filter_period_current_year_desc: 'З січня до сьогодні',
+        filter_period_all_desc: 'Повна історія без часових обмежень',
+        export_header_categories: 'ПІДСУМОК ЗА КАТЕГОРІЯМИ',
+        export_lbl_period: 'Період',
+        export_lbl_date: 'Дата',
+        export_lbl_of_total: 'від загального',
+        export_lbl_tx_history: 'ДЕТАЛЬНА ІСТОРІЯ ОПЕРАЦІЙ',
+        export_lbl_generated: 'Сформовано в MoneyApp',
+        export_btn: 'Експортувати Звіт',
+        fund_curr_modal_title: 'Валюта Конвертації Балансу',
+        fund_curr_modal_desc: 'Оберіть валюту для показу еквівалента поруч із основним балансом:',
+        fund_curr_none: '🚫 Без конвертації',
+        fund_curr_none_desc: 'Вимкнути показ додаткової валюти',
+        badge_active: 'Активна',
+        toast_fund_curr_disabled: 'Показ додаткової валюти вимкнено.',
+        toast_fund_curr_set: 'Валюту конвертації успішно оновлено!',
+        totals_modal_title: 'Загальний Підсумок Доходів та Витрат',
+        totals_modal_desc: 'Зведений огляд усіх зареєстрованих операцій:',
+        totals_card_income: 'Усього Зареєстровано Доходів',
+        totals_card_expense: 'Усього Зареєстровано Витрат',
+        totals_card_net_balance: 'Загальне Чисте Сальдо',
+        totals_card_savings_rate: 'Середній Рівень Заощаджень',
+        totals_card_tx_count: 'Загальна Кількість Транзакцій',
+        lbl_suspend_tx_short: 'Призупинити',
+        btn_scan_receipt: '📷 Сканувати Чек',
+        scanner_modal_title: 'Розумний Сканер Чеків (OCR)',
+        scanner_status_ready: 'Готовий до сканування чека...',
+        scanner_status_scanning: 'Триває розпізнавання OCR...',
+        scanner_status_detected: 'Чек успішно розпізнано!',
+        scanner_btn_upload_photo: '📁 Завантажити Фото',
+        scanner_btn_capture: '📸 Зробити Фото',
+        scanner_btn_live_cam: '🎥 Камера Наживо',
+        scanner_result_title: 'Дані, Знайдені на Чеку',
+        scanner_lbl_merchant: 'Магазин / Продавець',
+        scanner_lbl_amount: 'Загальна Сума',
+        scanner_lbl_category: 'Рекомендована Категорія',
+        scanner_lbl_payment_date: 'Дата Оплати',
+        scanner_btn_rescan: 'Сканувати Знову',
+        scanner_btn_apply: 'Заповнити Витрату',
+        scanner_err_camera: 'Не вдалося отримати доступ до камери пристрою.',
+        scanner_err_no_data: 'На чеку не знайдено зрозумілих даних.',
+        stat_bills_title: 'Рахунки та Регулярні Витрати',
+        bills_modal_title: 'Керування Рахунками та Підписками',
+        bills_modal_sub: 'Контроль регулярних платежів та фіксованих витрат',
+        bills_kpi_total: 'Усього Сплачено Рахунків',
+        bills_kpi_total_sub: 'за обраний період',
+        bills_kpi_avg: 'Щомісячний Середній Рахунок',
+        bills_kpi_avg_sub: 'орієнтовні регулярні витрати',
+        bills_kpi_peak: 'Найбільший Рахунок',
+        bills_kpi_share: 'Частка Рахунків',
+        bills_kpi_share_sub: 'від усіх витрат',
+        bills_chart_title: 'Щомісячна Динаміка Рахунків',
+        bills_breakdown_title: 'Розподіл за Типами Рахунків',
+        bills_history_title: 'Історія Останніх Рахунків',
+        bills_empty: 'Немає зареєстрованих регулярних рахунків.',
+        lbl_tx_total_expense_letter: 'В:',
+        lbl_tx_total_income_letter: 'Д:',
+        stat_deposits_sub: 'Строкові заощадження, банківські рахунки та інвестиції',
+        deposits_modal_title: 'Резервні Кошти та Депозити',
+        deposits_modal_sub: 'Керування заощадженнями та окремими рахунками',
+        deposits_hero_total: 'Усього Заощаджень та Депозитів',
+        deposits_list_title: 'Список Рахунків та Депозитів',
+        deposits_btn_add: '+ Додати Депозит',
+        deposit_form_title_new: 'Новий Депозит / Резервний Фонд',
+        deposit_form_title_edit: 'Редагувати Депозит / Фонд',
+        deposit_field_name: 'Назва або Опис Рахунку',
+        deposit_placeholder_name: 'напр. Ощадний рахунок, Депозит USD, Акції...',
+        deposit_field_category: 'Категорія Коштів',
+        deposit_field_currency: 'Валюта Депозиту',
+        deposit_field_amount: 'Поточна Сума',
+        deposit_field_date: 'Дата Створення / Оновлення',
+        btn_save_deposit: 'Зберегти Депозит',
+        deposits_funds_title: 'Структура Доступних Коштів',
+        deposits_card_fund: 'Кошти на Картці / у Банку',
+        deposits_card_fund_sub: 'доступно миттєво',
+        deposits_cash_fund: 'Кошти Готівкою / у Гаманці',
+        deposits_cash_fund_sub: 'наявна готівка',
+        deposits_isolated_notice: 'ℹ️ Ці депозити обліковуються окремо та не змінюють баланс щоденних витрат.',
+        deposits_empty_title: 'Поки що немає зареєстрованих депозитів.',
+        deposits_empty_sub: 'Додайте свої заощадження, інвестиції чи резерви для повної фінансової картини.',
+        toast_deposit_saved: 'Депозит успішно збережено!',
+        toast_deposit_updated: 'Депозит успішно оновлено!',
+        toast_deposit_deleted: 'Депозит успішно видалено.',
+        toast_deposit_name_req: 'Будь ласка, вкажіть назву депозиту!',
+        toast_deposit_amount_req: 'Будь ласка, вкажіть дійсну суму більше нуля!',
+        deposits_breakdown_dep: 'Депозити',
+        deposits_breakdown_card: 'Картка',
+        deposits_breakdown_cash: 'Готівка',
+        deposits_count_label: 'депозитів',
+        btn_edit: 'Редагувати',
+        btn_delete: 'Видалити',
+        eur_lang_modal_title: 'Виберіть мову для Євро (EUR)',
+        eur_lang_modal_desc: 'Валюта Євро широко використовується в Європі. Виберіть мову, якою ви хочете перекласти інтерфейс застосунку:',
+        eur_lang_active_badge: 'Активна',
+        eur_lang_change_btn: 'Змінити мову',
+        eur_lang_current_label: 'Мова інтерфейсу (EUR)'
     },
     tr: {
         currency_label: 'Para Birimi',
@@ -1064,6 +3654,9 @@ const I18N_DICTIONARY = {
         btn_income: 'Gelir',
         expenses_by_cat: 'Kategoriye Göre Giderler',
         total_month: 'Aylık Toplam',
+        total_last_month: 'Geçen Ay',
+        total_year: 'Yıllık Toplam',
+        total_all: 'Genel Toplam',
         categories_list_title: 'Kategoriler ve Harcama Listesi',
         period_current_month: 'Bu Ay',
         period_last_month: 'Geçen Ay',
@@ -1111,8 +3704,33 @@ const I18N_DICTIONARY = {
         categories_desc: 'Kendi simge ve renginizle özel kategoriler ekleyebilirsiniz.',
         no_expenses: 'Gider Yok',
         ops_suffix: 'işl.',
-        months: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-        monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
+                btn_categories_list: 'Kategori Listesi',
+        btn_added_merchants_items: 'Yeni Mağazalar ve Ürünler',
+        categories_list_modal_title: 'Kategori Listesi',
+        custom_merchants_title: 'Yeni Mağazalar ve Ürünler',
+        custom_merchants_sub: 'Eklediğiniz tüm mağazalar ve alışveriş ürünleri:',
+        heading_my_merchants: 'Tarafımdan Eklenen Mağazalar:',
+        heading_my_items: 'Tarafımdan Eklenen Ürünler:',
+        custom_merchants_empty: 'Henüz özel mağaza eklenmedi.',
+        custom_items_empty: 'Henüz özel alışveriş ürünü eklenmedi.',
+        custom_merchants_singular: 'mağaza',
+        custom_merchants_plural: 'mağazalar',
+        custom_items_singular: 'ürün',
+        custom_items_plural: 'ürünler',
+        merchant_config_sub: 'Alışveriş ürünleri ve mağazalar listesinin görünmesini istediğiniz kategorileri seçin:',
+        search_shopping_item_placeholder: '🔍 Ürün ara...',
+        search_merchant_placeholder: '🔍 Mağaza ara...',
+        popover_header_title: '🛍️ Ürünler <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Mağazalar',
+        popover_empty_items: 'Ürün bulunamadı',
+        popover_empty_stores: 'Mağaza bulunamadı',
+        prompt_add_item_title: '🛍️ Yeni Ürün Ekle',
+        prompt_add_item_ph: 'Örn: Ekmek, Süt, Meyve Suyu...',
+        prompt_add_merchant_title: '🛒 Yeni Mağaza Ekle',
+        prompt_add_merchant_ph: 'Örn: Migros, BIM, Pazar...',
+        drag_reorder_hint: 'Sıralamak için sürükleyin',
+                lbl_suspended_short: 'Askıya Alındı',
+        months: ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"],
+        monthsShort: ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"],
         year_prefix: 'Yıl',
         backup_title: 'Veri Yedekleme ve Geri Yükleme',
         backup_desc: 'Yedekleme tüm verilerinizi içerir: işlemler, özel kategoriler, ayarlar ve tema. İçe aktarıldığında uygulama birebir geri yüklenir.',
@@ -1142,7 +3760,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.72.apk İndir',
+        btn_download_apk: 'MoneyApp_v3.3.98.apk İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -1283,7 +3901,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: 'Net Mevcut Fon',
         totals_card_savings_rate: 'Tasarruf Oranı ve Faaliyet',
         totals_card_tx_count: 'aktif işlem',
-        lbl_suspend_tx_short: '⏸️ Askıya Al',
+        lbl_suspend_tx_short: 'Askıya Al',
         btn_scan_receipt: 'Tara',
         scanner_modal_title: 'Fiş ve Fatura Tarayıcı',
         scanner_status_ready: 'Kamerayı fişe veya QR koda doğrultun',
@@ -1349,7 +3967,26 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: 'Nakit',
         deposits_count_label: 'Mevduat',
         btn_edit: 'Düzenle',
-        btn_delete: 'Sil'
+        btn_delete: 'Sil',
+        eur_lang_modal_title: 'Euro (EUR) İçin Dil Seçin',
+        eur_lang_modal_desc: 'Euro para birimi Avrupa genelinde yaygın olarak kullanılmaktadır. Uygulama arayüzünün çevrilmesini istediğiniz dili seçin:',
+        eur_lang_active_badge: 'Aktif',
+        eur_lang_change_btn: 'Dili değiştir',
+        eur_lang_current_label: 'Arayüz Dili (EUR)',
+        guide_step3: '<strong>Bilgisayarda (Google Chrome / Edge):</strong><br>Adres çubuğundaki yükleme simgesine tıklayın veya yer işareti eklemek için <strong>Ctrl + D</strong> tuşlarına basın.',
+        guide_step4: '<strong>Veya doğrudan Android uygulaması olarak indirin (APK):</strong><br>Doğrudan yüklemek veya WhatsApp ile paylaşmak için APK dosyasını indirebilirsiniz.',
+        guide_btn_apk: 'Android APK İndir',
+        guide_btn_gotit: 'Anladım!',
+        qr_modal_title: 'Başka Bir Telefonda Aç',
+        qr_modal_desc: 'Uygulamayı mağazadan yüklemeden anında açmak için telefonunuzun kamerasıyla yukarıdaki QR kodunu tarayın.',
+        lbl_category_transactions: 'Bu kategorideki işlemler',
+        export_btn_copy: 'Metni Kopyala',
+        export_btn_whatsapp: 'WhatsApp ile Gönder',
+        export_btn_print: 'Yazdır / PDF',
+        export_btn_download: 'Raporu İndir',
+        export_copied_toast: 'Rapor panoya kopyalandı!',
+        export_downloaded_toast: 'Rapor dosyası başarıyla indirildi!',
+        scanner_btn_capture: 'Fotoğraf Çek'
     },
     ja: {
         currency_label: '通貨',
@@ -1368,6 +4005,9 @@ const I18N_DICTIONARY = {
         btn_income: '収入',
         expenses_by_cat: 'カテゴリー別支出',
         total_month: '月間合計',
+        total_last_month: '先月合計',
+        total_year: '年間合計',
+        total_all: '全期間合計',
         categories_list_title: 'カテゴリーと支出内訳',
         period_current_month: '今月',
         period_last_month: '先月',
@@ -1415,8 +4055,33 @@ const I18N_DICTIONARY = {
         categories_desc: 'カスタムアイコンと色で自由にカテゴリーを作成できます。',
         no_expenses: '支出なし',
         ops_suffix: '件',
-        months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-        monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                btn_categories_list: 'カテゴリ一覧',
+        btn_added_merchants_items: '新しい店舗と商品',
+        categories_list_modal_title: 'カテゴリ一覧',
+        custom_merchants_title: '新しい店舗と商品',
+        custom_merchants_sub: '追加したすべての店舗と商品:',
+        heading_my_merchants: '追加した店舗:',
+        heading_my_items: '追加した商品:',
+        custom_merchants_empty: '追加された店舗はありません。',
+        custom_items_empty: '追加された商品はありません。',
+        custom_merchants_singular: '店舗',
+        custom_merchants_plural: '店舗',
+        custom_items_singular: '商品',
+        custom_items_plural: '商品',
+        merchant_config_sub: '商品や店舗リストを表示するカテゴリを選択してください:',
+        search_shopping_item_placeholder: '🔍 商品を検索...',
+        search_merchant_placeholder: '🔍 店舗を検索...',
+        popover_header_title: '🛍️ 商品 <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 店舗',
+        popover_empty_items: '商品が見つかりません',
+        popover_empty_stores: '店舗が見つかりません',
+        prompt_add_item_title: '🛍️ 新しい商品を追加',
+        prompt_add_item_ph: '例: パン、牛乳、ジュース...',
+        prompt_add_merchant_title: '🛒 新しい店舗を追加',
+        prompt_add_merchant_ph: '例: スーパー、コンビニ...',
+        drag_reorder_hint: 'ドラッグして並べ替え',
+                lbl_suspended_short: '保留中',
+        months: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+        monthsShort: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
         year_prefix: '年',
         backup_title: 'データのバックアップと復元',
         backup_desc: 'バックアップには、取引履歴、カスタムカテゴリー、設定、テーマなどすべてのデータが含まれます。復元すると完全に元の状態に戻ります。',
@@ -1449,7 +4114,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.72.apk をダウンロード',
+        btn_download_apk: 'MoneyApp_v3.3.98.apk をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -1591,7 +4256,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: '純利用可能資金',
         totals_card_savings_rate: '貯蓄率と活動',
         totals_card_tx_count: '件のアクティブな取引',
-        lbl_suspend_tx_short: '⏸️ 一時停止',
+        lbl_suspend_tx_short: '一時停止',
         btn_scan_receipt: 'スキャン',
         scanner_modal_title: 'レシート・請求書スキャナー',
         scanner_status_ready: 'カメラをレシートまたはQRコードに向けてください',
@@ -1657,7 +4322,19 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: '現金',
         deposits_count_label: '預金',
         btn_edit: '編集',
-        btn_delete: '削除'
+        btn_delete: '削除',
+        eur_lang_modal_title: 'ユーロ（EUR）の言語を選択',
+        eur_lang_modal_desc: 'ユーロはヨーロッパ全域で広く使用されています。アプリのインターフェース言語を選択してください：',
+        eur_lang_active_badge: '有効',
+        eur_lang_change_btn: '言語を変更',
+        eur_lang_current_label: 'インターフェース言語 (EUR)',
+        export_btn_copy: 'テキストをコピー',
+        export_btn_whatsapp: 'WhatsAppで共有',
+        export_btn_print: '印刷 / PDF',
+        export_btn_download: 'レポートをダウンロード',
+        export_copied_toast: 'レポートがクリップボードにコピーされました！',
+        export_downloaded_toast: 'レポートファイルが正常にダウンロードされました！',
+        scanner_btn_capture: '写真を撮る'
     },
     zh: {
         currency_label: '货币',
@@ -1676,6 +4353,9 @@ const I18N_DICTIONARY = {
         btn_income: '收入',
         expenses_by_cat: '分类支出分析',
         total_month: '本月合计',
+        total_last_month: '上月合计',
+        total_year: '年度总计',
+        total_all: '全部总计',
         categories_list_title: '分类与支出明细',
         period_current_month: '本月',
         period_last_month: '上月',
@@ -1723,8 +4403,33 @@ const I18N_DICTIONARY = {
         categories_desc: '您可以自由创建个性化分类，自定义颜色与图标。',
         no_expenses: '无支出记录',
         ops_suffix: '笔',
-        months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-        monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                btn_categories_list: '类别列表',
+        btn_added_merchants_items: '新商店与商品',
+        categories_list_modal_title: '类别列表',
+        custom_merchants_title: '新商店与商品',
+        custom_merchants_sub: '您添加的所有自定义商店和购物商品：',
+        heading_my_merchants: '我添加的商店:',
+        heading_my_items: '我添加的商品:',
+        custom_merchants_empty: '尚未添加自定义商店。',
+        custom_items_empty: '尚未添加自定义商品。',
+        custom_merchants_singular: '家商店',
+        custom_merchants_plural: '家商店',
+        custom_items_singular: '个商品',
+        custom_items_plural: '个商品',
+        merchant_config_sub: '勾选需要显示购物项目和商店列表的类别：',
+        search_shopping_item_placeholder: '🔍 搜索商品...',
+        search_merchant_placeholder: '🔍 搜索商店...',
+        popover_header_title: '🛍️ 购物商品 <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 商店',
+        popover_empty_items: '未找到商品',
+        popover_empty_stores: '未找到商店',
+        prompt_add_item_title: '🛍️ 添加新商品',
+        prompt_add_item_ph: '例如：面包、牛奶、果汁...',
+        prompt_add_merchant_title: '🛒 添加新商店',
+        prompt_add_merchant_ph: '例如：沃尔玛、超市...',
+        drag_reorder_hint: '拖动以重新排序',
+                lbl_suspended_short: '已挂起',
+        months: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+        monthsShort: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
         year_prefix: '年份',
         backup_title: '数据备份与恢复',
         backup_desc: '备份文件包含您的所有数据：交易记录、自定义分类、设置和界面主题。导入时将完全恢复所有内容。',
@@ -1757,7 +4462,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.72.apk',
+        btn_download_apk: '下载 MoneyApp_v3.3.98.apk',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -1899,7 +4604,7 @@ const I18N_DICTIONARY = {
         totals_card_net_balance: '净可用资金',
         totals_card_savings_rate: '储蓄率与活动',
         totals_card_tx_count: '笔有效交易',
-        lbl_suspend_tx_short: '⏸️ 暂停',
+        lbl_suspend_tx_short: '暂停',
         btn_scan_receipt: '扫描',
         scanner_modal_title: '小票与账单智能扫描',
         scanner_status_ready: '将摄像头对准小票或二维码',
@@ -1965,12 +4670,29 @@ const I18N_DICTIONARY = {
         deposits_breakdown_cash: '现金',
         deposits_count_label: '存款',
         btn_edit: '编辑',
-        btn_delete: '删除'
+        btn_delete: '删除',
+        eur_lang_modal_title: '选择欧元（EUR）界面语言',
+        eur_lang_modal_desc: '欧元在欧洲广泛使用。请选择希望将应用程序界面翻译成的语言：',
+        eur_lang_active_badge: '已启用',
+        eur_lang_change_btn: '更改语言',
+        eur_lang_current_label: '界面语言 (EUR)',
+        export_btn_copy: '复制文本',
+        export_btn_whatsapp: '通过WhatsApp发送',
+        export_btn_print: '打印 / PDF',
+        export_btn_download: '下载报告',
+        export_copied_toast: '报告已复制到剪贴板！',
+        export_downloaded_toast: '报告文件已成功下载！',
+        scanner_btn_capture: '拍摄照片'
     }
 };
-
 function getLanguageForCurrency(curr = null) {
     const code = curr || getActiveCurrency();
+    if (code === 'EUR') {
+        if (typeof appData !== 'undefined' && appData && appData.settings && appData.settings.eurLanguage) {
+            return appData.settings.eurLanguage;
+        }
+        return 'ro';
+    }
     return CURRENCY_TO_LANG[code] || 'en';
 }
 
@@ -2078,6 +4800,111 @@ const LOCALIZED_CURRENCY_NAMES = {
         MDL: '摩尔多瓦列伊',
         CAD: '加拿大元',
         AUD: '澳大利亚元'
+    },
+    fr: {
+        RON: 'Leu Roumain',
+        EUR: 'Euro',
+        USD: 'Dollar Américain',
+        GBP: 'Livre Sterling',
+        CHF: 'Franc Suisse',
+        INR: 'Roupie Indienne',
+        CNY: 'Yuan Chinois',
+        JPY: 'Yen Japonais',
+        TRY: 'Livre Turque',
+        EGP: 'Livre Égyptienne',
+        MDL: 'Leu Moldave',
+        CAD: 'Dollar Canadien',
+        AUD: 'Dollar Australien'
+    },
+    es: {
+        RON: 'Leu Rumano',
+        EUR: 'Euro',
+        USD: 'Dólar Estadounidense',
+        GBP: 'Libra Esterlina',
+        CHF: 'Franco Suizo',
+        INR: 'Rupia India',
+        CNY: 'Yuan Chino',
+        JPY: 'Yen Japonés',
+        TRY: 'Lira Turca',
+        EGP: 'Libra Egipcia',
+        MDL: 'Leu Moldavo',
+        CAD: 'Dólar Canadiense',
+        AUD: 'Dólar Australiano'
+    },
+    it: {
+        RON: 'Leu Rumeno',
+        EUR: 'Euro',
+        USD: 'Dollaro Statunitense',
+        GBP: 'Sterlina Britannica',
+        CHF: 'Franco Svizzero',
+        INR: 'Rupia Indiana',
+        CNY: 'Yuan Cinese',
+        JPY: 'Yen Giapponese',
+        TRY: 'Lira Turca',
+        EGP: 'Sterlina Egiziana',
+        MDL: 'Leu Moldavo',
+        CAD: 'Dollaro Canadese',
+        AUD: 'Dollaro Australiano'
+    },
+    pl: {
+        RON: 'Lej Rumuński',
+        EUR: 'Euro',
+        USD: 'Dolar Amerykański',
+        GBP: 'Funt Szterling',
+        CHF: 'Frank Szwajcarski',
+        INR: 'Rupia Indyjska',
+        CNY: 'Yuan Chiński',
+        JPY: 'Jen Japoński',
+        TRY: 'Lira Turecka',
+        EGP: 'Funt Egipski',
+        MDL: 'Lej Mołdawski',
+        CAD: 'Dolar Kanadyjski',
+        AUD: 'Dolar Australijski'
+    },
+    nl: {
+        RON: 'Roemeense Leu',
+        EUR: 'Euro',
+        USD: 'Amerikaanse Dollar',
+        GBP: 'Britse Pond',
+        CHF: 'Zwitserse Frank',
+        INR: 'Indiase Roepie',
+        CNY: 'Chinese Yuan',
+        JPY: 'Japanse Yen',
+        TRY: 'Turkse Lira',
+        EGP: 'Egyptische Pond',
+        MDL: 'Moldavische Leu',
+        CAD: 'Canadese Dollar',
+        AUD: 'Australische Dollar'
+    },
+    pt: {
+        RON: 'Leu Romeno',
+        EUR: 'Euro',
+        USD: 'Dólar Americano',
+        GBP: 'Libra Esterlina',
+        CHF: 'Franco Suíço',
+        INR: 'Rúpia Indiana',
+        CNY: 'Yuan Chinês',
+        JPY: 'Iene Japonês',
+        TRY: 'Lira Turca',
+        EGP: 'Libra Egípcia',
+        MDL: 'Leu Moldavo',
+        CAD: 'Dólar Canadiano',
+        AUD: 'Dólar Australiano'
+    },
+    uk: {
+        RON: 'Румунський Лей',
+        EUR: 'Євро',
+        USD: 'Долар США',
+        GBP: 'Британський Фунт',
+        CHF: 'Швейцарський Франк',
+        INR: 'Індійська Рупія',
+        CNY: 'Китайський Юань',
+        JPY: 'Японська Єна',
+        TRY: 'Турецька Ліра',
+        EGP: 'Єгипетський Фунт',
+        MDL: 'Молдовський Лей',
+        CAD: 'Канадський Долар',
+        AUD: 'Австралійський Долар'
     }
 };
 
@@ -2093,8 +4920,479 @@ function getLocalizedCurrencyName(code, lang = null) {
     return found ? found.name : code;
 }
 
+
+// Filtru Perioadă Grafic Donut & Sincronizare Etichete (Global)
+// Helper: Populează selectorii de ani personalizați (de la anul curent înapoi până în 2007)
+function populateOverviewCustomYearSelect() {
+    const curYear = new Date().getFullYear();
+    let minYear = 2007;
+
+    if (typeof appData !== 'undefined' && Array.isArray(appData.transactions)) {
+        appData.transactions.forEach(t => {
+            if (t.date) {
+                const y = parseInt(t.date.split('-')[0], 10);
+                if (y && y < minYear) minYear = y;
+            }
+        });
+    }
+
+    const yearSelects = [
+        document.getElementById('selectOverviewYearOnly'),
+        document.getElementById('selectOverviewYearForMonth')
+    ];
+
+    yearSelects.forEach(sel => {
+        if (!sel) return;
+        const prevVal = sel.value ? parseInt(sel.value, 10) : curYear;
+        sel.innerHTML = '';
+        for (let y = curYear; y >= minYear; y--) {
+            const opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = `Anul ${y}`;
+            if (y === prevVal) opt.selected = true;
+            sel.appendChild(opt);
+        }
+    });
+}
+
+// Filtru Perioadă Grafic Donut & Sincronizare Etichete (Global)
+function updateOverviewPeriodFilterUI(period) {
+    const isCustom = period && (period.startsWith('year-') || period.startsWith('monthonly-') || period.startsWith('month-'));
+    const validPeriod = (['current-month', 'last-month', 'current-year', 'all'].includes(period) || isCustom) ? period : 'current-month';
+
+    // 1. Actualizare input ascuns
+    const hiddenInput = document.getElementById('overviewPeriod');
+    if (hiddenInput) hiddenInput.value = validPeriod;
+
+    // 2. Actualizare clase active în opțiunile standard din modal
+    document.querySelectorAll('#modalOverviewPeriodFilter .btn-tx-filter-option').forEach(b => {
+        b.classList.toggle('active', b.dataset.period === validPeriod);
+    });
+
+    // 2b. Actualizare stare casetă personalizată
+    const customBox = document.getElementById('overviewCustomPeriodBox');
+    if (customBox) {
+        customBox.classList.toggle('active', !!isCustom);
+    }
+    if (isCustom) {
+        populateOverviewCustomYearSelect();
+        const tabBtns = document.querySelectorAll('.overview-period-tab-btn');
+        const panelYearOnly = document.getElementById('panelPeriodYearOnly');
+        const panelMonthOnly = document.getElementById('panelPeriodMonthOnly');
+        const panelMonthYear = document.getElementById('panelPeriodMonthYear');
+
+        function switchTab(activeTab) {
+            tabBtns.forEach(b => b.classList.toggle('active', b.dataset.periodTab === activeTab));
+            if (panelYearOnly) panelYearOnly.style.display = (activeTab === 'year-only') ? 'block' : 'none';
+            if (panelMonthOnly) panelMonthOnly.style.display = (activeTab === 'month-only') ? 'block' : 'none';
+            if (panelMonthYear) panelMonthYear.style.display = (activeTab === 'month-year') ? 'block' : 'none';
+        }
+
+        if (period.startsWith('year-')) {
+            switchTab('year-only');
+            const yr = period.replace('year-', '');
+            const selY = document.getElementById('selectOverviewYearOnly');
+            if (selY) selY.value = yr;
+        } else if (period.startsWith('monthonly-')) {
+            switchTab('month-only');
+            const mo = period.replace('monthonly-', '');
+            const selM = document.getElementById('selectOverviewMonthOnly');
+            if (selM) selM.value = mo;
+        } else if (period.startsWith('month-')) {
+            switchTab('month-year');
+            const parts = period.split('-');
+            const yr = parts[1];
+            const mo = parts[2];
+            const selMY = document.getElementById('selectOverviewYearForMonth');
+            const selMM = document.getElementById('selectOverviewMonthForYear');
+            if (selMY) selMY.value = yr;
+            if (selMM) selMM.value = mo;
+        }
+    } else {
+        // Perioada standard (Luna Aceasta / Luna Trecută / Anul Acesta / Toată Perioada):
+        // niciun tab din secțiunea personalizată nu trebuie să apară selectat
+        document.querySelectorAll('.overview-period-tab-btn').forEach(b => b.classList.remove('active'));
+        const panelYearOnly = document.getElementById('panelPeriodYearOnly');
+        const panelMonthOnly = document.getElementById('panelPeriodMonthOnly');
+        const panelMonthYear = document.getElementById('panelPeriodMonthYear');
+        if (panelYearOnly) panelYearOnly.style.display = 'none';
+        if (panelMonthOnly) panelMonthOnly.style.display = 'none';
+        if (panelMonthYear) panelMonthYear.style.display = 'none';
+    }
+
+    // 3. Actualizare etichetă buton selector deasupra graficului
+    const labelEl = document.getElementById('overviewPeriodCurrentLabel');
+    const lang = (typeof getLanguageForCurrency === 'function') ? getLanguageForCurrency() : 'ro';
+    const months = (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY[lang]?.months) || (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY['ro']?.months) || [
+        'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+    ];
+
+    let displayLabel = '';
+    let donutLabel = '';
+
+    if (validPeriod === 'current-month') {
+        displayLabel = t('period_current_month', lang);
+        donutLabel = t('total_month', lang);
+        if (labelEl) labelEl.dataset.i18n = 'period_current_month';
+    } else if (validPeriod === 'last-month') {
+        displayLabel = t('period_last_month', lang);
+        donutLabel = t('total_last_month', lang);
+        if (labelEl) labelEl.dataset.i18n = 'period_last_month';
+    } else if (validPeriod === 'current-year') {
+        displayLabel = t('period_current_year', lang);
+        donutLabel = t('total_year', lang);
+        if (labelEl) labelEl.dataset.i18n = 'period_current_year';
+    } else if (validPeriod === 'all') {
+        displayLabel = t('period_all', lang);
+        donutLabel = t('total_all', lang);
+        if (labelEl) labelEl.dataset.i18n = 'period_all';
+    } else if (validPeriod.startsWith('year-')) {
+        const y = validPeriod.replace('year-', '');
+        displayLabel = `${t('year_prefix', lang)} ${y}`;
+        donutLabel = `Total ${y}`;
+        if (labelEl) delete labelEl.dataset.i18n;
+    } else if (validPeriod.startsWith('monthonly-')) {
+        const mIdx = parseInt(validPeriod.replace('monthonly-', ''), 10) - 1;
+        const mName = months[mIdx] || '';
+        displayLabel = `Luna ${mName} (Toți anii)`;
+        donutLabel = `Total ${mName}`;
+        if (labelEl) delete labelEl.dataset.i18n;
+    } else if (validPeriod.startsWith('month-')) {
+        const parts = validPeriod.split('-');
+        const y = parts[1];
+        const mIdx = parseInt(parts[2], 10) - 1;
+        const mName = months[mIdx] || parts[2];
+        displayLabel = `${mName} ${y}`;
+        donutLabel = `Total ${mName} ${y}`;
+        if (labelEl) delete labelEl.dataset.i18n;
+    }
+
+    if (labelEl) {
+        labelEl.textContent = displayLabel;
+    }
+
+    // 4. Actualizare etichetă centrală din graficul Donut
+    const donutCenterLabel = document.getElementById('donutCenterLabel') || document.querySelector('#donutCenterInfo .chart-center-label') || document.querySelector('.chart-center-label');
+    if (donutCenterLabel) {
+        donutCenterLabel.textContent = donutLabel;
+    }
+}
+
+// ==================== LOCALIZATION HELPERS ====================
+const CATEGORY_TRANSLATIONS = {
+    en: {
+        'Mâncare': 'Food',
+        'Mâncare & Alimente': 'Food & Groceries',
+        'Facturi': 'Bills',
+        'Facturi & Utilități': 'Bills & Utilities',
+        'Transport': 'Transport',
+        'Transport & Combustibil': 'Transport & Fuel',
+        'Locuință': 'Housing',
+        'Locuință & Chirie': 'Housing & Rent',
+        'Sănătate': 'Health',
+        'Sănătate & Farmacie': 'Health & Pharmacy',
+        'Cadouri': 'Gifts',
+        'Cadouri & Flori': 'Gifts & Flowers',
+        'Haine': 'Clothes',
+        'Cumpărături & Haine': 'Shopping & Clothes',
+        'Concediu': 'Vacation',
+        'Concediu & Călătorii': 'Vacation & Travel',
+        'Serviciu': 'Job / Work',
+        'Serviciu & Muncă': 'Job & Work',
+        'Fast-food': 'Fast Food',
+        'Fast food': 'Fast Food',
+        'Pisici': 'Cats',
+        'Pisici & Animale': 'Cats & Pets',
+        'Animale': 'Pets',
+        'Altele': 'Other',
+        'Economii': 'Savings',
+        'Economii & Rate': 'Savings & Loans',
+        'Divertisment': 'Entertainment',
+        'Divertisment & Ieșiri': 'Entertainment & Outings',
+        'Educație': 'Education',
+        'Sport': 'Sports',
+        'Auto': 'Car'
+    },
+    de: {
+        'Mâncare': 'Essen',
+        'Mâncare & Alimente': 'Lebensmittel & Essen',
+        'Facturi': 'Rechnungen',
+        'Facturi & Utilități': 'Rechnungen & Nebenkosten',
+        'Transport': 'Transport',
+        'Transport & Combustibil': 'Transport & Kraftstoff',
+        'Locuință': 'Wohnen',
+        'Locuință & Chirie': 'Wohnen & Miete',
+        'Sănătate': 'Gesundheit',
+        'Sănătate & Farmacie': 'Gesundheit & Apotheke',
+        'Cadouri': 'Geschenke',
+        'Cadouri & Flori': 'Geschenke & Blumen',
+        'Haine': 'Kleidung',
+        'Cumpărături & Haine': 'Einkaufen & Kleidung',
+        'Concediu': 'Urlaub',
+        'Concediu & Călătorii': 'Urlaub & Reisen',
+        'Serviciu': 'Arbeit',
+        'Serviciu & Muncă': 'Arbeit & Beruf',
+        'Fast-food': 'Fast Food',
+        'Fast food': 'Fast Food',
+        'Pisici': 'Katzen',
+        'Pisici & Animale': 'Katzen & Haustiere',
+        'Animale': 'Haustiere',
+        'Altele': 'Sonstiges',
+        'Economii': 'Ersparnisse',
+        'Economii & Rate': 'Sparen & Raten',
+        'Divertisment': 'Unterhaltung',
+        'Divertisment & Ieșiri': 'Unterhaltung & Freizeit',
+        'Educație': 'Bildung',
+        'Sport': 'Sport',
+        'Auto': 'Auto'
+    },
+    fr: {
+        'Mâncare': 'Alimentation',
+        'Mâncare & Alimente': 'Nourriture & Courses',
+        'Facturi': 'Factures',
+        'Facturi & Utilități': 'Factures & Charges',
+        'Transport': 'Transport',
+        'Transport & Combustibil': 'Transport & Carburant',
+        'Locuință': 'Logement',
+        'Locuință & Chirie': 'Logement & Loyer',
+        'Sănătate': 'Santé',
+        'Sănătate & Farmacie': 'Santé & Pharmacie',
+        'Cadouri': 'Cadeaux',
+        'Cadouri & Flori': 'Cadeaux & Fleurs',
+        'Haine': 'Vêtements',
+        'Cumpărături & Haine': 'Shopping & Vêtements',
+        'Concediu': 'Vacances',
+        'Concediu & Călătorii': 'Vacances & Voyages',
+        'Serviciu': 'Travail',
+        'Serviciu & Muncă': 'Travail & Emploi',
+        'Fast-food': 'Restauration rapide',
+        'Fast food': 'Restauration rapide',
+        'Pisici': 'Chats',
+        'Pisici & Animale': 'Chats & Animaux',
+        'Animale': 'Animaux',
+        'Altele': 'Autres',
+        'Economii': 'Épargne',
+        'Economii & Rate': 'Épargne & Crédits',
+        'Divertisment': 'Divertissement',
+        'Divertisment & Ieșiri': 'Loisirs & Sorties',
+        'Educație': 'Éducation',
+        'Sport': 'Sport',
+        'Auto': 'Voiture'
+    },
+    es: {
+        'Mâncare': 'Comida',
+        'Mâncare & Alimente': 'Comida & Alimentos',
+        'Facturi': 'Facturas',
+        'Facturi & Utilități': 'Facturas y Servicios',
+        'Transport': 'Transporte',
+        'Transport & Combustibil': 'Transporte y Combustible',
+        'Locuință': 'Vivienda',
+        'Locuință & Chirie': 'Vivienda y Alquiler',
+        'Sănătate': 'Salud',
+        'Sănătate & Farmacie': 'Salud y Farmacia',
+        'Cadouri': 'Regalos',
+        'Cadouri & Flori': 'Regalos y Flores',
+        'Haine': 'Ropa',
+        'Cumpărături & Haine': 'Compras y Ropa',
+        'Concediu': 'Vacaciones',
+        'Concediu & Călătorii': 'Vacaciones y Viajes',
+        'Serviciu': 'Trabajo',
+        'Serviciu & Muncă': 'Trabajo y Empleo',
+        'Fast-food': 'Comida rápida',
+        'Fast food': 'Comida rápida',
+        'Pisici': 'Gatos',
+        'Pisici & Animale': 'Gatos y Mascotas',
+        'Animale': 'Mascotas',
+        'Altele': 'Otros',
+        'Economii': 'Ahorros',
+        'Economii & Rate': 'Ahorros y Préstamos',
+        'Divertisment': 'Entretenimiento',
+        'Divertisment & Ieșiri': 'Ocio y Salidas',
+        'Educație': 'Educación',
+        'Sport': 'Deportes',
+        'Auto': 'Auto'
+    },
+    it: {
+        'Mâncare': 'Cibo',
+        'Mâncare & Alimente': 'Alimentari & Spesa',
+        'Facturi': 'Bollette',
+        'Facturi & Utilități': 'Bollette e Utenze',
+        'Transport': 'Trasporti',
+        'Transport & Combustibil': 'Trasporti e Carburante',
+        'Locuință': 'Casa',
+        'Locuință & Chirie': 'Casa e Affitto',
+        'Sănătate': 'Salute',
+        'Sănătate & Farmacie': 'Salute e Farmacia',
+        'Cadouri': 'Regali',
+        'Cadouri & Flori': 'Regali e Fiori',
+        'Haine': 'Abbigliamento',
+        'Cumpărături & Haine': 'Shopping & Vestiti',
+        'Concediu': 'Vacanze',
+        'Concediu & Călătorii': 'Vacanze e Viaggi',
+        'Serviciu': 'Lavoro',
+        'Serviciu & Muncă': 'Lavoro e Impiego',
+        'Fast-food': 'Fast Food',
+        'Fast food': 'Fast Food',
+        'Pisici': 'Gatti',
+        'Pisici & Animale': 'Gatti e Animali',
+        'Animale': 'Animali',
+        'Altele': 'Altro',
+        'Economii': 'Risparmi',
+        'Economii & Rate': 'Risparmi e Rate',
+        'Divertisment': 'Intrattenimento',
+        'Divertisment & Ieșiri': 'Svago e Uscite',
+        'Educație': 'Istruzione',
+        'Sport': 'Sport',
+        'Auto': 'Auto'
+    }
+};
+
+function getLocalizedCategoryName(name, lang = null) {
+    if (!name) return '';
+    const activeLang = lang || getLanguageForCurrency();
+    if (activeLang === 'ro') return name;
+    if (CATEGORY_TRANSLATIONS[activeLang] && CATEGORY_TRANSLATIONS[activeLang][name]) {
+        return CATEGORY_TRANSLATIONS[activeLang][name];
+    }
+    if (CATEGORY_TRANSLATIONS['en'] && CATEGORY_TRANSLATIONS['en'][name]) {
+        return CATEGORY_TRANSLATIONS['en'][name];
+    }
+    return name;
+}
+
+const SHOPPING_ITEM_TRANSLATIONS = {
+    en: {
+        'Pâine': 'Bread',
+        'Lapte': 'Milk',
+        'Ouă': 'Eggs',
+        'Carne': 'Meat',
+        'Pui': 'Chicken',
+        'Legume': 'Vegetables',
+        'Fructe': 'Fruits',
+        'Apă': 'Water',
+        'Suc': 'Juice',
+        'Cafea': 'Coffee',
+        'Dulciuri': 'Sweets',
+        'Brânzeturi': 'Cheese',
+        'Mezeluri': 'Cold Cuts',
+        'Iaurt': 'Yogurt',
+        'Ulei / Zahăr': 'Oil / Sugar',
+        'Paste / Orez': 'Pasta / Rice',
+        'Pește': 'Fish',
+        'Snacks': 'Snacks',
+        'Burger': 'Burger',
+        'Meniu Burger': 'Burger Meal',
+        'Shaorma': 'Shawarma',
+        'Pizza': 'Pizza',
+        'Cartofi prăjiți': 'French Fries',
+        'Aripioare pui': 'Chicken Wings',
+        'Crispy Strips': 'Crispy Strips',
+        'Sandwich': 'Sandwich',
+        'Sosuri': 'Sauces',
+        'Kebab': 'Kebab',
+        'Noodles': 'Noodles',
+        'Sushi': 'Sushi',
+        'Clătite': 'Pancakes',
+        'Tricou': 'T-Shirt',
+        'Pantaloni': 'Pants',
+        'Blugi': 'Jeans',
+        'Cămașă': 'Shirt',
+        'Rochie': 'Dress',
+        'Geacă': 'Jacket',
+        'Hanorac': 'Hoodie',
+        'Pantofi': 'Shoes',
+        'Adidași': 'Sneakers',
+        'Șosete': 'Socks',
+        'Lenjerie': 'Underwear',
+        'Geantă / Rucsac': 'Bag / Backpack',
+        'Curea': 'Belt',
+        'Benzină': 'Gasoline',
+        'Motorină': 'Diesel',
+        'GPL': 'LPG',
+        'Spălătorie auto': 'Car Wash',
+        'Parcare': 'Parking',
+        'Cursă Uber / Bolt': 'Uber / Bolt Ride',
+        'Bilet STB / Metrou': 'Bus / Metro Ticket',
+        'Bilet tren CFR': 'Train Ticket',
+        'Rovinietă': 'Road Vignette',
+        'Revizie / Schimb ulei': 'Oil Change / Service',
+        'Medicamente': 'Medicine',
+        'Antibiotice': 'Antibiotics',
+        'Vitamine': 'Vitamins',
+        'Sirop / Răceală': 'Cold Syrup',
+        'Pansamente / Plasturi': 'Bandages',
+        'Analize medicale': 'Medical Tests',
+        'Consultație medic': 'Doctor Consultation',
+        'Stomatolog': 'Dentist',
+        'Detergent rufe': 'Laundry Detergent',
+        'Balsam rufe': 'Fabric Softener',
+        'Detergent vase': 'Dish Soap',
+        'Soluție curățenie': 'Cleaning Solution',
+        'Hârtie igienică': 'Toilet Paper',
+        'Săpun / Gel duș': 'Soap / Shower Gel',
+        'Șampon': 'Shampoo',
+        'Pastă dinți': 'Toothpaste',
+        'Becuri': 'Light Bulbs',
+        'Curent Electric': 'Electricity',
+        'Gaze Naturale': 'Natural Gas',
+        'Apă & Canal': 'Water & Sewer',
+        'Internet & TV': 'Internet & TV',
+        'Telefonie Mobilă': 'Mobile Phone',
+        'Întreținere Bloc': 'Building Maintenance',
+        'Chirie Apartament': 'Apartment Rent',
+        'Impozit & Taxe': 'Taxes & Fees',
+        'Salubritate / Gunoi': 'Waste Collection',
+        'Asigurare Locuință': 'Home Insurance',
+        'Rată Bancă / Credit': 'Loan / Mortgage Payment',
+        'Hrană uscată': 'Dry Pet Food',
+        'Hrană umedă / Plicuri': 'Wet Pet Food',
+        'Conserve pisici': 'Canned Cat Food',
+        'Nisip pisici': 'Cat Litter',
+        'Recompense animale': 'Pet Treats',
+        'Antiparazitar': 'Antiparasitic',
+        'Jucărie animal': 'Pet Toy',
+        'Litieră': 'Litter Box',
+        'Vizită veterinar': 'Vet Visit',
+        'Toaletaj / Spălat': 'Pet Grooming',
+        'Buchet flori': 'Flower Bouquet',
+        'Cadou aniversare': 'Birthday Gift',
+        'Jucării': 'Toys',
+        'Parfum': 'Perfume',
+        'Carte': 'Book',
+        'Bijuterii': 'Jewelry',
+        'Dulciuri fine / Praline': 'Fine Sweets / Pralines',
+        'Pungă / Cutie cadou': 'Gift Bag / Box',
+        'Lumânare parfumată': 'Scented Candle',
+        'Bilet cinema': 'Cinema Ticket',
+        'Abonament streaming': 'Streaming Subscription',
+        'Cazare hotel / pensiune': 'Hotel / Lodging',
+        'Bilet avion': 'Flight Ticket',
+        'Bilet concert / festival': 'Concert / Festival Ticket',
+        'Cină restaurant': 'Restaurant Dinner',
+        'Băuturi ieșire': 'Drinks / Going Out',
+        'Intrare atracție / parc': 'Attraction / Park Entry',
+        'Șezlong / Plajă': 'Beach Lounger'
+    }
+};
+
+function getLocalizedItemName(name, lang = null) {
+    if (!name) return '';
+    const activeLang = lang || getLanguageForCurrency();
+    if (activeLang === 'ro') return name;
+    if (SHOPPING_ITEM_TRANSLATIONS[activeLang] && SHOPPING_ITEM_TRANSLATIONS[activeLang][name]) {
+        return SHOPPING_ITEM_TRANSLATIONS[activeLang][name];
+    }
+    if (SHOPPING_ITEM_TRANSLATIONS['en'] && SHOPPING_ITEM_TRANSLATIONS['en'][name]) {
+        return SHOPPING_ITEM_TRANSLATIONS['en'][name];
+    }
+    return name;
+}
+
 function applyLanguage() {
     const lang = getLanguageForCurrency();
+    if (typeof renderExpenseCategoryPicker === 'function') renderExpenseCategoryPicker();
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
+    if (typeof renderMerchantCatConfigModal === 'function') renderMerchantCatConfigModal();
     const curInfo = getCurrencyInfo();
 
     // Actualizare data-i18n in toata pagina
@@ -2169,11 +5467,16 @@ function applyLanguage() {
             : t('modal_add_category', lang);
     }
 
-    // Actualizare selector perioada panou general (ex: This Month, Dieser Monat)
+    // Actualizare selector perioada panou general (ex: This Month, This Year, etc.)
     const savedPeriod = document.getElementById('overviewPeriod')?.value || (appData.settings && appData.settings.overviewPeriod) || 'current-month';
-    if (typeof updateOverviewPeriodFilterUI === 'function') {
-        updateOverviewPeriodFilterUI(savedPeriod);
+    updateOverviewPeriodFilterUI(savedPeriod);
+
+    // Actualizare lista tranzactii suspendate daca modalul este deschis
+    const modalSusp = document.getElementById('modalSuspendedTransactions');
+    if (modalSusp && modalSusp.classList.contains('active')) {
+        renderSuspendedTransactionsList();
     }
+    updateSuspendedTxBadge();
 }
 
 function getCurrencySymbolDisplay(code = null) {
@@ -2299,6 +5602,15 @@ function formatMoney(amount, currency = null) {
     return `${formatted} ${info.symbol || info.code}`;
 }
 
+function formatMoneySubHtml(amount, currency = null, sign = '') {
+    const fullStr = formatMoney(amount, currency);
+    return (sign ? sign : '') + fullStr.replace(/,(\d{2})(\s+.*)?$/, function(m, dec, curr) {
+        return '<span class="totals-sub-dec">,' + dec + '</span>' + (curr ? '<span class="totals-sub-curr">' + curr + '</span>' : '');
+    }).replace(/^([^\d\s]+)\s+/, function(m, curr) {
+        return '<span class="totals-sub-curr">' + curr + ' </span>';
+    });
+}
+
 function getSecondaryCurrency() {
     if (appData && appData.settings && appData.settings.secondaryCurrency) {
         return appData.settings.secondaryCurrency;
@@ -2375,14 +5687,19 @@ function formatDateDisplay(dateStr) {
     return dateStr;
 }
 
-function getTransactionTimeDisplay(tx) {
-    if (!tx) return '';
-    if (tx.time && typeof tx.time === 'string' && tx.time.trim().length > 0) {
-        return tx.time.trim();
+// Extrage sigur ora și minutul în formatul strict standard HH:mm (fără secunde)
+function extractTimeHHmm(timeVal, fallbackTimestamp) {
+    if (timeVal && typeof timeVal === 'string' && timeVal.trim().length > 0) {
+        const m = timeVal.trim().match(/(\d{1,2}):(\d{2})/);
+        if (m) {
+            const hh = m[1].padStart(2, '0');
+            const mm = m[2];
+            return `${hh}:${mm}`;
+        }
     }
-    if (tx.createdAt) {
+    if (fallbackTimestamp) {
         try {
-            const d = new Date(tx.createdAt);
+            const d = new Date(fallbackTimestamp);
             if (!isNaN(d.getTime())) {
                 const hh = String(d.getHours()).padStart(2, '0');
                 const mm = String(d.getMinutes()).padStart(2, '0');
@@ -2391,6 +5708,11 @@ function getTransactionTimeDisplay(tx) {
         } catch (e) {}
     }
     return '';
+}
+
+function getTransactionTimeDisplay(tx) {
+    if (!tx) return '';
+    return extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '';
 }
 
 // Toast helper modern: dreptunghiular pe fundal gri, text alb clar si bordura fina neagra
@@ -2444,11 +5766,12 @@ function persistDatabaseToFile() {
                 categories: appData.categories,
                 transactions: appData.transactions,
                 customDeposits: appData.customDeposits || [],
+                utilityReadings: appData.utilityReadings || [],
                 settings: appData.settings
             };
             const jsonStr = JSON.stringify(payload, null, 2);
             window.AndroidBridge.persistDatabase(jsonStr);
-            console.log("MoneyApp: Baza de date a fost salvată pe disc (moneyapp_database.json & .bak) cu depozite:", (appData.customDeposits || []).length);
+            console.log("MoneyApp: Baza de date a fost salvată pe disc (moneyapp_database.json & .bak) cu depozite:", (appData.customDeposits || []).length, "și utilități:", (appData.utilityReadings || []).length);
         } catch (e) {
             console.error("MoneyApp: Eroare la scrierea bazei de date pe disc:", e);
         }
@@ -2464,7 +5787,7 @@ function initNativeDatabase() {
         const diskJson = window.AndroidBridge.readDatabase();
         if (diskJson && diskJson.trim().length > 0) {
             const parsed = JSON.parse(diskJson);
-            if (parsed && (Array.isArray(parsed.categories) || Array.isArray(parsed.transactions) || Array.isArray(parsed.customDeposits))) {
+            if (parsed && (Array.isArray(parsed.categories) || Array.isArray(parsed.transactions) || Array.isArray(parsed.customDeposits) || Array.isArray(parsed.utilityReadings))) {
                 if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
                     appData.categories = parsed.categories;
                 }
@@ -2485,6 +5808,20 @@ function initNativeDatabase() {
                         }
                     } catch (_) {}
                 }
+                if (Array.isArray(parsed.utilityReadings)) {
+                    appData.utilityReadings = parsed.utilityReadings;
+                } else {
+                    // Verificare localStorage pentru utilityReadings dacă fișierul de pe disc nu le conținea încă
+                    try {
+                        const lsStored = localStorage.getItem('moneyapp_data_v1');
+                        if (lsStored) {
+                            const lsParsed = JSON.parse(lsStored);
+                            if (Array.isArray(lsParsed.utilityReadings) && lsParsed.utilityReadings.length > 0) {
+                                appData.utilityReadings = lsParsed.utilityReadings;
+                            }
+                        }
+                    } catch (_) {}
+                }
                 if (parsed.settings) {
                     appData.settings = { ...appData.settings, ...parsed.settings };
                 }
@@ -2494,7 +5831,7 @@ function initNativeDatabase() {
                     localStorage.setItem('moneyapp_data_v1', JSON.stringify(appData));
                 } catch (lsErr) {}
 
-                console.log("MoneyApp: Bază de date recuperată de pe disc:", (appData.transactions || []).length, "tranzacții,", (appData.categories || []).length, "categorii,", (appData.customDeposits || []).length, "depozite");
+                console.log("MoneyApp: Bază de date recuperată de pe disc:", (appData.transactions || []).length, "tranzacții,", (appData.categories || []).length, "categorii,", (appData.customDeposits || []).length, "depozite,", (appData.utilityReadings || []).length, "citiri contoare");
                 return true;
             }
         }
@@ -2523,6 +5860,9 @@ function loadData() {
                 }
                 if (Array.isArray(parsed.customDeposits)) {
                     appData.customDeposits = parsed.customDeposits;
+                }
+                if (Array.isArray(parsed.utilityReadings)) {
+                    appData.utilityReadings = parsed.utilityReadings;
                 }
                 if (parsed.settings) {
                     appData.settings = { ...appData.settings, ...parsed.settings };
@@ -2571,6 +5911,22 @@ function loadData() {
         if (!appData.settings) appData.settings = {};
         if (!appData.settings.mainCurrency) appData.settings.mainCurrency = 'RON';
         if (!appData.settings.secondaryCurrency) appData.settings.secondaryCurrency = 'auto';
+        if (!Array.isArray(appData.utilityReadings)) {
+            appData.utilityReadings = [];
+        }
+
+        // Auto-recuperare (Self-Healing) citiri contoare din tranzacțiile existente dacă lipseau
+        if (Array.isArray(appData.transactions)) {
+            appData.transactions.forEach(tx => {
+                if (tx.utilityIndex && !isNaN(parseFloat(tx.utilityIndex))) {
+                    const alreadyExists = appData.utilityReadings.some(r => r.txId === tx.id);
+                    if (!alreadyExists) {
+                        syncTxUtilityReading(tx);
+                    }
+                }
+            });
+        }
+
         window.appData = appData;
 
         // Asigurare scriere inițială pe disc a bazei de date
@@ -2910,6 +6266,17 @@ function filterTransactionsByPeriod(transactions, periodKey) {
             return y === curYear;
         } else if (periodKey === 'all') {
             return true;
+        } else if (periodKey.startsWith('year-')) {
+            const targetYear = parseInt(periodKey.replace('year-', ''), 10);
+            return y === targetYear;
+        } else if (periodKey.startsWith('monthonly-')) {
+            const targetMonth = parseInt(periodKey.replace('monthonly-', ''), 10) - 1;
+            return txMonth === targetMonth;
+        } else if (periodKey.startsWith('month-')) {
+            const parts = periodKey.split('-');
+            const targetYear = parseInt(parts[1], 10);
+            const targetMonth = parseInt(parts[2], 10) - 1;
+            return y === targetYear && txMonth === targetMonth;
         }
         return true;
     });
@@ -2917,7 +6284,9 @@ function filterTransactionsByPeriod(transactions, periodKey) {
 
 function getPeriodLabel(periodKey) {
     const lang = getLanguageForCurrency();
-    const months = I18N_DICTIONARY[lang]?.months || I18N_DICTIONARY['ro'].months;
+    const months = (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY[lang]?.months) || (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY['ro']?.months) || [
+        'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+    ];
     const now = new Date();
     if (periodKey === 'current-month') {
         return `${months[now.getMonth()]} ${now.getFullYear()}`;
@@ -2927,6 +6296,17 @@ function getPeriodLabel(periodKey) {
         return `${months[prevM]} ${prevY}`;
     } else if (periodKey === 'current-year') {
         return `${t('year_prefix', lang)} ${new Date().getFullYear()}`;
+    } else if (periodKey.startsWith('year-')) {
+        const targetYear = periodKey.replace('year-', '');
+        return `${t('year_prefix', lang)} ${targetYear}`;
+    } else if (periodKey.startsWith('monthonly-')) {
+        const mIdx = parseInt(periodKey.replace('monthonly-', ''), 10) - 1;
+        return `${months[mIdx]} (${lang === 'ro' ? 'Toți anii' : 'All years'})`;
+    } else if (periodKey.startsWith('month-')) {
+        const parts = periodKey.split('-');
+        const targetYear = parts[1];
+        const targetMonth = parseInt(parts[2], 10) - 1;
+        return `${months[targetMonth]} ${targetYear}`;
     } else {
         return t('period_all', lang);
     }
@@ -2934,7 +6314,8 @@ function getPeriodLabel(periodKey) {
 
 // Render Main Donut Chart & Category Breakdown
 function renderOverviewChartAndList() {
-    const periodKey = document.getElementById('overviewPeriod').value;
+    const periodKey = document.getElementById('overviewPeriod')?.value || (appData.settings && appData.settings.overviewPeriod) || 'current-month';
+    updateOverviewPeriodFilterUI(periodKey);
     const periodTx = filterTransactionsByPeriod(appData.transactions, periodKey);
     const expenseTx = periodTx.filter(t => t.type === 'expense');
 
@@ -3696,6 +7077,8 @@ function openCategoryDetailModal(categoryId) {
                 toggleSuspendTransaction(tx.id);
                 openCategoryDetailModal(categoryId);
             });
+
+            // Doar butonul explicit de editare deschide formularul de editare, evitand deschiderea accidentala la tap pe grafic
             item.querySelector('.tx-edit-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 openEditExpenseModal(tx);
@@ -3711,6 +7094,14 @@ function openCategoryDetailModal(categoryId) {
         });
     }
 
+    const modalDet = document.getElementById('modalCategoryDetails');
+    if (modalDet) {
+        modalDet.style.pointerEvents = 'none';
+        setTimeout(() => {
+            modalDet.style.pointerEvents = 'auto';
+        }, 400);
+    }
+
     openModal('modalCategoryDetails');
 }
 
@@ -3720,7 +7111,9 @@ function openCategoryDetailModal(categoryId) {
 
 function getPeriodReadableName(periodKey) {
     const lang = getLanguageForCurrency();
-    const months = I18N_DICTIONARY[lang]?.months || I18N_DICTIONARY['ro'].months;
+    const months = (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY[lang]?.months) || (typeof I18N_DICTIONARY !== 'undefined' && I18N_DICTIONARY['ro']?.months) || [
+        'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+    ];
     const now = new Date();
     if (periodKey === 'current-month') {
         return `${t('period_current_month', lang)} (${months[now.getMonth()]} ${now.getFullYear()})`;
@@ -3729,6 +7122,17 @@ function getPeriodReadableName(periodKey) {
         return `${t('period_last_month', lang)} (${months[lastM.getMonth()]} ${lastM.getFullYear()})`;
     } else if (periodKey === 'current-year') {
         return `${t('period_current_year', lang)} (${now.getFullYear()})`;
+    } else if (periodKey.startsWith('year-')) {
+        const targetYear = periodKey.replace('year-', '');
+        return `${t('year_prefix', lang)} ${targetYear}`;
+    } else if (periodKey.startsWith('monthonly-')) {
+        const mIdx = parseInt(periodKey.replace('monthonly-', ''), 10) - 1;
+        return `Luna ${months[mIdx]} (${lang === 'ro' ? 'Toți anii' : 'All years'})`;
+    } else if (periodKey.startsWith('month-')) {
+        const parts = periodKey.split('-');
+        const targetYear = parts[1];
+        const targetMonth = parseInt(parts[2], 10) - 1;
+        return `${months[targetMonth]} ${targetYear}`;
     } else {
         return t('period_all', lang);
     }
@@ -4039,6 +7443,9 @@ function downloadExportFile() {
 // Delete Transaction
 function deleteTransaction(txId) {
     appData.transactions = appData.transactions.filter(t => t.id !== txId);
+    if (Array.isArray(appData.utilityReadings)) {
+        appData.utilityReadings = appData.utilityReadings.filter(r => r.txId !== txId);
+    }
     saveData();
     updateBalanceCards();
     renderOverviewChartAndList();
@@ -4052,6 +7459,10 @@ function deleteTransaction(txId) {
     const modalBills = document.getElementById('modalBillsAnalytics');
     if (modalBills && modalBills.classList.contains('active')) {
         renderBillsAnalytics();
+    }
+    const modalMeters = document.getElementById('modalUtilityMetersAnalytics');
+    if (modalMeters && modalMeters.classList.contains('active')) {
+        renderUtilityMetersAnalytics();
     }
     showToast('Tranzacție ștearsă cu succes.', 'success');
 }
@@ -4123,12 +7534,204 @@ function getTransactionMerchantAndComment(tx) {
 }
 
 // Render Transactions Tab (History) cu separare pe saptamani
+// Helper: Parser inteligent pentru căutare (detectează dacă s-a introdus o sumă)
+function parseTxSearchQuery(rawQuery) {
+    if (!rawQuery || !rawQuery.trim()) return null;
+    const trimmed = rawQuery.trim();
+
+    // Căutare număr cu zecimale opționale (ex: 50, 50.5, 50,50, 1500)
+    const numMatch = trimmed.match(/\b\d+(?:[.,]\d+)?\b/);
+    let targetAmount = null;
+    let textQuery = normalizeDiacritics(trimmed);
+
+    if (numMatch) {
+        const candidate = numMatch[0].replace(',', '.');
+        const val = parseFloat(candidate);
+        if (!isNaN(val) && val > 0) {
+            targetAmount = val;
+            const textWithoutNum = trimmed
+                .replace(numMatch[0], '')
+                .replace(/\b(ron|lei|eur|euro|usd|\$|€|mdl)\b/gi, '')
+                .trim();
+            textQuery = normalizeDiacritics(textWithoutNum);
+        }
+    }
+
+    return {
+        targetAmount,
+        textQuery,
+        fullNormalized: normalizeDiacritics(trimmed)
+    };
+}
+
+// Helper: Creare element card tranzacție pentru istoric
+function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
+    const isTransfer = tx.type === 'transfer';
+    const isExp = tx.type === 'expense';
+    const isSuspended = isTxSuspended(tx);
+    const cat = isExp ? appData.categories.find(c => c.id === tx.categoryId) : null;
+    const mc = getTransactionMerchantAndComment(tx);
+
+    let icon = '🏷️';
+    let mainTitle = '';
+    let sign = '';
+    let colorClass = '';
+
+    if (isTransfer) {
+        icon = '🔄';
+        const dir = tx.transferDirection || 'card-to-cash';
+        const dirLabel = dir === 'card-to-cash' ? 'Card ➔ Cash (ATM)' : 'Cash ➔ Card (Depunere)';
+        mainTitle = 'Transfer ' + dirLabel;
+        sign = '⇄ ';
+        colorClass = 'transfer-color';
+    } else if (isExp) {
+        icon = cat ? cat.icon : '🏷️';
+        mainTitle = cat ? cat.name : 'Cheltuială';
+        sign = '-';
+        colorClass = 'expense-color';
+    } else {
+        icon = '💰';
+        mainTitle = 'Venit';
+        sign = '+';
+        colorClass = 'income-color';
+    }
+
+    const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+    const mainAmount = convertFromRon(amtRon, mainCurr);
+    const mainText = sign + formatMoney(mainAmount, mainCurr);
+    const amountBlockHtml = isTransfer ? `
+        <div class="tx-val-block">
+            <span class="tx-val ${colorClass}">${mainText}</span>
+        </div>
+    ` : formatTransactionAmountHtml(tx, mainCurr, isExp);
+    const suspendedBadgeHtml = isSuspended ? '<span class="tx-suspended-badge">⏸️ Suspendat</span>' : '';
+
+    let payBadgeHtml = '';
+    if (isTransfer) {
+        const dir = tx.transferDirection || 'card-to-cash';
+        payBadgeHtml = dir === 'card-to-cash'
+            ? '<span class="tx-pay-badge transfer">💳 ➔ 💵 ATM</span>'
+            : '<span class="tx-pay-badge transfer">💵 ➔ 💳 Depunere</span>';
+    } else {
+        const payMethod = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
+        payBadgeHtml = payMethod === 'cash'
+            ? '<span class="tx-pay-badge cash">💵 Cash</span>'
+            : '<span class="tx-pay-badge card">💳 Card</span>';
+    }
+
+    // Badge căutare după sumă (exactă sau diferență)
+    let matchBadgeHtml = '';
+    if (matchType === 'exact') {
+        matchBadgeHtml = '<span class="tx-match-badge exact">🎯 Sumă exactă</span>';
+    } else if (matchType === 'near' && typeof diffVal === 'number') {
+        matchBadgeHtml = '<span class="tx-match-badge near">±' + formatMoney(diffVal, mainCurr) + ' diferență</span>';
+    }
+
+    const commentText = (isExp ? mc.comment : (tx.description || '')).trim();
+    const commentRowHtml = commentText ? `
+        <div class="tx-row-comment">
+            <span class="tx-comment-icon">💬</span>
+            <span class="tx-comment-text">${escapeHtml(commentText)}</span>
+        </div>
+    ` : '';
+
+    let merchantBadgeHtml = '';
+    if (isExp && mc.merchant) {
+        merchantBadgeHtml = '<span class="tx-store-badge">' + getMerchantLogoHtml(mc.merchant, 14) + ' <span>' + escapeHtml(mc.merchant) + '</span></span>';
+    } else if (isTransfer) {
+        merchantBadgeHtml = '<span class="tx-cat-badge" style="color:var(--accent);">Transfer Intern</span>';
+    }
+
+    const suspendIconSvg = isSuspended
+        ? '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M8 5v14l11-7z"/></svg>'
+        : '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+    const suspendTitle = isSuspended ? 'Reactivează tranzacția' : 'Suspendă tranzacția';
+    const suspendBtnClass = 'tx-suspend-btn' + (isSuspended ? ' active' : '');
+
+    const timeStr = getTransactionTimeDisplay(tx);
+    const timeDisp = timeStr ? ' • ⏰ ' + timeStr : '';
+
+    const item = document.createElement('div');
+    item.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
+    item.innerHTML = `
+        <div class="tx-row-top">
+            <div class="tx-desc-wrap">
+                <span class="tx-icon">${icon}</span>
+                <span class="tx-main-title" ${cat ? 'style="color:' + cat.color + ';"' : ''}>${escapeHtml(mainTitle)}</span>
+                ${suspendedBadgeHtml}
+            </div>
+            <div class="tx-amount-wrap">
+                ${amountBlockHtml}
+            </div>
+        </div>
+        <div class="tx-row-middle">
+            <span class="tx-date">📅 ${formatDateDisplay(tx.date)}${timeDisp}</span>
+            ${payBadgeHtml}
+            ${matchBadgeHtml}
+        </div>
+        ${commentRowHtml}
+        <div class="tx-row-bottom">
+            <div class="tx-merchant-wrap">
+                ${merchantBadgeHtml}
+            </div>
+            <div class="tx-buttons-wrap">
+                <button class="${suspendBtnClass}" title="${suspendTitle}" data-txid="${tx.id}">
+                    ${suspendIconSvg}
+                </button>
+                <button class="tx-edit-btn" title="Modifică" data-txid="${tx.id}">
+                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                </button>
+                <button class="tx-del-btn" title="Șterge" data-txid="${tx.id}">
+                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </button>
+            </div>
+        </div>
+    `;
+
+    item.querySelector('.tx-suspend-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSuspendTransaction(tx.id);
+    });
+
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', (e) => {
+        if (e.target.closest('.tx-buttons-wrap') || e.target.closest('button')) return;
+        if (tx.type === 'transfer') {
+            openEditTransferModal(tx);
+        } else if (tx.type === 'expense') {
+            openEditExpenseModal(tx);
+        } else {
+            openEditIncomeModal(tx);
+        }
+    });
+
+    item.querySelector('.tx-edit-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (tx.type === 'transfer') {
+            openEditTransferModal(tx);
+        } else if (tx.type === 'expense') {
+            openEditExpenseModal(tx);
+        } else {
+            openEditIncomeModal(tx);
+        }
+    });
+
+    item.querySelector('.tx-del-btn').addEventListener('click', () => {
+        if (confirm('Sigur doriți să ștergeți această tranzacție?')) {
+            deleteTransaction(tx.id);
+        }
+    });
+
+    return item;
+}
+
+// Render Transactions Tab (History) cu căutare după sumă (exactă prima dată, apoi apropiate) și separare pe săptămâni
 function renderTransactionsHistory() {
     updateSuspendedTxBadge();
     const listEl = document.getElementById('allTransactionsList');
     const filterType = document.getElementById('filterTxType')?.value || 'all';
     const rawQuery = document.getElementById('searchTxInput')?.value || '';
-    const query = normalizeDiacritics(rawQuery);
+    const mainCurr = getActiveCurrency();
 
     let list = [...appData.transactions];
 
@@ -4136,7 +7739,71 @@ function renderTransactionsHistory() {
         list = list.filter(t => t.type === filterType);
     }
 
-    if (query) {
+    const parsedSearch = parseTxSearchQuery(rawQuery);
+    const targetAmount = parsedSearch ? parsedSearch.targetAmount : null;
+    const textQuery = parsedSearch ? parsedSearch.textQuery : '';
+    const fullNormalized = parsedSearch ? parsedSearch.fullNormalized : '';
+
+    let isAmountSearchMode = false;
+    let exactMatches = [];
+    let nearMatches = [];
+    let otherMatches = [];
+
+    if (targetAmount !== null) {
+        // Mod căutare după sumă: prioritizează suma exactă prima dată, apoi sumele apropiate
+        isAmountSearchMode = true;
+        const maxMargin = Math.max(15, targetAmount * 0.30); // Marjă de apropiere (minim 15 unități sau 30%)
+
+        list.forEach(tx => {
+            const mc = getTransactionMerchantAndComment(tx);
+            const desc = normalizeDiacritics(mc.comment || '');
+            const merch = normalizeDiacritics(mc.merchant || '');
+            const origDesc = normalizeDiacritics(tx.description || '');
+            const cat = appData.categories.find(c => c.id === tx.categoryId);
+            const catName = normalizeDiacritics(cat ? cat.name : '');
+
+            // Dacă utilizatorul a introdus și text (ex: "lidl 50"), verificăm potrivirea textului
+            if (textQuery) {
+                const matchesText = desc.includes(textQuery) || merch.includes(textQuery) || origDesc.includes(textQuery) || catName.includes(textQuery);
+                if (!matchesText) return;
+            }
+
+            const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+            const amtDisp = convertFromRon(amtRon, mainCurr);
+            const amtOrig = parseFloat(tx.amount) || 0;
+
+            const diffDisp = Math.abs(amtDisp - targetAmount);
+            const diffOrig = Math.abs(amtOrig - targetAmount);
+            const minDiff = Math.min(diffDisp, diffOrig);
+
+            tx._searchDiff = minDiff;
+
+            if (minDiff < 0.01) {
+                // Potrivire EXACTĂ
+                exactMatches.push(tx);
+            } else if (minDiff <= maxMargin) {
+                // Potrivire APROPIATĂ
+                nearMatches.push(tx);
+            } else if (!textQuery && fullNormalized && (desc.includes(fullNormalized) || merch.includes(fullNormalized) || origDesc.includes(fullNormalized) || catName.includes(fullNormalized))) {
+                // Sumă îndepărtată, dar textul descrierii conține numărul căutat
+                otherMatches.push(tx);
+            }
+        });
+
+        // 1. Sumele exacte: sortate după dată descrescător
+        exactMatches.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
+
+        // 2. Sumele apropiate: sortate crescător după distanța față de suma căutată (cele mai apropiate primele), apoi după dată
+        nearMatches.sort((a, b) => (a._searchDiff - b._searchDiff) || (new Date(b.date) - new Date(a.date)));
+
+        // 3. Alte potriviri textuale
+        otherMatches.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        // Lista completă filtrată pentru calcul totaluri
+        list = [...exactMatches, ...nearMatches, ...otherMatches];
+
+    } else if (fullNormalized) {
+        // Căutare normală după text (descriere, magazin, categorie)
         list = list.filter(t => {
             const mc = getTransactionMerchantAndComment(t);
             const desc = normalizeDiacritics(mc.comment || '');
@@ -4144,24 +7811,24 @@ function renderTransactionsHistory() {
             const origDesc = normalizeDiacritics(t.description || '');
             const cat = appData.categories.find(c => c.id === t.categoryId);
             const catName = normalizeDiacritics(cat ? cat.name : '');
-            return desc.includes(query) || merch.includes(query) || origDesc.includes(query) || catName.includes(query);
+            return desc.includes(fullNormalized) || merch.includes(fullNormalized) || origDesc.includes(fullNormalized) || catName.includes(fullNormalized);
         });
+
+        // Sortare cronologică descrescătoare
+        list.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
+    } else {
+        // Vizualizare standard fără căutare
+        list.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
     }
 
-    // Sort descending by date & created time
-    list.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
-
     // Calcul Total Bonuri / Tranzacții filtrate (afișate)
-    const mainCurr = getActiveCurrency();
     let filteredExpenseRon = 0;
     let filteredIncomeRon = 0;
-    let filteredTransferRon = 0;
     list.forEach(tx => {
         if (isTxSuspended(tx)) return;
         const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
         if (tx.type === 'expense') filteredExpenseRon += amtRon;
         else if (tx.type === 'income') filteredIncomeRon += amtRon;
-        else if (tx.type === 'transfer') filteredTransferRon += amtRon;
     });
 
     function formatTxSummaryTotalHtml(ronVal, curr) {
@@ -4172,7 +7839,7 @@ function renderTransactionsHistory() {
         const parts = absStr.split(',');
         const intPart = (isNeg ? '-' : '') + parts[0];
         const decPart = parts[1] || '00';
-        return `<span class="bal-int">${intPart}</span><span class="bal-dec">,${decPart}</span> <span class="bal-curr">${curr}</span>`;
+        return '<span class="bal-int">' + intPart + '</span><span class="bal-dec">,' + decPart + '</span> <span class="bal-curr">' + curr + '</span>';
     }
 
     const expValEl = document.getElementById('txTotalExpenseVal');
@@ -4188,11 +7855,80 @@ function renderTransactionsHistory() {
     listEl.innerHTML = '';
 
     if (list.length === 0) {
-        listEl.innerHTML = '<div class="empty-state">Nu a fost găsită nicio tranzacție conform filtrelor.</div>';
+        if (isAmountSearchMode) {
+            listEl.innerHTML = '<div class="empty-state">Nu a fost găsit niciun bon cu suma de ' + formatMoney(targetAmount, mainCurr) + ' sau apropiată.</div>';
+        } else {
+            listEl.innerHTML = '<div class="empty-state">Nu a fost găsită nicio tranzacție conform filtrelor.</div>';
+        }
         return;
     }
 
-    // Calcul totaluri saptamanale pentru separatoare
+    // A. Afișare structurată în mod căutare după sumă (Suma exactă PRIMA DATĂ, apoi sume apropiate)
+    if (isAmountSearchMode) {
+        if (exactMatches.length > 0) {
+            const sepExact = document.createElement('div');
+            sepExact.className = 'tx-search-section-header exact';
+            sepExact.innerHTML = `
+                <div class="tx-search-section-title">
+                    <span>🎯 Potriviri Exacte: <strong>${formatMoney(targetAmount, mainCurr)}</strong></span>
+                    <span class="tx-search-section-count">${exactMatches.length} ${exactMatches.length === 1 ? 'bon' : 'bonuri'}</span>
+                </div>
+            `;
+            listEl.appendChild(sepExact);
+
+            const wrapExact = document.createElement('div');
+            wrapExact.className = 'tx-week-items';
+            exactMatches.forEach(tx => {
+                const item = buildTxHistoryItemElement(tx, 'exact', 0, mainCurr);
+                wrapExact.appendChild(item);
+            });
+            listEl.appendChild(wrapExact);
+        }
+
+        if (nearMatches.length > 0) {
+            const sepNear = document.createElement('div');
+            sepNear.className = 'tx-search-section-header near';
+            sepNear.innerHTML = `
+                <div class="tx-search-section-title">
+                    <span>🔍 Sume Apropiate (~<strong>${formatMoney(targetAmount, mainCurr)}</strong>)</span>
+                    <span class="tx-search-section-count">${nearMatches.length} ${nearMatches.length === 1 ? 'bon' : 'bonuri'}</span>
+                </div>
+            `;
+            listEl.appendChild(sepNear);
+
+            const wrapNear = document.createElement('div');
+            wrapNear.className = 'tx-week-items';
+            nearMatches.forEach(tx => {
+                const item = buildTxHistoryItemElement(tx, 'near', tx._searchDiff, mainCurr);
+                wrapNear.appendChild(item);
+            });
+            listEl.appendChild(wrapNear);
+        }
+
+        if (otherMatches.length > 0) {
+            const sepOther = document.createElement('div');
+            sepOther.className = 'tx-search-section-header text';
+            sepOther.innerHTML = `
+                <div class="tx-search-section-title">
+                    <span>📝 Alte potriviri în descriere</span>
+                    <span class="tx-search-section-count">${otherMatches.length}</span>
+                </div>
+            `;
+            listEl.appendChild(sepOther);
+
+            const wrapOther = document.createElement('div');
+            wrapOther.className = 'tx-week-items';
+            otherMatches.forEach(tx => {
+                const item = buildTxHistoryItemElement(tx, null, null, mainCurr);
+                wrapOther.appendChild(item);
+            });
+            listEl.appendChild(wrapOther);
+        }
+
+        return;
+    }
+
+    // B. Afișare standard cu separare pe săptămâni
     const weekTotals = {};
     list.forEach(tx => {
         if (isTxSuspended(tx)) return;
@@ -4227,13 +7963,13 @@ function renderTransactionsHistory() {
             if (wTotals.expenseRon > 0 && wTotals.incomeRon > 0) {
                 const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
                 const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
-                totalDisp = `<span class="tx-week-sum">-${expDisp}</span><span class="tx-week-sum income">+${incDisp}</span>`;
+                totalDisp = '<span class="tx-week-sum">-' + expDisp + '</span><span class="tx-week-sum income">+' + incDisp + '</span>';
             } else if (wTotals.expenseRon > 0) {
                 const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
-                totalDisp = `<span class="tx-week-sum">-${expDisp}</span>`;
+                totalDisp = '<span class="tx-week-sum">-' + expDisp + '</span>';
             } else if (wTotals.incomeRon > 0) {
                 const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
-                totalDisp = `<span class="tx-week-sum income">+${incDisp}</span>`;
+                totalDisp = '<span class="tx-week-sum income">+' + incDisp + '</span>';
             }
 
             sep.innerHTML = `
@@ -4258,150 +7994,13 @@ function renderTransactionsHistory() {
 
             currentWeekItemsEl = document.createElement('div');
             currentWeekItemsEl.className = 'tx-week-items' + (isCollapsed ? ' is-collapsed' : '');
-            currentWeekItemsEl.id = `weekItems_${w.key}`;
+            currentWeekItemsEl.id = 'weekItems_' + w.key;
             listEl.appendChild(currentWeekItemsEl);
         }
 
-        const isTransfer = tx.type === 'transfer';
-        const isExp = tx.type === 'expense';
-        const isSuspended = isTxSuspended(tx);
-        const cat = isExp ? appData.categories.find(c => c.id === tx.categoryId) : null;
-        const mc = getTransactionMerchantAndComment(tx);
-
-        let icon = '🏷️';
-        let mainTitle = '';
-        let sign = '';
-        let colorClass = '';
-
-        if (isTransfer) {
-            icon = '🔄';
-            const dir = tx.transferDirection || 'card-to-cash';
-            const dirLabel = dir === 'card-to-cash' ? 'Card ➔ Cash (ATM)' : 'Cash ➔ Card (Depunere)';
-            mainTitle = `Transfer ${dirLabel}`;
-            sign = '⇄ ';
-            colorClass = 'transfer-color';
-        } else if (isExp) {
-            icon = cat ? cat.icon : '🏷️';
-            mainTitle = cat ? cat.name : 'Cheltuială';
-            sign = '-';
-            colorClass = 'expense-color';
-        } else {
-            icon = '💰';
-            mainTitle = 'Venit';
-            sign = '+';
-            colorClass = 'income-color';
-        }
-
-        const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
-        const mainAmount = convertFromRon(amtRon, mainCurr);
-        const mainText = `${sign}${formatMoney(mainAmount, mainCurr)}`;
-        const amountBlockHtml = isTransfer ? `
-            <div class="tx-val-block">
-                <span class="tx-val ${colorClass}">${mainText}</span>
-            </div>
-        ` : formatTransactionAmountHtml(tx, mainCurr, isExp);
-        const suspendedBadgeHtml = isSuspended ? `<span class="tx-suspended-badge">⏸️ Suspendat</span>` : '';
-
-        let payBadgeHtml = '';
-        if (isTransfer) {
-            const dir = tx.transferDirection || 'card-to-cash';
-            payBadgeHtml = dir === 'card-to-cash'
-                ? `<span class="tx-pay-badge transfer">💳 ➔ 💵 ATM</span>`
-                : `<span class="tx-pay-badge transfer">💵 ➔ 💳 Depunere</span>`;
-        } else {
-            const payMethod = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
-            payBadgeHtml = payMethod === 'cash'
-                ? `<span class="tx-pay-badge cash">💵 Cash</span>`
-                : `<span class="tx-pay-badge card">💳 Card</span>`;
-        }
-
-        // Rândul 3: Comentariu / Descriere produs (dacă există)
-        const commentText = (isExp ? mc.comment : (tx.description || '')).trim();
-        const commentRowHtml = commentText ? `
-            <div class="tx-row-comment">
-                <span class="tx-comment-icon">💬</span>
-                <span class="tx-comment-text">${escapeHtml(commentText)}</span>
-            </div>
-        ` : '';
-
-        // Rândul 4 stânga: Magazinul (dacă există)
-        let merchantBadgeHtml = '';
-        if (isExp && mc.merchant) {
-            merchantBadgeHtml = `<span class="tx-store-badge">${getMerchantLogoHtml(mc.merchant, 14)} <span>${escapeHtml(mc.merchant)}</span></span>`;
-        } else if (isTransfer) {
-            merchantBadgeHtml = `<span class="tx-cat-badge" style="color:var(--accent);">Transfer Intern</span>`;
-        }
-
-        const suspendIconSvg = isSuspended
-            ? `<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M8 5v14l11-7z"/></svg>`
-            : `<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        const suspendTitle = isSuspended ? 'Reactivează tranzacția' : 'Suspendă tranzacția';
-        const suspendBtnClass = 'tx-suspend-btn' + (isSuspended ? ' active' : '');
-
-        const timeStr = getTransactionTimeDisplay(tx);
-        const timeDisp = timeStr ? ` • ⏰ ${timeStr}` : '';
-
-        const item = document.createElement('div');
-        item.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
-        item.innerHTML = `
-            <div class="tx-row-top">
-                <div class="tx-desc-wrap">
-                    <span class="tx-icon">${icon}</span>
-                    <span class="tx-main-title" ${cat ? `style="color:${cat.color};"` : ''}>${escapeHtml(mainTitle)}</span>
-                    ${suspendedBadgeHtml}
-                </div>
-                <div class="tx-amount-wrap">
-                    ${amountBlockHtml}
-                </div>
-            </div>
-            <div class="tx-row-middle">
-                <span class="tx-date">📅 ${formatDateDisplay(tx.date)}${timeDisp}</span>
-                ${payBadgeHtml}
-            </div>
-            ${commentRowHtml}
-            <div class="tx-row-bottom">
-                <div class="tx-merchant-wrap">
-                    ${merchantBadgeHtml}
-                </div>
-                <div class="tx-buttons-wrap">
-                    <button class="${suspendBtnClass}" title="${suspendTitle}" data-txid="${tx.id}">
-                        ${suspendIconSvg}
-                    </button>
-                    <button class="tx-edit-btn" title="Modifică" data-txid="${tx.id}">
-                        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                    </button>
-                    <button class="tx-del-btn" title="Șterge" data-txid="${tx.id}">
-                        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                    </button>
-                </div>
-            </div>
-        `;
-
-        item.querySelector('.tx-suspend-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleSuspendTransaction(tx.id);
-        });
-
-        item.querySelector('.tx-edit-btn').addEventListener('click', () => {
-            if (tx.type === 'transfer') {
-                openEditTransferModal(tx);
-            } else if (tx.type === 'expense') {
-                openEditExpenseModal(tx);
-            } else {
-                openEditIncomeModal(tx);
-            }
-        });
-
-        item.querySelector('.tx-del-btn').addEventListener('click', () => {
-            if (confirm('Sigur doriți să ștergeți această tranzacție?')) {
-                deleteTransaction(tx.id);
-            }
-        });
-
+        const item = buildTxHistoryItemElement(tx, null, null, mainCurr);
         if (currentWeekItemsEl) {
             currentWeekItemsEl.appendChild(item);
-        } else {
-            listEl.appendChild(item);
         }
     });
 }
@@ -4447,7 +8046,9 @@ function updateSuspendedTxBadge() {
     badge.textContent = String(suspendedCount);
     if (btn) {
         btn.classList.toggle('has-suspended', suspendedCount > 0);
-        btn.title = `Tranzacții suspendate: ${suspendedCount} (apasă pentru a le vizualiza)`;
+        const activeLang = (typeof getLanguageForCurrency === 'function') ? getLanguageForCurrency() : 'ro';
+        const titleText = (typeof t === 'function' ? t('suspended_tx_title', activeLang) : null) || 'Tranzacții Suspendate';
+        btn.title = `${titleText}: ${suspendedCount}`;
     }
 }
 
@@ -4465,8 +8066,11 @@ function renderSuspendedTransactionsList() {
 
     listEl.innerHTML = '';
 
+    const activeLang = (typeof getLanguageForCurrency === 'function') ? getLanguageForCurrency() : 'ro';
+
     if (suspendedList.length === 0) {
-        listEl.innerHTML = `<div class="empty-state" style="padding: 24px 10px; text-align: center; color: var(--text-muted);"><span>✨ Nu există nicio tranzacție suspendată.</span></div>`;
+        const emptyMsg = (typeof t === 'function' ? t('no_suspended_tx', activeLang) : null) || 'Nu există nicio tranzacție suspendată.';
+        listEl.innerHTML = `<div class="empty-state" style="padding: 24px 10px; text-align: center; color: var(--text-muted);"><span>✨ ${escapeHtml(emptyMsg)}</span></div>`;
         return;
     }
 
@@ -4488,10 +8092,10 @@ function renderSuspendedTransactionsList() {
             mainTitle = `Transfer ${dirLabel}`;
         } else if (isExp) {
             icon = cat ? cat.icon : '🏷️';
-            mainTitle = cat ? cat.name : 'Cheltuială';
+            mainTitle = cat ? cat.name : ((typeof t === 'function' ? t('btn_expense', activeLang) : null) || 'Cheltuială');
         } else {
             icon = '💰';
-            mainTitle = 'Venit';
+            mainTitle = (typeof t === 'function' ? t('btn_income', activeLang) : null) || 'Venit';
         }
 
         const amountBlockHtml = formatTransactionAmountHtml(tx, mainCurr, isExp);
@@ -4527,6 +8131,11 @@ function renderSuspendedTransactionsList() {
         const timeStr = getTransactionTimeDisplay(tx);
         const timeDisp = timeStr ? ` • ⏰ ${timeStr}` : '';
 
+        const suspendedLabel = (typeof t === 'function' ? t('lbl_suspended_short', activeLang) : null) || 'Suspendat';
+        const reactivateTooltip = (activeLang === 'en') ? 'Reactivate transaction' : 'Reactivează tranzacția';
+        const editTooltip = (typeof t === 'function' ? t('btn_edit', activeLang) : null) || 'Modifică';
+        const deleteTooltip = (typeof t === 'function' ? t('btn_delete', activeLang) : null) || 'Șterge';
+
         const item = document.createElement('div');
         item.className = 'tx-item tx-suspended';
         item.innerHTML = `
@@ -4534,7 +8143,7 @@ function renderSuspendedTransactionsList() {
                 <div class="tx-desc-wrap">
                     <span class="tx-icon">${icon}</span>
                     <span class="tx-main-title" ${cat ? `style="color:${cat.color};"` : ''}>${escapeHtml(mainTitle)}</span>
-                    <span class="tx-suspended-badge">⏸️ Suspendat</span>
+                    <span class="tx-suspended-badge">⏸️ ${escapeHtml(suspendedLabel)}</span>
                 </div>
                 <div class="tx-amount-wrap">
                     ${amountBlockHtml}
@@ -4550,13 +8159,13 @@ function renderSuspendedTransactionsList() {
                     ${merchantBadgeHtml}
                 </div>
                 <div class="tx-buttons-wrap">
-                    <button class="tx-suspend-btn active" title="Reactivează tranzacția" data-txid="${tx.id}">
+                    <button class="tx-suspend-btn active" title="${escapeHtml(reactivateTooltip)}" data-txid="${tx.id}">
                         <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M8 5v14l11-7z"/></svg>
                     </button>
-                    <button class="tx-edit-btn" title="Modifică" data-txid="${tx.id}">
+                    <button class="tx-edit-btn" title="${escapeHtml(editTooltip)}" data-txid="${tx.id}">
                         <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                     </button>
-                    <button class="tx-del-btn" title="Șterge" data-txid="${tx.id}">
+                    <button class="tx-del-btn" title="${escapeHtml(deleteTooltip)}" data-txid="${tx.id}">
                         <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                     </button>
                 </div>
@@ -4578,7 +8187,8 @@ function renderSuspendedTransactionsList() {
         });
 
         item.querySelector('.tx-del-btn').addEventListener('click', () => {
-            if (confirm('Sigur doriți să ștergeți această tranzacție?')) {
+            const confirmMsg = (activeLang === 'en') ? 'Are you sure you want to delete this transaction?' : 'Sigur doriți să ștergeți această tranzacție?';
+            if (confirm(confirmMsg)) {
                 deleteTransaction(tx.id);
             }
         });
@@ -4709,7 +8319,11 @@ function renderStatsTab() {
     // Populate Year selector
     const yearSelect = document.getElementById('statsYearSelect');
     const curYear = new Date().getFullYear();
-    const yearsSet = new Set([curYear]);
+    const minYear = 2007;
+    const yearsSet = new Set();
+    for (let y = curYear; y >= minYear; y--) {
+        yearsSet.add(y);
+    }
 
     appData.transactions.forEach(t => {
         if (t.date) {
@@ -4968,6 +8582,9 @@ function renderStatsTab() {
         const billsPct = totExpenseRon > 0 ? ((totBillsRon / totExpenseRon) * 100).toFixed(1) : '0';
         kpiBillsSub.textContent = `${billsCount} ${activeLang === 'ro' ? 'facturi' : 'bills'} • ${billsPct}% ${activeLang === 'ro' ? 'din cheltuieli' : 'of spend'}`;
     }
+
+    // 12B. Contoare & Consum Utilități (Card 2 KPI)
+    updateStatKpiMetersCard(mainCurr, activeLang);
 
     // 13. Ponderea Cheltuielilor pe Magazine (Calcul Card KPI)
     const storeSums = {};
@@ -6155,6 +9772,7 @@ function openKpiDetailModal(metricKey) {
     const mainCurr = getActiveCurrency();
     const activeLang = getLanguageForCurrency();
     const daysCount = getDaysInStatsPeriod();
+    let runwaySafetyColor = '#3b82f6';
 
     const isCashTx = (tx) => !!(tx && ((tx.paymentMethod === 'cash') || (tx.account === 'cash') || (typeof tx.paymentMethod === 'string' && tx.paymentMethod.toLowerCase() === 'cash') || (typeof tx.account === 'string' && tx.account.toLowerCase() === 'cash')));
 
@@ -6264,6 +9882,9 @@ function openKpiDetailModal(metricKey) {
     const dailyAvgRon = totExpenseRon / Math.max(1, daysCount);
     const dailyIncomeRon = totIncomeRon / Math.max(1, daysCount);
     const daysRunway = calculateGlobalRunwayDays();
+    const burnRateRon = (daysRunway > 0 && totalBalRon > 0 && daysRunway < 999)
+        ? (totalBalRon / daysRunway)
+        : calculateDailyExpenseRateRon();
 
     let periodText = 'Luna curentă';
     if (currentStatsPeriod === 'month') periodText = activeLang === 'ro' ? 'Luna Aceasta' : 'This Month';
@@ -6873,6 +10494,7 @@ function openKpiDetailModal(metricKey) {
             safetyBadge = activeLang === 'ro' ? 'Epuizat' : 'Exhausted';
             safetyColor = '#ef4444';
         }
+        runwaySafetyColor = safetyColor;
 
         const runwayDisplay = daysRunway >= 999 
             ? '&infin; Zile' 
@@ -6880,6 +10502,14 @@ function openKpiDetailModal(metricKey) {
 
         const sim10Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.11) : daysRunway;
         const sim20Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.25) : daysRunway;
+
+        const runwayToday = new Date();
+        const runwayDepDate = new Date(runwayToday);
+        if (daysRunway > 0 && daysRunway < 999) {
+            runwayDepDate.setDate(runwayToday.getDate() + daysRunway);
+        }
+        const runwayDepFullStr = runwayDepDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+        const runwayDepShortStr = runwayDepDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
 
         html += `
             <div class="kpi-detail-hero" style="border-left: 4px solid ${safetyColor};">
@@ -6904,6 +10534,39 @@ function openKpiDetailModal(metricKey) {
                 <div class="kpi-detail-mini-card">
                     <div class="kpi-detail-mini-label">💵 ${activeLang === 'ro' ? 'Sold Cash (Portofel)' : 'Cash Balance'}</div>
                     <div class="kpi-detail-mini-val">${formatMoney(convertFromRon(cashBalRon, mainCurr), mainCurr)}</div>
+                </div>
+            </div>
+
+            <div class="kpi-runway-chart-card">
+                <div class="kpi-runway-chart-header">
+                    <div class="kpi-runway-chart-title">
+                        <span>📈 ${activeLang === 'ro' ? 'Evoluție Sold & Epuizare Autonomie' : 'Balance History & Depletion'}</span>
+                    </div>
+                    <div class="kpi-runway-chart-badge">
+                        -${formatMoney(convertFromRon(burnRateRon, mainCurr), mainCurr)} / ${activeLang === 'ro' ? 'zi' : 'day'}
+                    </div>
+                </div>
+                <div class="kpi-runway-chart-sub">
+                    ${daysRunway >= 999
+                        ? (activeLang === 'ro' ? 'Autonomie nelimitată (fără cheltuieli recente).' : 'Infinite runway.')
+                        : (daysRunway <= 0
+                            ? (activeLang === 'ro' ? 'Soldul este deja epuizat.' : 'Reserves currently exhausted.')
+                            : (activeLang === 'ro'
+                                ? `📅 Data când ajungi pe 0: <strong style="color: #ef4444; font-size: 0.82rem;">${runwayDepFullStr}</strong> (în ${daysRunway} zile).`
+                                : `📅 Estimated zero balance date: <strong style="color: #ef4444; font-size: 0.82rem;">${runwayDepFullStr}</strong> (in ${daysRunway} days).`))}
+                </div>
+                <div class="kpi-runway-chart-canvas-wrap">
+                    <canvas id="kpiRunwayChart"></canvas>
+                </div>
+                <div class="kpi-runway-legend-row">
+                    <div class="kpi-runway-legend-item">
+                        <span class="kpi-runway-dot" style="background: #10b981;"></span>
+                        <span>${activeLang === 'ro' ? 'Azi' : 'Today'}: <strong>${formatMoney(convertFromRon(totalBalRon, mainCurr), mainCurr)}</strong></span>
+                    </div>
+                    <div class="kpi-runway-legend-item">
+                        <span class="kpi-runway-dot" style="background: #ef4444;"></span>
+                        <span>${activeLang === 'ro' ? 'Epuizare (0 lei)' : 'Depleted'}: <strong style="color: #ef4444;">${daysRunway >= 999 ? '&infin;' : runwayDepShortStr}</strong> (${daysRunway >= 999 ? '&infin;' : (daysRunway + ' ' + (activeLang === 'ro' ? 'zile' : 'days'))})</span>
+                    </div>
                 </div>
             </div>
 
@@ -7343,11 +11006,325 @@ function openKpiDetailModal(metricKey) {
 
     modalBodyEl.innerHTML = html;
     openModal('modalKpiDetail');
+
+    if (metricKey === 'runway') {
+        setTimeout(() => {
+            try {
+                renderKpiRunwayBurnDownChart(daysRunway, totalBalRon, burnRateRon, mainCurr, runwaySafetyColor, activeLang);
+            } catch (err) {
+                console.error('Error invoking renderKpiRunwayBurnDownChart:', err);
+            }
+        }, 60);
+    }
 }
 
-let merchantChartInstance = null;
-let currentMerchantPeriod = 'month';
-let currentFilteredMerchantKey = null;
+
+let kpiRunwayChartInstance = null;
+
+// Helper: Calculeaza soldul total la o anumita data din trecut
+function getHistoricalBalanceOnDateRon(targetDateStr, currentBalRon) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (!targetDateStr || targetDateStr >= todayStr) return currentBalRon;
+
+    let bal = 0;
+    if (typeof appData !== 'undefined' && appData.transactions) {
+        appData.transactions.forEach(t => {
+            if (isTxSuspended(t)) return;
+            const tDate = t.date || todayStr;
+            if (tDate <= targetDateStr) {
+                const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+                if (t.type === 'income') bal += a;
+                else if (t.type === 'expense') bal -= a;
+            }
+        });
+    }
+    return bal;
+}
+
+function renderKpiRunwayBurnDownChart(daysRunway, totalBalRon, burnRateRon, mainCurr, safetyColor, activeLang) {
+    const canvas = document.getElementById('kpiRunwayChart');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+        console.error("Chart library is not loaded");
+        return;
+    }
+
+    try {
+        if (kpiRunwayChartInstance) {
+            try { kpiRunwayChartInstance.destroy(); } catch (e) {}
+            kpiRunwayChartInstance = null;
+        }
+
+        const safeColor = safetyColor || (daysRunway >= 90 ? '#10b981' : (daysRunway >= 30 ? '#3b82f6' : (daysRunway > 0 ? '#f59e0b' : '#ef4444')));
+        const ctx = canvas.getContext('2d');
+        const totalBalConv = Math.round(convertFromRon(totalBalRon, mainCurr) * 100) / 100;
+        const burnConv = convertFromRon(burnRateRon, mainCurr);
+
+        const isLight = typeof document !== 'undefined' && document.body && document.body.classList.contains('light-theme');
+        const chartTextColor = getChartTextColor();
+        const chartGridColor = getChartGridColor();
+
+        const labels = [];
+        const pastDataVals = [];
+        const futureDataVals = [];
+        const metaPoints = [];
+
+        const today = new Date();
+
+        // 1. Puncte din trecut (arata evolutia soldului, inclusiv saltul la adaugarea venitului)
+        const pastOffsets = [4, 2]; // 4 zile in urma, 2 zile in urma
+        pastOffsets.forEach(offset => {
+            const d = new Date(today);
+            d.setDate(today.getDate() - offset);
+            const dStr = d.toISOString().split('T')[0];
+            const histBalRon = getHistoricalBalanceOnDateRon(dStr, totalBalRon);
+            const histBalConv = Math.round(convertFromRon(histBalRon, mainCurr) * 100) / 100;
+
+            const shortLbl = d.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
+            labels.push(shortLbl);
+            pastDataVals.push(histBalConv);
+            futureDataVals.push(null);
+            metaPoints.push({
+                type: 'past',
+                dateStr: d.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' }),
+                bal: histBalConv
+            });
+        });
+
+        // 2. Punctul de Astazi (Azi) - face legatura dintre istoric si proiectie
+        const todayShort = today.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
+        labels.push((activeLang === 'ro' ? 'Azi' : 'Today') + ' (' + todayShort + ')');
+        pastDataVals.push(totalBalConv);
+        futureDataVals.push(totalBalConv);
+        metaPoints.push({
+            type: 'today',
+            dateStr: (activeLang === 'ro' ? 'Azi, ' : 'Today, ') + today.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { weekday: 'short', day: 'numeric', month: 'long' }),
+            bal: totalBalConv
+        });
+
+        // 3. Proiectia viitoare (de la Azi pana la data epuizarii pe 0)
+        if (daysRunway <= 0 || totalBalRon <= 0) {
+            // Deja 0
+            labels.push(activeLang === 'ro' ? 'Epuizat' : 'Zero');
+            pastDataVals.push(null);
+            futureDataVals.push(0);
+            metaPoints.push({
+                type: 'future',
+                dateStr: activeLang === 'ro' ? 'Sold epuizat' : 'Zero balance',
+                bal: 0,
+                remDays: 0
+            });
+        } else if (daysRunway >= 999) {
+            // Autonomie nelimitata
+            [30, 60, 90].forEach(d => {
+                const futDate = new Date(today);
+                futDate.setDate(today.getDate() + d);
+                const futShort = futDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
+                labels.push(futShort);
+                pastDataVals.push(null);
+                futureDataVals.push(totalBalConv);
+                metaPoints.push({
+                    type: 'future',
+                    dateStr: futDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'long' }),
+                    bal: totalBalConv,
+                    remDays: 999
+                });
+            });
+        } else {
+            // Repartizam 2-3 etape intermediare si data exacta a epuizarii finale
+            const steps = Math.min(Math.max(2, Math.round(daysRunway / 6)), 3);
+            const stepSize = daysRunway / (steps + 1);
+
+            for (let i = 1; i <= steps; i++) {
+                const dayOffset = Math.round(i * stepSize);
+                if (dayOffset >= daysRunway) continue;
+
+                const futDate = new Date(today);
+                futDate.setDate(today.getDate() + dayOffset);
+                const futShort = futDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
+
+                labels.push(futShort);
+                pastDataVals.push(null);
+                const remBal = Math.max(0, Math.round((totalBalConv - (dayOffset * burnConv)) * 100) / 100);
+                futureDataVals.push(remBal);
+                metaPoints.push({
+                    type: 'future',
+                    dateStr: futDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { weekday: 'short', day: 'numeric', month: 'long' }),
+                    bal: remBal,
+                    remDays: daysRunway - dayOffset
+                });
+            }
+
+            // Punctul FINAL exact de epuizare (0 RON cu data calendaristica)
+            const depDate = new Date(today);
+            depDate.setDate(today.getDate() + daysRunway);
+            const depShort = depDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'short' });
+
+            labels.push(depShort + ' (0 ' + mainCurr + ')');
+            pastDataVals.push(null);
+            futureDataVals.push(0);
+            metaPoints.push({
+                type: 'depleted',
+                dateStr: depDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }),
+                bal: 0,
+                remDays: 0
+            });
+        }
+
+        // Gradiente pentru umplere
+        let gradPast = 'rgba(16, 185, 129, 0.15)';
+        let gradFuture = 'rgba(245, 158, 11, 0.15)';
+        try {
+            const g1 = ctx.createLinearGradient(0, 0, 0, 160);
+            g1.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+            g1.addColorStop(1, 'rgba(16, 185, 129, 0.02)');
+            gradPast = g1;
+
+            const g2 = ctx.createLinearGradient(0, 0, 0, 160);
+            const hex = safeColor.replace('#', '');
+            const r = parseInt(hex.slice(0, 2), 16) || 245;
+            const g = parseInt(hex.slice(2, 4), 16) || 158;
+            const b = parseInt(hex.slice(4, 6), 16) || 11;
+            g2.addColorStop(0, 'rgba(' + r + ', ' + g + ', ' + b + ', 0.30)');
+            g2.addColorStop(1, 'rgba(' + r + ', ' + g + ', ' + b + ', 0.02)');
+            gradFuture = g2;
+        } catch (e) {}
+
+        kpiRunwayChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: activeLang === 'ro' ? 'Sold Realizat (Istoric)' : 'Actual Balance',
+                        data: pastDataVals,
+                        borderColor: '#10b981',
+                        backgroundColor: gradPast,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: isLight ? '#ffffff' : '#1e293b',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: activeLang === 'ro' ? 'Proiecție Autonomie' : 'Runway Projection',
+                        data: futureDataVals,
+                        borderColor: safeColor,
+                        borderDash: [5, 4],
+                        backgroundColor: gradFuture,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: safeColor,
+                        pointBorderColor: isLight ? '#ffffff' : '#1e293b',
+                        pointBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 350 },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: chartTextColor,
+                            font: { size: 9.5, weight: '600' }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: chartGridColor },
+                        ticks: {
+                            color: chartTextColor,
+                            font: { size: 9.5 },
+                            callback: function(v) {
+                                if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+                                if (v >= 1000) {
+                                    const k = v / 1000;
+                                    return (Number.isInteger(k) ? k : k.toFixed(1)) + 'k';
+                                }
+                                return Math.round(v);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            padding: 6,
+                            font: { size: 9, weight: '600' },
+                            color: chartTextColor
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: isLight ? 'rgba(15, 23, 42, 0.94)' : 'rgba(30, 41, 59, 0.96)',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#f8fafc',
+                        borderColor: safeColor,
+                        borderWidth: 1,
+                        padding: 9,
+                        boxPadding: 4,
+                        callbacks: {
+                            title: function(items) {
+                                if (!items || !items.length) return '';
+                                const idx = items[0].dataIndex;
+                                const meta = metaPoints[idx];
+                                if (!meta) return items[0].label;
+                                return '📅 ' + meta.dateStr;
+                            },
+                            label: function(ctx) {
+                                const idx = ctx.dataIndex;
+                                const meta = metaPoints[idx];
+                                const val = ctx.parsed.y;
+                                if (val === null || val === undefined) return '';
+
+                                if (meta && meta.type === 'depleted') {
+                                    return (activeLang === 'ro' ? ' 🚨 Epuizare completă: 0 ' : ' 🚨 Depleted: 0 ') + mainCurr;
+                                }
+                                if (meta && meta.type === 'past') {
+                                    return (activeLang === 'ro' ? ' 💰 Sold înregistrat: ' : ' 💰 Balance: ') + formatMoney(val, mainCurr);
+                                }
+                                if (meta && meta.type === 'today') {
+                                    return (activeLang === 'ro' ? ' 🟢 Sold disponibil azi: ' : ' 🟢 Available today: ') + formatMoney(val, mainCurr);
+                                }
+                                const remText = (meta && meta.remDays !== undefined) ? ' (' + meta.remDays + (activeLang === 'ro' ? ' zile rămase)' : ' days left)') : '';
+                                return (activeLang === 'ro' ? ' 📉 Sold estimat: ' : ' 📉 Estimated: ') + formatMoney(val, mainCurr) + remText;
+                            }
+                        }
+                    },
+                    datalabels: { display: false }
+                }
+            }
+        });
+
+        setTimeout(() => {
+            if (kpiRunwayChartInstance) {
+                try { kpiRunwayChartInstance.resize(); } catch (e) {}
+            }
+        }, 120);
+
+    } catch (err) {
+        console.error("Error creating kpiRunwayChart:", err);
+    }
+}
 
 function openMerchantAnalyticsModal(periodKey) {
     if (periodKey) currentMerchantPeriod = periodKey;
@@ -8646,6 +12623,1356 @@ function renderBillsTransactionsList(billsTxs, mainCurr, lang) {
 }
 
 // ==========================================
+// BUSINESS INTELLIGENCE: CONTOARE & CONSUM UTILITĂȚI (CURENT, GAZE, APĂ)
+// ==========================================
+const UTILITY_METERS_CONFIG = {
+    electricity: {
+        key: 'electricity',
+        name: 'Curent Electric',
+        icon: '⚡',
+        unit: 'kWh',
+        color: '#f59e0b',
+        step: 0.1
+    },
+    gas: {
+        key: 'gas',
+        name: 'Gaze Naturale',
+        icon: '🔥',
+        unit: 'm³',
+        color: '#ea580c',
+        step: 0.01
+    },
+    water: {
+        key: 'water',
+        name: 'Apă & Canalizare',
+        icon: '💧',
+        unit: 'm³',
+        color: '#06b6d4',
+        step: 0.01
+    }
+};
+
+let chartMetersConsumptionInstance = null;
+let chartMetersUnitPriceInstance = null;
+let currentMetersPeriod = 'year';
+let currentMetersCustomYear = 'all';
+let currentMetersCustomMonth = 'all';
+let currentMetersType = 'all';
+let currentMetersHistorySubFilter = 'all';
+
+function getUtilityTypeForTransaction(tx) {
+    if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return null;
+
+    // 1. Daca tranzactia are deja utilityType setat
+    if (tx.utilityType && UTILITY_METERS_CONFIG[tx.utilityType]) {
+        return tx.utilityType;
+    }
+
+    // 2. Normalizare text din comerciant, descriere si comentarii
+    const mc = (typeof getTransactionMerchantAndComment === 'function') 
+        ? getTransactionMerchantAndComment(tx) 
+        : { merchant: tx.merchant || '', comment: tx.description || '' };
+    const rawText = `${tx.merchant || ''} ${tx.description || ''} ${mc.merchant || ''} ${mc.comment || ''}`;
+    const normText = normalizeDiacritics(rawText).toLowerCase();
+
+    // 3. Verificare Curent / Electricitate
+    if (normText.includes('curent') || normText.includes('electric') || normText.includes('energie') || 
+        normText.includes('enel') || normText.includes('hidroelectrica') || normText.includes('electrica') || 
+        normText.includes('pfe') || normText.includes('cezon') || normText.includes('lumina') || 
+        normText.includes('power') || normText.includes('ppc')) {
+        return 'electricity';
+    }
+
+    // 4. Verificare Gaze Naturale
+    if (normText.includes('gaz') || normText.includes('gaze') || normText.includes('engie') || 
+        normText.includes('distrigaz') || normText.includes('gaz metan') || normText.includes('nova power')) {
+        return 'gas';
+    }
+
+    // 5. Verificare Apa & Canalizare
+    if (normText.includes('apa') || normText.includes('aquatim') || normText.includes('raja') || 
+        normText.includes('canal') || normText.includes('apaterm') || normText.includes('salubrit') || 
+        normText.includes('gunoi') || normText.includes('retim')) {
+        return 'water';
+    }
+
+    // 6. Cazul E.ON (poate fi gaz sau curent)
+    if (normText.includes('e.on') || normText.includes('eon')) {
+        if (normText.includes('gaz')) return 'gas';
+        return 'electricity';
+    }
+
+    // 7. Daca este in categoria Facturi & Utilitati (`cat-2` sau nume categorie)
+    if (isBillCategory(tx.categoryId)) {
+        const bClass = classifyBillTransaction(tx);
+        if (bClass) {
+            if (bClass.key === 'electricity') return 'electricity';
+            if (bClass.key === 'gas') return 'gas';
+            if (bClass.key === 'water_waste') return 'water';
+        }
+    }
+
+    return null;
+}
+
+function getUtilityBillsWithoutIndex(targetType, periodKey, customYear, customMonth) {
+    if (!Array.isArray(appData.transactions)) return [];
+
+    const today = new Date();
+    const curYear = today.getFullYear();
+    const curMonthStr = `${curYear}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    const ninetyDaysAgo = new Date(today);
+    ninetyDaysAgo.setDate(today.getDate() - 90);
+    const ninetyDaysAgoStr = ninetyDaysAgo.toISOString().split('T')[0];
+
+    const unindexedBills = [];
+
+    appData.transactions.forEach(tx => {
+        if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return;
+
+        // Daca are deja index contor valid pe tranzactie sau in citirile sincronizate, este deja citire contorizata
+        const existingIdx = parseFloat(tx.utilityIndex);
+        if (!isNaN(existingIdx) && existingIdx > 0) return;
+
+        if (Array.isArray(appData.utilityReadings) && appData.utilityReadings.some(r => r.txId === tx.id && !isNaN(parseFloat(r.indexValue)) && parseFloat(r.indexValue) > 0)) {
+            return;
+        }
+
+        // Verificam daca este factura de utilitati
+        const uType = getUtilityTypeForTransaction(tx);
+        if (!uType) return;
+
+        // Filtru dupa utilitatea activa
+        if (targetType !== 'all' && uType !== targetType) return;
+
+        // Filtrare temporala
+        const txDate = tx.date || '';
+        if (customYear !== 'all' || customMonth !== 'all') {
+            const yrMatch = (customYear === 'all') || txDate.startsWith(String(customYear));
+            const moMatch = (customMonth === 'all') || (txDate.substring(5, 7) === String(customMonth));
+            if (!yrMatch || !moMatch) return;
+        } else if (periodKey === 'month') {
+            if (!txDate.startsWith(curMonthStr)) return;
+        } else if (periodKey === '3months') {
+            if (txDate < ninetyDaysAgoStr) return;
+        } else if (periodKey === 'year') {
+            if (!txDate.startsWith(String(curYear))) return;
+        }
+
+        unindexedBills.push({
+            tx: tx,
+            utilityType: uType,
+            date: txDate,
+            amount: parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0
+        });
+    });
+
+    unindexedBills.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.tx.id || '').localeCompare(a.tx.id || ''));
+    return unindexedBills;
+}
+
+function ensureUtilityReadingsInitialized() {
+    if (!Array.isArray(appData.utilityReadings)) {
+        appData.utilityReadings = [];
+    }
+}
+
+function syncTxUtilityReading(tx) {
+    if (!tx) return;
+    ensureUtilityReadingsInitialized();
+    const idxVal = parseFloat(tx.utilityIndex);
+    if (isNaN(idxVal) || idxVal <= 0) return;
+
+    const uType = tx.utilityType || 'electricity';
+    const rDate = tx.utilityIndexDate || tx.date || getTodayString();
+    const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+
+    let existing = appData.utilityReadings.find(r => r.txId === tx.id);
+    if (existing) {
+        existing.utilityType = uType;
+        existing.indexValue = idxVal;
+        existing.readingDate = rDate;
+        existing.amount = amtRon;
+        existing.notes = tx.merchant || tx.description || '';
+    } else {
+        appData.utilityReadings.push({
+            id: 'utl-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            txId: tx.id,
+            utilityType: uType,
+            indexValue: idxVal,
+            readingDate: rDate,
+            amount: amtRon,
+            currency: 'RON',
+            notes: tx.merchant || tx.description || ''
+        });
+    }
+}
+
+function getSortedReadingsForType(uType) {
+    ensureUtilityReadingsInitialized();
+    return appData.utilityReadings
+        .filter(r => r.utilityType === uType && !isNaN(parseFloat(r.indexValue)))
+        .sort((a, b) => (a.readingDate || '').localeCompare(b.readingDate || '') || (a.id || '').localeCompare(b.id || ''));
+}
+
+// Calcul matematic al consumului cu distribuție uniformă/ponderată când sunt sărite n luni
+function calculateReadingIntervalsForType(uType) {
+    const sorted = getSortedReadingsForType(uType);
+    if (sorted.length === 0) return [];
+
+    const intervals = [];
+    for (let i = 0; i < sorted.length; i++) {
+        const curr = sorted[i];
+        if (i === 0) {
+            intervals.push({
+                index: i,
+                reading: curr,
+                prevReading: null,
+                deltaIndex: 0,
+                deltaDays: 0,
+                dailyAvg: 0,
+                monthlyAvg: 0,
+                yearlyAvg: 0,
+                unitPrice: null,
+                isBaseline: true,
+                monthlyBreakdown: {}
+            });
+            continue;
+        }
+
+        const prev = sorted[i - 1];
+        let deltaIdx = curr.indexValue - prev.indexValue;
+        if (deltaIdx < 0) {
+            deltaIdx = curr.indexValue; // contor resetat / schimbat
+        }
+
+        const dPrev = new Date(prev.readingDate + 'T00:00:00');
+        const dCurr = new Date(curr.readingDate + 'T00:00:00');
+        const diffMs = dCurr.getTime() - dPrev.getTime();
+        const deltaDays = Math.max(1, Math.round(diffMs / (1000 * 60 * 60 * 24)));
+
+        const dailyAvg = deltaIdx / deltaDays;
+        const monthlyAvg = dailyAvg * 30.4375;
+        const yearlyAvg = dailyAvg * 365.25;
+        const amt = parseFloat(curr.amount) || 0;
+        const unitPrice = (amt > 0 && deltaIdx > 0) ? (amt / deltaIdx) : null;
+
+        // Distribuție lunară automată pentru lunile calendaristice traversate
+        const monthlyBreakdown = {};
+        const stepDate = new Date(dPrev);
+        stepDate.setDate(stepDate.getDate() + 1);
+
+        while (stepDate <= dCurr) {
+            const ym = `${stepDate.getFullYear()}-${String(stepDate.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthlyBreakdown[ym]) {
+                monthlyBreakdown[ym] = { days: 0, consumption: 0, cost: 0 };
+            }
+            monthlyBreakdown[ym].days++;
+            monthlyBreakdown[ym].consumption += dailyAvg;
+            if (amt > 0) {
+                monthlyBreakdown[ym].cost += (amt / deltaDays);
+            }
+            stepDate.setDate(stepDate.getDate() + 1);
+        }
+
+        intervals.push({
+            index: i,
+            reading: curr,
+            prevReading: prev,
+            deltaIndex: deltaIdx,
+            deltaDays: deltaDays,
+            dailyAvg: dailyAvg,
+            monthlyAvg: monthlyAvg,
+            yearlyAvg: yearlyAvg,
+            unitPrice: unitPrice,
+            isBaseline: false,
+            monthlyBreakdown: monthlyBreakdown
+        });
+    }
+
+    return intervals;
+}
+
+// Filtrare intervale & calcul sumare pe perioadă și filtru detaliat
+function getUtilityMetersAnalysis(targetType, periodKey, customYear, customMonth) {
+    const typesToEvaluate = (targetType === 'all')
+        ? ['electricity', 'gas', 'water']
+        : [targetType];
+
+    const today = new Date();
+    const curYear = today.getFullYear();
+    const curMonthStr = `${curYear}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    const ninetyDaysAgo = new Date(today);
+    ninetyDaysAgo.setDate(today.getDate() - 90);
+    const ninetyDaysAgoStr = ninetyDaysAgo.toISOString().split('T')[0];
+
+    const result = {
+        types: {},
+        allIntervals: [],
+        combinedMonthlyConsumption: {}, // YYYY-MM -> { electricity, gas, water }
+        combinedMonthlyCost: {},
+        combinedPriceTrend: {}         // YYYY-MM -> { electricity, gas, water }
+    };
+
+    typesToEvaluate.forEach(uType => {
+        const intervals = calculateReadingIntervalsForType(uType);
+        let filteredIntervals = [];
+
+        // Filtrare după perioadă sau filtru personalizat
+        if (customYear !== 'all' || customMonth !== 'all') {
+            filteredIntervals = intervals.filter(it => {
+                if (it.isBaseline) return false;
+                const dStr = it.reading.readingDate || '';
+                const yrMatch = (customYear === 'all') || dStr.startsWith(String(customYear));
+                const moMatch = (customMonth === 'all') || (dStr.substring(5, 7) === String(customMonth));
+                return yrMatch && moMatch;
+            });
+        } else if (periodKey === 'month') {
+            filteredIntervals = intervals.filter(it => !it.isBaseline && (it.reading.readingDate || '').startsWith(curMonthStr));
+        } else if (periodKey === '3months') {
+            filteredIntervals = intervals.filter(it => !it.isBaseline && (it.reading.readingDate || '') >= ninetyDaysAgoStr);
+        } else if (periodKey === 'year') {
+            filteredIntervals = intervals.filter(it => !it.isBaseline && (it.reading.readingDate || '').startsWith(String(curYear)));
+        } else {
+            // 'all'
+            filteredIntervals = intervals.filter(it => !it.isBaseline);
+        }
+
+        let totConsumption = 0;
+        let totDays = 0;
+        let totSpend = 0;
+        let weightedPriceSum = 0;
+        let weightedPriceVol = 0;
+
+        filteredIntervals.forEach(it => {
+            totConsumption += it.deltaIndex;
+            totDays += it.deltaDays;
+            if (it.reading.amount > 0) {
+                totSpend += parseFloat(it.reading.amount);
+            }
+            if (it.unitPrice !== null && it.deltaIndex > 0) {
+                weightedPriceSum += it.unitPrice * it.deltaIndex;
+                weightedPriceVol += it.deltaIndex;
+            }
+
+            // Distribuție lunară cumulată
+            Object.entries(it.monthlyBreakdown).forEach(([ym, data]) => {
+                if (customYear !== 'all' && !ym.startsWith(String(customYear))) return;
+                if (customMonth !== 'all' && ym.substring(5, 7) !== String(customMonth)) return;
+                if (customYear === 'all' && customMonth === 'all') {
+                    if (periodKey === 'month' && !ym.startsWith(curMonthStr)) return;
+                    if (periodKey === 'year' && !ym.startsWith(String(curYear))) return;
+                }
+                if (!result.combinedMonthlyConsumption[ym]) {
+                    result.combinedMonthlyConsumption[ym] = { electricity: 0, gas: 0, water: 0 };
+                }
+                result.combinedMonthlyConsumption[ym][uType] = (result.combinedMonthlyConsumption[ym][uType] || 0) + data.consumption;
+
+                if (!result.combinedMonthlyCost[ym]) {
+                    result.combinedMonthlyCost[ym] = { electricity: 0, gas: 0, water: 0 };
+                }
+                result.combinedMonthlyCost[ym][uType] = (result.combinedMonthlyCost[ym][uType] || 0) + data.cost;
+            });
+        });
+
+        // Calcul medii și preț unitar
+        const dailyAvg = totDays > 0 ? (totConsumption / totDays) : 0;
+        const monthlyAvg = dailyAvg * 30.4375;
+        const avgUnitPrice = weightedPriceVol > 0 ? (weightedPriceSum / weightedPriceVol) : (totConsumption > 0 && totSpend > 0 ? totSpend / totConsumption : 0);
+        const forecastCost30d = monthlyAvg * avgUnitPrice;
+
+        result.types[uType] = {
+            config: UTILITY_METERS_CONFIG[uType],
+            intervals: filteredIntervals,
+            totalConsumption: totConsumption,
+            totalDays: totDays,
+            totalSpend: totSpend,
+            dailyAvg: dailyAvg,
+            monthlyAvg: monthlyAvg,
+            avgUnitPrice: avgUnitPrice,
+            forecastCost30d: forecastCost30d
+        };
+
+        intervals.forEach(it => {
+            result.allIntervals.push({ ...it, utilityType: uType });
+        });
+    });
+
+    // Sortare istoric global descrescător după dată
+    result.allIntervals.sort((a, b) => (b.reading.readingDate || '').localeCompare(a.reading.readingDate || '') || (b.reading.id || '').localeCompare(a.reading.id || ''));
+
+    return result;
+}
+
+function renderUtilityMetersAnalytics() {
+    const mainCurr = getActiveCurrency();
+    const lang = (typeof getLanguageForCurrency === 'function') ? getLanguageForCurrency() : 'ro';
+
+    const analysis = getUtilityMetersAnalysis(currentMetersType, currentMetersPeriod, currentMetersCustomYear, currentMetersCustomMonth);
+
+    // 1. Calcul KPI-uri
+    let kpiConsumptionText = '';
+    let kpiDailyMonthlyText = '';
+    let kpiUnitPriceText = '';
+    let kpiForecastText = '';
+
+    if (currentMetersType !== 'all') {
+        const tData = analysis.types[currentMetersType];
+        if (tData && tData.intervals.length > 0) {
+            const unit = tData.config.unit;
+            kpiConsumptionText = `${tData.totalConsumption.toFixed(1)} ${unit}`;
+            kpiDailyMonthlyText = `${tData.dailyAvg.toFixed(2)} ${unit}/zi • ${tData.monthlyAvg.toFixed(1)} ${unit}/lună`;
+            kpiUnitPriceText = tData.avgUnitPrice > 0 ? `${tData.avgUnitPrice.toFixed(3)} RON / ${unit}` : `-`;
+            kpiForecastText = tData.forecastCost30d > 0 ? `~${formatMoney(convertFromRon(tData.forecastCost30d, mainCurr), mainCurr)} / lună` : `-`;
+        } else {
+            const cfg = UTILITY_METERS_CONFIG[currentMetersType];
+            kpiConsumptionText = `0 ${cfg ? cfg.unit : ''}`;
+            kpiDailyMonthlyText = `0 / zi • 0 / lună`;
+            kpiUnitPriceText = `-`;
+            kpiForecastText = `-`;
+        }
+    } else {
+        const parts = [];
+        let totalForecast = 0;
+        let hasData = false;
+
+        ['electricity', 'gas', 'water'].forEach(ut => {
+            const td = analysis.types[ut];
+            if (td && td.totalConsumption > 0) {
+                parts.push(`${td.config.icon} ${td.totalConsumption.toFixed(0)} ${td.config.unit}`);
+                totalForecast += td.forecastCost30d;
+                hasData = true;
+            }
+        });
+
+        kpiConsumptionText = parts.length > 0 ? parts.join(' • ') : '0 unități';
+        kpiDailyMonthlyText = hasData ? 'Medii calculate ponderat' : '0 / zi • 0 / lună';
+        kpiUnitPriceText = 'Vezi detaliat pe utilitate';
+        kpiForecastText = totalForecast > 0 ? `~${formatMoney(convertFromRon(totalForecast, mainCurr), mainCurr)} / lună` : `-`;
+    }
+
+    const elTotal = document.getElementById('metersKpiTotalConsumption');
+    if (elTotal) elTotal.textContent = kpiConsumptionText;
+
+    const elAvg = document.getElementById('metersKpiDailyMonthlyAvg');
+    if (elAvg) elAvg.textContent = kpiDailyMonthlyText;
+
+    const elPrice = document.getElementById('metersKpiUnitPrice');
+    if (elPrice) elPrice.textContent = kpiUnitPriceText;
+
+    const elForecast = document.getElementById('metersKpiForecast');
+    if (elForecast) elForecast.textContent = kpiForecastText;
+
+    // 2. Grafic Consum
+    renderMetersConsumptionChart(analysis, currentMetersType, lang);
+
+    // 3. Grafic Preț Unitar
+    renderMetersUnitPriceChart(analysis, currentMetersType, lang);
+
+    const unindexedBills = getUtilityBillsWithoutIndex(currentMetersType, currentMetersPeriod, currentMetersCustomYear, currentMetersCustomMonth);
+
+    const elTotalSub = document.getElementById('metersKpiTotalSub');
+    if (elTotalSub) {
+        if (unindexedBills.length > 0) {
+            elTotalSub.innerHTML = `Perioada selectată • <strong style="color:#f59e0b;">+${unindexedBills.length} facturi fără index</strong>`;
+        } else {
+            elTotalSub.textContent = 'În perioada selectată';
+        }
+    }
+
+    // 4. Diagnostic & Recomandări
+    renderMetersDiagnostic(analysis, lang, unindexedBills);
+
+    // 5. Istoric Citiri Contoare & Facturi fără index
+    renderMetersHistoryList(analysis.allIntervals, unindexedBills, mainCurr, lang);
+}
+
+function renderMetersConsumptionChart(analysis, filterType, lang) {
+    const canvas = document.getElementById('chartMetersConsumption');
+    const legendEl = document.getElementById('chartMetersConsumptionLegend');
+    const badgeEl = document.getElementById('metersConsumptionChartBadge');
+    if (!canvas) return;
+
+    // Extragem lunile unice sortate
+    const allMonths = Object.keys(analysis.combinedMonthlyConsumption).sort();
+    if (badgeEl) {
+        badgeEl.textContent = filterType === 'all' ? 'Toate utilitățile' : UTILITY_METERS_CONFIG[filterType]?.name || '';
+    }
+
+    if (allMonths.length === 0) {
+        if (chartMetersConsumptionInstance) {
+            chartMetersConsumptionInstance.destroy();
+            chartMetersConsumptionInstance = null;
+        }
+        if (legendEl) legendEl.innerHTML = '<span style="color:var(--text-muted);">Nu există citiri pentru perioada selectată</span>';
+        return;
+    }
+
+    const labels = allMonths.map(ym => {
+        const parts = ym.split('-');
+        const y = parts[0];
+        const m = parseInt(parts[1], 10);
+        const mNames = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Noi', 'Dec'];
+        return `${mNames[m - 1] || ''} '${y.substring(2)}`;
+    });
+
+    const datasets = [];
+    const typesToShow = filterType === 'all' ? ['electricity', 'gas', 'water'] : [filterType];
+
+    typesToShow.forEach(ut => {
+        const cfg = UTILITY_METERS_CONFIG[ut];
+        const dataVals = allMonths.map(ym => {
+            const val = analysis.combinedMonthlyConsumption[ym] ? analysis.combinedMonthlyConsumption[ym][ut] : 0;
+            return Math.round((val || 0) * 10) / 10;
+        });
+
+        // Adăugăm doar dacă există date nenule sau dacă este utilitatea filtrată
+        if (filterType !== 'all' || dataVals.some(v => v > 0)) {
+            datasets.push({
+                label: `${cfg.name} (${cfg.unit})`,
+                data: dataVals,
+                backgroundColor: cfg.color + '80',
+                borderColor: cfg.color,
+                borderWidth: 2,
+                borderRadius: 4,
+                fill: false,
+                tension: 0.2
+            });
+        }
+    });
+
+    if (legendEl) {
+        legendEl.innerHTML = datasets.map(d => `
+            <span style="display:flex; align-items:center; gap:5px;">
+                <span style="display:inline-block; width:10px; height:10px; background:${d.borderColor}; border-radius:2px;"></span>
+                <span style="font-weight:700; color:var(--text-color);">${escapeHtml(d.label)}</span>
+            </span>
+        `).join('');
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (chartMetersConsumptionInstance) {
+        chartMetersConsumptionInstance.destroy();
+        chartMetersConsumptionInstance = null;
+    }
+
+    const textColor = getChartTextColor();
+    const gridColor = getChartGridColor();
+
+    chartMetersConsumptionInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw}`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: textColor, font: { size: 10, weight: 'bold' } }
+                },
+                y: {
+                    grid: { color: gridColor },
+                    ticks: { color: textColor, font: { size: 10 } },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function renderMetersUnitPriceChart(analysis, filterType, lang) {
+    const canvas = document.getElementById('chartMetersUnitPrice');
+    const legendEl = document.getElementById('chartMetersUnitPriceLegend');
+    const badgeEl = document.getElementById('metersPriceChartBadge');
+    if (!canvas) return;
+
+    if (badgeEl) {
+        badgeEl.textContent = 'RON / unitate';
+    }
+
+    // Colectăm punctele de preț din intervalele calculate
+    const pricePoints = [];
+    const typesToShow = filterType === 'all' ? ['electricity', 'gas', 'water'] : [filterType];
+
+    typesToShow.forEach(ut => {
+        const cfg = UTILITY_METERS_CONFIG[ut];
+        const intervals = analysis.types[ut] ? analysis.types[ut].intervals : [];
+        intervals.forEach(it => {
+            if (it.unitPrice !== null && it.unitPrice > 0 && it.reading.readingDate) {
+                pricePoints.push({
+                    date: it.reading.readingDate,
+                    price: Math.round(it.unitPrice * 1000) / 1000,
+                    type: ut,
+                    cfg: cfg
+                });
+            }
+        });
+    });
+
+    pricePoints.sort((a, b) => a.date.localeCompare(b.date));
+
+    if (pricePoints.length === 0) {
+        if (chartMetersUnitPriceInstance) {
+            chartMetersUnitPriceInstance.destroy();
+            chartMetersUnitPriceInstance = null;
+        }
+        if (legendEl) legendEl.innerHTML = '<span style="color:var(--text-muted);">Prețul unitar se calculează automat la introducerea sumei facturii</span>';
+        return;
+    }
+
+    const uniqueDates = Array.from(new Set(pricePoints.map(p => p.date))).sort();
+    const labels = uniqueDates.map(d => {
+        const parts = d.split('-');
+        return `${parts[2]}/${parts[1]}`;
+    });
+
+    const datasets = [];
+    typesToShow.forEach(ut => {
+        const cfg = UTILITY_METERS_CONFIG[ut];
+        const pts = pricePoints.filter(p => p.type === ut);
+        if (pts.length > 0) {
+            const dataVals = uniqueDates.map(d => {
+                const found = pts.find(p => p.date === d);
+                return found ? found.price : null;
+            });
+            datasets.push({
+                label: `${cfg.name} (RON/${cfg.unit})`,
+                data: dataVals,
+                borderColor: cfg.color,
+                backgroundColor: cfg.color + '20',
+                borderWidth: 2.5,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                spanGaps: true,
+                tension: 0.15
+            });
+        }
+    });
+
+    if (legendEl) {
+        legendEl.innerHTML = datasets.map(d => `
+            <span style="display:flex; align-items:center; gap:5px;">
+                <span style="display:inline-block; width:10px; height:10px; background:${d.borderColor}; border-radius:50%;"></span>
+                <span style="font-weight:700; color:var(--text-color);">${escapeHtml(d.label)}</span>
+            </span>
+        `).join('');
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (chartMetersUnitPriceInstance) {
+        chartMetersUnitPriceInstance.destroy();
+        chartMetersUnitPriceInstance = null;
+    }
+
+    const textColor = getChartTextColor();
+    const gridColor = getChartGridColor();
+
+    chartMetersUnitPriceInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw} lei`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: textColor, font: { size: 10, weight: 'bold' } }
+                },
+                y: {
+                    grid: { color: gridColor },
+                    ticks: { color: textColor, font: { size: 10 } },
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+}
+
+function renderMetersDiagnostic(analysis, lang, unindexedBills) {
+    const container = document.getElementById('metersDiagnosticList');
+    const badgeEl = document.getElementById('metersDiagnosticBadge');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const diagnostics = [];
+    const today = new Date();
+
+    if (Array.isArray(unindexedBills) && unindexedBills.length > 0) {
+        diagnostics.push({
+            type: 'warning',
+            icon: '📋',
+            title: `Facturi fără index: ${unindexedBills.length} factur${unindexedBills.length === 1 ? 'ă' : 'i'} înregistrat${unindexedBills.length === 1 ? 'ă' : 'e'} anterior`,
+            desc: `Ai ${unindexedBills.length} factur${unindexedBills.length === 1 ? 'ă' : 'i'} (ex: ${unindexedBills.slice(0, 3).map(b => b.tx.merchant || b.tx.description || 'Factură').join(', ')}) salvat${unindexedBills.length === 1 ? 'ă' : 'e'} fără index. Apasă „Completează Index” din lista de mai jos pentru a calibra consumul exact.`,
+            action: null
+        });
+    }
+
+    ['electricity', 'gas', 'water'].forEach(ut => {
+        const cfg = UTILITY_METERS_CONFIG[ut];
+        const intervals = calculateReadingIntervalsForType(ut);
+        if (intervals.length === 0) return;
+
+        const lastReading = intervals[intervals.length - 1].reading;
+        const lastDate = new Date(lastReading.readingDate + 'T00:00:00');
+        const daysSinceLast = Math.round((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (daysSinceLast > 35) {
+            diagnostics.push({
+                type: 'warning',
+                icon: cfg.icon,
+                title: `${cfg.name}: Au trecut ${daysSinceLast} zile de la ultima citire`,
+                desc: `Ultimul index înregistrat a fost pe ${formatDateDisplay(lastReading.readingDate)}. Introduceți un index nou pentru a menține estimările și consumul mediu la zi.`,
+                action: ut
+            });
+        }
+
+        // Comparație cu intervalul anterior dacă avem minim 2 intervale calculate
+        const validIntervals = intervals.filter(it => !it.isBaseline);
+        if (validIntervals.length >= 2) {
+            const currentInt = validIntervals[validIntervals.length - 1];
+            const prevInt = validIntervals[validIntervals.length - 2];
+
+            if (prevInt.dailyAvg > 0) {
+                const diffPct = ((currentInt.dailyAvg - prevInt.dailyAvg) / prevInt.dailyAvg) * 100;
+                if (diffPct > 25) {
+                    diagnostics.push({
+                        type: 'alert',
+                        icon: '⚠️',
+                        title: `${cfg.name}: Ritmul de consum a crescut cu +${diffPct.toFixed(0)}%`,
+                        desc: `Consumul zilnic mediu a crescut de la ${prevInt.dailyAvg.toFixed(2)} ${cfg.unit}/zi la ${currentInt.dailyAvg.toFixed(2)} ${cfg.unit}/zi în ultimul interval (${currentInt.deltaDays} zile).`,
+                        action: null
+                    });
+                } else if (diffPct < -20) {
+                    diagnostics.push({
+                        type: 'good',
+                        icon: '🌱',
+                        title: `${cfg.name}: Economie de ${Math.abs(diffPct).toFixed(0)}% a consumului`,
+                        desc: `Felicitări! Ritmul mediu zilnic a scăzut de la ${prevInt.dailyAvg.toFixed(2)} la ${currentInt.dailyAvg.toFixed(2)} ${cfg.unit}/zi.`,
+                        action: null
+                    });
+                }
+            }
+        }
+    });
+
+    if (badgeEl) {
+        badgeEl.textContent = diagnostics.length > 0 ? `${diagnostics.length} notificări` : 'Optim';
+        badgeEl.style.color = diagnostics.length > 0 ? '#f59e0b' : '#10b981';
+    }
+
+    if (diagnostics.length === 0) {
+        container.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.35rem; flex-shrink: 0;">✅</span>
+                <div>
+                    <div style="font-weight: 800; font-size: 0.82rem; color: #10b981;">Consum Contorizat la Zi</div>
+                    <div style="font-size: 0.70rem; color: var(--text-muted); margin-top: 1px;">Indexurile sunt înregistrate periodic, iar mediile pe zi și lună sunt calibrate corespunzător.</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    diagnostics.forEach(diag => {
+        const card = document.createElement('div');
+        const borderColor = diag.type === 'alert' ? 'rgba(239, 68, 68, 0.4)' : (diag.type === 'warning' ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)');
+        card.style.background = 'var(--item-bg)';
+        card.style.border = `1px solid ${borderColor}`;
+        card.style.borderRadius = '8px';
+        card.style.padding = '8px 10px';
+
+        card.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.80rem; color: var(--text-color); margin-bottom: 2px;">
+                <span>${diag.icon}</span>
+                <span>${escapeHtml(diag.title)}</span>
+            </div>
+            <div style="font-size: 0.70rem; color: var(--text-muted); line-height: 1.35;">
+                ${escapeHtml(diag.desc)}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function renderMetersHistoryList(allIntervals, unindexedBills, mainCurr, lang) {
+    const listEl = document.getElementById('metersReadingsList');
+    const countEl = document.getElementById('metersHistoryCount');
+    const countAllEl = document.getElementById('countHistAll');
+    const countReadingsEl = document.getElementById('countHistReadings');
+    const countUnindexedEl = document.getElementById('countHistUnindexed');
+
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    const safeIntervals = Array.isArray(allIntervals) ? allIntervals : [];
+    const safeUnindexed = Array.isArray(unindexedBills) ? unindexedBills : [];
+
+    const totalReadings = safeIntervals.length;
+    const totalUnindexed = safeUnindexed.length;
+    const totalCombined = totalReadings + totalUnindexed;
+
+    if (countAllEl) countAllEl.textContent = totalCombined;
+    if (countReadingsEl) countReadingsEl.textContent = totalReadings;
+    if (countUnindexedEl) countUnindexedEl.textContent = totalUnindexed;
+
+    if (countEl) {
+        if (totalUnindexed > 0) {
+            countEl.innerHTML = `<span>${totalReadings} citiri index</span> • <span style="color:#f59e0b; font-weight:800;">${totalUnindexed} fără index</span>`;
+        } else {
+            countEl.textContent = `${totalReadings} citiri`;
+        }
+    }
+
+    // Listă unificată cronologică
+    let unifiedItems = [];
+
+    if (currentMetersHistorySubFilter === 'all' || currentMetersHistorySubFilter === 'readings') {
+        safeIntervals.forEach(it => {
+            unifiedItems.push({
+                type: 'reading',
+                date: it.reading.readingDate || '',
+                utilityType: it.utilityType,
+                interval: it,
+                reading: it.reading
+            });
+        });
+    }
+
+    if (currentMetersHistorySubFilter === 'all' || currentMetersHistorySubFilter === 'unindexed') {
+        safeUnindexed.forEach(ub => {
+            unifiedItems.push({
+                type: 'unindexed_bill',
+                date: ub.date || '',
+                utilityType: ub.utilityType,
+                tx: ub.tx,
+                amount: ub.amount
+            });
+        });
+    }
+
+    unifiedItems.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+    if (unifiedItems.length === 0) {
+        if (currentMetersHistorySubFilter === 'unindexed') {
+            listEl.innerHTML = '<div style="text-align:center; padding:18px 10px; color:var(--text-muted); font-size:0.75rem;">Toate facturile din această perioadă au indexul contorului înregistrat! 🎉</div>';
+        } else if (currentMetersHistorySubFilter === 'readings') {
+            listEl.innerHTML = '<div style="text-align:center; padding:18px 10px; color:var(--text-muted); font-size:0.75rem;">Nu există citiri de index înregistrate în perioada selectată.</div>';
+        } else {
+            listEl.innerHTML = '<div style="text-align:center; padding:18px 10px; color:var(--text-muted); font-size:0.75rem;">Nu există facturi sau citiri de contor înregistrate pentru perioada selectată.</div>';
+        }
+        return;
+    }
+
+    unifiedItems.forEach(item => {
+        if (item.type === 'reading') {
+            const it = item.interval;
+            const r = item.reading;
+            const cfg = UTILITY_METERS_CONFIG[item.utilityType] || UTILITY_METERS_CONFIG.electricity;
+            const card = document.createElement('div');
+            card.className = 'meter-reading-card';
+
+            const isBase = it.isBaseline;
+            const diffText = isBase ? 'Punct de start' : `+${it.deltaIndex.toFixed(1)} ${cfg.unit}`;
+            const daysText = isBase ? '-' : `${it.deltaDays} zile (${it.dailyAvg.toFixed(2)} ${cfg.unit}/zi)`;
+            const priceText = (it.unitPrice !== null && it.unitPrice > 0) ? `${it.unitPrice.toFixed(3)} lei/${cfg.unit}` : '-';
+            const amtText = r.amount > 0 ? formatMoney(convertFromRon(r.amount, mainCurr), mainCurr) : '-';
+
+            card.innerHTML = `
+                <div class="meter-reading-top">
+                    <div class="meter-reading-title">
+                        <span>${cfg.icon}</span>
+                        <span>${cfg.name}</span>
+                        ${isBase ? '<span style="font-size:0.62rem; font-weight:700; background:rgba(100,116,139,0.15); color:var(--text-muted); padding:1px 5px; border-radius:4px;">Prima citire</span>' : ''}
+                    </div>
+                    <div class="meter-reading-date">📅 ${formatDateDisplay(r.readingDate)}</div>
+                </div>
+                <div class="meter-reading-body">
+                    <div class="meter-reading-stat">
+                        <span class="meter-reading-stat-label">Index Contor</span>
+                        <span class="meter-reading-stat-val" style="color:var(--text-color);">${r.indexValue.toFixed(1)}</span>
+                    </div>
+                    <div class="meter-reading-stat">
+                        <span class="meter-reading-stat-label">Consum Calculat</span>
+                        <span class="meter-reading-stat-val" style="color:${isBase ? 'var(--text-muted)' : cfg.color};">${diffText}</span>
+                    </div>
+                    <div class="meter-reading-stat">
+                        <span class="meter-reading-stat-label">Preț Unitar</span>
+                        <span class="meter-reading-stat-val" style="color:#f59e0b;">${priceText}</span>
+                    </div>
+                </div>
+                <div class="meter-reading-bottom">
+                    <div>
+                        <span>⏱️ ${daysText}</span>
+                        ${r.amount > 0 ? `<span> • Factură: <strong>${amtText}</strong></span>` : ''}
+                        ${r.notes ? `<span> • 💬 ${escapeHtml(r.notes)}</span>` : ''}
+                    </div>
+                    <div style="display:flex; align-items:center; gap:4px; margin-left:auto;">
+                        <button type="button" class="meter-action-btn btn-edit-meter-reading" title="Editează citirea">✏️</button>
+                        <button type="button" class="meter-action-btn btn-delete-meter-reading" style="color:#ef4444;" title="Șterge citirea">🗑️</button>
+                    </div>
+                </div>
+            `;
+
+            const btnEdit = card.querySelector('.btn-edit-meter-reading');
+            if (btnEdit) {
+                btnEdit.addEventListener('click', () => {
+                    openAddMeterReadingModal(r);
+                });
+            }
+
+            const btnDel = card.querySelector('.btn-delete-meter-reading');
+            if (btnDel) {
+                btnDel.addEventListener('click', () => {
+                    if (confirm('Sigur doriți să ștergeți această citire de contor?')) {
+                        deleteMeterReading(r.id);
+                    }
+                });
+            }
+
+            listEl.appendChild(card);
+        } else if (item.type === 'unindexed_bill') {
+            const tx = item.tx;
+            const cfg = UTILITY_METERS_CONFIG[item.utilityType] || UTILITY_METERS_CONFIG.electricity;
+            const card = document.createElement('div');
+            card.className = 'meter-reading-card';
+            card.style.borderLeft = `3.5px solid #f59e0b`;
+            card.style.background = 'rgba(245, 158, 11, 0.04)';
+
+            const amtText = formatMoney(convertFromRon(item.amount, mainCurr), mainCurr);
+            const merchDesc = [tx.merchant, tx.description].filter(Boolean).join(' • ') || 'Factură utilitate';
+
+            card.innerHTML = `
+                <div class="meter-reading-top">
+                    <div class="meter-reading-title">
+                        <span>${cfg.icon}</span>
+                        <span>${cfg.name}</span>
+                        <span style="font-size:0.62rem; font-weight:700; background:rgba(245,158,11,0.18); color:#f59e0b; padding:1px 6px; border-radius:4px; border:1px solid rgba(245,158,11,0.35);">⚠️ Factură fără index</span>
+                    </div>
+                    <div class="meter-reading-date">📅 ${formatDateDisplay(item.date)}</div>
+                </div>
+                <div class="meter-reading-body" style="padding: 6px 0; display:flex; flex-direction:column; gap:3px;">
+                    <div style="font-size:0.78rem; font-weight:700; color:var(--text-color);">
+                        ${escapeHtml(merchDesc)}
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">
+                        Factură: <strong style="color:var(--text-color);">${amtText}</strong> • <span style="font-style:italic;">Înregistrată anterior fără index contor</span>
+                    </div>
+                </div>
+                <div class="meter-reading-bottom" style="margin-top:4px; padding-top:6px; border-top:1px dashed var(--border-color); display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:0.68rem; color:var(--text-muted);">Asociază indexul contorului:</span>
+                    <button type="button" class="btn btn-accent btn-sm btn-complete-bill-index" style="height:30px; font-size:0.74rem; font-weight:700; display:flex; align-items:center; gap:4px; padding:0 10px;">
+                        <span>➕</span> <span>Completează Index</span>
+                    </button>
+                </div>
+            `;
+
+            const btnComp = card.querySelector('.btn-complete-bill-index');
+            if (btnComp) {
+                btnComp.addEventListener('click', () => {
+                    openAddMeterReadingModalForTx(tx, item.utilityType);
+                });
+            }
+
+            listEl.appendChild(card);
+        }
+    });
+}
+
+function updateStatKpiMetersCard(mainCurr, lang) {
+    const valEl = document.getElementById('statKpiMetersVal');
+    const subEl = document.getElementById('statKpiMetersSub');
+    if (!valEl) return;
+
+    ensureUtilityReadingsInitialized();
+    const readings = appData.utilityReadings;
+    const unindexedAll = getUtilityBillsWithoutIndex('all', 'year', 'all', 'all');
+
+    if ((!readings || readings.length === 0) && (!unindexedAll || unindexedAll.length === 0)) {
+        valEl.textContent = '-';
+        if (subEl) subEl.textContent = 'Adaugă prima citire index';
+        return;
+    }
+
+    const analysis = getUtilityMetersAnalysis('all', 'year', 'all', 'all');
+    const summaryParts = [];
+    ['electricity', 'gas', 'water'].forEach(ut => {
+        const td = analysis.types[ut];
+        if (td && td.totalConsumption > 0) {
+            summaryParts.push(`${td.config.icon} ${td.totalConsumption.toFixed(0)} ${td.config.unit}`);
+        }
+    });
+
+    if (summaryParts.length > 0) {
+        valEl.innerHTML = summaryParts.join(' <span style="opacity:0.4; font-size:0.8em;">•</span> ');
+        if (subEl) {
+            if (unindexedAll.length > 0) {
+                subEl.innerHTML = `${readings.length} citiri • <strong style="color:#f59e0b;">${unindexedAll.length} facturi fără index</strong>`;
+            } else {
+                subEl.textContent = `${readings.length} citiri • preț/unitate & evoluții`;
+            }
+        }
+    } else {
+        if (unindexedAll.length > 0) {
+            valEl.textContent = `${unindexedAll.length} facturi`;
+            if (subEl) subEl.textContent = `${readings.length} citiri • Apasă pentru a asocia indexul`;
+        } else {
+            valEl.textContent = `${readings.length} citiri`;
+            if (subEl) subEl.textContent = 'Indexuri & consum înregistrat';
+        }
+    }
+}
+
+function openUtilityMetersModal() {
+    ensureUtilityReadingsInitialized();
+
+    const selectYear = document.getElementById('selectMetersFilterYear');
+    if (selectYear) {
+        const years = new Set();
+        const curYear = new Date().getFullYear();
+        years.add(curYear);
+        years.add(curYear - 1);
+        appData.utilityReadings.forEach(r => {
+            if (r.readingDate) {
+                const yr = parseInt(r.readingDate.substring(0, 4), 10);
+                if (!isNaN(yr) && yr >= 2007) years.add(yr);
+            }
+        });
+        if (Array.isArray(appData.transactions)) {
+            appData.transactions.forEach(tx => {
+                if (tx.date) {
+                    const yr = parseInt(tx.date.substring(0, 4), 10);
+                    if (!isNaN(yr) && yr >= 2007) years.add(yr);
+                }
+            });
+        }
+        const sortedYears = Array.from(years).sort((a, b) => b - a);
+        selectYear.innerHTML = '<option value="all">Toți anii</option>' + sortedYears.map(y => `<option value="${y}">${y}</option>`).join('');
+        selectYear.value = (currentMetersCustomYear !== 'all') ? currentMetersCustomYear : 'all';
+    }
+
+    const selectMonth = document.getElementById('selectMetersFilterMonth');
+    if (selectMonth) {
+        selectMonth.value = currentMetersCustomMonth || 'all';
+    }
+
+    renderUtilityMetersAnalytics();
+    openModal('modalUtilityMetersAnalytics');
+}
+
+function openAddMeterReadingModal(existingReading) {
+    const titleText = document.getElementById('meterReadingModalTitleText');
+    const idInput = document.getElementById('editMeterReadingId');
+    const txIdInput = document.getElementById('editMeterReadingTxId');
+    const typeInput = document.getElementById('directMeterUtilityType');
+    const valInput = document.getElementById('directMeterIndexValue');
+    const dateInput = document.getElementById('directMeterReadingDate');
+    const amtInput = document.getElementById('directMeterAmount');
+    const notesInput = document.getElementById('directMeterNotes');
+    const liveCalc = document.getElementById('directMeterLiveCalc');
+
+    if (txIdInput) txIdInput.value = '';
+
+    if (existingReading) {
+        if (titleText) titleText.textContent = 'Modifică Citire Contor';
+        if (idInput) idInput.value = existingReading.id;
+        if (txIdInput) txIdInput.value = existingReading.txId || '';
+        const ut = existingReading.utilityType || 'electricity';
+        if (typeInput) typeInput.value = ut;
+        document.querySelectorAll('#directMeterUtilityTabs .btn-direct-util-tab').forEach(b => {
+            b.classList.toggle('active', b.dataset.utility === ut);
+        });
+        if (valInput) valInput.value = existingReading.indexValue;
+        if (dateInput) dateInput.value = existingReading.readingDate;
+        if (amtInput) amtInput.value = existingReading.amount > 0 ? existingReading.amount : '';
+        if (notesInput) notesInput.value = existingReading.notes || '';
+    } else {
+        if (titleText) titleText.textContent = 'Adaugă Citire Contor';
+        if (idInput) idInput.value = '';
+        if (txIdInput) txIdInput.value = '';
+        const ut = 'electricity';
+        if (typeInput) typeInput.value = ut;
+        document.querySelectorAll('#directMeterUtilityTabs .btn-direct-util-tab').forEach(b => {
+            b.classList.toggle('active', b.dataset.utility === ut);
+        });
+        if (valInput) valInput.value = '';
+        if (dateInput) dateInput.value = getTodayString();
+        if (amtInput) amtInput.value = '';
+        if (notesInput) notesInput.value = '';
+    }
+
+    if (liveCalc) liveCalc.style.display = 'none';
+    updateDirectMeterLivePreview();
+    openModal('modalAddMeterReading');
+}
+
+function openAddMeterReadingModalForTx(tx, uType) {
+    if (!tx) return;
+    const ut = uType || getUtilityTypeForTransaction(tx) || 'electricity';
+    const cfg = UTILITY_METERS_CONFIG[ut] || UTILITY_METERS_CONFIG.electricity;
+
+    const titleText = document.getElementById('meterReadingModalTitleText');
+    const idInput = document.getElementById('editMeterReadingId');
+    const txIdInput = document.getElementById('editMeterReadingTxId');
+    const typeInput = document.getElementById('directMeterUtilityType');
+    const valInput = document.getElementById('directMeterIndexValue');
+    const dateInput = document.getElementById('directMeterReadingDate');
+    const amtInput = document.getElementById('directMeterAmount');
+    const notesInput = document.getElementById('directMeterNotes');
+    const liveCalc = document.getElementById('directMeterLiveCalc');
+
+    if (titleText) titleText.textContent = `Completează Index • ${tx.merchant || cfg.name}`;
+    if (idInput) idInput.value = '';
+    if (txIdInput) txIdInput.value = tx.id;
+    if (typeInput) typeInput.value = ut;
+
+    document.querySelectorAll('#directMeterUtilityTabs .btn-direct-util-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.utility === ut);
+    });
+
+    if (valInput) valInput.value = tx.utilityIndex || '';
+    if (dateInput) dateInput.value = tx.utilityIndexDate || tx.date || getTodayString();
+    const amt = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
+    if (amtInput) amtInput.value = amt > 0 ? amt : '';
+    if (notesInput) notesInput.value = (tx.merchant ? `${tx.merchant} - ` : '') + (tx.description || '');
+
+    if (liveCalc) liveCalc.style.display = 'none';
+    updateDirectMeterLivePreview();
+    openModal('modalAddMeterReading');
+    setTimeout(() => {
+        if (valInput) valInput.focus();
+    }, 150);
+}
+
+function deleteMeterReading(readingId) {
+    ensureUtilityReadingsInitialized();
+    const reading = appData.utilityReadings.find(r => r.id === readingId);
+    if (reading && reading.txId) {
+        const tx = appData.transactions.find(t => t.id === reading.txId);
+        if (tx) {
+            delete tx.utilityIndex;
+            delete tx.utilityIndexDate;
+            delete tx.utilityType;
+        }
+    }
+    appData.utilityReadings = appData.utilityReadings.filter(r => r.id !== readingId);
+    saveData();
+    renderUtilityMetersAnalytics();
+    renderStatsTab();
+    showToast('Citire contor ștearsă cu succes.', 'success');
+}
+
+let currentFloatingPromptUtilityType = 'electricity';
+
+function isUtilityItemOrMerchant(merch, itemDesc) {
+    const text = `${merch || ''} ${itemDesc || ''}`.toLowerCase();
+    return text.includes('gaz') || text.includes('gas') || text.includes('curent') || 
+           text.includes('electr') || text.includes('apa') || text.includes('apă') || 
+           text.includes('utilitat') || text.includes('enel') || text.includes('engie') || 
+           text.includes('e.on') || text.includes('hidroelectrica') || text.includes('electrica') || 
+           text.includes('nova') || text.includes('distrigaz') || text.includes('aquatim') || 
+           text.includes('raja') || text.includes('salubr') || text.includes('factur');
+}
+
+function openExpenseUtilityFloatingPrompt(merch, itemDesc) {
+    const overlay = document.getElementById('expenseUtilityFloatingOverlay');
+    if (!overlay) return;
+
+    const merchEl = document.getElementById('expenseUtilityPromptMerchant');
+    const itemEl = document.getElementById('expenseUtilityPromptItem');
+    const indexInput = document.getElementById('expenseUtilityFloatingIndex');
+    const dateInput = document.getElementById('expenseUtilityFloatingDate');
+
+    if (merchEl) merchEl.textContent = merch || 'Factură Utilități';
+    if (itemEl) itemEl.textContent = itemDesc || 'Consum & Servicii';
+
+    // Auto-detecție tip utilitate pe baza numelui magazinului sau a cumpărăturii
+    const combined = `${merch || ''} ${itemDesc || ''}`.toLowerCase();
+    let detectedType = 'electricity';
+    if (combined.includes('gaz') || combined.includes('gas') || combined.includes('engie') || combined.includes('distrigaz')) {
+        detectedType = 'gas';
+    } else if (combined.includes('apa') || combined.includes('apă') || combined.includes('canal') || combined.includes('aquatim') || combined.includes('raja')) {
+        detectedType = 'water';
+    } else {
+        detectedType = 'electricity';
+    }
+
+    const existingType = document.getElementById('expenseUtilityType')?.value;
+    if (existingType && UTILITY_METERS_CONFIG[existingType]) {
+        detectedType = existingType;
+    }
+    currentFloatingPromptUtilityType = detectedType;
+
+    document.querySelectorAll('#expenseUtilityTypeTabsPrompt .btn-utility-type-tab').forEach(b => {
+        b.classList.toggle('active', b.dataset.utility === currentFloatingPromptUtilityType);
+    });
+
+    const savedIdx = document.getElementById('expenseUtilityIndex')?.value;
+    if (indexInput) {
+        indexInput.value = savedIdx || '';
+    }
+
+    const savedDate = document.getElementById('expenseUtilityIndexDate')?.value;
+    const expDate = document.getElementById('expenseDate')?.value;
+    if (dateInput) {
+        dateInput.value = savedDate || expDate || getTodayString();
+    }
+
+    updateFloatingUtilityLivePreview();
+
+    overlay.style.display = 'flex';
+    setTimeout(() => {
+        if (indexInput) indexInput.focus();
+    }, 120);
+}
+
+function closeExpenseUtilityFloatingPrompt() {
+    const overlay = document.getElementById('expenseUtilityFloatingOverlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function updateFloatingUtilityLivePreview() {
+    const previewEl = document.getElementById('expenseUtilityFloatingLivePreview');
+    const indexInput = document.getElementById('expenseUtilityFloatingIndex');
+    const dateInput = document.getElementById('expenseUtilityFloatingDate');
+    const amtInput = document.getElementById('expenseAmount');
+    if (!previewEl || !indexInput) return;
+
+    const newVal = parseFloat(indexInput.value);
+    if (isNaN(newVal) || newVal <= 0) {
+        previewEl.style.display = 'none';
+        return;
+    }
+
+    const uType = currentFloatingPromptUtilityType || 'electricity';
+    const cfg = UTILITY_METERS_CONFIG[uType] || UTILITY_METERS_CONFIG.electricity;
+    const curDate = (dateInput && dateInput.value) ? dateInput.value : getTodayString();
+
+    const sorted = getSortedReadingsForType(uType).filter(r => (r.readingDate || '') <= curDate);
+    if (sorted.length === 0) {
+        previewEl.style.display = 'block';
+        previewEl.innerHTML = `<strong>ℹ️ Prima citire pentru ${cfg.name}:</strong> ${newVal} ${cfg.unit}. Consumul și prețul/unitate se vor calcula automat de la următoarea citire.`;
+        return;
+    }
+
+    const prev = sorted[sorted.length - 1];
+    let delta = newVal - prev.indexValue;
+    if (delta < 0) delta = newVal;
+
+    const dPrev = new Date(prev.readingDate + 'T00:00:00');
+    const dCurr = new Date(curDate + 'T00:00:00');
+    const days = Math.max(1, Math.round((dCurr.getTime() - dPrev.getTime()) / (1000 * 60 * 60 * 24)));
+    const daily = delta / days;
+
+    const amt = parseFloat(amtInput ? amtInput.value : 0) || 0;
+    const unitPriceText = (amt > 0 && delta > 0) ? ` • Preț: <strong>${(amt / delta).toFixed(3)} lei/${cfg.unit}</strong>` : '';
+
+    previewEl.style.display = 'block';
+    previewEl.innerHTML = `
+        <div>Index anterior: <strong>${prev.indexValue}</strong> (${formatDateDisplay(prev.readingDate)})</div>
+        <div>Consum: <strong style="color:var(--accent);">+${delta.toFixed(1)} ${cfg.unit}</strong> în <strong>${days} zile</strong> (${daily.toFixed(2)} ${cfg.unit}/zi)${unitPriceText}</div>
+    `;
+}
+
+function saveExpenseUtilityFloatingPrompt() {
+    const indexInput = document.getElementById('expenseUtilityFloatingIndex');
+    const dateInput = document.getElementById('expenseUtilityFloatingDate');
+    const newVal = parseFloat(indexInput ? indexInput.value : '');
+
+    if (isNaN(newVal) || newVal <= 0) {
+        showToast('Introduceți o valoare validă a indexului!', 'error');
+        return;
+    }
+
+    const newDate = (dateInput && dateInput.value) ? dateInput.value : getTodayString();
+    const uType = currentFloatingPromptUtilityType || 'electricity';
+    const cfg = UTILITY_METERS_CONFIG[uType] || UTILITY_METERS_CONFIG.electricity;
+
+    const uIdxHidden = document.getElementById('expenseUtilityIndex');
+    const uDateHidden = document.getElementById('expenseUtilityIndexDate');
+    const uTypeHidden = document.getElementById('expenseUtilityType');
+
+    if (uIdxHidden) uIdxHidden.value = newVal;
+    if (uDateHidden) uDateHidden.value = newDate;
+    if (uTypeHidden) uTypeHidden.value = uType;
+
+    const badge = document.getElementById('expenseUtilityEnteredBadge');
+    const badgeText = document.getElementById('expenseUtilityEnteredText');
+    if (badge && badgeText) {
+        badgeText.innerHTML = `Index: <strong>${newVal} ${cfg.unit}</strong> (${cfg.name}) • ${formatDateDisplay(newDate)}`;
+        badge.style.display = 'none';
+    }
+
+    closeExpenseUtilityFloatingPrompt();
+    showToast(`✓ Index reținut: ${newVal} ${cfg.unit} (${cfg.name})`, 'success');
+}
+
+function updateDirectMeterLivePreview() {
+    const previewEl = document.getElementById('directMeterLiveCalc');
+    const indexInput = document.getElementById('directMeterIndexValue');
+    const dateInput = document.getElementById('directMeterReadingDate');
+    const typeInput = document.getElementById('directMeterUtilityType');
+    const amtInput = document.getElementById('directMeterAmount');
+    if (!previewEl || !indexInput) return;
+
+    const newVal = parseFloat(indexInput.value);
+    if (isNaN(newVal) || newVal <= 0) {
+        previewEl.style.display = 'none';
+        return;
+    }
+
+    const uType = typeInput ? typeInput.value : 'electricity';
+    const cfg = UTILITY_METERS_CONFIG[uType] || UTILITY_METERS_CONFIG.electricity;
+    const curDate = dateInput && dateInput.value ? dateInput.value : getTodayString();
+
+    const sorted = getSortedReadingsForType(uType).filter(r => (r.readingDate || '') <= curDate);
+    if (sorted.length === 0) {
+        previewEl.style.display = 'block';
+        previewEl.innerHTML = `<strong>ℹ️ Prima citire pentru ${cfg.name}:</strong> ${newVal} ${cfg.unit}. Consumul se va calcula la următoarele citiri.`;
+        return;
+    }
+
+    const prev = sorted[sorted.length - 1];
+    let delta = newVal - prev.indexValue;
+    if (delta < 0) delta = newVal;
+
+    const dPrev = new Date(prev.readingDate + 'T00:00:00');
+    const dCurr = new Date(curDate + 'T00:00:00');
+    const days = Math.max(1, Math.round((dCurr.getTime() - dPrev.getTime()) / (1000 * 60 * 60 * 24)));
+    const daily = delta / days;
+
+    const amt = parseFloat(amtInput ? amtInput.value : 0) || 0;
+    const unitPriceText = (amt > 0 && delta > 0) ? ` • Preț calculat: <strong>${(amt / delta).toFixed(3)} lei/${cfg.unit}</strong>` : '';
+
+    previewEl.style.display = 'block';
+    previewEl.innerHTML = `
+        <div>Index anterior: <strong>${prev.indexValue}</strong> (${formatDateDisplay(prev.readingDate)})</div>
+        <div>Consum: <strong style="color:var(--accent);">+${delta.toFixed(1)} ${cfg.unit}</strong> în <strong>${days} zile</strong> (${daily.toFixed(2)} ${cfg.unit}/zi)${unitPriceText}</div>
+    `;
+}
+
+// ==========================================
 // MODUL DEPOZITE & PATRIMONIU / GESTIUNE FONDURI
 // ==========================================
 
@@ -8699,6 +14026,55 @@ const DEPOSIT_CATEGORY_NAMES = {
         cash: '现金/外币',
         stocks: '股票/基金',
         crypto: '加密货币/黄金/其他'
+    },
+    fr: {
+        deposit: 'Dépôt Bancaire',
+        card: 'Carte / Compte Bancaire',
+        cash: 'Espèces / Devises',
+        stocks: 'Actions / Fonds',
+        crypto: 'Crypto / Or / Autres'
+    },
+    es: {
+        deposit: 'Depósito Bancario',
+        card: 'Tarjeta / Cuenta Bancaria',
+        cash: 'Efectivo / Divisas',
+        stocks: 'Acciones / Fondos',
+        crypto: 'Cripto / Oro / Otros'
+    },
+    it: {
+        deposit: 'Deposito Bancario',
+        card: 'Carta / Conto Bancario',
+        cash: 'Contanti / Valuta',
+        stocks: 'Azioni / Fondi',
+        crypto: 'Cripto / Oro / Altro'
+    },
+    pl: {
+        deposit: 'Lokata Bankowa',
+        card: 'Karta / Konto Bankowe',
+        cash: 'Gotówka / Waluta',
+        stocks: 'Akcje / Fundusze',
+        crypto: 'Krypto / Złoto / Inne'
+    },
+    nl: {
+        deposit: 'Bankdeposito',
+        card: 'Kaart / Bankrekening',
+        cash: 'Contant / Vreemde Valuta',
+        stocks: 'Aandelen / Fondsen',
+        crypto: 'Crypto / Goud / Overig'
+    },
+    pt: {
+        deposit: 'Depósito Bancário',
+        card: 'Cartão / Conta Bancária',
+        cash: 'Dinheiro / Moeda Estrangeira',
+        stocks: 'Ações / Fundos',
+        crypto: 'Cripto / Ouro / Outros'
+    },
+    uk: {
+        deposit: 'Банківський Депозит',
+        card: 'Картка / Рахунок',
+        cash: 'Готівка / Валюта',
+        stocks: 'Акції / Фонди',
+        crypto: 'Крипто / Золото / Інше'
     }
 };
 
@@ -8890,6 +14266,20 @@ function getDepositCurrencyLabel(currCode, lang) {
         return `Depozite ${currCode}`;
     } else if (lang === 'de') {
         return `Einlagen ${currCode === 'EUR' ? 'Euro' : (currCode === 'RON' ? 'Lei' : currCode)}`;
+    } else if (lang === 'fr') {
+        return `Dépôts ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'es') {
+        return `Depósitos ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'it') {
+        return `Depositi ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'pl') {
+        return `Depozyty ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'nl') {
+        return `Deposito's ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'pt') {
+        return `Depósitos ${currCode === 'EUR' ? 'Euro' : currCode}`;
+    } else if (lang === 'uk') {
+        return `Депозити ${currCode === 'EUR' ? 'Євро' : currCode}`;
     } else if (lang === 'tr') {
         return `Mevduat ${currCode === 'TRY' ? 'TL' : (currCode === 'EUR' ? 'Euro' : currCode)}`;
     } else if (lang === 'ja') {
@@ -9009,10 +14399,44 @@ function renderDepositsPage() {
     if (grandTotalEl) {
         grandTotalEl.innerHTML = formatDepositMoneyHtml(grandPatrimoniuDisp, mainCurr);
     }
+
+    // Total general convertit în moneda selectată pentru Fond din Panou
+    const grandTotalConvEl = document.getElementById('depositsGrandTotalConvertedDisplay');
+    const convCurr = appData.settings?.fundConversionCurrency || (mainCurr === 'RON' ? 'EUR' : 'RON');
+
+    if (grandTotalConvEl) {
+        if (convCurr === 'none' || convCurr === mainCurr) {
+            grandTotalConvEl.style.display = 'none';
+            grandTotalConvEl.innerHTML = '';
+        } else {
+            grandTotalConvEl.style.display = 'flex';
+            const convertedGrandVal = convertFromRon(grandPatrimoniuRon, convCurr);
+            grandTotalConvEl.innerHTML = `<span style="opacity: 0.85; font-weight: 500; margin-right: 2px;">≈</span> <span>${formatDepositMoneyHtml(convertedGrandVal, convCurr)}</span>`;
+            if (!grandTotalConvEl.dataset.bound) {
+                grandTotalConvEl.dataset.bound = 'true';
+                grandTotalConvEl.style.cursor = 'pointer';
+                grandTotalConvEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (typeof openFundCurrencyPickerModal === 'function') openFundCurrencyPickerModal();
+                });
+            }
+        }
+    }
+
     if (countBadgeEl) {
         const count = deposits.length;
-        const countSuffix = activeLang === 'ro' ? (count === 1 ? 'Depozit' : 'Depozite') : t('deposits_count_label');
-        countBadgeEl.textContent = `${count} ${countSuffix}`;
+        const countValEl = document.getElementById('depositsCountValue');
+        const countLblEl = document.getElementById('depositsCountLabel');
+        const labelText = activeLang === 'ro' ? (count === 1 ? 'Depozit' : 'Depozite') : t('deposits_count_label');
+        if (countValEl && countLblEl) {
+            countLblEl.textContent = labelText;
+            countValEl.textContent = count;
+        } else {
+            countBadgeEl.innerHTML = `
+                <span id="depositsCountLabel" style="font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.92; line-height: 1.1;" data-i18n="deposits_count_label">${labelText}</span>
+                <span id="depositsCountValue" style="font-size: 1.10rem; font-weight: 900; line-height: 1.1; margin-top: 1px;">${count}</span>
+            `;
+        }
     }
     if (breakdownEl) {
         const lDep = t('deposits_breakdown_dep');
@@ -9249,39 +14673,52 @@ function getCategoryDomain(catId) {
     if (!catId) return 'general';
     const cat = (appData && Array.isArray(appData.categories)) ? appData.categories.find(c => c.id === catId) : null;
     if (!cat) return 'general';
-    const raw = ((cat.name || '') + ' ' + (cat.icon || '')).toLowerCase();
+    const raw = ((cat.name || '') + ' ' + (cat.icon || '')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    if (raw.includes('fast food') || raw.includes('fastfood') || raw.includes('fast-food') || raw.includes('burger') || raw.includes('pizza') || raw.includes('shaorma') || raw.includes('kebab') || raw.includes('mcdonald') || raw.includes('kfc') || raw.includes('cantina') || raw.includes('delivery')) {
+    if (raw.includes('fast food') || raw.includes('fastfood') || raw.includes('fast-food') || raw.includes('burger') || raw.includes('pizza') || raw.includes('shaorma') || raw.includes('kebab') || raw.includes('mcdonald') || raw.includes('kfc') || raw.includes('cantina') || raw.includes('delivery') || raw.includes('restaurant') || raw.includes('bar') || raw.includes('cafenea') || raw.includes('bistro') || raw.includes('pub') || raw.includes('patiserie') || raw.includes('covrig') || raw.includes('gogos')) {
         return 'fastfood';
     }
-    if (raw.includes('mancare') || raw.includes('mâncare') || raw.includes('aliment') || raw.includes('supermarket') || raw.includes('piata') || raw.includes('piață') || raw.includes('hypermarket') || raw.includes('bacanie') || raw.includes('băcănie') || raw.includes('grocer')) {
+    if (raw.includes('mancare') || raw.includes('aliment') || raw.includes('supermarket') || raw.includes('piata') || raw.includes('hypermarket') || raw.includes('bacanie') || raw.includes('grocer') || raw.includes('dulciuri') || raw.includes('carne') || raw.includes('legume') || raw.includes('fructe') || raw.includes('paine') || raw.includes('branza') || raw.includes('peste')) {
         return 'food';
     }
-    if (raw.includes('haine') || raw.includes('imbracaminte') || raw.includes('îmbrăcăminte') || raw.includes('fashion') || raw.includes('incaltaminte') || raw.includes('încălțăminte') || raw.includes('pantofi') || raw.includes('cumparatur') || raw.includes('cumpărături') || raw.includes('shopping') || raw.includes('cloth') || raw.includes('dress')) {
+    if (raw.includes('haine') || raw.includes('imbracaminte') || raw.includes('fashion') || raw.includes('incaltaminte') || raw.includes('pantofi') || raw.includes('cumparatur') || raw.includes('shopping') || raw.includes('cloth') || raw.includes('dress') || raw.includes('textile') || raw.includes('accesorii') || raw.includes('genti')) {
         return 'fashion';
     }
-    if (raw.includes('transport') || raw.includes('combustibil') || raw.includes('carburant') || raw.includes('benzina') || raw.includes('benzină') || raw.includes('motorina') || raw.includes('motorină') || raw.includes('gpl') || raw.includes('auto') || raw.includes('masina') || raw.includes('mașină') || raw.includes('taxi') || raw.includes('uber') || raw.includes('bolt') || raw.includes('peco') || raw.includes('stb') || raw.includes('cfr')) {
+    if (raw.includes('transport') || raw.includes('combustibil') || raw.includes('carburant') || raw.includes('benzina') || raw.includes('motorina') || raw.includes('gpl') || raw.includes('auto') || raw.includes('masina') || raw.includes('taxi') || raw.includes('uber') || raw.includes('bolt') || raw.includes('peco') || raw.includes('stb') || raw.includes('cfr') || raw.includes('parcare') || raw.includes('spalatorie') || raw.includes('service') || raw.includes('vulcanizare') || raw.includes('itp')) {
         return 'transport';
     }
-    if (raw.includes('sanatate') || raw.includes('sănătate') || raw.includes('farmacie') || raw.includes('medical') || raw.includes('medicament') || raw.includes('doctor') || raw.includes('medic') || raw.includes('dentist') || raw.includes('stomatolog') || raw.includes('clinica') || raw.includes('clinică') || raw.includes('analize') || raw.includes('spital') || raw.includes('pharma')) {
+    if (raw.includes('sanatate') || raw.includes('farmacie') || raw.includes('medical') || raw.includes('medicament') || raw.includes('doctor') || raw.includes('medic') || raw.includes('dentist') || raw.includes('stomatolog') || raw.includes('clinica') || raw.includes('analize') || raw.includes('spital') || raw.includes('pharma') || raw.includes('optica') || raw.includes('ochelari')) {
         return 'health';
     }
-    if (raw.includes('locuinta') || raw.includes('locuință') || raw.includes('chirie') || raw.includes('casa') || raw.includes('casă') || raw.includes('mobila') || raw.includes('mobilă') || raw.includes('amenajare') || raw.includes('bricolaj') || raw.includes('curatenie') || raw.includes('curățenie') || raw.includes('gradina') || raw.includes('grădină')) {
+    if (raw.includes('locuinta') || raw.includes('chirie') || raw.includes('casa') || raw.includes('mobila') || raw.includes('amenajare') || raw.includes('bricolaj') || raw.includes('curatenie') || raw.includes('gradina') || raw.includes('electrocasnice') || raw.includes('unelte') || raw.includes('renovare')) {
         return 'home';
     }
-    if (raw.includes('electronice') || raw.includes('it') || raw.includes('gadget') || raw.includes('electrocasnice') || raw.includes('telefon') || raw.includes('pc') || raw.includes('laptop') || raw.includes('tech')) {
+    if (raw.includes('electronice') || raw.includes('it') || raw.includes('gadget') || raw.includes('telefon') || raw.includes('pc') || raw.includes('laptop') || raw.includes('tech') || raw.includes('gaming') || raw.includes('componente')) {
         return 'tech';
     }
-    if (raw.includes('facturi') || raw.includes('utilitati') || raw.includes('utilități') || raw.includes('curent') || raw.includes('gaz') || raw.includes('gaze') || raw.includes('energie') || raw.includes('apa') || raw.includes('apă') || raw.includes('salubritate') || raw.includes('gunoi') || raw.includes('internet') || raw.includes('tv') || raw.includes('telefonie') || raw.includes('telefon') || raw.includes('impozit') || raw.includes('taxe') || raw.includes('chirie') || raw.includes('întreținere') || raw.includes('intretinere') || raw.includes('asociație') || raw.includes('asociatie') || raw.includes('electric') || raw.includes('rate') || raw.includes('rată') || raw.includes('credit') || raw.includes('asigurare') || raw.includes('⚡') || raw.includes('💡') || raw.includes('🔥') || raw.includes('💧') || raw.includes('📶') || raw.includes('📱') || raw.includes('🏢') || raw.includes('🏛️') || raw.includes('🗑️') || raw.includes('🛡️')) {
+    if (raw.includes('facturi') || raw.includes('utilitati') || raw.includes('curent') || raw.includes('gaz') || raw.includes('gaze') || raw.includes('energie') || raw.includes('apa') || raw.includes('salubritate') || raw.includes('gunoi') || raw.includes('internet') || raw.includes('tv') || raw.includes('telefonie') || raw.includes('telefon') || raw.includes('impozit') || raw.includes('taxe') || raw.includes('intretinere') || raw.includes('asociatie') || raw.includes('electric') || raw.includes('rate') || raw.includes('rata') || raw.includes('credit') || raw.includes('asigurare') || raw.includes('banca') || raw.includes('rovinieta') || raw.includes('⚡') || raw.includes('💡') || raw.includes('🔥') || raw.includes('💧') || raw.includes('📶') || raw.includes('📱') || raw.includes('🏢') || raw.includes('🏛️') || raw.includes('🗑️') || raw.includes('🛡️')) {
         return 'utilities';
     }
-    if (raw.includes('divertisment') || raw.includes('iesiri') || raw.includes('ieșiri') || raw.includes('cinema') || raw.includes('film') || raw.includes('jocuri') || raw.includes('gaming') || raw.includes('concediu') || raw.includes('vacanta') || raw.includes('vacanță') || raw.includes('calatorie') || raw.includes('călătorie')) {
+    if (raw.includes('divertisment') || raw.includes('iesiri') || raw.includes('cinema') || raw.includes('film') || raw.includes('jocuri') || raw.includes('concediu') || raw.includes('vacanta') || raw.includes('calatorie') || raw.includes('hotel') || raw.includes('pensiune') || raw.includes('avion') || raw.includes('turism') || raw.includes('distractie')) {
         return 'entertainment';
+    }
+    if (raw.includes('pisici') || raw.includes('pisica') || raw.includes('caini') || raw.includes('caine') || raw.includes('animale') || raw.includes('pet') || raw.includes('veterinar') || raw.includes('zoomania') || raw.includes('maxi pet') || raw.includes('animax') || raw.includes('litiera') || raw.includes('pisic') || raw.includes('cat') || raw.includes('dog') || raw.includes('🐱') || raw.includes('🐶') || raw.includes('🐾')) {
+        return 'pets';
+    }
+    if (raw.includes('cadouri') || raw.includes('cadou') || raw.includes('flori') || raw.includes('jucarii') || raw.includes('party') || raw.includes('aniversare') || raw.includes('nunta') || raw.includes('botez') || raw.includes('gift') || raw.includes('🎁') || raw.includes('💐') || raw.includes('🎉')) {
+        return 'gifts';
     }
     return 'general';
 }
 
 // Verifică dacă o categorie are activată lista de magazine
+
+// Helper pentru căutare și filtrare fără diacritice și insensibilă la majuscule
+function normalizeForSearch(str) {
+    if (!str) return '';
+    return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+
 function isMerchantEnabledForCategory(catId) {
     if (!catId) return false;
     if (!appData.settings) appData.settings = {};
@@ -9634,42 +15071,49 @@ function getReceiptVisualIcon(tx, m) {
 function getFoodMerchantsList(activeCatId) {
     const activeDomain = getCategoryDomain(activeCatId);
 
-    // Catalog bogat de magazine cu apartenență de domeniu
+    // Catalog extins de branduri și magazine reale din România pe domenii
     const defaultStores = [
-        // Fast Food & Delivery & Restaurante
+        // Fast Food & Delivery
         { name: "McDonald's", domain: 'fastfood', priority: 95 },
         { name: 'KFC', domain: 'fastfood', priority: 94 },
         { name: 'Burger King', domain: 'fastfood', priority: 92 },
         { name: 'Dristor Kebap', domain: 'fastfood', priority: 90 },
-        { name: 'Mesopotamia', domain: 'fastfood', priority: 89 },
+        { name: 'Socului Kebap', domain: 'fastfood', priority: 89 },
         { name: 'Spartan', domain: 'fastfood', priority: 88 },
-        { name: 'Pizza Hut', domain: 'fastfood', priority: 86 },
-        { name: "Domino's Pizza", domain: 'fastfood', priority: 85 },
-        { name: 'Subway', domain: 'fastfood', priority: 84 },
-        { name: 'Taco Bell', domain: 'fastfood', priority: 83 },
-        { name: 'Popeyes', domain: 'fastfood', priority: 82 },
-        { name: 'Trenta Pizza', domain: 'fastfood', priority: 81 },
-        { name: 'Starbucks', domain: 'fastfood', priority: 80 },
-        { name: '5 to go', domain: 'fastfood', priority: 79 },
-        { name: 'Glovo', domain: 'fastfood', priority: 85 },
-        { name: 'Tazz', domain: 'fastfood', priority: 84 },
-        { name: 'Restaurant', domain: 'fastfood', priority: 75 },
+        { name: 'Tazz', domain: 'fastfood', priority: 92 },
+        { name: 'Glovo', domain: 'fastfood', priority: 91 },
+        { name: 'Bolt Food', domain: 'fastfood', priority: 90 },
+        { name: 'Subway', domain: 'fastfood', priority: 86 },
+        { name: 'Pizza Hut', domain: 'fastfood', priority: 85 },
+        { name: 'Domino\'s Pizza', domain: 'fastfood', priority: 84 },
+        { name: 'Chopstix', domain: 'fastfood', priority: 82 },
+        { name: 'Noodle Pack', domain: 'fastfood', priority: 80 },
+        { name: 'Starbucks', domain: 'fastfood', priority: 85 },
+        { name: '5 to go', domain: 'fastfood', priority: 84 },
+        { name: 'Luca (Patiserie)', domain: 'fastfood', priority: 88 },
+        { name: 'Matei (Patiserie)', domain: 'fastfood', priority: 86 },
 
-        // Supermarketuri & Mâncare
-        { name: 'Lidl', domain: 'food', priority: 95 },
-        { name: 'Kaufland', domain: 'food', priority: 94 },
-        { name: 'Carrefour', domain: 'food', priority: 92 },
-        { name: 'Mega Image', domain: 'food', priority: 90 },
-        { name: 'Penny', domain: 'food', priority: 88 },
-        { name: 'Auchan', domain: 'food', priority: 86 },
-        { name: 'Profi', domain: 'food', priority: 85 },
-        { name: 'Freshful', domain: 'food', priority: 84 },
-        { name: 'Piață', domain: 'food', priority: 82 },
-        { name: 'Aprozar', domain: 'food', priority: 80 },
-        { name: 'Măcelărie', domain: 'food', priority: 78 },
-        { name: 'Brutărie', domain: 'food', priority: 76 },
+        // Supermarket & Mâncare & Piețe
+        { name: 'Kaufland', domain: 'food', priority: 95 },
+        { name: 'Lidl', domain: 'food', priority: 94 },
+        { name: 'Carrefour', domain: 'food', priority: 93 },
+        { name: 'Mega Image', domain: 'food', priority: 92 },
+        { name: 'Auchan', domain: 'food', priority: 91 },
+        { name: 'Penny', domain: 'food', priority: 90 },
+        { name: 'Profi', domain: 'food', priority: 89 },
+        { name: 'Metro', domain: 'food', priority: 88 },
+        { name: 'Selgros', domain: 'food', priority: 87 },
+        { name: 'Cora', domain: 'food', priority: 80 },
+        { name: 'Aprozar', domain: 'food', priority: 85 },
+        { name: 'Piață / Tarabă', domain: 'food', priority: 86 },
+        { name: 'Piața Ceair', domain: 'food', priority: 88 },
+        { name: 'Măcelărie', domain: 'food', priority: 84 },
+        { name: 'Brutărie', domain: 'food', priority: 83 },
+        { name: 'La Doi Pași', domain: 'food', priority: 82 },
+        { name: 'Freshful', domain: 'food', priority: 85 },
+        { name: 'Sezamo', domain: 'food', priority: 84 },
 
-        // Cumpărături, Haine & Fashion
+        // Haine, Încălțăminte & Shopping
         { name: 'Zara', domain: 'fashion', priority: 95 },
         { name: 'H&M', domain: 'fashion', priority: 94 },
         { name: 'Bershka', domain: 'fashion', priority: 92 },
@@ -9741,7 +15185,38 @@ function getFoodMerchantsList(activeCatId) {
         { name: 'Restart Energy', domain: 'utilities', priority: 80 },
         { name: 'Tinmar Energy', domain: 'utilities', priority: 79 },
         { name: 'Asociație Proprietari', domain: 'utilities', priority: 78 },
-        { name: 'ANAF / Taxe', domain: 'utilities', priority: 77 }
+        { name: 'ANAF / Taxe', domain: 'utilities', priority: 77 },
+
+        // Animale de Companie & Pet Shop (Pisici, Câini)
+        { name: 'Animax', domain: 'pets', priority: 95 },
+        { name: 'Maxi Pet', domain: 'pets', priority: 94 },
+        { name: 'Zoomania', domain: 'pets', priority: 93 },
+        { name: 'Cabinet Veterinar', domain: 'pets', priority: 92 },
+        { name: 'Farmacie Veterinară', domain: 'pets', priority: 90 },
+        { name: 'Pet Shop Local', domain: 'pets', priority: 88 },
+
+        // Cadouri, Flori, Jucării & Ocazii
+        { name: 'Florărie', domain: 'gifts', priority: 95 },
+        { name: 'Cărturești', domain: 'gifts', priority: 94 },
+        { name: 'Sephora', domain: 'gifts', priority: 93 },
+        { name: 'Douglas', domain: 'gifts', priority: 92 },
+        { name: 'Noriel', domain: 'gifts', priority: 91 },
+        { name: 'Smyk', domain: 'gifts', priority: 90 },
+        { name: 'Jumbo', domain: 'gifts', priority: 89 },
+        { name: 'Pandora', domain: 'gifts', priority: 88 },
+        { name: 'Lego Store', domain: 'gifts', priority: 87 },
+
+        // Divertisment, Concediu & Călătorii
+        { name: 'Cinema City', domain: 'entertainment', priority: 95 },
+        { name: 'Netflix', domain: 'entertainment', priority: 94 },
+        { name: 'Spotify', domain: 'entertainment', priority: 93 },
+        { name: 'YouTube Premium', domain: 'entertainment', priority: 92 },
+        { name: 'Booking.com', domain: 'entertainment', priority: 91 },
+        { name: 'Airbnb', domain: 'entertainment', priority: 90 },
+        { name: 'Therme', domain: 'entertainment', priority: 89 },
+        { name: 'Wizz Air', domain: 'entertainment', priority: 88 },
+        { name: 'Tarom', domain: 'entertainment', priority: 87 },
+        { name: 'Bilete.ro', domain: 'entertainment', priority: 86 }
     ];
 
     const hidden = (appData && appData.settings && Array.isArray(appData.settings.hiddenMerchants))
@@ -9784,7 +15259,7 @@ function getFoodMerchantsList(activeCatId) {
         });
     }
 
-    // Numărare frecvență utilizare tranzacții
+    // Numărare frecvență utilizare tranzacții în categoria activă și în general
     if (appData && Array.isArray(appData.transactions)) {
         appData.transactions.forEach(t => {
             if (t.type === 'expense') {
@@ -9814,39 +15289,41 @@ function getFoodMerchantsList(activeCatId) {
         });
     }
 
-    // Calcul scor inteligent:
-    // 1. Tranzacții în categoria activă (catCount) -> prioritate maximă absolută!
-    // 2. Apartenență la domeniul categoriei active (Fast Food -> Fast Food primele, Haine -> Haine primele)
-    // 3. Frecvență generală tranzacții (count)
-    // 4. Prioritate prestabilită a brandului
+    // ORDONARE INTELIGENTĂ ÎN 3 NIVELE PENTRU TOATE CATEGORIILE:
+    // Nivel 1: Cele folosite deja în categoria activă (catCount > 0), descrescător după frecvență, apoi alfabetic
+    // Nivel 2: Celelalte legate de categoria activă (domeniu sau categorie asociată), în ordine alfabetică A-Z
+    // Nivel 3: Restul magazinelor fără legătură directă cu categoria, în ordine alfabetică A-Z
     const storesList = Array.from(storeMap.values());
-    storesList.forEach(store => {
-        let score = 0;
-        const isDomainMatch = (activeDomain !== 'general' && store.domain === activeDomain);
-        const isDirectCatMatch = (store.categoryId && store.categoryId === activeCatId);
-
-        if (store.catCount > 0) {
-            score += 10000 + (store.catCount * 250);
-        } else if (isDirectCatMatch) {
-            score += 5000;
-        } else if (isDomainMatch) {
-            score += 2000 + (store.priority || 50);
+    storesList.sort((a, b) => {
+        const aUsed = a.catCount > 0;
+        const bUsed = b.catCount > 0;
+        if (aUsed && !bUsed) return -1;
+        if (!aUsed && bUsed) return 1;
+        if (aUsed && bUsed) {
+            if (b.catCount !== a.catCount) return b.catCount - a.catCount;
+            return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
         }
 
-        score += (store.count * 15);
-        if (!isDomainMatch && !isDirectCatMatch && store.catCount === 0) {
-            score += (store.priority || 10);
+        const aDirect = (a.categoryId && a.categoryId === activeCatId);
+        const bDirect = (b.categoryId && b.categoryId === activeCatId);
+        const aDomain = (activeDomain !== 'general' && a.domain === activeDomain);
+        const bDomain = (activeDomain !== 'general' && b.domain === activeDomain);
+        const aRelated = aDirect || aDomain;
+        const bRelated = bDirect || bDomain;
+
+        if (aRelated && !bRelated) return -1;
+        if (!aRelated && bRelated) return 1;
+        if (aRelated && bRelated) {
+            return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
         }
 
-        store.smartScore = score;
+        return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
     });
 
-    storesList.sort((a, b) => b.smartScore - a.smartScore);
     return storesList;
 }
 
-// Extrage lista de cumpărături / articole ordonate inteligent după categoria activă și frecvență
-function getFoodShoppingItemsList(activeCatId) {
+function getFoodShoppingItemsList(activeCatId, selectedMerchant) {
     const activeDomain = getCategoryDomain(activeCatId);
 
     // Catalog cuprinzător de articole cu emoji și domeniu asociat
@@ -9945,7 +15422,41 @@ function getFoodShoppingItemsList(activeCatId) {
         { name: 'Impozit & Taxe', icon: '🏛️', domain: 'utilities', priority: 91 },
         { name: 'Salubritate / Gunoi', icon: '🗑️', domain: 'utilities', priority: 90 },
         { name: 'Asigurare Locuință', icon: '🛡️', domain: 'utilities', priority: 89 },
-        { name: 'Rată Bancă / Credit', icon: '💳', domain: 'utilities', priority: 88 }
+        { name: 'Rată Bancă / Credit', icon: '💳', domain: 'utilities', priority: 88 },
+
+        // Animale de Companie (Pisici, Câini)
+        { name: 'Hrană uscată', icon: '🥫', domain: 'pets', priority: 95 },
+        { name: 'Hrană umedă / Plicuri', icon: '🍲', domain: 'pets', priority: 94 },
+        { name: 'Conserve pisici', icon: '🥫', domain: 'pets', priority: 93 },
+        { name: 'Nisip pisici', icon: '📦', domain: 'pets', priority: 92 },
+        { name: 'Recompense animale', icon: '🦴', domain: 'pets', priority: 91 },
+        { name: 'Antiparazitar', icon: '💉', domain: 'pets', priority: 90 },
+        { name: 'Jucărie animal', icon: '🎾', domain: 'pets', priority: 89 },
+        { name: 'Litieră', icon: '📦', domain: 'pets', priority: 88 },
+        { name: 'Vizită veterinar', icon: '🩺', domain: 'pets', priority: 87 },
+        { name: 'Toaletaj / Spălat', icon: '✂️', domain: 'pets', priority: 86 },
+
+        // Cadouri, Flori & Ocazii
+        { name: 'Buchet flori', icon: '💐', domain: 'gifts', priority: 95 },
+        { name: 'Cadou aniversare', icon: '🎁', domain: 'gifts', priority: 94 },
+        { name: 'Jucării', icon: '🧸', domain: 'gifts', priority: 93 },
+        { name: 'Parfum', icon: '🧴', domain: 'gifts', priority: 92 },
+        { name: 'Carte', icon: '📚', domain: 'gifts', priority: 91 },
+        { name: 'Bijuterii', icon: '💍', domain: 'gifts', priority: 90 },
+        { name: 'Dulciuri fine / Praline', icon: '🍬', domain: 'gifts', priority: 89 },
+        { name: 'Pungă / Cutie cadou', icon: '🛍️', domain: 'gifts', priority: 88 },
+        { name: 'Lumânare parfumată', icon: '🕯️', domain: 'gifts', priority: 87 },
+
+        // Divertisment, Concediu & Ieșiri
+        { name: 'Bilet cinema', icon: '🎟️', domain: 'entertainment', priority: 95 },
+        { name: 'Abonament streaming', icon: '📺', domain: 'entertainment', priority: 94 },
+        { name: 'Cazare hotel / pensiune', icon: '🏨', domain: 'entertainment', priority: 93 },
+        { name: 'Bilet avion', icon: '✈️', domain: 'entertainment', priority: 92 },
+        { name: 'Bilet concert / festival', icon: '🎫', domain: 'entertainment', priority: 91 },
+        { name: 'Cină restaurant', icon: '🍽️', domain: 'entertainment', priority: 90 },
+        { name: 'Băuturi ieșire', icon: '🍹', domain: 'entertainment', priority: 89 },
+        { name: 'Intrare atracție / parc', icon: '🎡', domain: 'entertainment', priority: 88 },
+        { name: 'Șezlong / Plajă', icon: '🏖️', domain: 'entertainment', priority: 87 }
     ];
 
     const hidden = (appData && appData.settings && Array.isArray(appData.settings.hiddenShoppingItems))
@@ -9989,65 +15500,96 @@ function getFoodShoppingItemsList(activeCatId) {
         });
     }
 
-    // Colectare din descrierile tranzacțiilor existente
+    // Colectare din descrierile tranzacțiilor existente (cu suport pentru articole multiple pe un bon)
+    const selMerchLower = selectedMerchant ? selectedMerchant.trim().toLowerCase() : '';
     if (appData && Array.isArray(appData.transactions)) {
         appData.transactions.forEach(t => {
             if (t.type === 'expense') {
                 const mc = getTransactionMerchantAndComment(t);
                 const desc = (mc.comment || '').trim();
+                const txMerch = (mc.merchant || t.merchant || '').trim().toLowerCase();
                 if (desc) {
-                    const key = desc.toLowerCase();
-                    if (!hidden.includes(key)) {
-                        if (!itemMap.has(key)) {
-                            itemMap.set(key, {
-                                name: desc,
-                                icon: '🛍️',
-                                domain: (t.categoryId === activeCatId ? activeDomain : getCategoryDomain(t.categoryId)),
-                                priority: 50,
-                                count: 1,
-                                catCount: (t.categoryId === activeCatId ? 1 : 0),
-                                isCustom: true
-                            });
-                        } else {
-                            const item = itemMap.get(key);
-                            item.count += 1;
-                            if (t.categoryId === activeCatId) {
-                                item.catCount += 1;
+                    const parts = desc.split(',').map(s => s.trim()).filter(Boolean);
+                    parts.forEach(part => {
+                        const key = part.toLowerCase();
+                        if (!hidden.includes(key)) {
+                            if (!itemMap.has(key)) {
+                                itemMap.set(key, {
+                                    name: part,
+                                    icon: '🛍️',
+                                    domain: (t.categoryId === activeCatId ? activeDomain : getCategoryDomain(t.categoryId)),
+                                    priority: 50,
+                                    count: 1,
+                                    catCount: (t.categoryId === activeCatId ? 1 : 0),
+                                    merchCount: (selMerchLower && txMerch === selMerchLower ? 1 : 0),
+                                    isCustom: true
+                                });
+                            } else {
+                                const item = itemMap.get(key);
+                                item.count += 1;
+                                if (t.categoryId === activeCatId) {
+                                    item.catCount += 1;
+                                }
+                                if (selMerchLower && txMerch === selMerchLower) {
+                                    item.merchCount = (item.merchCount || 0) + 1;
+                                }
                             }
                         }
-                    }
+                    });
                 }
             }
         });
     }
 
-    // Calcul scor inteligent
+    // ORDONARE INTELIGENTĂ ÎN 4 NIVELE PENTRU TOATE CATEGORIILE:
+    // Nivel 0: Cele mai folosite la magazinul selectat (merchCount > 0), descrescător — doar când e selectat un magazin
+    // Nivel 1: Cele folosite deja în categoria activă (catCount > 0), descrescător după frecvență, apoi alfabetic
+    // Nivel 2: Celelalte legate de categoria activă (domeniu sau categorie asociată), în ordine alfabetică A-Z
+    // Nivel 3: Restul articolelor fără legătură directă cu categoria, în ordine alfabetică A-Z
     const itemsList = Array.from(itemMap.values());
-    itemsList.forEach(item => {
-        let score = 0;
-        const isDomainMatch = (activeDomain !== 'general' && item.domain === activeDomain);
-        const isDirectCatMatch = (item.categoryId && item.categoryId === activeCatId);
-
-        if (item.catCount > 0) {
-            score += 10000 + (item.catCount * 250);
-        } else if (isDirectCatMatch) {
-            score += 5000;
-        } else if (isDomainMatch) {
-            score += 2000 + (item.priority || 50);
+    itemsList.sort((a, b) => {
+        // Nivel 0: prioritate magazin selectat
+        const aMerch = (a.merchCount || 0) > 0;
+        const bMerch = (b.merchCount || 0) > 0;
+        if (aMerch && !bMerch) return -1;
+        if (!aMerch && bMerch) return 1;
+        if (aMerch && bMerch) {
+            if ((b.merchCount || 0) !== (a.merchCount || 0)) return (b.merchCount || 0) - (a.merchCount || 0);
+            // Dacă au același merchCount, preferăm cel mai folosit în categorie
+            if (b.catCount !== a.catCount) return b.catCount - a.catCount;
+            return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
         }
 
-        score += (item.count * 15);
-        if (!isDomainMatch && !isDirectCatMatch && item.catCount === 0) {
-            score += (item.priority || 10);
+        // Nivel 1: folosite în categoria activă
+        const aUsed = a.catCount > 0;
+        const bUsed = b.catCount > 0;
+        if (aUsed && !bUsed) return -1;
+        if (!aUsed && bUsed) return 1;
+        if (aUsed && bUsed) {
+            if (b.catCount !== a.catCount) return b.catCount - a.catCount;
+            return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
         }
 
-        item.smartScore = score;
+        // Nivel 2: legate de domeniu / categorie
+        const aDirect = (a.categoryId && a.categoryId === activeCatId);
+        const bDirect = (b.categoryId && b.categoryId === activeCatId);
+        const aDomain = (activeDomain !== 'general' && a.domain === activeDomain);
+        const bDomain = (activeDomain !== 'general' && b.domain === activeDomain);
+        const aRelated = aDirect || aDomain;
+        const bRelated = bDirect || bDomain;
+
+        if (aRelated && !bRelated) return -1;
+        if (!aRelated && bRelated) return 1;
+        if (aRelated && bRelated) {
+            return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
+        }
+
+        // Nivel 3: restul
+        return a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' });
     });
 
-    itemsList.sort((a, b) => b.smartScore - a.smartScore);
     return itemsList;
 }
-
 // Adăugare articol de cumpărături personalizat
 function addCustomShoppingItem(name, catId = null) {
     if (!name || !name.trim()) return;
@@ -10109,6 +15651,7 @@ function deleteCustomShoppingItem(name) {
     }
 
     saveData();
+    if (typeof renderCustomMerchantsModal === "function") renderCustomMerchantsModal();
     persistDatabaseToFile();
 
     const activeCatId = document.getElementById('selectedExpenseCategoryId')?.value;
@@ -10179,7 +15722,206 @@ function deleteCustomMerchant(name) {
     const activeCatId = document.getElementById('selectedExpenseCategoryId')?.value;
     updateFoodMerchantsQuickPicker(activeCatId);
     renderMerchantCatConfigModal();
+    renderCustomMerchantsModal();
     showToast(`Magazinul "${name}" a fost eliminat!`, 'info');
+}
+
+
+// Închide complet panoul de cumpărături/magazine și readuce modal-box la înălțimea normală a formularului cheltuieli
+function closeFoodMerchantsOverlay() {
+    const pop = document.getElementById('foodMerchantsFloatingOverlay');
+    if (pop) pop.style.display = 'none';
+    const mOverlay = document.getElementById('modalExpense');
+    if (mOverlay) mOverlay.classList.remove('merchant-popover-open');
+    const mBox = mOverlay?.querySelector('.modal-box');
+    if (mBox) {
+        mBox.style.height = 'auto';
+        mBox.style.maxHeight = '98vh';
+    }
+    const searchWrap = document.getElementById('merchantPopoverBottomSearches');
+    if (searchWrap) {
+        searchWrap.classList.remove('is-floating-keyboard');
+        searchWrap.style.bottom = '';
+    }
+}
+
+// Afișează panoul dual cu cumpărături (stânga) și magazine cu sigle reale (dreapta)
+let currentShoppingSearchQuery = '';
+let currentMerchantSearchQuery = '';
+let lastFoodMerchantsOpenTime = 0;
+
+// Randare coloană Cumpărături / Articole cu filtrare după căutare
+function renderShoppingItemsCol(catId) {
+    const itemsListEl = document.getElementById('expenseShoppingItemsFloatingList');
+    if (!itemsListEl) return;
+
+    const activeLang = getLanguageForCurrency();
+    const merchantInput = document.getElementById('selectedExpenseMerchant');
+    const currentSelectedMerchant = merchantInput ? merchantInput.value.trim() : '';
+    const items = getFoodShoppingItemsList(catId, currentSelectedMerchant);
+    const q = normalizeForSearch(currentShoppingSearchQuery);
+    const filteredItems = q 
+        ? items.filter(item => {
+            const dispName = getLocalizedItemName(item.name, activeLang);
+            return normalizeForSearch(item.name).includes(q) || normalizeForSearch(dispName).includes(q);
+        })
+        : items;
+
+    const descInput = document.getElementById('expenseDesc');
+    const getSelectedItems = () => {
+        if (!descInput || !descInput.value) return [];
+        return descInput.value.split(',').map(s => s.trim()).filter(Boolean);
+    };
+
+    itemsListEl.innerHTML = '';
+
+    if (filteredItems.length === 0) {
+        itemsListEl.innerHTML = `<div class="popover-empty-search">${t('popover_empty_items', activeLang) || 'Niciun articol găsit'}</div>`;
+        return;
+    }
+
+    filteredItems.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const displayName = getLocalizedItemName(item.name, activeLang);
+        const selectedItems = getSelectedItems();
+        const isMatch = selectedItems.some(s => s.toLowerCase() === item.name.toLowerCase() || s.toLowerCase() === displayName.toLowerCase());
+        btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
+        btn.title = displayName;
+
+        const iconHtml = item.icon || '🛍️';
+
+        btn.innerHTML = `
+            <span class="merchant-btn-name"><span>${iconHtml}</span> <span>${escapeHtml(displayName)}</span></span>
+            <span class="merchant-btn-del" title="${activeLang === 'ro' ? 'Șterge articolul' : 'Delete item'}">&times;</span>
+        `;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (Date.now() - lastFoodMerchantsOpenTime < 320) return;
+            if (e.target && (e.target.classList.contains('merchant-btn-del') || e.target.closest('.merchant-btn-del'))) {
+                e.stopPropagation();
+                deleteCustomShoppingItem(item.name);
+                return;
+            }
+            
+            let curItems = getSelectedItems();
+            const existingIdx = curItems.findIndex(s => s.toLowerCase() === item.name.toLowerCase() || s.toLowerCase() === displayName.toLowerCase());
+            if (existingIdx !== -1) {
+                // Dacă era deja selectat, îl debifăm (toggle off)
+                curItems.splice(existingIdx, 1);
+                btn.classList.remove('active');
+            } else {
+                // Multi-select
+                curItems.push(displayName);
+                btn.classList.add('active');
+            }
+            if (descInput) {
+                descInput.value = curItems.join(', ');
+                updateExpenseBoxesClearButtons();
+            }
+        });
+
+        itemsListEl.appendChild(btn);
+    });
+
+    // Sincronizare automată când utilizatorul editează manual câmpul de descriere
+    if (descInput && !descInput.dataset.multiSyncBound) {
+        descInput.dataset.multiSyncBound = 'true';
+        descInput.addEventListener('input', () => {
+            const curItems = descInput.value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+            itemsListEl.querySelectorAll('.merchant-popover-btn').forEach(btn => {
+                const nameSpan = btn.querySelector('.merchant-btn-name span:last-child');
+                const btnName = nameSpan ? nameSpan.textContent.trim().toLowerCase() : '';
+                if (btnName && curItems.includes(btnName)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateExpenseBoxesClearButtons();
+        });
+    }
+}
+
+// Randare coloană Magazine cu sigle reale și filtrare după căutare
+function renderMerchantsCol(catId) {
+    const storesListEl = document.getElementById('expenseMerchantsFloatingList');
+    if (!storesListEl) return;
+
+    const stores = getFoodMerchantsList(catId);
+    const q = normalizeForSearch(currentMerchantSearchQuery);
+    const filteredStores = q 
+        ? stores.filter(store => normalizeForSearch(store.name).includes(q))
+        : stores;
+
+    const merchantInput = document.getElementById('selectedExpenseMerchant');
+    const currentMerchant = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
+
+    storesListEl.innerHTML = '';
+
+    if (filteredStores.length === 0) {
+        storesListEl.innerHTML = `<div class="popover-empty-search">${t('popover_empty_stores', getLanguageForCurrency()) || 'Niciun magazin găsit'}</div>`;
+        return;
+    }
+
+    filteredStores.forEach(store => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isMatch = currentMerchant && currentMerchant === store.name.toLowerCase();
+        btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
+        btn.title = store.name;
+
+        const logoHtml = getMerchantLogoHtml(store.name, 16);
+
+        btn.innerHTML = `
+            <span class="merchant-btn-name">${logoHtml} <span>${escapeHtml(store.name)}</span></span>
+            <span class="merchant-btn-del" title="Șterge magazinul">&times;</span>
+        `;
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (Date.now() - lastFoodMerchantsOpenTime < 320) return;
+            if (e.target && (e.target.classList.contains('merchant-btn-del') || e.target.closest('.merchant-btn-del'))) {
+                e.stopPropagation();
+                deleteCustomMerchant(store.name);
+                return;
+            }
+            const curSel = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
+            if (curSel === store.name.toLowerCase()) {
+                if (merchantInput) merchantInput.value = '';
+                btn.classList.remove('active');
+            } else {
+                if (merchantInput) merchantInput.value = store.name;
+                storesListEl.querySelectorAll('.merchant-popover-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            // Re-randez cumpărăturile cu noul filtru de magazin
+            const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            renderShoppingItemsCol(curCatId);
+            updateExpenseBoxesClearButtons();
+        });
+
+        storesListEl.appendChild(btn);
+    });
+
+    // Sincronizare automată când utilizatorul editează manual magazinul
+    if (merchantInput && !merchantInput.dataset.syncBound) {
+        merchantInput.dataset.syncBound = 'true';
+        merchantInput.addEventListener('input', () => {
+            const curMerch = merchantInput.value.trim().toLowerCase();
+            storesListEl.querySelectorAll('.merchant-popover-btn').forEach(btn => {
+                const nameSpan = btn.querySelector('.merchant-btn-name span:last-child');
+                const btnName = nameSpan ? nameSpan.textContent.trim().toLowerCase() : '';
+                if (btnName && curMerch === btnName) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateExpenseBoxesClearButtons();
+        });
+    }
 }
 
 // Afișează panoul dual cu cumpărături (stânga) și magazine cu sigle reale (dreapta)
@@ -10196,125 +15938,170 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         return;
     }
 
-    const stores = getFoodMerchantsList(catId);
-    const items = getFoodShoppingItemsList(catId);
-
     if (forceOpen) {
         popover.style.display = 'flex';
-    }
+        // Prevenim ghost click / tap-through de la degetul de pe categoria selectată
+        popover.style.pointerEvents = 'none';
+        lastFoodMerchantsOpenTime = Date.now();
+        setTimeout(() => {
+            if (popover) popover.style.pointerEvents = '';
+        }, 320);
 
-    // 1. Randare Coloana Magazine (Dreapta) cu Sigle Reale & Buton de Ștergere
-    if (storesListEl) {
-        const merchantInput = document.getElementById('selectedExpenseMerchant');
-        const currentMerchant = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
+        const mOverlay = document.getElementById('modalExpense');
+        if (mOverlay) mOverlay.classList.add('merchant-popover-open');
+        const mBox = popover.closest('.modal-box');
+        if (mBox) {
+            mBox.style.height = 'calc(100vh - 48px)';
+            mBox.style.maxHeight = 'calc(100vh - 48px)';
+        }
 
-        storesListEl.innerHTML = '';
-        stores.forEach(store => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            const isMatch = currentMerchant && currentMerchant === store.name.toLowerCase();
-            btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
-            btn.title = store.name;
-
-            const logoHtml = getMerchantLogoHtml(store.name, 16);
-
-            btn.innerHTML = `
-                <span class="merchant-btn-name">${logoHtml} <span>${escapeHtml(store.name)}</span></span>
-                <span class="merchant-btn-del" title="Șterge magazinul">&times;</span>
-            `;
-
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (e.target && (e.target.classList.contains('merchant-btn-del') || e.target.closest('.merchant-btn-del'))) {
-                    e.stopPropagation();
-                    deleteCustomMerchant(store.name);
-                    return;
-                }
-                const curSel = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
-                if (curSel === store.name.toLowerCase()) {
-                    if (merchantInput) merchantInput.value = '';
-                    btn.classList.remove('active');
-                } else {
-                    if (merchantInput) merchantInput.value = store.name;
-                    storesListEl.querySelectorAll('.merchant-popover-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                }
-            });
-
-            storesListEl.appendChild(btn);
-        });
-    }
-
-    // 2. Randare Coloana Cumpărături / Articole (Stânga - Suport Selecție Multiplă) & Buton de Ștergere
-    if (itemsListEl) {
+        // La deschiderea listelor Cumpărături / Magazine nu este selectat nimic default
         const descInput = document.getElementById('expenseDesc');
-        const getSelectedItems = () => {
-            if (!descInput || !descInput.value) return [];
-            return descInput.value.split(',').map(s => s.trim()).filter(Boolean);
-        };
+        const merchantInput = document.getElementById('selectedExpenseMerchant');
+        if (descInput) descInput.value = '';
+        if (merchantInput) merchantInput.value = '';
+        if (typeof updateExpenseBoxesClearButtons === 'function') {
+            updateExpenseBoxesClearButtons();
+        }
 
-        itemsListEl.innerHTML = '';
-        items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            const selectedItems = getSelectedItems();
-            const isMatch = selectedItems.some(s => s.toLowerCase() === item.name.toLowerCase());
-            btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
-            btn.title = item.name;
-
-            const iconHtml = item.icon || '🛍️';
-
-            btn.innerHTML = `
-                <span class="merchant-btn-name"><span>${iconHtml}</span> <span>${escapeHtml(item.name)}</span></span>
-                <span class="merchant-btn-del" title="Șterge articolul">&times;</span>
-            `;
-
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (e.target && (e.target.classList.contains('merchant-btn-del') || e.target.closest('.merchant-btn-del'))) {
-                    e.stopPropagation();
-                    deleteCustomShoppingItem(item.name);
-                    return;
-                }
-                
-                let curItems = getSelectedItems();
-                const existingIdx = curItems.findIndex(s => s.toLowerCase() === item.name.toLowerCase());
-                if (existingIdx !== -1) {
-                    // Dacă era deja selectat, îl debifăm (toggle off)
-                    curItems.splice(existingIdx, 1);
-                    btn.classList.remove('active');
-                } else {
-                    // Dacă nu era selectat, îl adăugăm pe același bon (multi-select)
-                    curItems.push(item.name);
-                    btn.classList.add('active');
-                }
-                if (descInput) {
-                    descInput.value = curItems.join(', ');
-                }
-            });
-
-            itemsListEl.appendChild(btn);
-        });
-
-        // Sincronizare automată când utilizatorul editează manual câmpul de descriere
-        if (descInput && !descInput.dataset.multiSyncBound) {
-            descInput.dataset.multiSyncBound = 'true';
-            descInput.addEventListener('input', () => {
-                const curItems = descInput.value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-                itemsListEl.querySelectorAll('.merchant-popover-btn').forEach(btn => {
-                    const nameSpan = btn.querySelector('.merchant-btn-name span:last-child');
-                    const btnName = nameSpan ? nameSpan.textContent.trim().toLowerCase() : '';
-                    if (btnName && curItems.includes(btnName)) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            });
+        // Resetăm căutările la redeschidere
+        currentShoppingSearchQuery = '';
+        currentMerchantSearchQuery = '';
+        const sInput = document.getElementById('searchShoppingItemsInput');
+        if (sInput) sInput.value = '';
+        const mInput = document.getElementById('searchMerchantsInput');
+        if (mInput) mInput.value = '';
+        const btnClearS = document.getElementById('btnClearShoppingSearch');
+        if (btnClearS) btnClearS.style.display = 'none';
+        const btnClearM = document.getElementById('btnClearMerchantSearch');
+        if (btnClearM) btnClearM.style.display = 'none';
+        const searchWrap = document.getElementById('merchantPopoverBottomSearches');
+        if (searchWrap) {
+            searchWrap.classList.remove('is-floating-keyboard');
+            searchWrap.style.bottom = '';
         }
     }
 
-    // 3. Legare buton deschidere adaugare articol (Stânga Jos)
+    // 1. Randare coloane
+    renderShoppingItemsCol(catId);
+    renderMerchantsCol(catId);
+
+    // Funcție dedicată: poziționare plutitoare deasupra tastaturii
+    // Permite tastaturii să se deschidă natural la atingere (fără blur fals)
+    // Când tastatura este deschisă și utilizatorul este în casetă -> plutește deasupra tastaturii
+    // Când tastatura se închide (tasta revenire sau tap afară) -> revine instant în fluxul normal fără să acopere Salvează
+    function syncMerchantSearchFloating() {
+        const searchWrap = document.getElementById('merchantPopoverBottomSearches');
+        const sInput = document.getElementById('searchShoppingItemsInput');
+        const mInput = document.getElementById('searchMerchantsInput');
+        if (!searchWrap) return;
+
+        const isInputActive = (sInput && document.activeElement === sInput) ||
+                              (mInput && document.activeElement === mInput);
+
+        let kbHeight = 0;
+        if (window.visualViewport) {
+            const vv = window.visualViewport;
+            kbHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+        }
+
+        const isKeyboardOpen = kbHeight > 80;
+
+        if (isInputActive && isKeyboardOpen) {
+            const mExp = document.getElementById('modalExpense');
+            if (mExp) mExp.scrollTop = 0;
+            const mBox = mExp?.querySelector('.modal-box');
+            if (mBox) mBox.scrollTop = 0;
+            window.scrollTo(0, 0);
+
+            searchWrap.classList.add('is-floating-keyboard');
+            searchWrap.style.bottom = (kbHeight + 10) + 'px';
+        } else {
+            searchWrap.classList.remove('is-floating-keyboard');
+            searchWrap.style.bottom = '';
+        }
+    }
+
+    // Ascultător resize pe visualViewport o singură dată
+    if (window.visualViewport && !window.visualViewport._merchantSearchSyncBound) {
+        window.visualViewport._merchantSearchSyncBound = true;
+        window.visualViewport.addEventListener('resize', syncMerchantSearchFloating);
+        window.visualViewport.addEventListener('scroll', syncMerchantSearchFloating);
+    }
+
+    // 2. Legare casetă căutare Cumpărături / Articole
+    const searchShoppingInput = document.getElementById('searchShoppingItemsInput');
+    const btnClearS = document.getElementById('btnClearShoppingSearch');
+    if (searchShoppingInput && !searchShoppingInput.dataset.bound) {
+        searchShoppingInput.dataset.bound = 'true';
+        searchShoppingInput.addEventListener('input', (e) => {
+            currentShoppingSearchQuery = e.target.value;
+            if (btnClearS) btnClearS.style.display = currentShoppingSearchQuery ? 'block' : 'none';
+            const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            renderShoppingItemsCol(curCatId);
+            syncMerchantSearchFloating();
+        });
+        searchShoppingInput.addEventListener('focus', () => {
+            // Tastatura se deschide natural; visualViewport resize va repoziționa caseta când tastatura devine vizibilă
+        });
+        searchShoppingInput.addEventListener('blur', () => {
+            setTimeout(syncMerchantSearchFloating, 100);
+        });
+    }
+
+    if (btnClearS && !btnClearS.dataset.bound) {
+        btnClearS.dataset.bound = 'true';
+        btnClearS.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+        });
+        btnClearS.addEventListener('click', () => {
+            currentShoppingSearchQuery = '';
+            if (searchShoppingInput) searchShoppingInput.value = '';
+            btnClearS.style.display = 'none';
+            const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            renderShoppingItemsCol(curCatId);
+            if (searchShoppingInput) searchShoppingInput.focus();
+            syncMerchantSearchFloating();
+        });
+    }
+
+    // 3. Legare casetă căutare Magazine
+    const searchMerchantsInput = document.getElementById('searchMerchantsInput');
+    const btnClearM = document.getElementById('btnClearMerchantSearch');
+    if (searchMerchantsInput && !searchMerchantsInput.dataset.bound) {
+        searchMerchantsInput.dataset.bound = 'true';
+        searchMerchantsInput.addEventListener('input', (e) => {
+            currentMerchantSearchQuery = e.target.value;
+            if (btnClearM) btnClearM.style.display = currentMerchantSearchQuery ? 'block' : 'none';
+            const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            renderMerchantsCol(curCatId);
+            syncMerchantSearchFloating();
+        });
+        searchMerchantsInput.addEventListener('focus', () => {
+            // Tastatura se deschide natural; visualViewport resize va repoziționa caseta când tastatura devine vizibilă
+        });
+        searchMerchantsInput.addEventListener('blur', () => {
+            setTimeout(syncMerchantSearchFloating, 100);
+        });
+    }
+
+    if (btnClearM && !btnClearM.dataset.bound) {
+        btnClearM.dataset.bound = 'true';
+        btnClearM.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+        });
+        btnClearM.addEventListener('click', () => {
+            currentMerchantSearchQuery = '';
+            if (searchMerchantsInput) searchMerchantsInput.value = '';
+            btnClearM.style.display = 'none';
+            const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            renderMerchantsCol(curCatId);
+            if (searchMerchantsInput) searchMerchantsInput.focus();
+            syncMerchantSearchFloating();
+        });
+    }
+
+    // 4. Legare buton adăugare articol (Stânga Jos)
     const btnOpenAddShopping = document.getElementById('btnOpenAddShoppingItemModal');
     if (btnOpenAddShopping && !btnOpenAddShopping.dataset.bound) {
         btnOpenAddShopping.dataset.bound = 'true';
@@ -10324,7 +16111,7 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         });
     }
 
-    // 4. Legare buton deschidere adaugare magazin (Dreapta Jos)
+    // 5. Legare buton adăugare magazin (Dreapta Jos)
     const btnOpenAddStore = document.getElementById('btnOpenAddMerchantModal');
     if (btnOpenAddStore && !btnOpenAddStore.dataset.bound) {
         btnOpenAddStore.dataset.bound = 'true';
@@ -10334,14 +16121,13 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         });
     }
 
-    // 5. Buton Salvează Selecția din panoul dual
+    // 6. Buton Salvează Selecția din panoul dual
     const btnConfirmSelection = document.getElementById('btnConfirmMerchantAndItemsSelection');
     if (btnConfirmSelection && !btnConfirmSelection.dataset.bound) {
         btnConfirmSelection.dataset.bound = 'true';
         btnConfirmSelection.addEventListener('click', (e) => {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            const pop = document.getElementById('foodMerchantsFloatingOverlay');
-            if (pop) pop.style.display = 'none';
+            closeFoodMerchantsOverlay();
 
             const merch = document.getElementById('selectedExpenseMerchant')?.value || '';
             const itemDesc = document.getElementById('expenseDesc')?.value || '';
@@ -10349,10 +16135,16 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
                 const summary = [itemDesc, merch].filter(Boolean).join(' @ ');
                 showToast(`Selecție salvată: ${summary}`, 'success');
             }
+
+            const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+            if (isBillCategory(currentCatId) || isUtilityItemOrMerchant(merch, itemDesc)) {
+                openExpenseUtilityFloatingPrompt(merch, itemDesc);
+            }
+            updateExpenseBoxesClearButtons();
         });
     }
 
-    // 6. Legare acțiuni fereastră prompt adăugare
+    // 7. Legare acțiuni fereastră prompt adăugare
     const btnClosePrompt = document.getElementById('btnCloseMerchantPrompt');
     if (btnClosePrompt && !btnClosePrompt.dataset.bound) {
         btnClosePrompt.dataset.bound = 'true';
@@ -10419,14 +16211,17 @@ function openMerchantPrompt(type) {
     if (!overlay || !input) return;
 
     if (type === 'shopping_item') {
-        if (title) title.textContent = '🛍️ Adaugă Articol Nou';
-        input.placeholder = 'Ex: Pâine, Suc, Lapte...';
+        const pLang = getLanguageForCurrency();
+        if (title) title.textContent = t('prompt_add_item_title', pLang) || '🛍️ Adaugă Articol Nou';
+        input.placeholder = t('prompt_add_item_ph', pLang) || 'Ex: Pâine, Suc, Lapte...';
+        input.value = currentShoppingSearchQuery.trim();
     } else {
-        if (title) title.textContent = '🛒 Adaugă Magazin Nou';
-        input.placeholder = 'Ex: eMAG, Penny, Piață...';
+        const mLang = getLanguageForCurrency();
+        if (title) title.textContent = t('prompt_add_merchant_title', mLang) || '🛒 Adaugă Magazin Nou';
+        input.placeholder = t('prompt_add_merchant_ph', mLang) || 'Ex: eMAG, Penny, Piață...';
+        input.value = currentMerchantSearchQuery.trim();
     }
 
-    input.value = '';
     overlay.style.display = 'flex';
     setTimeout(() => {
         input.focus();
@@ -10451,7 +16246,85 @@ function closeAndSaveMerchantPrompt() {
     overlay.style.display = 'none';
 }
 
-// Fereastra de configurare: La care carduri apare lista de magazine
+
+// Randează lista completă cu magazine și cumpărături noi adăugate de utilizator
+function renderCustomMerchantsModal() {
+    const merchantsListEl = document.getElementById('customMerchantsListContainer');
+    const itemsListEl = document.getElementById('customItemsListContainer');
+    const countEl = document.getElementById('customMerchantsTotalCount');
+
+    const customMerchants = (appData.settings && Array.isArray(appData.settings.customMerchants)) ? appData.settings.customMerchants : [];
+    const customItems = (appData.settings && Array.isArray(appData.settings.customShoppingItems)) ? appData.settings.customShoppingItems : [];
+
+    if (countEl) {
+        const activeLang = getLanguageForCurrency();
+        const mCount = customMerchants.length;
+        const iCount = customItems.length;
+        const mLabel = mCount === 1 ? (t('custom_merchants_singular', activeLang) || 'magazin') : (t('custom_merchants_plural', activeLang) || 'magazine');
+        const iLabel = iCount === 1 ? (t('custom_items_singular', activeLang) || 'cumpărătură') : (t('custom_items_plural', activeLang) || 'cumpărături');
+        countEl.textContent = `${mCount} ${mLabel}, ${iCount} ${iLabel}`;
+    }
+
+    // 1. Magazine Adăugate de Mine
+    if (merchantsListEl) {
+        merchantsListEl.innerHTML = '';
+        if (customMerchants.length === 0) {
+            merchantsListEl.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 2px;">' + (t('custom_merchants_empty', getLanguageForCurrency()) || 'Niciun magazin nou adăugat încă.') + '</div>';
+        } else {
+            customMerchants.forEach(m => {
+                const name = typeof m === 'string' ? m : (m.name || '');
+                if (!name) return;
+                const tag = document.createElement('div');
+                tag.className = 'merchant-custom-tag';
+                tag.style.cssText = 'display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 9px; font-size: 0.83rem; font-weight: 600; color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.06);';
+                tag.innerHTML = `
+                    <span style="display:inline-flex;align-items:center;gap:6px;">
+                        ${getMerchantLogoHtml(name, 18)}
+                        <span>${escapeHtml(name)}</span>
+                    </span>
+                    <span class="merchant-tag-del" title="Șterge magazinul" style="cursor:pointer; font-size:1.15rem; color:var(--danger); margin-left:4px; padding:0 3px; font-weight:bold; line-height:1;">&times;</span>
+                `;
+                tag.querySelector('.merchant-tag-del').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteCustomMerchant(name);
+                    renderCustomMerchantsModal();
+                });
+                merchantsListEl.appendChild(tag);
+            });
+        }
+    }
+
+    // 2. Cumpărături Noi Adăugate de Mine
+    if (itemsListEl) {
+        itemsListEl.innerHTML = '';
+        if (customItems.length === 0) {
+            itemsListEl.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 2px;">' + (t('custom_items_empty', getLanguageForCurrency()) || 'Niciun articol nou de cumpărături adăugat încă.') + '</div>';
+        } else {
+            customItems.forEach(item => {
+                const name = typeof item === 'string' ? item : (item.name || '');
+                if (!name) return;
+                const tag = document.createElement('div');
+                tag.className = 'merchant-custom-tag';
+                tag.style.cssText = 'display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 9px; font-size: 0.83rem; font-weight: 600; color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.06);';
+                tag.innerHTML = `
+                    <span style="display:inline-flex;align-items:center;gap:6px;">
+                        <span style="font-size:1rem;">🛍️</span>
+                        <span>${escapeHtml(name)}</span>
+                    </span>
+                    <span class="merchant-tag-del" title="Șterge articolul" style="cursor:pointer; font-size:1.15rem; color:var(--danger); margin-left:4px; padding:0 3px; font-weight:bold; line-height:1;">&times;</span>
+                `;
+                tag.querySelector('.merchant-tag-del').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteCustomShoppingItem(name);
+                    renderCustomMerchantsModal();
+                });
+                itemsListEl.appendChild(tag);
+            });
+        }
+    }
+}
 function renderMerchantCatConfigModal() {
     const listEl = document.getElementById('merchantCatConfigList');
     if (!listEl) return;
@@ -10469,7 +16342,7 @@ function renderMerchantCatConfigModal() {
         item.innerHTML = `
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:1.1rem;">${cat.icon || '🏷️'}</span>
-                <span style="color:${cat.color}; font-weight:700;">${escapeHtml(cat.name)}</span>
+                <span style="color:${cat.color}; font-weight:700;">${escapeHtml(getLocalizedCategoryName(cat.name, getLanguageForCurrency()))}</span>
             </div>
             <input type="checkbox" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;" ${isChecked ? 'checked' : ''} data-catid="${cat.id}">
         `;
@@ -10550,14 +16423,16 @@ function renderExpenseCategoryPicker() {
         btn.type = 'button';
         btn.className = 'cat-pick-btn' + (isSelected ? ' active' : '');
         btn.dataset.id = cat.id;
-        btn.title = `${cat.name} (Ține apăsat și trage pentru a rearanja)`;
+        const activeLang = getLanguageForCurrency();
+        const localizedCatName = getLocalizedCategoryName(cat.name, activeLang);
+        btn.title = `${localizedCatName} (${t('drag_reorder_hint', activeLang) || 'Ține apăsat și trage pentru a rearanja'})`;
         btn.draggable = true;
         btn.innerHTML = `
             <div class="cat-pick-icon-wrap">
                 <span class="cat-pick-dot" style="background-color: ${cat.color};"></span>
                 <span class="cat-pick-icon">${cat.icon || '🏷️'}</span>
             </div>
-            <span class="cat-pick-name">${escapeHtml(cat.name)}</span>
+            <span class="cat-pick-name">${escapeHtml(localizedCatName)}</span>
         `;
 
         // === Desktop Drag & Drop (HTML5) ===
@@ -10671,7 +16546,7 @@ function renderExpenseCategoryPicker() {
             }
         }, { passive: false });
 
-        btn.addEventListener('touchend', () => {
+        btn.addEventListener('touchend', (e) => {
             clearTimeout(dragTimer);
             btn.classList.remove('holding');
             btn.classList.remove('dragging');
@@ -10689,9 +16564,17 @@ function renderExpenseCategoryPicker() {
                 }
             } else if (!touchMoved && !isTouchDragging) {
                 // Click / Tap normal (selectare categorie)
+                if (e && e.cancelable) e.preventDefault();
                 document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedHidden.value = cat.id;
+                const descInput = document.getElementById('expenseDesc');
+                const merchantInput = document.getElementById('selectedExpenseMerchant');
+                if (descInput) descInput.value = '';
+                if (merchantInput) merchantInput.value = '';
+                if (typeof updateExpenseBoxesClearButtons === 'function') {
+                    updateExpenseBoxesClearButtons();
+                }
                 updateFoodMerchantsQuickPicker(cat.id, true);
             }
             isTouchDragging = false;
@@ -10713,6 +16596,13 @@ function renderExpenseCategoryPicker() {
             document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedHidden.value = cat.id;
+            const descInput = document.getElementById('expenseDesc');
+            const merchantInput = document.getElementById('selectedExpenseMerchant');
+            if (descInput) descInput.value = '';
+            if (merchantInput) merchantInput.value = '';
+            if (typeof updateExpenseBoxesClearButtons === 'function') {
+                updateExpenseBoxesClearButtons();
+            }
             updateFoodMerchantsQuickPicker(cat.id, true);
         });
 
@@ -10722,10 +16612,10 @@ function renderExpenseCategoryPicker() {
     if (selectedHidden && selectedHidden.value) {
         updateFoodMerchantsQuickPicker(selectedHidden.value, false);
     } else {
-        const popover = document.getElementById('foodMerchantsFloatingOverlay');
-        if (popover) popover.style.display = 'none';
+        closeFoodMerchantsOverlay();
     }
 }
+
 
 // Preset Colors in Category Edit Modal
 function renderColorPresets() {
@@ -10785,6 +16675,97 @@ function closeModal(modalId) {
 }
 
 // Render Currency Picker Modal (Activat cand utilizatorul apasa pe indicatorul monedei in antet)
+function renderEurLanguagePickerModal(targetCurrency = 'EUR') {
+    const container = document.getElementById('eurLanguageListContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    applyLanguage();
+
+    const currentEurLang = getLanguageForCurrency('EUR');
+    const activeLang = currentEurLang;
+
+    TOP_EUROPEAN_LANGUAGES.forEach(lang => {
+        const isActive = lang.code === currentEurLang;
+        const card = document.createElement('div');
+        card.className = 'eur-lang-card-item' + (isActive ? ' active' : '');
+        card.dataset.lang = lang.code;
+
+        card.innerHTML = `
+            <div class="eur-lang-card-left">
+                <div class="eur-lang-flag-badge">${lang.flag}</div>
+                <div>
+                    <div class="eur-lang-card-title">${lang.name} <span style="font-weight: 400; font-size: 0.78rem; opacity: 0.85;">(${lang.localName})</span></div>
+                    <div class="eur-lang-card-sub">${lang.speakers} vorbitori în Europa</div>
+                </div>
+            </div>
+            <div class="eur-lang-card-right">
+                ${isActive ? `<span class="eur-lang-active-pill">✓ ${t('eur_lang_active_badge', activeLang)}</span>` : `<span style="font-size: 0.8rem; color: var(--accent); font-weight: 700;">Alege ➔</span>`}
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            setEurLanguage(lang.code);
+        });
+
+        container.appendChild(card);
+    });
+}
+
+function setEurLanguage(langCode) {
+    if (!appData.settings) appData.settings = {};
+    appData.settings.mainCurrency = 'EUR';
+    appData.settings.eurLanguage = langCode;
+    window.appData = appData;
+    saveData();
+
+    // Actualizare indicator M in antet
+    const ind = document.getElementById('logoCurrencyIndicator');
+    if (ind) ind.textContent = 'EUR';
+
+    applyLanguage();
+
+    closeModal('modalEurLanguagePicker');
+    closeModal('modalCurrencyPicker');
+
+    // Recalculare si randare completa a aplicatiei
+    updateBalanceCards();
+    renderOverviewChartAndList();
+    renderTransactionsHistory();
+    renderStatsTab();
+    renderCategoriesManager();
+
+    const curInfo = getCurrencyInfo('EUR');
+    const langInfo = TOP_EUROPEAN_LANGUAGES.find(l => l.code === langCode) || { name: langCode };
+
+    let toastMsg = `Moneda Euro (${curInfo.symbol}) selectată! Limba interfeței: ${langInfo.name}.`;
+    if (langCode === 'en') {
+        toastMsg = `Currency changed to Euro (${curInfo.symbol})! Interface translated to English.`;
+    } else if (langCode === 'de') {
+        toastMsg = `Währung auf Euro (${curInfo.symbol}) geändert! Oberfläche auf Deutsch übersetzt.`;
+    } else if (langCode === 'fr') {
+        toastMsg = `Devise changée en Euro (${curInfo.symbol}) ! Interface traduite en Français.`;
+    } else if (langCode === 'es') {
+        toastMsg = `¡Moneda cambiada a Euro (${curInfo.symbol})! Interfaz traducida al Español.`;
+    } else if (langCode === 'it') {
+        toastMsg = `Valuta cambiata in Euro (${curInfo.symbol})! Interfaccia tradotta in Italiano.`;
+    } else if (langCode === 'pl') {
+        toastMsg = `Waluta zmieniona na Euro (${curInfo.symbol})! Interfejs przetłumaczony na język polski.`;
+    } else if (langCode === 'nl') {
+        toastMsg = `Valuta gewijzigd naar Euro (${curInfo.symbol})! Interface vertaald naar het Nederlands.`;
+    } else if (langCode === 'pt') {
+        toastMsg = `Moeda alterada para Euro (${curInfo.symbol})! Interface traduzida para Português.`;
+    } else if (langCode === 'uk') {
+        toastMsg = `Валюту змінено на Євро (${curInfo.symbol})! Інтерфейс перекладено українською.`;
+    } else if (langCode === 'tr') {
+        toastMsg = `Para birimi Euro (${curInfo.symbol}) olarak güncellendi! Dil Türkçe yapıldı.`;
+    } else if (langCode === 'ro') {
+        toastMsg = `Moneda Euro (${curInfo.symbol}) selectată! Interfața este acum în limba română.`;
+    }
+
+    showToast(toastMsg, 'success');
+}
+
 function renderCurrencyPickerModal() {
     const container = document.getElementById('currencyListContainer');
     if (!container) return;
@@ -10811,25 +16792,52 @@ function renderCurrencyPickerModal() {
             rateDesc = `1 ${info.code} = ${info.rateToRon.toFixed(2)} ${unitRon}`;
         }
 
+        let eurExtraHtml = '';
+        if (info.code === 'EUR') {
+            const curEurLang = getLanguageForCurrency('EUR');
+            const langObj = TOP_EUROPEAN_LANGUAGES.find(l => l.code === curEurLang) || { name: 'Română', flag: '🇷🇴' };
+            eurExtraHtml = `
+                <div class="currency-eur-lang-chip">
+                    <div class="currency-eur-lang-chip-left">
+                        <span class="eur-globe">🌐</span>
+                        <span class="eur-lang-name">${langObj.flag} ${langObj.name}</span>
+                    </div>
+                    <div class="currency-eur-lang-chip-right">
+                        <span>${t('eur_lang_change_btn', activeLang)}</span>
+                        <span>➔</span>
+                    </div>
+                </div>
+            `;
+        }
+
         const card = document.createElement('div');
-        card.className = 'currency-card-item' + (isActive ? ' active' : '');
+        card.className = 'currency-card-item' + (isActive ? ' active' : '') + (info.code === 'EUR' ? ' has-lang-chip' : '');
         card.dataset.currency = info.code;
 
         card.innerHTML = `
-            <div class="currency-card-left">
-                <div class="currency-flag-badge">${info.flag}</div>
-                <div>
-                    <div class="currency-card-title">${localizedName} (${info.code})</div>
-                    <div class="currency-card-sub">${rateDesc}</div>
+            <div class="currency-card-main-row">
+                <div class="currency-card-left">
+                    <div class="currency-flag-badge">${info.flag}</div>
+                    <div style="min-width: 0;">
+                        <div class="currency-card-title">${localizedName} (${info.code})</div>
+                        <div class="currency-card-sub">${rateDesc}</div>
+                    </div>
+                </div>
+                <div class="currency-card-right">
+                    ${isActive ? `<span class="currency-active-pill">${t('currency_active_badge', activeLang)}</span>` : `<span class="currency-rate-text">${info.symbol}</span>`}
                 </div>
             </div>
-            <div class="currency-card-right">
-                ${isActive ? `<span class="currency-active-pill">${t('currency_active_badge', activeLang)}</span>` : `<span class="currency-rate-text">${info.symbol}</span>`}
-            </div>
+            ${eurExtraHtml}
         `;
 
         card.addEventListener('click', () => {
-            setMainCurrency(info.code);
+            if (info.code === 'EUR') {
+                closeModal('modalCurrencyPicker');
+                renderEurLanguagePickerModal();
+                openModal('modalEurLanguagePicker');
+            } else {
+                setMainCurrency(info.code);
+            }
         });
 
         container.appendChild(card);
@@ -10947,6 +16955,31 @@ function renderCurrencyConverter() {
         if (eurInput) eurInput.value = activeInfo.rateToRon || 4.98;
     }
 
+    // Afiseaza sectiunea de selectie a limbii Euro DOAR cand moneda principala este EUR!
+    const eurLangBox = document.getElementById('detailsEurLanguageSection');
+    if (eurLangBox) {
+        if (activeCurr === 'EUR') {
+            eurLangBox.style.display = 'flex';
+            const eurLangTitle = document.getElementById('convEurLanguageTitle');
+            const curEurLang = getLanguageForCurrency('EUR');
+            const langObj = TOP_EUROPEAN_LANGUAGES.find(l => l.code === curEurLang) || { name: 'Română', flag: '🇷🇴' };
+            if (eurLangTitle) {
+                eurLangTitle.textContent = `${t('eur_lang_current_label', activeLang)}: ${langObj.flag} ${langObj.name}`;
+            }
+            const btnChange = document.getElementById('btnChangeEurLangFromConverter');
+            if (btnChange && !btnChange._hasClickListener) {
+                btnChange._hasClickListener = true;
+                btnChange.addEventListener('click', () => {
+                    closeModal('modalSettings');
+                    renderEurLanguagePickerModal();
+                    openModal('modalEurLanguagePicker');
+                });
+            }
+        } else {
+            eurLangBox.style.display = 'none';
+        }
+    }
+
     const flagEl = document.getElementById('converterActiveFlag');
     const codeEl = document.getElementById('converterActiveCode');
     const symEl = document.getElementById('converterAmountCurrencySymbol');
@@ -11032,9 +17065,18 @@ function renderCurrencyConverter() {
     });
 }
 
-function setMainCurrency(newCurrency) {
+function setMainCurrency(newCurrency, specificLang = null) {
+    if (newCurrency === 'EUR' && !specificLang && !(appData && appData.settings && appData.settings.eurLanguage)) {
+        closeModal('modalCurrencyPicker');
+        renderEurLanguagePickerModal();
+        openModal('modalEurLanguagePicker');
+        return;
+    }
     if (!appData.settings) appData.settings = {};
     appData.settings.mainCurrency = newCurrency;
+    if (newCurrency === 'EUR' && specificLang) {
+        appData.settings.eurLanguage = specificLang;
+    }
     window.appData = appData;
     saveData();
 
@@ -11056,17 +17098,32 @@ function setMainCurrency(newCurrency) {
 
     const curInfo = getCurrencyInfo(newCurrency);
     const lang = getLanguageForCurrency(newCurrency);
-    const toastMsg = lang === 'en'
-        ? `Currency changed to ${curInfo.name} (${curInfo.symbol})! Interface translated to English.`
-        : (lang === 'de'
-            ? `Währung auf ${curInfo.name} (${curInfo.symbol}) geändert! Oberfläche auf Deutsch übersetzt.`
-            : (lang === 'tr'
-                ? `Para birimi ${curInfo.name} (${curInfo.symbol}) olarak güncellendi! Dil Türkçe yapıldı.`
-                : (lang === 'ja'
-                    ? `通貨が ${curInfo.name} (${curInfo.symbol}) に変更され、日本語に設定されました。`
-                    : (lang === 'zh'
-                        ? `货币已切换至 ${curInfo.name} (${curInfo.symbol})，界面已切换为中文。`
-                        : `Moneda aplicației a fost schimbată în ${curInfo.name} (${curInfo.symbol})! Interfața este acum în limba română.`))));
+    let toastMsg = `Moneda aplicației a fost schimbată în ${curInfo.name} (${curInfo.symbol})! Interfața este acum în limba română.`;
+    if (lang === 'en') {
+        toastMsg = `Currency changed to ${curInfo.name} (${curInfo.symbol})! Interface translated to English.`;
+    } else if (lang === 'de') {
+        toastMsg = `Währung auf ${curInfo.name} (${curInfo.symbol}) geändert! Oberfläche auf Deutsch übersetzt.`;
+    } else if (lang === 'fr') {
+        toastMsg = `Devise changée en ${curInfo.name} (${curInfo.symbol}) ! Interface traduite en Français.`;
+    } else if (lang === 'es') {
+        toastMsg = `¡Moneda cambiada a ${curInfo.name} (${curInfo.symbol})! Interfaz traducida al Español.`;
+    } else if (lang === 'it') {
+        toastMsg = `Valuta cambiata in ${curInfo.name} (${curInfo.symbol})! Interfaccia tradotta in Italiano.`;
+    } else if (lang === 'pl') {
+        toastMsg = `Waluta zmieniona na ${curInfo.name} (${curInfo.symbol})! Interfejs przetłumaczony na język polski.`;
+    } else if (lang === 'nl') {
+        toastMsg = `Valuta gewijzigd naar ${curInfo.name} (${curInfo.symbol})! Interface vertaald naar het Nederlands.`;
+    } else if (lang === 'pt') {
+        toastMsg = `Moeda alterada para ${curInfo.name} (${curInfo.symbol})! Interface traduzida para Português.`;
+    } else if (lang === 'uk') {
+        toastMsg = `Валюту змінено на ${curInfo.name} (${curInfo.symbol})! Інтерфейс перекладено українською.`;
+    } else if (lang === 'tr') {
+        toastMsg = `Para birimi ${curInfo.name} (${curInfo.symbol}) olarak güncellendi! Dil Türkçe yapıldı.`;
+    } else if (lang === 'ja') {
+        toastMsg = `通貨が ${curInfo.name} (${curInfo.symbol}) に変更され、日本語に設定されました。`
+    } else if (lang === 'zh') {
+        toastMsg = `货币已切换至 ${curInfo.name} (${curInfo.symbol})，界面已切换为中文。`
+    }
 
     showToast(toastMsg, 'success');
 }
@@ -11105,6 +17162,7 @@ function openFundCurrencyPickerModal() {
         persistDatabaseToFile();
         closeModal('modalFundCurrencyPicker');
         updateBalanceCards();
+        if (typeof renderDepositsPage === 'function') renderDepositsPage();
         showToast(t('toast_fund_curr_disabled', activeLang), 'info');
     };
     container.appendChild(noneCard);
@@ -11144,6 +17202,7 @@ function openFundCurrencyPickerModal() {
             persistDatabaseToFile();
             closeModal('modalFundCurrencyPicker');
             updateBalanceCards();
+            if (typeof renderDepositsPage === 'function') renderDepositsPage();
             showToast(`${t('toast_fund_curr_set', activeLang)} ${info.code} (${info.symbol})`, 'success');
         });
 
@@ -11219,74 +17278,111 @@ function openTotalsSummaryModal() {
 
     container.innerHTML = '';
 
-    // 1. Total Venituri Card
+    const activeTxLabel = activeLang === 'ro' ? 'Total tranzacții active' : (activeLang === 'en' ? 'Active transactions' : (t('totals_card_tx_count', activeLang) || 'Active transactions'));
+    const splitLabel = activeLang === 'ro' ? 'Venituri vs Cheltuieli' : (activeLang === 'en' ? 'Incomes vs Expenses' : 'Incomes / Expenses');
+
+    // 1. Total Venituri Card (Titlu pe un singur rand, suma sub titlu, apoi card si cash)
     const incomeCard = document.createElement('div');
-    incomeCard.className = 'currency-card-item';
-    incomeCard.style.cursor = 'default';
+    incomeCard.className = 'totals-summary-card';
     incomeCard.innerHTML = `
-        <div class="currency-card-left">
-            <div class="currency-flag-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">📈</div>
-            <div>
-                <div class="currency-card-title">${t('totals_card_income', activeLang)}</div>
-                <div class="currency-card-sub">💳 ${formatMoney(displayCardIncome, mainCurr)} • 💵 ${formatMoney(displayCashIncome, mainCurr)}</div>
-            </div>
+        <div class="totals-card-title-row">
+            <span class="totals-card-icon">📈</span>
+            <span class="totals-card-title">${escapeHtml(t('totals_card_income', activeLang) || 'Total Venituri')}</span>
         </div>
-        <div class="currency-card-right">
-            <span style="font-weight: 800; color: #10b981; font-size: 0.96rem;">+${formatMoney(displayIncome, mainCurr)}</span>
+        <div class="totals-card-amount-row">
+            <span class="totals-card-main-amount" style="color: #10b981;">${formatMoneySubHtml(displayIncome, mainCurr, '+')}</span>
+        </div>
+        <div class="totals-card-divider"></div>
+        <div class="totals-card-details">
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💳 Card</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCardIncome, mainCurr)}</span>
+            </div>
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💵 Cash</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCashIncome, mainCurr)}</span>
+            </div>
         </div>
     `;
     container.appendChild(incomeCard);
 
-    // 2. Total Cheltuieli Card
+    // 2. Total Cheltuieli Card (Titlu pe un singur rand, suma sub titlu, apoi card si cash)
     const expenseCard = document.createElement('div');
-    expenseCard.className = 'currency-card-item';
-    expenseCard.style.cursor = 'default';
+    expenseCard.className = 'totals-summary-card';
     expenseCard.innerHTML = `
-        <div class="currency-card-left">
-            <div class="currency-flag-badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">📉</div>
-            <div>
-                <div class="currency-card-title">${t('totals_card_expense', activeLang)}</div>
-                <div class="currency-card-sub">💳 ${formatMoney(displayCardExpense, mainCurr)} • 💵 ${formatMoney(displayCashExpense, mainCurr)}</div>
-            </div>
+        <div class="totals-card-title-row">
+            <span class="totals-card-icon">📉</span>
+            <span class="totals-card-title">${escapeHtml(t('totals_card_expense', activeLang) || 'Total Cheltuieli')}</span>
         </div>
-        <div class="currency-card-right">
-            <span style="font-weight: 800; color: #ef4444; font-size: 0.96rem;">-${formatMoney(displayExpense, mainCurr)}</span>
+        <div class="totals-card-amount-row">
+            <span class="totals-card-main-amount" style="color: #ef4444;">${formatMoneySubHtml(displayExpense, mainCurr, '-')}</span>
+        </div>
+        <div class="totals-card-divider"></div>
+        <div class="totals-card-details">
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💳 Card</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCardExpense, mainCurr)}</span>
+            </div>
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💵 Cash</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCashExpense, mainCurr)}</span>
+            </div>
         </div>
     `;
     container.appendChild(expenseCard);
 
-    // 3. Fond Disponibil Net
+    // 3. Fond Disponibil Net (Titlu pe un singur rand, suma sub titlu, apoi card si cash)
     const balanceCard = document.createElement('div');
-    balanceCard.className = 'currency-card-item';
-    balanceCard.style.cursor = 'default';
+    balanceCard.className = 'totals-summary-card';
+    const balColor = displayBalance >= 0 ? '#10b981' : '#ef4444';
+    const balSign = displayBalance >= 0 ? '+' : '';
     balanceCard.innerHTML = `
-        <div class="currency-card-left">
-            <div class="currency-flag-badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">💰</div>
-            <div>
-                <div class="currency-card-title">${t('totals_card_net_balance', activeLang)}</div>
-                <div class="currency-card-sub">💳 ${formatMoney(displayCard, mainCurr)} • 💵 ${formatMoney(displayCash, mainCurr)}</div>
-            </div>
+        <div class="totals-card-title-row">
+            <span class="totals-card-icon">💰</span>
+            <span class="totals-card-title">${escapeHtml(t('totals_card_net_balance', activeLang) || 'Fond Disponibil Net')}</span>
         </div>
-        <div class="currency-card-right">
-            <span style="font-weight: 800; color: ${displayBalance >= 0 ? '#10b981' : '#ef4444'}; font-size: 0.96rem;">${formatMoney(displayBalance, mainCurr)}</span>
+        <div class="totals-card-amount-row">
+            <span class="totals-card-main-amount" style="color: ${balColor};">${formatMoneySubHtml(displayBalance, mainCurr, balSign)}</span>
+        </div>
+        <div class="totals-card-divider"></div>
+        <div class="totals-card-details">
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💳 Card</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCard, mainCurr)}</span>
+            </div>
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">💵 Cash</span>
+                <span class="totals-card-data-val">${formatMoneySubHtml(displayCash, mainCurr)}</span>
+            </div>
         </div>
     `;
     container.appendChild(balanceCard);
 
-    // 4. Rată Economisire & Activitate
+    // 4. Rată Economisire & Activitate (Titlu pe un singur rand, rata sub titlu, apoi detalii)
     const statsCard = document.createElement('div');
-    statsCard.className = 'currency-card-item';
-    statsCard.style.cursor = 'default';
+    statsCard.className = 'totals-summary-card';
     statsCard.innerHTML = `
-        <div class="currency-card-left">
-            <div class="currency-flag-badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">📊</div>
-            <div>
-                <div class="currency-card-title">${t('totals_card_savings_rate', activeLang)}</div>
-                <div class="currency-card-sub">${activeTxCount} ${t('totals_card_tx_count', activeLang)} (${incomeCount} 📈, ${expenseCount} 📉)</div>
-            </div>
+        <div class="totals-card-title-row">
+            <span class="totals-card-icon">📊</span>
+            <span class="totals-card-title">${escapeHtml(t('totals_card_savings_rate', activeLang) || 'Rată Economisire & Activitate')}</span>
         </div>
-        <div class="currency-card-right">
-            <span class="currency-active-pill" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-weight: 800; font-size: 0.84rem;">${savingsRate}%</span>
+        <div class="totals-card-amount-row">
+            <span class="totals-card-main-amount" style="color: #3b82f6;">${savingsRate}%</span>
+        </div>
+        <div class="totals-card-divider"></div>
+        <div class="totals-card-details">
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">${escapeHtml(activeTxLabel)}</span>
+                <span class="totals-card-data-val">${activeTxCount}</span>
+            </div>
+            <div class="totals-card-data-row">
+                <span class="totals-card-data-label">${escapeHtml(splitLabel)}</span>
+                <span class="totals-card-data-val" style="display:flex; align-items:center; gap:8px;">
+                    <span style="color:#10b981; font-weight:700;">${incomeCount} 📈</span>
+                    <span style="color:var(--text-muted);">•</span>
+                    <span style="color:#ef4444; font-weight:700;">${expenseCount} 📉</span>
+                </span>
+            </div>
         </div>
     `;
     container.appendChild(statsCard);
@@ -11361,6 +17457,10 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(appData.settings.theme);
     updateBalanceCards();
     renderExpenseCategoryPicker();
+
+    // Initializare perioada salvata inainte de randarea graficului
+    const initSavedPeriod = (appData.settings && appData.settings.overviewPeriod) || 'current-month';
+    updateOverviewPeriodFilterUI(initSavedPeriod);
     renderOverviewChartAndList();
 
     const curr = getActiveCurrency();
@@ -11493,81 +17593,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function initSwipeNavigation() {
         let touchStartX = 0;
         let touchStartY = 0;
-        let touchCurrentX = 0;
-        let touchCurrentY = 0;
         let touchStartTime = 0;
         let isTracking = false;
+        let hasSwipedThisGesture = false;
         let startTarget = null;
 
         function isInteractiveInput(target) {
             if (!target) return false;
             const tag = target.tagName ? target.tagName.toUpperCase() : '';
+            // Form inputs and text fields must not trigger page swipes
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
                 return true;
             }
-            if (target.closest && target.closest('input, textarea, select, .no-swipe, [data-no-swipe]')) {
+            // Explicitly no-swipe tables (e.g., horizontal reporting tables)
+            if (target.closest && target.closest('input, textarea, select, .no-swipe, [data-no-swipe], .stats-table-wrap, .stats-pl-table')) {
                 return true;
             }
+            // Note: CANVAS is NOT blocked! Charts are fully swipeable!
             return false;
         }
 
-        document.addEventListener('touchstart', (e) => {
-            if (!e.touches || e.touches.length !== 1) {
-                isTracking = false;
-                return;
-            }
-            const t = e.touches[0];
-            touchStartX = t.clientX;
-            touchStartY = t.clientY;
-            touchCurrentX = t.clientX;
-            touchCurrentY = t.clientY;
-            touchStartTime = Date.now();
-            startTarget = e.target;
-            isTracking = true;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isTracking || !e.touches || e.touches.length !== 1) return;
-            const t = e.touches[0];
-            touchCurrentX = t.clientX;
-            touchCurrentY = t.clientY;
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            if (!isTracking) return;
-            isTracking = false;
-
-            if (e.changedTouches && e.changedTouches.length > 0) {
-                touchCurrentX = e.changedTouches[0].clientX;
-                touchCurrentY = e.changedTouches[0].clientY;
-            }
-
-            const deltaX = touchCurrentX - touchStartX;
-            const deltaY = touchCurrentY - touchStartY;
-            const deltaTime = Date.now() - touchStartTime;
-            const absX = Math.abs(deltaX);
-            const absY = Math.abs(deltaY);
-
-            // Daca utilizatorul a atins un input / selector de formular, nu facem swipe
-            if (startTarget && isInteractiveInput(startTarget)) {
-                return;
-            }
-
-            // Detectie swipe orizontal usor si fluid:
-            // 1. Prag distanta lejera (minim 28px) si timp relaxat (pana la 1200ms)
-            // 2. Componenta orizontala dominanta (absX > absY * 0.7) pentru a tolera curbura degetului
-            // 3. Sau flick scurt si rapid (sub 350ms, absX >= 22px si absX > absY)
-            const isFlick = deltaTime < 350 && absX >= 22 && absX > absY;
-            const isStandardSwipe = absX >= 28 && absX > absY * 0.7 && deltaTime <= 1200;
-
-            if (!isFlick && !isStandardSwipe) {
-                return;
-            }
-
-            // Daca exista un modal deschis, swipe spre dreapta il inchide
+        function handleSwipeAction(deltaX) {
+            // 1. Daca exista un modal deschis, swipe spre dreapta il inchide
             const activeModal = document.querySelector('.modal-overlay.active');
             if (activeModal) {
-                if (deltaX > 28) {
+                if (deltaX > 25) {
                     closeModal(activeModal.id);
                 }
                 return;
@@ -11589,9 +17639,75 @@ document.addEventListener('DOMContentLoaded', () => {
                     switchTab(TABS_ORDER[currentIndex - 1]);
                 }
             }
+        }
+
+        document.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length !== 1) {
+                isTracking = false;
+                return;
+            }
+            startTarget = e.target;
+            if (startTarget && isInteractiveInput(startTarget)) {
+                isTracking = false;
+                return;
+            }
+            const t = e.touches[0];
+            touchStartX = t.clientX;
+            touchStartY = t.clientY;
+            touchStartTime = Date.now();
+            isTracking = true;
+            hasSwipedThisGesture = false;
         }, { passive: true });
 
-        document.addEventListener('touchcancel', () => {
+        document.addEventListener('touchmove', (e) => {
+            if (!isTracking || hasSwipedThisGesture || !e.touches || e.touches.length !== 1) return;
+            const t = e.touches[0];
+            const deltaX = t.clientX - touchStartX;
+            const deltaY = t.clientY - touchStartY;
+            const absX = Math.abs(deltaX);
+            const absY = Math.abs(deltaY);
+
+            // Răspuns instant și fluid chiar în timpul mișcării degetului:
+            // Imediat ce degetul s-a deplasat 32px orizontal și direcția este clar orizontală
+            if (absX >= 32 && absX > absY * 0.9) {
+                hasSwipedThisGesture = true;
+                isTracking = false;
+                handleSwipeAction(deltaX);
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (!isTracking || hasSwipedThisGesture) return;
+            isTracking = false;
+
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                const deltaX = e.changedTouches[0].clientX - touchStartX;
+                const deltaY = e.changedTouches[0].clientY - touchStartY;
+                const deltaTime = Date.now() - touchStartTime;
+                const absX = Math.abs(deltaX);
+                const absY = Math.abs(deltaY);
+
+                // Gest scurt și rapid de flick (sub 400ms, minim 20px)
+                if (absX >= 20 && absX > absY * 0.7 && deltaTime <= 400) {
+                    hasSwipedThisGesture = true;
+                    handleSwipeAction(deltaX);
+                }
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchcancel', (e) => {
+            // Dacă WebView începe scroll vertical și emite touchcancel,
+            // dar degetul se mișcase deja orizontal considerabil, declanșăm tranziția fără să o pierdem
+            if (isTracking && !hasSwipedThisGesture && e.changedTouches && e.changedTouches.length > 0) {
+                const deltaX = e.changedTouches[0].clientX - touchStartX;
+                const deltaY = e.changedTouches[0].clientY - touchStartY;
+                const absX = Math.abs(deltaX);
+                const absY = Math.abs(deltaY);
+                if (absX >= 28 && absX > absY * 0.9) {
+                    hasSwipedThisGesture = true;
+                    handleSwipeAction(deltaX);
+                }
+            }
             isTracking = false;
         }, { passive: true });
     }
@@ -11628,15 +17744,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Deschidere selector valutar la apasarea pe logo-ul M
-    const btnLogoMenu = document.getElementById('btnLogoMenu');
-    if (btnLogoMenu) {
-        btnLogoMenu.addEventListener('click', (e) => {
+    // Deschidere selector valutar și limbi Euro la apăsarea pe logo-ul aplicației
+    const handleLogoCurrencyClick = (e) => {
+        if (e) {
+            e.preventDefault();
             e.stopPropagation();
-            renderCurrencyPickerModal();
-            openModal('modalCurrencyPicker');
-        });
-    }
+        }
+        renderCurrencyPickerModal();
+        openModal('modalCurrencyPicker');
+    };
+
+    const btnLogoMenu = document.getElementById('btnLogoMenu');
+    if (btnLogoMenu) btnLogoMenu.addEventListener('click', handleLogoCurrencyClick);
+
+    const logoBadgeImg = document.querySelector('.logo-badge');
+    if (logoBadgeImg) logoBadgeImg.addEventListener('click', handleLogoCurrencyClick);
+
+    const logoWrapEl = document.querySelector('.logo-wrapper');
+    if (logoWrapEl && logoWrapEl !== btnLogoMenu) logoWrapEl.addEventListener('click', handleLogoCurrencyClick);
 
     // Apăsare pe scutul de Autonomie din antet -> Deschidere card / modal Autonomie Financiară
     const headerRunwayWidget = document.getElementById('headerRunwayWidget');
@@ -11894,22 +18019,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('expenseDate').value = tx.date;
         const expTimeInput = document.getElementById('expenseTime');
         if (expTimeInput) {
-            if (tx.time) {
-                expTimeInput.value = tx.time;
-            } else if (tx.createdAt) {
-                const d = new Date(tx.createdAt);
-                expTimeInput.value = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-            } else {
-                expTimeInput.value = '12:00';
-            }
+            const savedTime = extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '12:00';
+            expTimeInput.value = savedTime;
         }
         const mc = getTransactionMerchantAndComment(tx);
         const merchantHidden = document.getElementById('selectedExpenseMerchant');
         if (merchantHidden) merchantHidden.value = mc.merchant || '';
         document.getElementById('expenseDesc').value = mc.comment || '';
+        updateExpenseBoxesClearButtons();
         
-        const popover = document.getElementById('foodMerchantsFloatingOverlay');
-        if (popover) popover.style.display = 'none';
+        closeFoodMerchantsOverlay();
         updateFoodMerchantsQuickPicker(tx.categoryId, false);
         
         const expPayMethod = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
@@ -11920,11 +18039,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const suspInput = document.getElementById('expenseIsSuspended');
-        if (suspInput) suspInput.checked = !!tx.isSuspended;
+        if (suspInput) {
+            suspInput.checked = !!tx.isSuspended;
+            const sLabel = document.getElementById('labelExpenseSuspend');
+            if (sLabel) sLabel.classList.toggle('active', suspInput.checked);
+        }
 
         // Inchidem ferestrele din spate pentru a nu suprapune modalele
         closeModal('modalCategoryDetails');
         closeModal('modalSuspendedTransactions');
+
+        const uType = tx.utilityType || 'electricity';
+        const uTypeInput = document.getElementById('expenseUtilityType');
+        if (uTypeInput) uTypeInput.value = uType;
+        const uIndexInput = document.getElementById('expenseUtilityIndex');
+        if (uIndexInput) uIndexInput.value = tx.utilityIndex || '';
+        const uDateInput = document.getElementById('expenseUtilityIndexDate');
+        if (uDateInput) uDateInput.value = tx.utilityIndexDate || tx.date || getTodayString();
+
+        const uBadge = document.getElementById('expenseUtilityEnteredBadge');
+        if (uBadge) {
+            uBadge.style.display = 'none';
+        }
+        closeExpenseUtilityFloatingPrompt();
         
         openModal('modalExpense');
         updateExpenseLivePreview();
@@ -11956,14 +18093,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dateInput) dateInput.value = tx.date;
         const incTimeInput = document.getElementById('incomeTime');
         if (incTimeInput) {
-            if (tx.time) {
-                incTimeInput.value = tx.time;
-            } else if (tx.createdAt) {
-                const d = new Date(tx.createdAt);
-                incTimeInput.value = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-            } else {
-                incTimeInput.value = '12:00';
-            }
+            const savedTime = extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '12:00';
+            incTimeInput.value = savedTime;
         }
         const srcInput = document.getElementById('incomeSource');
         if (srcInput) srcInput.value = tx.description || '';
@@ -12048,14 +18179,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dateInput) dateInput.value = tx.date;
         const timeInput = document.getElementById('transferTime');
         if (timeInput) {
-            if (tx.time) {
-                timeInput.value = tx.time;
-            } else if (tx.createdAt) {
-                const d = new Date(tx.createdAt);
-                timeInput.value = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-            } else {
-                timeInput.value = '12:00';
-            }
+            const savedTime = extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '12:00';
+            timeInput.value = savedTime;
         }
         const descInput = document.getElementById('transferDescription');
         if (descInput) descInput.value = tx.description || '';
@@ -12167,6 +18292,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const incCurEl = document.getElementById('incomeCurrencySelect');
     if (incCurEl) {
         incCurEl.addEventListener('change', updateIncomeLivePreview);
+    }
+
+    // Sincronizare vizuală checkbox Suspendare Tranzacție
+    const suspCheckbox = document.getElementById('expenseIsSuspended');
+    const suspLabel = document.getElementById('labelExpenseSuspend');
+    if (suspCheckbox && suspLabel) {
+        suspCheckbox.addEventListener('change', () => {
+            suspLabel.classList.toggle('active', suspCheckbox.checked);
+        });
     }
 
     // Selector Metoda de Plata (Card / Cash) - Evenimente Click
@@ -12318,8 +18452,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedMerchantHidden) selectedMerchantHidden.value = '';
             const descInput = document.getElementById('expenseDesc');
             if (descInput) descInput.value = '';
+            updateExpenseBoxesClearButtons();
             const popover = document.getElementById('foodMerchantsFloatingOverlay');
-            if (popover) popover.style.display = 'none';
+            if (popover) {
+                popover.style.display = 'none';
+                const mBox = popover.closest('.modal-box');
+                if (mBox) {
+                    mBox.style.height = 'auto';
+                    mBox.style.maxHeight = '98vh';
+                }
+            }
 
             const expPayInput = document.getElementById('expensePaymentMethod');
             if (expPayInput) expPayInput.value = 'card';
@@ -12342,11 +18484,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 expTimeInput.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             }
             const suspInput = document.getElementById('expenseIsSuspended');
-            if (suspInput) suspInput.checked = false;
+            if (suspInput) {
+                suspInput.checked = false;
+                const sLabel = document.getElementById('labelExpenseSuspend');
+                if (sLabel) sLabel.classList.remove('active');
+            }
 
             const previewBox = document.getElementById('expenseLivePreview');
             if (previewBox) previewBox.style.display = 'none';
+
+            const uIndexInput = document.getElementById('expenseUtilityIndex');
+            if (uIndexInput) uIndexInput.value = '';
+            const uDateInput = document.getElementById('expenseUtilityIndexDate');
+            if (uDateInput) uDateInput.value = getTodayString();
+            const uTypeInput = document.getElementById('expenseUtilityType');
+            if (uTypeInput) uTypeInput.value = 'electricity';
+            const uBadge = document.getElementById('expenseUtilityEnteredBadge');
+            if (uBadge) uBadge.style.display = 'none';
+            closeExpenseUtilityFloatingPrompt();
+
             renderExpenseCategoryPicker();
+            closeFoodMerchantsOverlay();
             openModal('modalExpense');
             setTimeout(() => {
                 const amt = document.getElementById('expenseAmount');
@@ -12366,16 +18524,119 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Buton Magazine Adăugate (deschide pagina cu toate magazinele adăugate de utilizator)
+    const btnOpenCustom = document.getElementById('btnOpenCustomMerchants');
+    if (btnOpenCustom) {
+        btnOpenCustom.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            renderCustomMerchantsModal();
+            openModal('modalCustomMerchants');
+        });
+    }
+
+
     // Buton Închidere Meniu Plutitor Magazine
     const btnCloseMerchantPop = document.getElementById('btnCloseMerchantPopover');
     if (btnCloseMerchantPop) {
         btnCloseMerchantPop.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const popover = document.getElementById('foodMerchantsFloatingOverlay');
-            if (popover) popover.style.display = 'none';
+            closeFoodMerchantsOverlay();
         });
     }
+
+    // ========================================================
+    // CASETE CUMPĂRĂTURI & MAGAZINE DEASUPRA BUTONULUI SCANEAZĂ
+    // ========================================================
+    function updateExpenseBoxesClearButtons() {
+        const desc = document.getElementById('expenseDesc');
+        const merch = document.getElementById('selectedExpenseMerchant');
+        const clearDescBtn = document.getElementById('btnClearExpenseDesc');
+        const clearMerchBtn = document.getElementById('btnClearExpenseMerchant');
+
+        if (clearDescBtn && desc) {
+            clearDescBtn.style.display = desc.value ? 'flex' : 'none';
+        }
+        if (clearMerchBtn && merch) {
+            clearMerchBtn.style.display = merch.value ? 'flex' : 'none';
+        }
+    }
+
+    function initExpenseSummaryBoxes() {
+        const desc = document.getElementById('expenseDesc');
+        const merch = document.getElementById('selectedExpenseMerchant');
+        const clearDescBtn = document.getElementById('btnClearExpenseDesc');
+        const clearMerchBtn = document.getElementById('btnClearExpenseMerchant');
+        const boxShopping = document.getElementById('expenseBoxShopping');
+        const boxMerchant = document.getElementById('expenseBoxMerchant');
+
+        if (desc && !desc.dataset.clearBound) {
+            desc.dataset.clearBound = 'true';
+            desc.addEventListener('input', updateExpenseBoxesClearButtons);
+        }
+        if (merch && !merch.dataset.clearBound) {
+            merch.dataset.clearBound = 'true';
+            merch.addEventListener('input', updateExpenseBoxesClearButtons);
+        }
+
+        if (clearDescBtn && !clearDescBtn.dataset.bound) {
+            clearDescBtn.dataset.bound = 'true';
+            clearDescBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (desc) {
+                    desc.value = '';
+                    desc.dispatchEvent(new Event('input'));
+                }
+                updateExpenseBoxesClearButtons();
+            });
+        }
+
+        if (clearMerchBtn && !clearMerchBtn.dataset.bound) {
+            clearMerchBtn.dataset.bound = 'true';
+            clearMerchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (merch) {
+                    merch.value = '';
+                    merch.dispatchEvent(new Event('input'));
+                }
+                updateExpenseBoxesClearButtons();
+            });
+        }
+
+        const labelShopping = boxShopping?.querySelector('.expense-selected-box-label');
+        if (labelShopping && !labelShopping.dataset.bound) {
+            labelShopping.dataset.bound = 'true';
+            labelShopping.addEventListener('click', (e) => {
+                e.preventDefault();
+                const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+                if (curCatId) {
+                    updateFoodMerchantsQuickPicker(curCatId, true);
+                } else {
+                    showToast('Alegeți mai întâi o categorie!', 'info');
+                }
+            });
+        }
+
+        const labelMerchant = boxMerchant?.querySelector('.expense-selected-box-label');
+        if (labelMerchant && !labelMerchant.dataset.bound) {
+            labelMerchant.dataset.bound = 'true';
+            labelMerchant.addEventListener('click', (e) => {
+                e.preventDefault();
+                const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+                if (curCatId) {
+                    updateFoodMerchantsQuickPicker(curCatId, true);
+                } else {
+                    showToast('Alegeți mai întâi o categorie!', 'info');
+                }
+            });
+        }
+
+        updateExpenseBoxesClearButtons();
+    }
+    initExpenseSummaryBoxes();
 
     // Quick Add Income Button
     const btnOpenIncome = document.getElementById('btnOpenAddIncome');
@@ -12429,7 +18690,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('expenseDate').value || getTodayString();
         const now = new Date();
         const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const time = document.getElementById('expenseTime')?.value || fallbackTime;
+        const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
+        const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
+        const inputTimeVal = document.getElementById('expenseTime')?.value?.trim();
+        const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
         const description = (document.getElementById('expenseDesc').value || '').trim();
         const paymentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
 
@@ -12448,6 +18712,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isSuspended = document.getElementById('expenseIsSuspended')?.checked || false;
 
+        const utilityIndexVal = parseFloat(document.getElementById('expenseUtilityIndex')?.value);
+        const utilityTypeVal = document.getElementById('expenseUtilityType')?.value || 'electricity';
+        const utilityIndexDateVal = document.getElementById('expenseUtilityIndexDate')?.value || date;
+
         if (editId) {
             // Modificare cheltuiala existenta
             const existing = appData.transactions.find(t => t.id === editId);
@@ -12458,10 +18726,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 existing.categoryId = categoryId;
                 existing.date = date;
                 existing.time = time;
+                if (!existing.initialTime) existing.initialTime = existing.time || time;
                 existing.merchant = merchant;
                 existing.description = description;
                 existing.isSuspended = isSuspended;
                 existing.paymentMethod = paymentMethod;
+
+                if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
+                    existing.utilityType = utilityTypeVal;
+                    existing.utilityIndex = utilityIndexVal;
+                    existing.utilityIndexDate = utilityIndexDateVal;
+                    syncTxUtilityReading(existing);
+                } else {
+                    delete existing.utilityType;
+                    delete existing.utilityIndex;
+                    delete existing.utilityIndexDate;
+                    if (Array.isArray(appData.utilityReadings)) {
+                        appData.utilityReadings = appData.utilityReadings.filter(r => r.txId !== existing.id);
+                    }
+                }
             }
             saveData();
             updateBalanceCards();
@@ -12474,6 +18757,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
                 renderBillsAnalytics();
+            }
+            if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
+                renderUtilityMetersAnalytics();
             }
             showToast(t('btn_save'), 'success');
             return;
@@ -12491,10 +18777,18 @@ document.addEventListener('DOMContentLoaded', () => {
             description: description,
             date: date,
             time: time,
+            initialTime: time,
             isSuspended: isSuspended,
             paymentMethod: paymentMethod,
             createdAt: Date.now()
         };
+
+        if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
+            newTx.utilityType = utilityTypeVal;
+            newTx.utilityIndex = utilityIndexVal;
+            newTx.utilityIndexDate = utilityIndexDateVal;
+            syncTxUtilityReading(newTx);
+        }
 
         appData.transactions.push(newTx);
         saveData();
@@ -12505,6 +18799,9 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal('modalExpense');
         if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
             renderBillsAnalytics();
+        }
+        if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
+            renderUtilityMetersAnalytics();
         }
         showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
     });
@@ -12517,7 +18814,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('incomeDate').value || getTodayString();
         const now = new Date();
         const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const time = document.getElementById('incomeTime')?.value || fallbackTime;
+        const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
+        const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
+        const inputTimeVal = document.getElementById('incomeTime')?.value?.trim();
+        const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
         const source = (document.getElementById('incomeSource').value || '').trim();
         const isSuspended = document.getElementById('incomeIsSuspended')?.checked || false;
         const paymentMethod = document.getElementById('incomePaymentMethod')?.value || 'card';
@@ -12688,47 +18988,83 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Filtru Perioadă Grafic Donut (Modal Stilizat)
-    function updateOverviewPeriodFilterUI(period) {
-        const hiddenInput = document.getElementById('overviewPeriod');
-        if (hiddenInput) hiddenInput.value = period;
-
-        document.querySelectorAll('#modalOverviewPeriodFilter .btn-tx-filter-option').forEach(b => {
-            b.classList.toggle('active', b.dataset.period === period);
-        });
-
-        const labelEl = document.getElementById('overviewPeriodCurrentLabel');
-        const activeLang = (typeof getLanguageForCurrency === 'function') ? getLanguageForCurrency() : 'ro';
-        const periodLabelsMap = {
-            'current-month': { ro: 'Luna Aceasta', en: 'This Month', de: 'Dieser Monat', tr: 'Bu Ay', ja: '今月', zh: '本月' },
-            'last-month': { ro: 'Luna Trecută', en: 'Last Month', de: 'Letzter Monat', tr: 'Geçen Ay', ja: '先月', zh: '上月' },
-            'current-year': { ro: 'Anul Acesta', en: 'This Year', de: 'Dieses Jahr', tr: 'Bu Yıl', ja: '今年', zh: '今年' },
-            'all': { ro: 'Toată Perioada', en: 'All Time', de: 'Gesamter Zeitraum', tr: 'Tüm Zamanlar', ja: '全期間', zh: '全部时间' }
-        };
-        const item = periodLabelsMap[period] || periodLabelsMap['current-month'];
-        if (labelEl) labelEl.textContent = item[activeLang] || item.ro;
-    }
-
     function initOverviewPeriodFilter() {
         const btnOpen = document.getElementById('btnOpenOverviewPeriod');
         if (btnOpen) {
             btnOpen.addEventListener('click', () => {
-                const curVal = document.getElementById('overviewPeriod')?.value || 'current-month';
+                populateOverviewCustomYearSelect();
+                const curVal = document.getElementById('overviewPeriod')?.value || (appData.settings && appData.settings.overviewPeriod) || 'current-month';
                 document.querySelectorAll('#modalOverviewPeriodFilter .btn-tx-filter-option').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.period === curVal);
                 });
+                const customBox = document.getElementById('overviewCustomPeriodBox');
+                const isCustom = curVal && (curVal.startsWith('year-') || curVal.startsWith('monthonly-') || curVal.startsWith('month-'));
+                if (customBox) {
+                    customBox.classList.toggle('active', !!isCustom);
+                }
+                updateOverviewPeriodFilterUI(curVal);
                 openModal('modalOverviewPeriodFilter');
             });
         }
 
+        // Tab-uri selector personalizat (Doar Anul / Doar Luna / Lună & An)
+        document.querySelectorAll('.overview-period-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.periodTab;
+                document.querySelectorAll('.overview-period-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+                const panelYearOnly = document.getElementById('panelPeriodYearOnly');
+                const panelMonthOnly = document.getElementById('panelPeriodMonthOnly');
+                const panelMonthYear = document.getElementById('panelPeriodMonthYear');
+                if (panelYearOnly) panelYearOnly.style.display = (targetTab === 'year-only') ? 'block' : 'none';
+                if (panelMonthOnly) panelMonthOnly.style.display = (targetTab === 'month-only') ? 'block' : 'none';
+                if (panelMonthYear) panelMonthYear.style.display = (targetTab === 'month-year') ? 'block' : 'none';
+            });
+        });
+
+        // Helper aplicare perioadă
+        function setAndApplyOverviewPeriod(periodKey) {
+            if (!appData.settings) appData.settings = {};
+            appData.settings.overviewPeriod = periodKey;
+            saveData();
+            persistDatabaseToFile();
+            updateOverviewPeriodFilterUI(periodKey);
+            closeModal('modalOverviewPeriodFilter');
+            renderOverviewChartAndList();
+        }
+
+        // 1. Aplică Doar Anul
+        const btnApplyYearOnly = document.getElementById('btnApplyYearOnly');
+        if (btnApplyYearOnly) {
+            btnApplyYearOnly.addEventListener('click', () => {
+                const yr = document.getElementById('selectOverviewYearOnly')?.value || new Date().getFullYear();
+                setAndApplyOverviewPeriod(`year-${yr}`);
+            });
+        }
+
+        // 2. Aplică Doar Luna (din toți anii)
+        const btnApplyMonthOnly = document.getElementById('btnApplyMonthOnly');
+        if (btnApplyMonthOnly) {
+            btnApplyMonthOnly.addEventListener('click', () => {
+                const mo = document.getElementById('selectOverviewMonthOnly')?.value || '01';
+                setAndApplyOverviewPeriod(`monthonly-${mo}`);
+            });
+        }
+
+        // 3. Aplică Lună & An specific
+        const btnApplyMonthYear = document.getElementById('btnApplyMonthYear');
+        if (btnApplyMonthYear) {
+            btnApplyMonthYear.addEventListener('click', () => {
+                const mo = document.getElementById('selectOverviewMonthForYear')?.value || '01';
+                const yr = document.getElementById('selectOverviewYearForMonth')?.value || new Date().getFullYear();
+                setAndApplyOverviewPeriod(`month-${yr}-${mo}`);
+            });
+        }
+
+        // Opțiuni standard predefinite
         document.querySelectorAll('#modalOverviewPeriodFilter .btn-tx-filter-option').forEach(btn => {
             btn.addEventListener('click', () => {
                 const period = btn.dataset.period || 'current-month';
-                updateOverviewPeriodFilterUI(period);
-                if (!appData.settings) appData.settings = {};
-                appData.settings.overviewPeriod = period;
-                saveData();
-                closeModal('modalOverviewPeriodFilter');
-                renderOverviewChartAndList();
+                setAndApplyOverviewPeriod(period);
             });
         });
 
@@ -12802,7 +19138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             settings: appData.settings,
             categories: appData.categories,
             transactions: appData.transactions,
-            customDeposits: appData.customDeposits || []
+            customDeposits: appData.customDeposits || [],
+            utilityReadings: appData.utilityReadings || []
         };
 
         const jsonStr = JSON.stringify(exportPayload, null, 2);
@@ -12825,7 +19162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('Fișierul complet (tranzacții, categorii, depozite, setări și temă) a fost descărcat!', 'success');
+        showToast('Fișierul complet (tranzacții, categorii, depozite, utilități, setări și temă) a fost descărcat!', 'success');
     });
 
     // Backup: Import JSON (Restaureaza date, categorii, setari si interfata instant)
@@ -12837,7 +19174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             try {
                 const parsed = JSON.parse(event.target.result);
-                if (parsed.categories && (parsed.transactions || parsed.settings || parsed.customDeposits)) {
+                if (parsed.categories && (parsed.transactions || parsed.settings || parsed.customDeposits || parsed.utilityReadings)) {
                     // Actualizare categorii
                     if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
                         appData.categories = parsed.categories;
@@ -12851,6 +19188,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Actualizare depozite
                     if (Array.isArray(parsed.customDeposits)) {
                         appData.customDeposits = parsed.customDeposits;
+                    }
+
+                    // Actualizare citiri contoare utilități
+                    if (Array.isArray(parsed.utilityReadings)) {
+                        appData.utilityReadings = parsed.utilityReadings;
                     }
                     
                     // Actualizare setari
@@ -12914,6 +19256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'cardStatDeposits', action: () => openDepositsModal() },
         { id: 'cardStatTotalTxCountCard', action: () => openKpiDetailModal('activity') },
         { id: 'cardStatBillsAnalytics', action: () => openBillsAnalyticsModal(currentStatsPeriod) },
+        { id: 'cardStatUtilityMeters', action: () => openUtilityMetersModal() },
         { id: 'cardStatStoresShare', action: () => openKpiDetailModal('stores') },
         { id: 'cardStatPurchasesShare', action: () => openKpiDetailModal('purchases') }
     ];
@@ -12992,6 +19335,264 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.fontWeight = '700';
             currentBillsPeriod = btn.dataset.period;
             renderBillsAnalytics();
+        });
+    });
+
+    // =========================================================================
+    // ASCULTĂTORI PENTRU CONTOARE & CONSUM UTILITĂȚI (CURENT, GAZE, APĂ)
+    // =========================================================================
+
+    // 1. Ascultători Fereastră Plutitoare Index & Contor Utilități
+    const btnCloseUtilPrompt = document.getElementById('btnCloseExpenseUtilityPrompt');
+    if (btnCloseUtilPrompt) {
+        btnCloseUtilPrompt.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeExpenseUtilityFloatingPrompt();
+        });
+    }
+
+    const btnCancelUtilPrompt = document.getElementById('btnCancelExpenseUtilityPrompt');
+    if (btnCancelUtilPrompt) {
+        btnCancelUtilPrompt.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeExpenseUtilityFloatingPrompt();
+        });
+    }
+
+    const btnSaveUtilPrompt = document.getElementById('btnSaveExpenseUtilityPrompt');
+    if (btnSaveUtilPrompt) {
+        btnSaveUtilPrompt.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveExpenseUtilityFloatingPrompt();
+        });
+    }
+
+    // Tab-uri tip utilitate în fereastra plutitoare prompt
+    document.querySelectorAll('#expenseUtilityTypeTabsPrompt .btn-utility-type-tab').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const uType = btn.dataset.utility;
+            currentFloatingPromptUtilityType = uType;
+            document.querySelectorAll('#expenseUtilityTypeTabsPrompt .btn-utility-type-tab').forEach(b => {
+                b.classList.toggle('active', b.dataset.utility === uType);
+            });
+            updateFloatingUtilityLivePreview();
+        });
+    });
+
+    const floatingIdxInput = document.getElementById('expenseUtilityFloatingIndex');
+    if (floatingIdxInput) {
+        floatingIdxInput.addEventListener('input', updateFloatingUtilityLivePreview);
+    }
+    const floatingDateInput = document.getElementById('expenseUtilityFloatingDate');
+    if (floatingDateInput) {
+        floatingDateInput.addEventListener('change', updateFloatingUtilityLivePreview);
+    }
+
+    // Badge indicator din formularul de cheltuieli (redeschide fereastra plutitoare)
+    const enteredBadge = document.getElementById('expenseUtilityEnteredBadge');
+    if (enteredBadge) {
+        enteredBadge.addEventListener('click', () => {
+            const merch = document.getElementById('selectedExpenseMerchant')?.value || '';
+            const itemDesc = document.getElementById('expenseDesc')?.value || '';
+            openExpenseUtilityFloatingPrompt(merch, itemDesc);
+        });
+    }
+
+    // 3. Modal Contoare & Consum: Tab-uri perioadă rapidă
+    document.querySelectorAll('.meters-period-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.meters-period-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+                b.style.fontWeight = '600';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#ffffff';
+            btn.style.fontWeight = '700';
+            currentMetersPeriod = btn.dataset.period;
+            currentMetersCustomYear = 'all';
+            currentMetersCustomMonth = 'all';
+            const sY = document.getElementById('selectMetersFilterYear');
+            const sM = document.getElementById('selectMetersFilterMonth');
+            if (sY) sY.value = 'all';
+            if (sM) sM.value = 'all';
+            renderUtilityMetersAnalytics();
+        });
+    });
+
+    // 4. Modal Contoare & Consum: Tab-uri tip utilitate
+    document.querySelectorAll('.meters-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.meters-type-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+                b.style.fontWeight = '600';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--card-bg)';
+            btn.style.color = 'var(--text-color)';
+            btn.style.fontWeight = '700';
+            currentMetersType = btn.dataset.type;
+            renderUtilityMetersAnalytics();
+        });
+    });
+
+    // 5. Modal Contoare: Filtru personalizat an / lună
+    const btnApplyMetersFilter = document.getElementById('btnApplyMetersCustomFilter');
+    if (btnApplyMetersFilter) {
+        btnApplyMetersFilter.addEventListener('click', () => {
+            const sY = document.getElementById('selectMetersFilterYear');
+            const sM = document.getElementById('selectMetersFilterMonth');
+            currentMetersCustomYear = sY ? sY.value : 'all';
+            currentMetersCustomMonth = sM ? sM.value : 'all';
+            document.querySelectorAll('.meters-period-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+                b.style.fontWeight = '600';
+            });
+            renderUtilityMetersAnalytics();
+        });
+    }
+
+    const btnResetMetersFilter = document.getElementById('btnResetMetersCustomFilter');
+    if (btnResetMetersFilter) {
+        btnResetMetersFilter.addEventListener('click', () => {
+            currentMetersCustomYear = 'all';
+            currentMetersCustomMonth = 'all';
+            currentMetersPeriod = 'year';
+            const sY = document.getElementById('selectMetersFilterYear');
+            const sM = document.getElementById('selectMetersFilterMonth');
+            if (sY) sY.value = 'all';
+            if (sM) sM.value = 'all';
+            document.querySelectorAll('.meters-period-btn').forEach(b => {
+                const isActive = b.dataset.period === 'year';
+                b.classList.toggle('active', isActive);
+                b.style.background = isActive ? 'var(--accent)' : 'transparent';
+                b.style.color = isActive ? '#ffffff' : 'var(--text-muted)';
+                b.style.fontWeight = isActive ? '700' : '600';
+            });
+            renderUtilityMetersAnalytics();
+        });
+    }
+
+    // 6. Modal Contoare: Buton deschidere adăugare citire index
+    const btnOpenAddMeter = document.getElementById('btnOpenAddMeterReadingModal');
+    if (btnOpenAddMeter) {
+        btnOpenAddMeter.addEventListener('click', () => {
+            openAddMeterReadingModal();
+        });
+    }
+
+    // 7. Modal Adăugare Citire Directă: Tab-uri utilitate
+    document.querySelectorAll('#directMeterUtilityTabs .btn-direct-util-tab').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const uType = btn.dataset.utility;
+            const uTypeInput = document.getElementById('directMeterUtilityType');
+            if (uTypeInput) uTypeInput.value = uType;
+            document.querySelectorAll('#directMeterUtilityTabs .btn-direct-util-tab').forEach(b => {
+                b.classList.toggle('active', b.dataset.utility === uType);
+            });
+            updateDirectMeterLivePreview();
+        });
+    });
+
+    const directIdxInput = document.getElementById('directMeterIndexValue');
+    if (directIdxInput) directIdxInput.addEventListener('input', updateDirectMeterLivePreview);
+    const directDateInput = document.getElementById('directMeterReadingDate');
+    if (directDateInput) directDateInput.addEventListener('change', updateDirectMeterLivePreview);
+    const directAmtInput = document.getElementById('directMeterAmount');
+    if (directAmtInput) directAmtInput.addEventListener('input', updateDirectMeterLivePreview);
+
+    // 8. Formular Salvare Citire Directă
+    const formMeter = document.getElementById('formMeterReading');
+    if (formMeter) {
+        formMeter.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const rId = document.getElementById('editMeterReadingId')?.value;
+            const txId = document.getElementById('editMeterReadingTxId')?.value;
+            const uType = document.getElementById('directMeterUtilityType')?.value || 'electricity';
+            const idxVal = parseFloat(document.getElementById('directMeterIndexValue')?.value);
+            const rDate = document.getElementById('directMeterReadingDate')?.value || getTodayString();
+            const amt = parseFloat(document.getElementById('directMeterAmount')?.value) || 0;
+            const notes = (document.getElementById('directMeterNotes')?.value || '').trim();
+
+            if (isNaN(idxVal) || idxVal <= 0) {
+                showToast('Introduceți o valoare validă a indexului!', 'error');
+                return;
+            }
+
+            ensureUtilityReadingsInitialized();
+
+            if (txId) {
+                const tx = appData.transactions.find(t => t.id === txId);
+                if (tx) {
+                    tx.utilityType = uType;
+                    tx.utilityIndex = idxVal;
+                    tx.utilityIndexDate = rDate;
+                    syncTxUtilityReading(tx);
+                }
+            } else if (rId) {
+                const existing = appData.utilityReadings.find(r => r.id === rId);
+                if (existing) {
+                    existing.utilityType = uType;
+                    existing.indexValue = idxVal;
+                    existing.readingDate = rDate;
+                    existing.amount = amt;
+                    existing.notes = notes;
+                    if (existing.txId) {
+                        const tx = appData.transactions.find(t => t.id === existing.txId);
+                        if (tx) {
+                            tx.utilityType = uType;
+                            tx.utilityIndex = idxVal;
+                            tx.utilityIndexDate = rDate;
+                        }
+                    }
+                }
+            } else {
+                appData.utilityReadings.push({
+                    id: 'utl-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                    utilityType: uType,
+                    indexValue: idxVal,
+                    readingDate: rDate,
+                    amount: amt,
+                    currency: 'RON',
+                    notes: notes
+                });
+            }
+
+            const txIdInput = document.getElementById('editMeterReadingTxId');
+            if (txIdInput) txIdInput.value = '';
+
+            saveData();
+            updateBalanceCards();
+            renderStatsTab();
+            renderUtilityMetersAnalytics();
+            closeModal('modalAddMeterReading');
+            showToast('Citirea de contor a fost salvată!', 'success');
+        });
+    }
+
+    // 9. Tab-uri filtru istoric contoare: Toate, Cu index, Fără index
+    document.querySelectorAll('.meters-hist-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.meters-hist-filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+                b.style.fontWeight = '600';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#ffffff';
+            btn.style.fontWeight = '700';
+            currentMetersHistorySubFilter = btn.dataset.histFilter || 'all';
+            renderUtilityMetersAnalytics();
         });
     });
 
@@ -13925,6 +20526,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (expenseNoteInput && data.note) {
             expenseNoteInput.value = data.note;
         }
+
+        // 6. Setare Magazin & Cumpărături
+        if (data.merchant && data.merchant.name) {
+            const merchInput = document.getElementById('selectedExpenseMerchant');
+            if (merchInput) merchInput.value = data.merchant.name;
+        }
+        if (data.note) {
+            const descInput = document.getElementById('expenseDesc');
+            if (descInput) descInput.value = data.note;
+        }
+        updateExpenseBoxesClearButtons();
 
         showToast('Datele din bon au fost aplicate în formular!', 'success');
     }

@@ -1,9 +1,9 @@
-const CACHE_NAME = 'moneyapp-v419';
+const CACHE_NAME = 'moneyapp-v480';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=419',
-  './app.js?v=419',
+  './style.css?v=480',
+  './app.js?v=480',
   './chart.min.js',
   './chartjs-plugin-datalabels.min.js',
   './qrcode.min.js',
@@ -57,3 +57,4 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
