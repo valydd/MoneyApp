@@ -56,16 +56,64 @@ const DEFAULT_CATEGORIES = [
     { id: 'cat-9', name: 'Altele', color: '#64748b', icon: '📦' }
 ];
 
+const DEFAULT_LOCATIONS = [
+    'Alba Iulia',
+    'Alexandria',
+    'Arad',
+    'Bacău',
+    'Baia Mare',
+    'Bistrița',
+    'Botoșani',
+    'Brăila',
+    'Brașov',
+    'București',
+    'Buzău',
+    'Călărași',
+    'Cluj-Napoca',
+    'Constanța',
+    'Craiova',
+    'Curtea de Argeș',
+    'Deva',
+    'Drobeta-Turnu Severin',
+    'Focșani',
+    'Galați',
+    'Giurgiu',
+    'Iași',
+    'Miercurea Ciuc',
+    'Mioveni',
+    'Oradea',
+    'Piatra Neamț',
+    'Pitești',
+    'Ploiești',
+    'Râmnicu Vâlcea',
+    'Reșița',
+    'Satu Mare',
+    'Sfântu Gheorghe',
+    'Sibiu',
+    'Slatina',
+    'Slobozia',
+    'Suceava',
+    'Târgoviște',
+    'Târgu Jiu',
+    'Târgu Mureș',
+    'Timișoara',
+    'Tulcea',
+    'Vaslui',
+    'Zalău'
+];
+
 // Initial State
 let appData = {
     categories: [...DEFAULT_CATEGORIES],
     transactions: [],
     customDeposits: [],
+    locations: [...DEFAULT_LOCATIONS],
     settings: {
         eurRate: 4.98,
         theme: 'dark',
         mainCurrency: 'RON',
-        secondaryCurrency: 'auto'
+        secondaryCurrency: 'auto',
+        merchantDefaultLocations: {}
     }
 };
 window.appData = appData;
@@ -75,10 +123,12 @@ let monthlyBarChartInstance = null;
 let statsWeekdayChartInstance = null;
 let statsHourlyChartInstance = null;
 let statsMonthDaysChartInstance = null;
+let statsLocationsBarChartInstance = null;
+let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.17";
+const APP_VERSION = "3.4.49";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -492,7 +542,7 @@ const I18N_DICTIONARY = {
         toast_deposit_deleted: 'Depozitul a fost șters.',
         toast_deposit_name_req: 'Introdu un nume sau o descriere pentru depozit!',
         toast_deposit_amount_req: 'Introdu o sumă validă mai mare decât zero!',
-        deposits_breakdown_dep: 'Depozite',
+        deposits_breakdown_dep: 'Depozite Euro+Lei',
         deposits_breakdown_card: 'Card',
         deposits_breakdown_cash: 'Cash',
         deposits_count_label: 'Depozite',
@@ -5728,10 +5778,14 @@ function getTransactionTimeDisplay(tx) {
     return extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '';
 }
 
-// Toast helper modern: dreptunghiular pe fundal gri, text alb clar si bordura fina neagra
+// Toast helper modern: la jumătatea ecranului, fără blocare click-uri, dispariție rapidă
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
+
+    // Curățăm orice toast anterior pentru a păstra ecranul curat
+    container.innerHTML = '';
+
     const toast = document.createElement('div');
     toast.className = 'toast';
 
@@ -5742,21 +5796,18 @@ function showToast(message, type = 'info') {
         icon = '⚠️';
     }
 
-    toast.innerHTML = `<span style="font-size: 1.05rem; line-height: 1; flex-shrink: 0;">${icon}</span> <span style="line-height: 1.4; text-align: left;">${escapeHtml(message).replace(/\n/g, '<br>')}</span>`;
+    toast.innerHTML = `<span style="font-size: 1.05rem; line-height: 1; flex-shrink: 0;">${icon}</span> <span style="line-height: 1.35; text-align: center;">${escapeHtml(message).replace(/\n/g, '<br>')}</span>`;
     
-    // Stiluri cerute: fundal gri modern, dreptunghiular, scris alb luminos, bordura fina neagra
-    toast.style.backgroundColor = '#334155';
-    toast.style.color = '#ffffff';
-    toast.style.border = '1.5px solid #000000';
-    toast.style.borderRadius = '8px';
-    toast.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.45)';
+    // Asigurăm pointer-events: none pe elementul injectat pentru a nu bloca niciodată atingerile pe butoane
+    toast.style.pointerEvents = 'none';
 
     container.appendChild(toast);
     setTimeout(() => {
+        toast.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
         toast.style.opacity = '0';
-        toast.style.transform = 'translateY(12px)';
-        setTimeout(() => toast.remove(), 250);
-    }, 3200);
+        toast.style.transform = 'scale(0.90)';
+        setTimeout(() => toast.remove(), 220);
+    }, 1600);
 }
 
 // ==========================================
@@ -5877,6 +5928,9 @@ function loadData() {
                 if (Array.isArray(parsed.utilityReadings)) {
                     appData.utilityReadings = parsed.utilityReadings;
                 }
+                if (Array.isArray(parsed.locations)) {
+                    appData.locations = parsed.locations;
+                }
                 if (parsed.settings) {
                     appData.settings = { ...appData.settings, ...parsed.settings };
                 }
@@ -5924,17 +5978,53 @@ function loadData() {
         if (!appData.settings) appData.settings = {};
         if (!appData.settings.mainCurrency) appData.settings.mainCurrency = 'RON';
         if (!appData.settings.secondaryCurrency) appData.settings.secondaryCurrency = 'auto';
+        // Migrare v3.4.38: resetăm suspendedWeeks dacă versiunea anterioară era buggy
+        if (appData.settings._swVersion !== '3.4.38') {
+            appData.settings.suspendedWeeks = [];
+            appData.settings._swVersion = '3.4.38';
+        }
+        if (!Array.isArray(appData.settings.suspendedWeeks)) appData.settings.suspendedWeeks = [];
+        if (!Array.isArray(appData.settings.collapsedWeeks)) appData.settings.collapsedWeeks = [];
+        if (!appData.settings.merchantDefaultLocations || typeof appData.settings.merchantDefaultLocations !== 'object' || Array.isArray(appData.settings.merchantDefaultLocations)) {
+            appData.settings.merchantDefaultLocations = {};
+        }
+
+
         if (!Array.isArray(appData.utilityReadings)) {
             appData.utilityReadings = [];
         }
 
-        // Auto-recuperare (Self-Healing) citiri contoare din tranzacțiile existente dacă lipseau
+        if (!appData.settings) appData.settings = {};
+        if (!Array.isArray(appData.settings.deletedLocations)) {
+            appData.settings.deletedLocations = [];
+        }
+        const deletedLocs = appData.settings.deletedLocations.map(l => l.toLowerCase());
+
+        if (!Array.isArray(appData.locations) || appData.locations.length === 0) {
+            appData.locations = DEFAULT_LOCATIONS.filter(l => !deletedLocs.includes(l.toLowerCase()));
+        } else {
+            DEFAULT_LOCATIONS.forEach(defLoc => {
+                const defLower = defLoc.toLowerCase();
+                if (!deletedLocs.includes(defLower) && !appData.locations.some(l => l.toLowerCase() === defLower)) {
+                    appData.locations.push(defLoc);
+                }
+            });
+        }
+
+        // Auto-recuperare (Self-Healing) citiri contoare și locații din tranzacțiile existente
         if (Array.isArray(appData.transactions)) {
             appData.transactions.forEach(tx => {
                 if (tx.utilityIndex && !isNaN(parseFloat(tx.utilityIndex))) {
                     const alreadyExists = appData.utilityReadings.some(r => r.txId === tx.id);
                     if (!alreadyExists) {
                         syncTxUtilityReading(tx);
+                    }
+                }
+                if (tx.location && typeof tx.location === 'string' && tx.location.trim().length > 0) {
+                    const locTrimmed = tx.location.trim();
+                    const locLower = locTrimmed.toLowerCase();
+                    if (!deletedLocs.includes(locLower) && !appData.locations.some(l => l.toLowerCase() === locLower)) {
+                        appData.locations.push(locTrimmed);
                     }
                 }
             });
@@ -6006,7 +6096,59 @@ function getChartGridColor() {
 }
 
 function isTxSuspended(tx) {
+    // Verifică NUMAI suspendarea individuală a tranzacției
     return !!(tx && (tx.isSuspended === true || tx.isSuspended === 'true' || tx.suspended === true));
+}
+
+function isWeeklySuspendedTx(tx) {
+    // Verifică dacă tranzacția aparține unei săptămâni suspendate
+    if (!tx || !tx.date) return false;
+    return isWeekSuspended(getIsoWeekKey(tx.date));
+}
+
+function isTxEffectivelySuspended(tx) {
+    // Combinat: suspendat individual SAU prin săptămână
+    return isTxSuspended(tx) || isWeeklySuspendedTx(tx);
+}
+
+
+function getIsoWeekKey(dateStr) {
+    if (!dateStr || typeof dateStr !== 'string') return 'unknown';
+    const parts = dateStr.split('-');
+    if (parts.length < 3) return 'unknown';
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    const d = parseInt(parts[2], 10);
+    const date = new Date(Date.UTC(y, m, d));
+    date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
+function isWeekSuspended(weekKey) {
+    return Array.isArray(appData.settings && appData.settings.suspendedWeeks) &&
+           appData.settings.suspendedWeeks.includes(weekKey);
+}
+
+function toggleWeekSuspension(weekKey) {
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.suspendedWeeks)) appData.settings.suspendedWeeks = [];
+    const idx = appData.settings.suspendedWeeks.indexOf(weekKey);
+    if (idx >= 0) {
+        appData.settings.suspendedWeeks.splice(idx, 1);
+    } else {
+        appData.settings.suspendedWeeks.push(weekKey);
+    }
+    saveData();
+    updateBalanceCards();
+    renderOverviewChartAndList();
+    renderTransactionsHistory();
+    renderStatsTab();
+    renderCurrencyConverter();
+    updateSuspendedTxBadge();
+    const isSusp = isWeekSuspended(weekKey);
+    showToast(isSusp ? '⏸️ Săptămână suspendată (exclusă din calcule)' : '▶️ Săptămână reactivată (inclusă în calcule)', 'info');
 }
 
 function updateBalanceCards() {
@@ -6019,18 +6161,22 @@ function updateBalanceCards() {
     let cashExpenseRon = 0;
 
     appData.transactions.forEach(tx => {
-        if (isTxSuspended(tx)) return; // Exclude suspended
+        if (isTxSuspended(tx)) return; // Exclude individual suspended (incl. income)
+        const weekSusp = isWeeklySuspendedTx(tx);
         const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
         const method = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
         if (tx.type === 'income') {
+            // Veniturile NU sunt excluse prin suspendarea săptămânii (nu scădem venitul)
             totalIncomeRon += amtRon;
             if (method === 'cash') cashIncomeRon += amtRon;
             else cardIncomeRon += amtRon;
         } else if (tx.type === 'expense') {
+            if (weekSusp) return; // Cheltuielile din săptămâna suspendată sunt excluse
             totalExpenseRon += amtRon;
             if (method === 'cash') cashExpenseRon += amtRon;
             else cardExpenseRon += amtRon;
         } else if (tx.type === 'transfer') {
+            if (weekSusp) return; // Transferurile din săptămâna suspendată excluse
             const dir = tx.transferDirection || 'card-to-cash';
             if (dir === 'card-to-cash') {
                 cardExpenseRon += amtRon;
@@ -6040,6 +6186,7 @@ function updateBalanceCards() {
                 cardIncomeRon += amtRon;
             }
         }
+
     });
 
     const netBalanceRon = totalIncomeRon - totalExpenseRon;
@@ -6112,79 +6259,136 @@ function updateBalanceCards() {
     const expEl = document.getElementById('displayTotalExpense');
     if (expEl) expEl.textContent = formatMoney(displayExpense, mainCurr);
 
+    // Afișare medie cheltuieli zilnice în bannerul din Statistici
+    const statsDailyAvgEl = document.getElementById('displayStatsDailyAvgExpense');
+    if (statsDailyAvgEl) {
+        const dailyAvgRon = calculateDailyExpenseRateRon();
+        const dailyAvgDisp = convertFromRon(dailyAvgRon, mainCurr);
+        statsDailyAvgEl.textContent = formatMoney(dailyAvgDisp, mainCurr) + '/zi';
+    }
+
     // Actualizare indicator M in antet
     const logoInd = document.getElementById('logoCurrencyIndicator');
     if (logoInd) logoInd.textContent = mainCurr;
 
     // Actualizare Widget Autonomie Financiara in coltul sus dreapta al antetului
     updateHeaderRunwayWidget();
+
+    // Sincronizare cu Widget-urile Android de pe ecranul telefonului
+    if (window.AndroidBridge && typeof window.AndroidBridge.updateWidgetBalances === 'function') {
+        try {
+            const totStr = formatMoney(displayBalance, mainCurr);
+            const cardStr = formatMoney(displayCard, mainCurr);
+            const cashStr = formatMoney(displayCash, mainCurr);
+            window.AndroidBridge.updateWidgetBalances(totStr, cardStr, cashStr, mainCurr);
+        } catch (errWidget) {
+            console.warn('Eroare sincronizare widget Android:', errWidget);
+        }
+    }
 }
 
 // Helper: Ritm Zilnic Mediu de Cheltuieli (RON)
+function isSavingsCategory(tx) {
+    // Categoria "Economii & Rate" (cat-8) nu este o cheltuiala reala — banii raman in depozit/economii
+    return !!(tx && tx.categoryId === 'cat-8');
+}
+
 function calculateDailyExpenseRateRon() {
     const today = new Date();
     const curYear = today.getFullYear();
     const curMonth = today.getMonth() + 1;
     const curMonthStr = `${curYear}-${String(curMonth).padStart(2, '0')}`;
     const daysElapsedInMonth = Math.max(1, today.getDate());
+    const daysInCurMonth = new Date(curYear, curMonth, 0).getDate(); // ex: 30 în septembrie
 
-    let curMonthExpenseRon = 0;
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
+
+    // 1. Facturi (Facturi & Utilități): cheltuială lunară, plătită periodic
+    // Valoarea facturilor este împărțită pe toate zilele lunii (30 zile),
+    // pentru a nu influența grav autonomia în ziua când sunt plătite.
+    let curMonthBillsRon = 0;
+    let last30BillsRon = 0;
+
+    // 2. Cheltuieli variabile curente (Mâncare, Transport, Sănătate, Cumpărături, etc.)
+    // Excludem "Economii & Rate" (cat-8) și "Facturi & Utilități" (care sunt distribuite pe 30 zile)
+    let curMonthVarRon = 0;
+    let last30VarRon = 0;
+
     appData.transactions.forEach(t => {
-        if (!isTxSuspended(t) && t.type === 'expense' && t.date && t.date.startsWith(curMonthStr)) {
-            curMonthExpenseRon += parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        if (isTxEffectivelySuspended(t)) return;
+        if (t.type !== 'expense' || isSavingsCategory(t) || !t.date) return;
+
+        const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+        const isBill = (typeof isBillCategory === 'function') ? isBillCategory(t.categoryId) : (t.categoryId === 'cat-2');
+
+        if (t.date.startsWith(curMonthStr)) {
+            if (isBill) {
+                curMonthBillsRon += amtRon;
+            } else {
+                curMonthVarRon += amtRon;
+            }
+        }
+
+        if (t.date >= thirtyDaysAgoStr) {
+            if (isBill) {
+                last30BillsRon += amtRon;
+            } else {
+                last30VarRon += amtRon;
+            }
         }
     });
 
-    let dailyAvgRon = curMonthExpenseRon / daysElapsedInMonth;
+    // Rata zilnică pentru Facturi: împărțită la zilele lunii (30 zile)
+    const billsTotal = curMonthBillsRon > 0 ? curMonthBillsRon : last30BillsRon;
+    const dailyBillsRate = billsTotal / (curMonthBillsRon > 0 ? daysInCurMonth : 30);
 
-    if (dailyAvgRon <= 0 || daysElapsedInMonth < 3) {
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 30);
-        const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
-
-        let last30ExpenseRon = 0;
-        let oldestDateInWindow = today.toISOString().split('T')[0];
-
-        appData.transactions.forEach(t => {
-            if (!isTxSuspended(t) && t.type === 'expense' && t.date && t.date >= thirtyDaysAgoStr) {
-                last30ExpenseRon += parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-                if (t.date < oldestDateInWindow) oldestDateInWindow = t.date;
-            }
-        });
-
-        const d1 = new Date(oldestDateInWindow);
-        const diffDays = Math.max(1, Math.ceil((today - d1) / (1000 * 60 * 60 * 24)));
-        const recent30Avg = last30ExpenseRon / diffDays;
-
-        if (recent30Avg > 0) {
-            dailyAvgRon = recent30Avg;
-        }
+    // Rata zilnică pentru Cheltuieli Variabile:
+    // Dacă au trecut cel puțin 3 zile din lună, împărțim cheltuielile variabile la zilele trecute.
+    // În primele 2 zile, folosim media variabilelor din ultimele 30 zile / 30.
+    let dailyVarRate = 0;
+    if (daysElapsedInMonth >= 3) {
+        dailyVarRate = curMonthVarRon / daysElapsedInMonth;
+    } else {
+        dailyVarRate = last30VarRon / 30;
     }
 
-    return dailyAvgRon;
+    const totalDailyRate = dailyBillsRate + dailyVarRate;
+    return Math.max(0, totalDailyRate);
 }
+
+
+
+
 
 // Calcul Autonomie Financiară Globală (Banii actuali din cont / Ritmul de cheltuieli recent)
 function calculateGlobalRunwayDays() {
     // 1. Sold curent total din cont (Venituri - Cheltuieli active)
+    // Veniturile nu se exclud la suspendarea saptamânii; cheltuielile se exclud
     let totalBalRon = 0;
     appData.transactions.forEach(t => {
         if (isTxSuspended(t)) return;
         const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
-        if (t.type === 'income') totalBalRon += a;
-        else if (t.type === 'expense') totalBalRon -= a;
+        if (t.type === 'income') {
+            totalBalRon += a;
+        } else if (t.type === 'expense') {
+            if (isWeeklySuspendedTx(t)) return; // cheltuielile din saptamana suspendata excluse
+            totalBalRon -= a;
+        }
     });
 
     if (totalBalRon <= 0) return 0;
 
     const dailyAvgRon = calculateDailyExpenseRateRon();
     if (dailyAvgRon <= 0) {
-        return 999;
+        return Infinity;
     }
 
     const daysRunway = Math.round(totalBalRon / dailyAvgRon);
     return Math.max(0, daysRunway);
 }
+
 
 function updateHeaderRunwayWidget() {
     const daysEl = document.getElementById('headerRunwayDays');
@@ -6198,23 +6402,55 @@ function updateHeaderRunwayWidget() {
         ro: 'ZILE',
         en: 'DAYS',
         de: 'TAGE',
+        fr: 'JOURS',
+        es: 'DÍAS',
+        it: 'GIORNI',
+        pl: 'DNI',
+        nl: 'DAGEN',
+        pt: 'DIAS',
+        uk: 'ДНІВ',
         tr: 'GÜN',
         ja: '日',
         zh: '天'
     };
-    const unitText = unitMap[activeLang] || 'ZILE';
+    const yearUnitMap = {
+        ro: 'ANI',
+        en: 'YRS',
+        de: 'JAHRE',
+        fr: 'ANS',
+        es: 'AÑOS',
+        it: 'ANNI',
+        pl: 'LAT',
+        nl: 'JAAR',
+        pt: 'ANOS',
+        uk: 'РОКІВ',
+        tr: 'YIL',
+        ja: '年',
+        zh: '年'
+    };
 
-    if (days >= 999) {
-        daysEl.textContent = '999+';
-        daysEl.style.fontSize = '0.78rem';
+    if (!isFinite(days) || days > 36500) {
+        daysEl.textContent = '∞';
+        daysEl.style.fontSize = '1.05rem';
+        if (unitEl) unitEl.textContent = unitMap[activeLang] || 'ZILE';
+        if (widgetEl) widgetEl.title = `Autonomie Financiară: Fără cheltuieli active (rezervă nelimitată).`;
+    } else if (days >= 365) {
+        const years = (days / 365).toFixed(1);
+        daysEl.textContent = years;
+        daysEl.style.fontSize = years.length > 4 ? '0.70rem' : (years.length > 3 ? '0.76rem' : '0.82rem');
+        const yearText = yearUnitMap[activeLang] || 'ANI';
+        if (unitEl) unitEl.textContent = yearText;
+        if (widgetEl) {
+            widgetEl.title = `Autonomie Financiară: ~${years} ${yearText.toLowerCase()} (~${days} zile) de rezervă cu banii actuali din cont.`;
+        }
     } else {
         daysEl.textContent = String(days);
-        daysEl.style.fontSize = '0.92rem';
-    }
-    if (unitEl) unitEl.textContent = unitText;
-
-    if (widgetEl) {
-        widgetEl.title = `Autonomie Financiară: ~${days} ${unitText.toLowerCase()} de rezervă cu banii actuali din cont.`;
+        daysEl.style.fontSize = days >= 100 ? '0.84rem' : '0.92rem';
+        const unitText = unitMap[activeLang] || 'ZILE';
+        if (unitEl) unitEl.textContent = unitText;
+        if (widgetEl) {
+            widgetEl.title = `Autonomie Financiară: ~${days} ${unitText.toLowerCase()} de rezervă cu banii actuali din cont.`;
+        }
     }
 }
 
@@ -6230,7 +6466,7 @@ function updateDepositsRunwayWidget(grandPatrimoniuRon) {
     if (dailyAvgRon > 0 && grandPatrimoniuRon > 0) {
         days = Math.round(grandPatrimoniuRon / dailyAvgRon);
     } else if (grandPatrimoniuRon > 0) {
-        days = 999;
+        days = Infinity;
     }
 
     const activeLang = getLanguageForCurrency();
@@ -6238,23 +6474,55 @@ function updateDepositsRunwayWidget(grandPatrimoniuRon) {
         ro: 'ZILE',
         en: 'DAYS',
         de: 'TAGE',
+        fr: 'JOURS',
+        es: 'DÍAS',
+        it: 'GIORNI',
+        pl: 'DNI',
+        nl: 'DAGEN',
+        pt: 'DIAS',
+        uk: 'ДНІВ',
         tr: 'GÜN',
         ja: '日',
         zh: '天'
     };
-    const unitText = unitMap[activeLang] || 'ZILE';
+    const yearUnitMap = {
+        ro: 'ANI',
+        en: 'YRS',
+        de: 'JAHRE',
+        fr: 'ANS',
+        es: 'AÑOS',
+        it: 'ANNI',
+        pl: 'LAT',
+        nl: 'JAAR',
+        pt: 'ANOS',
+        uk: 'РОКІВ',
+        tr: 'YIL',
+        ja: '年',
+        zh: '年'
+    };
 
-    if (days >= 999) {
-        daysEl.textContent = '999+';
-        daysEl.style.fontSize = '0.78rem';
+    if (!isFinite(days) || days > 36500) {
+        daysEl.textContent = '∞';
+        daysEl.style.fontSize = '1.05rem';
+        if (unitEl) unitEl.textContent = unitMap[activeLang] || 'ZILE';
+        if (widgetEl) widgetEl.title = `Autonomie Patrimoniu Total: Fără cheltuieli active (rezervă nelimitată).`;
+    } else if (days >= 365) {
+        const years = (days / 365).toFixed(1);
+        daysEl.textContent = years;
+        daysEl.style.fontSize = years.length > 4 ? '0.70rem' : (years.length > 3 ? '0.76rem' : '0.82rem');
+        const yearText = yearUnitMap[activeLang] || 'ANI';
+        if (unitEl) unitEl.textContent = yearText;
+        if (widgetEl) {
+            widgetEl.title = `Autonomie Patrimoniu Total: ~${years} ${yearText.toLowerCase()} (~${days} zile) de rezervă pe baza depozitelor și fondurilor disponibile.`;
+        }
     } else {
         daysEl.textContent = String(days);
-        daysEl.style.fontSize = '0.92rem';
-    }
-    if (unitEl) unitEl.textContent = unitText;
-
-    if (widgetEl) {
-        widgetEl.title = `Autonomie Patrimoniu Total: ~${days} ${unitText.toLowerCase()} de rezervă pe baza depozitelor și fondurilor disponibile.`;
+        daysEl.style.fontSize = days >= 100 ? '0.84rem' : '0.92rem';
+        const unitText = unitMap[activeLang] || 'ZILE';
+        if (unitEl) unitEl.textContent = unitText;
+        if (widgetEl) {
+            widgetEl.title = `Autonomie Patrimoniu Total: ~${days} ${unitText.toLowerCase()} de rezervă pe baza depozitelor și fondurilor disponibile.`;
+        }
     }
 }
 
@@ -7048,6 +7316,13 @@ function openCategoryDetailModal(categoryId) {
             const suspendBtnClass = 'tx-suspend-btn' + (isSuspended ? ' active' : '');
             const timeStr = getTransactionTimeDisplay(tx);
             const timeDisp = timeStr ? ` • ⏰ ${timeStr}` : '';
+            const locText = (tx.location || '').trim();
+            const locationRowHtml = locText ? `
+                <div class="tx-row-location">
+                    <span class="tx-loc-icon">📍</span>
+                    <span class="tx-loc-text">${escapeHtml(locText)}</span>
+                </div>
+            ` : '';
 
             const item = document.createElement('div');
             item.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
@@ -7067,6 +7342,7 @@ function openCategoryDetailModal(categoryId) {
                     ${payBadgeHtml}
                 </div>
                 ${commentRowHtml}
+                ${locationRowHtml}
                 <div class="tx-row-bottom">
                     <div class="tx-merchant-wrap">
                         ${merchantBadgeHtml}
@@ -7581,9 +7857,11 @@ function parseTxSearchQuery(rawQuery) {
 function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
     const isTransfer = tx.type === 'transfer';
     const isExp = tx.type === 'expense';
-    const isSuspended = isTxSuspended(tx);
+    const isSuspended = isTxEffectivelySuspended(tx); // individual SAU prin saptamana suspendată
+    const isWeekSusp = !isTxSuspended(tx) && isWeeklySuspendedTx(tx); // suspendat doar prin saptamana
     const cat = isExp ? appData.categories.find(c => c.id === tx.categoryId) : null;
     const mc = getTransactionMerchantAndComment(tx);
+
 
     let icon = '🏷️';
     let mainTitle = '';
@@ -7617,7 +7895,11 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
             <span class="tx-val ${colorClass}">${mainText}</span>
         </div>
     ` : formatTransactionAmountHtml(tx, mainCurr, isExp);
-    const suspendedBadgeHtml = isSuspended ? '<span class="tx-suspended-badge">⏸️ Suspendat</span>' : '';
+    const suspendedBadgeHtml = isSuspended
+        ? (isWeekSusp
+            ? '<span class="tx-suspended-badge">⏸️ Săptămână suspendată</span>'
+            : '<span class="tx-suspended-badge">⏸️ Suspendat</span>')
+        : '';
 
     let payBadgeHtml = '';
     if (isTransfer) {
@@ -7655,14 +7937,24 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
         merchantBadgeHtml = '<span class="tx-cat-badge" style="color:var(--accent);">Transfer Intern</span>';
     }
 
-    const suspendIconSvg = isSuspended
+    // Dacă e suspendat prin săptămână, butonul individual de suspendare e ascuns (se folosește butonul de pe cardul săptămânii)
+    const suspendIconSvg = isTxSuspended(tx)
         ? '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M8 5v14l11-7z"/></svg>'
         : '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:currentColor;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-    const suspendTitle = isSuspended ? 'Reactivează tranzacția' : 'Suspendă tranzacția';
-    const suspendBtnClass = 'tx-suspend-btn' + (isSuspended ? ' active' : '');
+    const suspendTitle = isTxSuspended(tx) ? 'Reactivează tranzacția' : 'Suspendă tranzacția';
+    const suspendBtnClass = 'tx-suspend-btn' + (isTxSuspended(tx) ? ' active' : '') + (isWeekSusp ? ' week-susp-hidden' : '');
+
+
 
     const timeStr = getTransactionTimeDisplay(tx);
     const timeDisp = timeStr ? ' • ⏰ ' + timeStr : '';
+    const locText = (tx.location || '').trim();
+    const locationRowHtml = locText ? `
+        <div class="tx-row-location">
+            <span class="tx-loc-icon">📍</span>
+            <span class="tx-loc-text">${escapeHtml(locText)}</span>
+        </div>
+    ` : '';
 
     const item = document.createElement('div');
     item.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
@@ -7683,6 +7975,7 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
             ${matchBadgeHtml}
         </div>
         ${commentRowHtml}
+        ${locationRowHtml}
         <div class="tx-row-bottom">
             <div class="tx-merchant-wrap">
                 ${merchantBadgeHtml}
@@ -7834,15 +8127,16 @@ function renderTransactionsHistory() {
         list.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
     }
 
-    // Calcul Total Bonuri / Tranzacții filtrate (afișate)
+    // Calcul Total Bonuri / Tranzacții filtrate (afișate) — exclud TOATE cele suspendate
     let filteredExpenseRon = 0;
     let filteredIncomeRon = 0;
     list.forEach(tx => {
-        if (isTxSuspended(tx)) return;
+        if (isTxEffectivelySuspended(tx)) return; // exclude individual + săptămână suspendată
         const amtRon = parseFloat(tx.amountInRon) || parseFloat(tx.amount) || 0;
         if (tx.type === 'expense') filteredExpenseRon += amtRon;
         else if (tx.type === 'income') filteredIncomeRon += amtRon;
     });
+
 
     function formatTxSummaryTotalHtml(ronVal, curr) {
         const conv = convertFromRon(ronVal, curr);
@@ -7943,8 +8237,9 @@ function renderTransactionsHistory() {
 
     // B. Afișare standard cu separare pe săptămâni
     const weekTotals = {};
+    // Compute week totals: includ TOATE tranzacțiile (inclusiv cele individual suspendate)
+    // Cardul săptămânii se afișează mereu, chiar dacă toate tx sunt suspendate
     list.forEach(tx => {
-        if (isTxSuspended(tx)) return;
         const w = getIsoWeek(tx.date);
         if (!weekTotals[w.key]) {
             weekTotals[w.key] = { expenseRon: 0, incomeRon: 0 };
@@ -7954,69 +8249,95 @@ function renderTransactionsHistory() {
         else if (tx.type === 'income') weekTotals[w.key].incomeRon += amtRon;
     });
 
-    let currentWeekKey = null;
-    let currentWeekItemsEl = null;
-    const collapsedWeeks = (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) ? appData.settings.collapsedWeeks : [];
-
+    // Group transactions by week key — TOATE tx, inclusiv cele suspendate individual
+    // (buildTxHistoryItemElement le afișează cu styling suspendat automat)
+    const weekGroups = {};
+    const weekOrder = [];
     list.forEach(tx => {
         const w = getIsoWeek(tx.date);
-        if (w.key !== currentWeekKey) {
-            currentWeekKey = w.key;
-            const isCollapsed = collapsedWeeks.includes(w.key);
+        if (!weekGroups[w.key]) {
+            weekGroups[w.key] = { w, txs: [] };
+            weekOrder.push(w.key);
+        }
+        weekGroups[w.key].txs.push(tx);
+    });
 
-            const sep = document.createElement('div');
-            sep.className = 'tx-week-separator' + (isCollapsed ? ' is-collapsed' : '');
-            sep.dataset.weekKey = w.key;
-            sep.setAttribute('role', 'button');
-            sep.setAttribute('tabindex', '0');
-            sep.setAttribute('title', isCollapsed ? 'Apasă pentru a deschide săptămâna' : 'Apasă pentru a ascunde tranzacțiile săptămânii');
 
-            const wTotals = weekTotals[w.key] || { expenseRon: 0, incomeRon: 0 };
-            let totalDisp = '';
-            if (wTotals.expenseRon > 0 && wTotals.incomeRon > 0) {
-                const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
-                const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
-                totalDisp = '<span class="tx-week-sum">-' + expDisp + '</span><span class="tx-week-sum income">+' + incDisp + '</span>';
-            } else if (wTotals.expenseRon > 0) {
-                const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
-                totalDisp = '<span class="tx-week-sum">-' + expDisp + '</span>';
-            } else if (wTotals.incomeRon > 0) {
-                const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
-                totalDisp = '<span class="tx-week-sum income">+' + incDisp + '</span>';
-            }
+    const collapsedWeeks = (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) ? appData.settings.collapsedWeeks : [];
 
-            sep.innerHTML = `
-                <div class="tx-week-top-row">
-                    <div class="tx-week-info">
-                        <span class="tx-week-badge">${w.badge}</span>
-                        <span class="tx-week-dates">${w.range}</span>
-                    </div>
-                    <svg viewBox="0 0 24 24" class="tx-week-chevron"><path d="M7 10l5 5 5-5z"/></svg>
+    weekOrder.forEach(wKey => {
+        const { w, txs } = weekGroups[wKey];
+        const isCollapsed = collapsedWeeks.includes(w.key);
+        const weekSuspended = isWeekSuspended(w.key);
+
+        const sep = document.createElement('div');
+        sep.className = 'tx-week-separator' + (isCollapsed ? ' is-collapsed' : '') + (weekSuspended ? ' week-is-suspended' : '');
+        sep.dataset.weekKey = w.key;
+        sep.setAttribute('role', 'button');
+        sep.setAttribute('tabindex', '0');
+        sep.setAttribute('title', isCollapsed ? 'Apasă pentru a deschide săptămâna' : 'Apasă pentru a ascunde tranzacțiile săptămânii');
+
+        const wTotals = weekTotals[w.key] || { expenseRon: 0, incomeRon: 0 };
+        let totalDisp = '';
+        if (wTotals.expenseRon > 0 && wTotals.incomeRon > 0) {
+            const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
+            const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
+            totalDisp = '<span class="tx-week-sum">' + (weekSuspended ? '' : '-') + expDisp + '</span><span class="tx-week-sum income">+' + incDisp + '</span>';
+        } else if (wTotals.expenseRon > 0) {
+            const expDisp = formatMoney(convertFromRon(wTotals.expenseRon, mainCurr), mainCurr);
+            totalDisp = '<span class="tx-week-sum">' + (weekSuspended ? '' : '-') + expDisp + '</span>';
+        } else if (wTotals.incomeRon > 0) {
+            const incDisp = formatMoney(convertFromRon(wTotals.incomeRon, mainCurr), mainCurr);
+            totalDisp = '<span class="tx-week-sum income">+' + incDisp + '</span>';
+        }
+
+        const suspBtnLabel = weekSuspended ? '▶️ Activează Săptămâna' : '⏸️ Suspendă Săptămâna';
+        const suspBadge = weekSuspended ? '<span class="tx-week-suspended-badge">SUSPENDAT</span>' : '';
+
+        sep.innerHTML = `
+            <div class="tx-week-top-row">
+                <div class="tx-week-info">
+                    <span class="tx-week-badge">${w.badge}</span>
+                    <span class="tx-week-dates">${w.range}</span>
+                    ${suspBadge}
                 </div>
-                <div class="tx-week-totals-row">
-                    ${totalDisp}
-                </div>
-            `;
+                <svg viewBox="0 0 24 24" class="tx-week-chevron"><path d="M7 10l5 5 5-5z"/></svg>
+            </div>
+            <div class="tx-week-totals-row">
+                ${totalDisp}
+                <button class="tx-week-suspend-btn" data-week-key="${w.key}" title="${suspBtnLabel}">${weekSuspended ? '▶️' : '⏸️'}</button>
+            </div>
+        `;
 
-            sep.addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleWeekCollapsed(w.key, sep);
+        sep.addEventListener('click', (e) => {
+            if (e.target.closest('.tx-week-suspend-btn')) return; // handled separately
+            e.preventDefault();
+            toggleWeekCollapsed(w.key, sep);
+        });
+
+        const suspBtn = sep.querySelector('.tx-week-suspend-btn');
+        if (suspBtn) {
+            suspBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleWeekSuspension(w.key);
             });
-
-            listEl.appendChild(sep);
-
-            currentWeekItemsEl = document.createElement('div');
-            currentWeekItemsEl.className = 'tx-week-items' + (isCollapsed ? ' is-collapsed' : '');
-            currentWeekItemsEl.id = 'weekItems_' + w.key;
-            listEl.appendChild(currentWeekItemsEl);
         }
 
-        const item = buildTxHistoryItemElement(tx, null, null, mainCurr);
-        if (currentWeekItemsEl) {
-            currentWeekItemsEl.appendChild(item);
-        }
+        listEl.appendChild(sep);
+
+        const itemsEl = document.createElement('div');
+        itemsEl.className = 'tx-week-items' + (isCollapsed ? ' is-collapsed' : '') + (weekSuspended ? ' week-is-suspended' : '');
+        itemsEl.id = 'weekItems_' + w.key;
+
+        txs.forEach(tx => {
+            const item = buildTxHistoryItemElement(tx, null, null, mainCurr);
+            itemsEl.appendChild(item);
+        });
+
+        listEl.appendChild(itemsEl);
     });
 }
+
 
 function toggleWeekCollapsed(weekKey, sepEl) {
     if (!appData.settings) appData.settings = {};
@@ -8055,7 +8376,8 @@ function updateSuspendedTxBadge() {
     const badge = document.getElementById('suspendedTxCountBadge');
     const btn = document.getElementById('btnOpenSuspendedTx');
     if (!badge || !appData || !Array.isArray(appData.transactions)) return;
-    const suspendedCount = appData.transactions.filter(t => isTxSuspended(t)).length;
+    // Numără: individual suspendate + cele din săptămâni suspendate
+    const suspendedCount = appData.transactions.filter(t => isTxEffectivelySuspended(t)).length;
     badge.textContent = String(suspendedCount);
     if (btn) {
         btn.classList.toggle('has-suspended', suspendedCount > 0);
@@ -8070,7 +8392,7 @@ function renderSuspendedTransactionsList() {
     const countEl = document.getElementById('modalSuspendedHeaderCount');
     if (!listEl) return;
 
-    const suspendedList = appData.transactions.filter(t => isTxSuspended(t));
+    const suspendedList = appData.transactions.filter(t => isTxEffectivelySuspended(t));
     suspendedList.sort((a, b) => new Date(b.date) - new Date(a.date) || (b.createdAt || 0) - (a.createdAt || 0));
 
     if (countEl) {
@@ -8148,6 +8470,13 @@ function renderSuspendedTransactionsList() {
         const reactivateTooltip = (activeLang === 'en') ? 'Reactivate transaction' : 'Reactivează tranzacția';
         const editTooltip = (typeof t === 'function' ? t('btn_edit', activeLang) : null) || 'Modifică';
         const deleteTooltip = (typeof t === 'function' ? t('btn_delete', activeLang) : null) || 'Șterge';
+        const locText = (tx.location || '').trim();
+        const locationRowHtml = locText ? `
+            <div class="tx-row-location">
+                <span class="tx-loc-icon">📍</span>
+                <span class="tx-loc-text">${escapeHtml(locText)}</span>
+            </div>
+        ` : '';
 
         const item = document.createElement('div');
         item.className = 'tx-item tx-suspended';
@@ -8167,6 +8496,7 @@ function renderSuspendedTransactionsList() {
                 ${payBadgeHtml}
             </div>
             ${commentRowHtml}
+            ${locationRowHtml}
             <div class="tx-row-bottom">
                 <div class="tx-merchant-wrap">
                     ${merchantBadgeHtml}
@@ -8444,6 +8774,39 @@ function renderStatsTab() {
         kpiAvgEl.innerHTML = formatKpiMoneyHtml(avgDisp, mainCurr, dayUnit);
     }
 
+    // Actualizare Banner Medie Cheltuieli Zilnice din Tab-ul Statistici
+    const statsBannerValEl = document.getElementById('displayStatsDailyAvgExpense');
+    const statsBannerSubEl = document.getElementById('statsDailyAvgSub');
+    if (statsBannerValEl) {
+        if (currentStatsPeriod === 'month') {
+            const currentPaceRon = calculateDailyExpenseRateRon();
+            const currentPaceDisp = convertFromRon(currentPaceRon, mainCurr);
+            statsBannerValEl.textContent = formatMoney(currentPaceDisp, mainCurr) + dayUnit;
+            if (statsBannerSubEl) {
+                statsBannerSubEl.textContent = 'Ritm curent (facturi distribuite pe 30 zile)';
+            }
+        } else {
+            let periodNonSavingsExpRon = 0;
+            filteredTxs.forEach(t => {
+                if (t.type === 'expense' && !isSavingsCategory(t)) {
+                    periodNonSavingsExpRon += (parseFloat(t.amountInRon) || parseFloat(t.amount) || 0);
+                }
+            });
+            const periodDailyRon = periodNonSavingsExpRon / Math.max(1, daysCount);
+            const periodDailyDisp = convertFromRon(periodDailyRon, mainCurr);
+            statsBannerValEl.textContent = formatMoney(periodDailyDisp, mainCurr) + dayUnit;
+            if (statsBannerSubEl) {
+                const periodLabelMap = {
+                    '3months': 'Media ultimelor 3 luni',
+                    'year': 'Media zilnică pe anul curent',
+                    'all': 'Media zilnică din tot istoricul'
+                };
+                statsBannerSubEl.textContent = periodLabelMap[currentStatsPeriod] || 'Ritm zilnic de cheltuire';
+            }
+        }
+    }
+
+
     const kpiPeakVal = document.getElementById('statKpiPeakVal');
     const kpiPeakDesc = document.getElementById('statKpiPeakDesc');
     if (kpiPeakVal && kpiPeakDesc) {
@@ -8503,9 +8866,13 @@ function renderStatsTab() {
         if (totalBalRon <= 0) {
             kpiRunwayEl.innerHTML = `0 <span class="b-kpi-curr">${activeLang === 'ro' ? 'Zile' : 'Days'}</span>`;
             kpiRunwaySub.textContent = activeLang === 'ro' ? 'Sold epuizat' : 'Zero reserves';
-        } else if (daysRunway >= 999) {
+        } else if (!isFinite(daysRunway) || daysRunway > 36500) {
             kpiRunwayEl.innerHTML = `&infin; <span class="b-kpi-curr">${activeLang === 'ro' ? 'Zile' : 'Days'}</span>`;
             kpiRunwaySub.textContent = activeLang === 'ro' ? 'Fără cheltuieli' : 'No expenses';
+        } else if (daysRunway >= 365) {
+            const yrRunway = (daysRunway / 365).toFixed(1);
+            kpiRunwayEl.innerHTML = `~${yrRunway} <span class="b-kpi-curr">${activeLang === 'ro' ? 'Ani' : 'Yrs'}</span>`;
+            kpiRunwaySub.textContent = `~${daysRunway} ${activeLang === 'ro' ? 'zile de rezervă' : 'reserve days'}`;
         } else if (daysRunway >= 60) {
             const moRunway = (daysRunway / 30.4).toFixed(1);
             kpiRunwayEl.innerHTML = `~${moRunway} <span class="b-kpi-curr">${activeLang === 'ro' ? 'Luni' : 'Mo'}</span>`;
@@ -8737,7 +9104,7 @@ function renderStatsTab() {
     }
     if (grpSavSub) {
         const daysRunway = calculateGlobalRunwayDays();
-        const runwayText = daysRunway >= 999 ? '∞' : (daysRunway >= 60 ? `~${(daysRunway/30.4).toFixed(1)} ${activeLang === 'ro' ? 'Luni' : 'Mo'}` : `${daysRunway} ${activeLang === 'ro' ? 'zile' : 'days'}`);
+        const runwayText = (!isFinite(daysRunway) || daysRunway > 36500) ? '∞' : (daysRunway >= 365 ? `~${(daysRunway/365).toFixed(1)} ${activeLang === 'ro' ? 'Ani' : 'Yrs'}` : (daysRunway >= 60 ? `~${(daysRunway/30.4).toFixed(1)} ${activeLang === 'ro' ? 'Luni' : 'Mo'}` : `${daysRunway} ${activeLang === 'ro' ? 'zile' : 'days'}`));
         grpSavSub.textContent = `${activeLang === 'ro' ? 'Rată' : 'Rate'}: ${savingsRate}% • ${activeLang === 'ro' ? 'Autonomie' : 'Runway'}: ${runwayText}`;
     }
 
@@ -8760,14 +9127,23 @@ function renderStatsTab() {
         grpActSub.textContent = `${activeLang === 'ro' ? 'Coș' : 'Ticket'}: ${formatMoney(ticketDisp, mainCurr)} • ${sortedStoreKeys.length} ${activeLang === 'ro' ? 'magazine' : 'stores'}`;
     }
 
-    // 3. GRAFIC 1: Distribuție pe Zilele Săptămânii (plasat deasupra Cashflow)
-    renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang);
+    // Tranzacții de cheltuieli din toate lunile (fără Economii, fără suspendate) pentru graficele comportamentale de distribuție
+    const allDistributionExpenseTxs = getAllActiveExpenseTransactions();
 
-    // 4. GRAFIC 2: Distribuție pe Interval Orar
-    renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang);
+    // 3. GRAFIC 1: Distribuție pe Zilele Săptămânii (plasat deasupra Cashflow - cumulat din toate lunile)
+    renderStatsWeekdayChart(allDistributionExpenseTxs, mainCurr, curSymbol, activeLang);
 
-    // 5. GRAFIC 3: Distribuție pe Zilele Lunii (1 - 31)
-    renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang);
+    // 4. GRAFIC 2: Distribuție pe Interval Orar (cumulat din toate lunile)
+    renderStatsHourlyChart(allDistributionExpenseTxs, mainCurr, curSymbol, activeLang);
+
+    // 5. GRAFIC 3: Distribuție pe Zilele Lunii (1 - 31 cumulat din toate lunile)
+    renderStatsMonthDaysChart(allDistributionExpenseTxs, mainCurr, curSymbol, activeLang);
+
+    // GRAFIC NOU: Clasament Locații (cumulat din toate perioadele)
+    renderStatsLocationsAllTimeChart(mainCurr, curSymbol, activeLang);
+
+    // GRAFIC NOU: Clasament Magazine (cumulat din toate perioadele)
+    renderStatsStoresAllTimeChart(mainCurr, curSymbol, activeLang);
 
     // 6. GRAFIC 4: Evoluție Cashflow (Venituri vs Cheltuieli)
     renderStatsCashflowChart(mainCurr, activeLang, curSymbol);
@@ -9068,16 +9444,29 @@ function renderStatsTopPurchases(filteredTxs, mainCurr, totExpenseRon) {
     });
 }
 
-// Grafic 3: Distributie Cheltuieli pe Zilele Saptamanii (Luni - Duminica)
-function renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang) {
+// Helper: Obține toate cheltuielile din toate lunile (fără Economii & Rate, fără tranzacții suspendate)
+function getAllActiveExpenseTransactions() {
+    if (!appData || !Array.isArray(appData.transactions)) return [];
+    return appData.transactions.filter(t => 
+        t && 
+        t.type === 'expense' && 
+        t.date && 
+        !isSavingsCategory(t) && 
+        !isTxEffectivelySuspended(t)
+    );
+}
+
+// Grafic: Distribuție Cheltuieli pe Zilele Săptămânii (Luni - Duminică, cumulat din toate lunile)
+function renderStatsWeekdayChart(txList, mainCurr, curSymbol, activeLang) {
     const canvas = document.getElementById('statsWeekdayChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
     const daySumsRon = [0, 0, 0, 0, 0, 0, 0]; // 0=Lun, 1=Mar, 2=Mie, 3=Joi, 4=Vin, 5=Sam, 6=Dum
+    const targetTxs = (Array.isArray(txList) && txList.length > 0) ? txList : getAllActiveExpenseTransactions();
 
-    filteredTxs.filter(t => t.type === 'expense').forEach(t => {
-        if (!t.date) return;
+    targetTxs.forEach(t => {
+        if (!t.date || t.type !== 'expense' || isSavingsCategory(t) || isTxEffectivelySuspended(t)) return;
         const d = new Date(t.date + 'T12:00:00');
         const day = d.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
         const mappedIdx = (day + 6) % 7; // 0=Mon, ..., 6=Sun
@@ -9086,6 +9475,7 @@ function renderStatsWeekdayChart(filteredTxs, mainCurr, curSymbol, activeLang) {
     });
 
     const daySumsDisp = daySumsRon.map(v => convertFromRon(v, mainCurr));
+
 
     const dayLabelsMap = {
         ro: ['Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm', 'Dum'],
@@ -9179,8 +9569,8 @@ function getTransactionHour(t) {
     return null;
 }
 
-// Grafic 2: Distributie Cheltuieli pe Interval Orar (00:00 - 23:00)
-function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
+// Grafic 2: Distribuție Cheltuieli pe Interval Orar (00:00 - 23:00, cumulat din toate lunile)
+function renderStatsHourlyChart(txList, mainCurr, curSymbol, activeLang) {
     const canvas = document.getElementById('statsHourlyChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -9188,8 +9578,10 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
 
     const hourlySumsRon = new Array(24).fill(0);
     const hourlyCounts = new Array(24).fill(0);
+    const targetTxs = (Array.isArray(txList) && txList.length > 0) ? txList : getAllActiveExpenseTransactions();
 
-    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
+    targetTxs.forEach(t => {
+        if (t.type !== 'expense' || isSavingsCategory(t) || isTxEffectivelySuspended(t)) return;
         const h = getTransactionHour(t);
         const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
         if (h !== null && h >= 0 && h <= 23) {
@@ -9197,6 +9589,7 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
             hourlyCounts[h]++;
         }
     });
+
 
     // Identificare ora de varf
     let peakHour = -1;
@@ -9297,8 +9690,8 @@ function renderStatsHourlyChart(filteredTxs, mainCurr, curSymbol, activeLang) {
     });
 }
 
-// Grafic 3: Distribuție Cheltuieli pe Zilele Lunii (1 - 31)
-function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang) {
+// Grafic 3: Distribuție Cheltuieli pe Zilele Lunii (1 - 31, cumulat din toate lunile)
+function renderStatsMonthDaysChart(txList, mainCurr, curSymbol, activeLang) {
     const canvas = document.getElementById('statsMonthDaysChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -9306,9 +9699,10 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
 
     const monthDaySumsRon = new Array(31).fill(0);
     const monthDayCounts = new Array(31).fill(0);
+    const targetTxs = (Array.isArray(txList) && txList.length > 0) ? txList : getAllActiveExpenseTransactions();
 
-    filteredTxs.filter(t => t.type === 'expense' && !isTxSuspended(t)).forEach(t => {
-        if (!t.date || typeof t.date !== 'string') return;
+    targetTxs.forEach(t => {
+        if (!t.date || typeof t.date !== 'string' || t.type !== 'expense' || isSavingsCategory(t) || isTxEffectivelySuspended(t)) return;
         const parts = t.date.split('-');
         if (parts.length >= 3) {
             const dayNum = parseInt(parts[2], 10);
@@ -9319,6 +9713,7 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
             }
         }
     });
+
 
     // Identificare ziua de vârf a lunii
     let peakDayIdx = -1;
@@ -9419,6 +9814,251 @@ function renderStatsMonthDaysChart(filteredTxs, mainCurr, curSymbol, activeLang)
                                              activeLang === 'ja' ? `${count}件` :
                                              `${count} payments`;
                             return ` ${formatMoney(ctx.raw, mainCurr)} (${countTxt})`;
+                        }
+                    }
+                },
+                datalabels: { display: false }
+            }
+        }
+    });
+}
+
+// Grafic Nou: Clasament Locații din Toate Perioadele Cumulate (după totalul cumpărăturilor, fără suspendate)
+function renderStatsLocationsAllTimeChart(mainCurr, curSymbol, activeLang) {
+    const canvas = document.getElementById('statsLocationsBarChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const locMap = {};
+    if (Array.isArray(appData.transactions)) {
+        appData.transactions.forEach(t => {
+            if (!t || t.type !== 'expense') return;
+            if (isTxEffectivelySuspended(t)) return;
+            if (isSavingsCategory(t)) return;
+
+            const locName = (t.location || '').trim();
+            if (!locName) return;
+
+            const key = locName.toLowerCase();
+            const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+            if (amtRon <= 0) return;
+
+            if (!locMap[key]) {
+                locMap[key] = {
+                    name: locName,
+                    totalRon: 0,
+                    count: 0
+                };
+            }
+            locMap[key].totalRon += amtRon;
+            locMap[key].count += 1;
+        });
+    }
+
+    const locsList = Object.values(locMap).sort((a, b) => b.totalRon - a.totalRon);
+
+    const badge = document.getElementById('statsLocationsTotalCountBadge');
+    if (badge) {
+        const locWord = activeLang === 'ro' ? (locsList.length === 1 ? 'Locație' : 'Locații') : (locsList.length === 1 ? 'Location' : 'Locations');
+        badge.textContent = `${locsList.length} ${locWord}`;
+    }
+
+    const wrap = document.getElementById('wrapStatsLocationsBarChart');
+    if (locsList.length === 0) {
+        if (statsLocationsBarChartInstance) {
+            statsLocationsBarChartInstance.destroy();
+            statsLocationsBarChartInstance = null;
+        }
+        if (wrap) {
+            wrap.innerHTML = `<canvas id="statsLocationsBarChart"></canvas><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.78rem;color:var(--text-muted);">${activeLang === 'ro' ? 'Nu există cheltuieli cu locații asociate' : 'No location expense data'}</div>`;
+        }
+        return;
+    } else {
+        const existingNoData = wrap?.querySelector('div');
+        if (existingNoData) existingNoData.remove();
+    }
+
+    // Top 15 locații
+    const topLocs = locsList.slice(0, 15);
+    const locLabels = topLocs.map(l => l.name);
+    const locData = topLocs.map(l => convertFromRon(l.totalRon, mainCurr));
+
+    if (wrap) {
+        wrap.style.minHeight = Math.max(200, topLocs.length * 32) + 'px';
+    }
+
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
+    if (statsLocationsBarChartInstance) {
+        statsLocationsBarChartInstance.destroy();
+    }
+
+    statsLocationsBarChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: locLabels,
+            datasets: [{
+                label: `${activeLang === 'ro' ? 'Total Cheltuieli' : 'Total Expenses'} (${curSymbol})`,
+                data: locData,
+                backgroundColor: 'rgba(59, 130, 246, 0.82)',
+                hoverBackgroundColor: '#3b82f6',
+                borderRadius: 4,
+                barPercentage: 0.7
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { color: chartGridColor },
+                    ticks: {
+                        color: chartTextColor,
+                        font: { size: 10 },
+                        callback: (v) => v + ' ' + curSymbol
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        color: chartTextColor,
+                        font: { size: 10, weight: 'bold' }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (c) => {
+                            const loc = topLocs[c.dataIndex];
+                            const cntText = activeLang === 'ro' ? `${loc.count} achiziții` : `${loc.count} purchases`;
+                            return ` ${formatMoney(c.raw, mainCurr)} • ${cntText}`;
+                        }
+                    }
+                },
+                datalabels: { display: false }
+            }
+        }
+    });
+}
+
+// Grafic Nou: Clasament Magazine din Toate Perioadele Cumulate (după totalul cumpărăturilor, fără suspendate)
+function renderStatsStoresAllTimeChart(mainCurr, curSymbol, activeLang) {
+    const canvas = document.getElementById('statsStoresBarChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const storeMap = {};
+    if (Array.isArray(appData.transactions)) {
+        appData.transactions.forEach(t => {
+            if (!t || t.type !== 'expense') return;
+            if (isTxEffectivelySuspended(t)) return;
+            if (isSavingsCategory(t)) return;
+
+            const mc = getTransactionMerchantAndComment(t);
+            const storeName = (t.merchant || mc.merchant || '').trim();
+            if (!storeName) return;
+
+            const key = storeName.toLowerCase();
+            const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
+            if (amtRon <= 0) return;
+
+            if (!storeMap[key]) {
+                storeMap[key] = {
+                    name: storeName,
+                    totalRon: 0,
+                    count: 0
+                };
+            }
+            storeMap[key].totalRon += amtRon;
+            storeMap[key].count += 1;
+        });
+    }
+
+    const storesList = Object.values(storeMap).sort((a, b) => b.totalRon - a.totalRon);
+
+    const badge = document.getElementById('statsStoresTotalCountBadge');
+    if (badge) {
+        const storeWord = activeLang === 'ro' ? (storesList.length === 1 ? 'Magazin' : 'Magazine') : (storesList.length === 1 ? 'Store' : 'Stores');
+        badge.textContent = `${storesList.length} ${storeWord}`;
+    }
+
+    const wrap = document.getElementById('wrapStatsStoresBarChart');
+    if (storesList.length === 0) {
+        if (statsStoresBarChartInstance) {
+            statsStoresBarChartInstance.destroy();
+            statsStoresBarChartInstance = null;
+        }
+        if (wrap) {
+            wrap.innerHTML = `<canvas id="statsStoresBarChart"></canvas><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:0.78rem;color:var(--text-muted);">${activeLang === 'ro' ? 'Nu există cheltuieli cu magazine asociate' : 'No store expense data'}</div>`;
+        }
+        return;
+    } else {
+        const existingNoData = wrap?.querySelector('div');
+        if (existingNoData) existingNoData.remove();
+    }
+
+    // Top 15 magazine
+    const topStores = storesList.slice(0, 15);
+    const storeLabels = topStores.map(s => s.name);
+    const storeData = topStores.map(s => convertFromRon(s.totalRon, mainCurr));
+
+    if (wrap) {
+        wrap.style.minHeight = Math.max(220, topStores.length * 32) + 'px';
+    }
+
+    const chartTextColor = getChartTextColor();
+    const chartGridColor = getChartGridColor();
+
+    if (statsStoresBarChartInstance) {
+        statsStoresBarChartInstance.destroy();
+    }
+
+    statsStoresBarChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: storeLabels,
+            datasets: [{
+                label: `${activeLang === 'ro' ? 'Total Cheltuieli' : 'Total Expenses'} (${curSymbol})`,
+                data: storeData,
+                backgroundColor: 'rgba(16, 185, 129, 0.82)',
+                hoverBackgroundColor: '#10b981',
+                borderRadius: 4,
+                barPercentage: 0.7
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: { color: chartGridColor },
+                    ticks: {
+                        color: chartTextColor,
+                        font: { size: 10 },
+                        callback: (v) => v + ' ' + curSymbol
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        color: chartTextColor,
+                        font: { size: 10, weight: 'bold' }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (c) => {
+                            const st = topStores[c.dataIndex];
+                            const cntText = activeLang === 'ro' ? `${st.count} achiziții` : `${st.count} purchases`;
+                            return ` ${formatMoney(c.raw, mainCurr)} • ${cntText}`;
                         }
                     }
                 },
@@ -9895,7 +10535,7 @@ function openKpiDetailModal(metricKey) {
     const dailyAvgRon = totExpenseRon / Math.max(1, daysCount);
     const dailyIncomeRon = totIncomeRon / Math.max(1, daysCount);
     const daysRunway = calculateGlobalRunwayDays();
-    const burnRateRon = (daysRunway > 0 && totalBalRon > 0 && daysRunway < 999)
+    const burnRateRon = (daysRunway > 0 && totalBalRon > 0 && isFinite(daysRunway))
         ? (totalBalRon / daysRunway)
         : calculateDailyExpenseRateRon();
 
@@ -10509,16 +11149,16 @@ function openKpiDetailModal(metricKey) {
         }
         runwaySafetyColor = safetyColor;
 
-        const runwayDisplay = daysRunway >= 999 
+        const runwayDisplay = (!isFinite(daysRunway) || daysRunway > 36500)
             ? '&infin; Zile' 
-            : (daysRunway >= 60 ? `~${(daysRunway / 30.4).toFixed(1)} Luni` : `${daysRunway} Zile`);
+            : (daysRunway >= 365 ? `~${(daysRunway / 365).toFixed(1)} Ani` : (daysRunway >= 60 ? `~${(daysRunway / 30.4).toFixed(1)} Luni` : `${daysRunway} Zile`));
 
-        const sim10Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.11) : daysRunway;
-        const sim20Days = daysRunway > 0 && daysRunway < 999 ? Math.round(daysRunway * 1.25) : daysRunway;
+        const sim10Days = daysRunway > 0 && isFinite(daysRunway) ? Math.round(daysRunway * 1.11) : daysRunway;
+        const sim20Days = daysRunway > 0 && isFinite(daysRunway) ? Math.round(daysRunway * 1.25) : daysRunway;
 
         const runwayToday = new Date();
         const runwayDepDate = new Date(runwayToday);
-        if (daysRunway > 0 && daysRunway < 999) {
+        if (daysRunway > 0 && isFinite(daysRunway) && daysRunway < 36500) {
             runwayDepDate.setDate(runwayToday.getDate() + daysRunway);
         }
         const runwayDepFullStr = runwayDepDate.toLocaleDateString(activeLang === 'ro' ? 'ro-RO' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -10528,7 +11168,7 @@ function openKpiDetailModal(metricKey) {
             <div class="kpi-detail-hero" style="border-left: 4px solid ${safetyColor};">
                 <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Autonomie Totală Disponibilă' : 'Estimated Financial Runway'}</div>
                 <div class="kpi-detail-hero-val" style="color: ${safetyColor};">${runwayDisplay}</div>
-                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `timpul de acoperire a cheltuielilor (~${daysRunway} zile de rezervă)` : `time you can sustain current spend without new income`}</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? (daysRunway >= 365 ? `timpul de acoperire a cheltuielilor (~${(daysRunway / 365).toFixed(1)} ani / ~${daysRunway} zile de rezervă)` : `timpul de acoperire a cheltuielilor (~${daysRunway} zile de rezervă)`) : `time you can sustain current spend without new income`}</div>
             </div>
 
             <div class="kpi-detail-mini-grid">
@@ -10560,12 +11200,12 @@ function openKpiDetailModal(metricKey) {
                     </div>
                 </div>
                 <div class="kpi-runway-chart-sub">
-                    ${daysRunway >= 999
+                    ${(!isFinite(daysRunway) || daysRunway > 36500)
                         ? (activeLang === 'ro' ? 'Autonomie nelimitată (fără cheltuieli recente).' : 'Infinite runway.')
                         : (daysRunway <= 0
                             ? (activeLang === 'ro' ? 'Soldul este deja epuizat.' : 'Reserves currently exhausted.')
                             : (activeLang === 'ro'
-                                ? `📅 Data când ajungi pe 0: <strong style="color: #ef4444; font-size: 0.82rem;">${runwayDepFullStr}</strong> (în ${daysRunway} zile).`
+                                ? `📅 Data când ajungi pe 0: <strong style="color: #ef4444; font-size: 0.82rem;">${runwayDepFullStr}</strong> (${daysRunway >= 365 ? `~${(daysRunway / 365).toFixed(1)} ani / ` : ''}în ${daysRunway} zile).`
                                 : `📅 Estimated zero balance date: <strong style="color: #ef4444; font-size: 0.82rem;">${runwayDepFullStr}</strong> (in ${daysRunway} days).`))}
                 </div>
                 <div class="kpi-runway-chart-canvas-wrap">
@@ -10578,7 +11218,7 @@ function openKpiDetailModal(metricKey) {
                     </div>
                     <div class="kpi-runway-legend-item">
                         <span class="kpi-runway-dot" style="background: #ef4444;"></span>
-                        <span>${activeLang === 'ro' ? 'Epuizare (0 lei)' : 'Depleted'}: <strong style="color: #ef4444;">${daysRunway >= 999 ? '&infin;' : runwayDepShortStr}</strong> (${daysRunway >= 999 ? '&infin;' : (daysRunway + ' ' + (activeLang === 'ro' ? 'zile' : 'days'))})</span>
+                        <span>${activeLang === 'ro' ? 'Epuizare (0 lei)' : 'Depleted'}: <strong style="color: #ef4444;">${(!isFinite(daysRunway) || daysRunway > 36500) ? '&infin;' : runwayDepShortStr}</strong> (${(!isFinite(daysRunway) || daysRunway > 36500) ? '&infin;' : (daysRunway >= 365 ? `~${(daysRunway / 365).toFixed(1)} ani` : (daysRunway + ' ' + (activeLang === 'ro' ? 'zile' : 'days')))})</span>
                     </div>
                 </div>
             </div>
@@ -12673,59 +13313,120 @@ let currentMetersCustomMonth = 'all';
 let currentMetersType = 'all';
 let currentMetersHistorySubFilter = 'all';
 
-function getUtilityTypeForTransaction(tx) {
-    if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return null;
-
-    // 1. Daca tranzactia are deja utilityType setat
-    if (tx.utilityType && UTILITY_METERS_CONFIG[tx.utilityType]) {
-        return tx.utilityType;
-    }
-
-    // 2. Normalizare text din comerciant, descriere si comentarii
-    const mc = (typeof getTransactionMerchantAndComment === 'function') 
-        ? getTransactionMerchantAndComment(tx) 
-        : { merchant: tx.merchant || '', comment: tx.description || '' };
-    const rawText = `${tx.merchant || ''} ${tx.description || ''} ${mc.merchant || ''} ${mc.comment || ''}`;
-    const normText = normalizeDiacritics(rawText).toLowerCase();
-
-    // 3. Verificare Curent / Electricitate
-    if (normText.includes('curent') || normText.includes('electric') || normText.includes('energie') || 
-        normText.includes('enel') || normText.includes('hidroelectrica') || normText.includes('electrica') || 
-        normText.includes('pfe') || normText.includes('cezon') || normText.includes('lumina') || 
-        normText.includes('power') || normText.includes('ppc')) {
-        return 'electricity';
-    }
-
-    // 4. Verificare Gaze Naturale
-    if (normText.includes('gaz') || normText.includes('gaze') || normText.includes('engie') || 
-        normText.includes('distrigaz') || normText.includes('gaz metan') || normText.includes('nova power')) {
-        return 'gas';
-    }
-
-    // 5. Verificare Apa & Canalizare
-    if (normText.includes('apa') || normText.includes('aquatim') || normText.includes('raja') || 
-        normText.includes('canal') || normText.includes('apaterm') || normText.includes('salubrit') || 
-        normText.includes('gunoi') || normText.includes('retim')) {
-        return 'water';
-    }
-
-    // 6. Cazul E.ON (poate fi gaz sau curent)
-    if (normText.includes('e.on') || normText.includes('eon')) {
-        if (normText.includes('gaz')) return 'gas';
-        return 'electricity';
-    }
-
-    // 7. Daca este in categoria Facturi & Utilitati (`cat-2` sau nume categorie)
-    if (isBillCategory(tx.categoryId)) {
-        const bClass = classifyBillTransaction(tx);
-        if (bClass) {
-            if (bClass.key === 'electricity') return 'electricity';
-            if (bClass.key === 'gas') return 'gas';
-            if (bClass.key === 'water_waste') return 'water';
+function isMeteredUtilityBill(catId, merch, itemDesc) {
+    // 1. Categoriile non-facturi evidente sunt EXCLUSE categoric
+    if (catId) {
+        const cat = appData.categories ? appData.categories.find(c => c.id === catId) : null;
+        const catName = cat ? normalizeDiacritics(cat.name || '').toLowerCase() : '';
+        if (catName.includes('mancare') || catName.includes('aliment') || catName.includes('chirie') || 
+            catName.includes('locuinta') || catName.includes('transport') || catName.includes('combustibil') || 
+            catName.includes('sanatate') || catName.includes('farmaci') || catName.includes('haine') || 
+            catName.includes('cumparatur') || catName.includes('divertisment') || catName.includes('iesir') ||
+            catName.includes('economii') || catName.includes('rate')) {
+            return false;
         }
     }
 
-    return null;
+    // 2. Excludere magazine alimentare, benzinării, restaurante, brutării, chirii
+    const raw = `${merch || ''} ${itemDesc || ''}`;
+    const norm = normalizeDiacritics(raw).toLowerCase();
+
+    if (norm.includes('mega image') || norm.includes('lidl') || norm.includes('kaufland') || 
+        norm.includes('carrefour') || norm.includes('auchan') || norm.includes('penny') || 
+        norm.includes('profi') || norm.includes('omv') || norm.includes('petrom') || 
+        norm.includes('rompetrol') || norm.includes('mol') || norm.includes('lukoil') || 
+        norm.includes('socar') || norm.includes('romaria') || norm.includes('petresti') || 
+        norm.includes('fornetti') || norm.includes('brutar') || norm.includes('patiser') || 
+        norm.includes('covrig') || norm.includes('sandwich') || norm.includes('chirie') || 
+        norm.includes('apartament') || norm.includes('garsonier') || norm.includes('hotel') ||
+        norm.includes('pensiun') || norm.includes('farmaci') || norm.includes('catena') || 
+        norm.includes('dr max') || norm.includes('help net') || norm.includes('restaurant') ||
+        norm.includes('mcdonald') || norm.includes('kfc') || norm.includes('cafe')) {
+        return false;
+    }
+
+    // Excludere expresii de apă de băut
+    if (norm.includes('apa plata') || norm.includes('apa minerala') || norm.includes('apa mg') || 
+        norm.includes('borsec') || norm.includes('dorna') || norm.includes('bucovina') || 
+        norm.includes('aqua carp') || norm.includes('perla') || norm.includes('zizin')) {
+        return false;
+    }
+
+    // 3. Verificare cele 3 utilități cu contor: Curent, Gaze, Apă
+    // A. Curent / Electricitate
+    const isElectricity = norm.includes('premier energy') || norm.includes('hidroelectrica') || 
+                          norm.includes('electrica') || norm.includes('enel') || norm.includes('ppc') || 
+                          norm.includes('cezon') || norm.includes('pfe') ||
+                          (isBillCategory(catId) && (norm.includes('curent') || norm.includes('electric') || norm.includes('energie electrica') || norm.includes('contor electric')));
+
+    // B. Gaze Naturale
+    const isGas = norm.includes('engie') || norm.includes('distrigaz') || norm.includes('nova power') || 
+                  norm.includes('e.on gaz') || norm.includes('eon gaz') || norm.includes('gaz metan') ||
+                  (isBillCategory(catId) && (matchKeywordWordBoundary(norm, 'gaz') || matchKeywordWordBoundary(norm, 'gaze') || norm.includes('gaze naturale') || norm.includes('contor gaz')));
+
+    // C. Apă & Canalizare (Doar furnizori de apă sau facturi din categoria Facturi & Utilități)
+    const isWater = norm.includes('apa nova') || norm.includes('aquatim') || norm.includes('raja') || 
+                    norm.includes('apaterm') || norm.includes('compania de apa') || norm.includes('apa canal') || 
+                    norm.includes('apa & canal') || norm.includes('apometru') || norm.includes('apometre') ||
+                    (isBillCategory(catId) && (matchKeywordWordBoundary(norm, 'apa') || matchKeywordWordBoundary(norm, 'apometru') || matchKeywordWordBoundary(norm, 'canal') || matchKeywordWordBoundary(norm, 'canalizare')));
+
+    // E.ON generic
+    const isEon = norm.includes('e.on') || norm.includes('eon');
+
+    return isElectricity || isGas || isWater || isEon;
+}
+
+function detectMeteredUtilityType(catId, merch, desc) {
+    const raw = `${merch || ''} ${desc || ''}`;
+    const norm = normalizeDiacritics(raw).toLowerCase();
+
+    // 1. Gaze Naturale
+    if (norm.includes('engie') || norm.includes('distrigaz') || norm.includes('nova power') || 
+        norm.includes('e.on gaz') || norm.includes('eon gaz') || norm.includes('gaz metan') ||
+        matchKeywordWordBoundary(norm, 'gaz') || matchKeywordWordBoundary(norm, 'gaze') || norm.includes('gaze naturale')) {
+        return 'gas';
+    }
+
+    // 2. Apă & Canalizare
+    if (norm.includes('apa nova') || norm.includes('aquatim') || norm.includes('raja') || 
+        norm.includes('apaterm') || norm.includes('compania de apa') || norm.includes('apa canal') || 
+        norm.includes('apa & canal') || norm.includes('apometru') || norm.includes('apometre') ||
+        matchKeywordWordBoundary(norm, 'apa') || matchKeywordWordBoundary(norm, 'canal') || matchKeywordWordBoundary(norm, 'canalizare')) {
+        return 'water';
+    }
+
+    // 3. Curent / Electricitate (default pentru utilități contorizate dacă nu e gaz sau apă)
+    return 'electricity';
+}
+
+function getUtilityTypeForTransaction(tx) {
+    if (!tx || tx.type !== 'expense' || isTxSuspended(tx)) return null;
+
+    // 1. Daca tranzactia are deja citire contor valida salvata pe ea sau in utilityReadings
+    const hasValidReading = (!isNaN(parseFloat(tx.utilityIndex)) && parseFloat(tx.utilityIndex) > 0) ||
+        (Array.isArray(appData.utilityReadings) && appData.utilityReadings.some(r => r.txId === tx.id && !isNaN(parseFloat(r.indexValue)) && parseFloat(r.indexValue) > 0));
+
+    if (hasValidReading && tx.utilityType && UTILITY_METERS_CONFIG[tx.utilityType]) {
+        return tx.utilityType;
+    }
+
+    // 2. Extragere comerciant si descriere
+    const mc = (typeof getTransactionMerchantAndComment === 'function') 
+        ? getTransactionMerchantAndComment(tx) 
+        : { merchant: tx.merchant || '', comment: tx.description || '' };
+    const merch = tx.merchant || mc.merchant || '';
+    const desc = tx.description || mc.comment || '';
+
+    // 3. Verificare stricta: Factura contorizata exclusiva de apa, curent sau gaze
+    if (!isMeteredUtilityBill(tx.categoryId, merch, desc)) {
+        // Curatam utilityType rezidual daca exista din trecut pe tranzactii non-utilitati
+        if (!hasValidReading && tx.utilityType) {
+            delete tx.utilityType;
+        }
+        return null;
+    }
+
+    return detectMeteredUtilityType(tx.categoryId, merch, desc);
 }
 
 function getUtilityBillsWithoutIndex(targetType, periodKey, customYear, customMonth) {
@@ -13798,19 +14499,20 @@ function deleteMeterReading(readingId) {
 
 let currentFloatingPromptUtilityType = 'electricity';
 
-function isUtilityItemOrMerchant(merch, itemDesc) {
-    const text = `${merch || ''} ${itemDesc || ''}`.toLowerCase();
-    return text.includes('gaz') || text.includes('gas') || text.includes('curent') || 
-           text.includes('electr') || text.includes('apa') || text.includes('apă') || 
-           text.includes('utilitat') || text.includes('enel') || text.includes('engie') || 
-           text.includes('e.on') || text.includes('hidroelectrica') || text.includes('electrica') || 
-           text.includes('nova') || text.includes('distrigaz') || text.includes('aquatim') || 
-           text.includes('raja') || text.includes('salubr') || text.includes('factur');
+function isUtilityItemOrMerchant(merch, itemDesc, catId) {
+    const currentCatId = catId || document.getElementById('selectedExpenseCategoryId')?.value;
+    return isMeteredUtilityBill(currentCatId, merch, itemDesc);
 }
 
 function openExpenseUtilityFloatingPrompt(merch, itemDesc) {
     const overlay = document.getElementById('expenseUtilityFloatingOverlay');
     if (!overlay) return;
+
+    const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    // Pagina cu introducere index apare exclusiv la facturile de apa, curent si gaze
+    if (!isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
+        return;
+    }
 
     const merchEl = document.getElementById('expenseUtilityPromptMerchant');
     const itemEl = document.getElementById('expenseUtilityPromptItem');
@@ -13820,16 +14522,8 @@ function openExpenseUtilityFloatingPrompt(merch, itemDesc) {
     if (merchEl) merchEl.textContent = merch || 'Factură Utilități';
     if (itemEl) itemEl.textContent = itemDesc || 'Consum & Servicii';
 
-    // Auto-detecție tip utilitate pe baza numelui magazinului sau a cumpărăturii
-    const combined = `${merch || ''} ${itemDesc || ''}`.toLowerCase();
-    let detectedType = 'electricity';
-    if (combined.includes('gaz') || combined.includes('gas') || combined.includes('engie') || combined.includes('distrigaz')) {
-        detectedType = 'gas';
-    } else if (combined.includes('apa') || combined.includes('apă') || combined.includes('canal') || combined.includes('aquatim') || combined.includes('raja')) {
-        detectedType = 'water';
-    } else {
-        detectedType = 'electricity';
-    }
+    // Auto-detecție tip utilitate contorizată (curent, gaz, apă)
+    let detectedType = detectMeteredUtilityType(currentCatId, merch, itemDesc) || 'electricity';
 
     const existingType = document.getElementById('expenseUtilityType')?.value;
     if (existingType && UTILITY_METERS_CONFIG[existingType]) {
@@ -14423,8 +15117,9 @@ function renderDepositsPage() {
             grandTotalConvEl.innerHTML = '';
         } else {
             grandTotalConvEl.style.display = 'flex';
+            grandTotalConvEl.style.gap = '0';
             const convertedGrandVal = convertFromRon(grandPatrimoniuRon, convCurr);
-            grandTotalConvEl.innerHTML = `<span style="opacity: 0.85; font-weight: 500; margin-right: 2px;">≈</span> <span>${formatDepositMoneyHtml(convertedGrandVal, convCurr)}</span>`;
+            grandTotalConvEl.innerHTML = `<span style="opacity: 0.85; font-weight: 400;">(</span><span style="opacity: 0.85; font-weight: 400; margin: 0 3px 0 1px;">≈</span><span>${formatDepositMoneyHtml(convertedGrandVal, convCurr)}</span><span style="opacity: 0.85; font-weight: 400;">)</span>`;
             if (!grandTotalConvEl.dataset.bound) {
                 grandTotalConvEl.dataset.bound = 'true';
                 grandTotalConvEl.style.cursor = 'pointer';
@@ -15740,8 +16435,532 @@ function deleteCustomMerchant(name) {
 }
 
 
+// ==========================================
+// GESTIONARE LOCAȚII MAGAZIN & TOP BAR POPOVER
+// ==========================================
+
+
+function getMerchantDefaultLocation(storeName) {
+    if (!storeName || !appData?.settings?.merchantDefaultLocations) return '';
+    const key = storeName.trim().toLowerCase();
+    return appData.settings.merchantDefaultLocations[key] || '';
+}
+
+function setMerchantDefaultLocation(storeName, locName) {
+    if (!storeName) return;
+    if (!appData.settings) appData.settings = {};
+    if (!appData.settings.merchantDefaultLocations || typeof appData.settings.merchantDefaultLocations !== 'object' || Array.isArray(appData.settings.merchantDefaultLocations)) {
+        appData.settings.merchantDefaultLocations = {};
+    }
+    const key = storeName.trim().toLowerCase();
+    const locClean = (locName || '').trim();
+    if (locClean) {
+        appData.settings.merchantDefaultLocations[key] = locClean;
+        if (!Array.isArray(appData.locations)) appData.locations = [];
+        if (!appData.locations.some(l => l.toLowerCase() === locClean.toLowerCase())) {
+            appData.locations.push(locClean);
+        }
+    } else {
+        delete appData.settings.merchantDefaultLocations[key];
+    }
+    saveData();
+    const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    if (curCatId) renderMerchantsCol(curCatId);
+    renderLocationsDropdownList();
+}
+
+function removeMerchantDefaultLocation(storeName) {
+    if (!storeName || !appData?.settings?.merchantDefaultLocations) return;
+    const key = storeName.trim().toLowerCase();
+    delete appData.settings.merchantDefaultLocations[key];
+    saveData();
+    const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    if (curCatId) renderMerchantsCol(curCatId);
+    renderLocationsDropdownList();
+}
+
+let currentMerchantForDefLocModal = '';
+
+function openMerchantDefaultLocationModal(storeName) {
+    if (!storeName) return;
+    currentMerchantForDefLocModal = storeName;
+    renderMerchantDefLocModal(storeName);
+    openModal('modalMerchantDefaultLocation');
+}
+
+function renderMerchantDefLocModal(storeName) {
+    const sName = storeName || currentMerchantForDefLocModal;
+    if (!sName) return;
+
+    const logoEl = document.getElementById('merchantDefLocModalLogo');
+    if (logoEl) {
+        logoEl.innerHTML = getMerchantLogoHtml(sName, 20);
+    }
+
+    const titleEl = document.getElementById('merchantDefLocModalTitle');
+    if (titleEl) {
+        titleEl.textContent = `Locație Implicită: ${sName}`;
+    }
+
+    const storeNameEl = document.getElementById('merchantDefLocModalStoreName');
+    if (storeNameEl) {
+        storeNameEl.textContent = sName;
+    }
+
+    const currentDefLoc = getMerchantDefaultLocation(sName);
+    const currentValEl = document.getElementById('merchantDefLocCurrentVal');
+    const btnRemoveDef = document.getElementById('btnRemoveMerchantDefLoc');
+
+    if (currentValEl) {
+        if (currentDefLoc) {
+            currentValEl.textContent = `📍 ${currentDefLoc}`;
+            currentValEl.style.color = 'var(--accent, #3b82f6)';
+        } else {
+            currentValEl.textContent = 'Fără locație implicită';
+            currentValEl.style.color = 'var(--text-muted)';
+        }
+    }
+
+    if (btnRemoveDef) {
+        btnRemoveDef.style.display = currentDefLoc ? 'inline-block' : 'none';
+        btnRemoveDef.onclick = (e) => {
+            e.stopPropagation();
+            removeMerchantDefaultLocation(sName);
+            const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+            if (curExpenseStore.toLowerCase() === sName.toLowerCase()) {
+                clearLocation();
+            }
+            renderMerchantDefLocModal(sName);
+            if (typeof showToast === 'function') {
+                showToast(`Locația implicită a fost ștearsă pentru ${sName}.`);
+            }
+        };
+    }
+
+    // Populare listă cu locațiile existente
+    const listContainer = document.getElementById('merchantDefLocsList');
+    if (listContainer) {
+        listContainer.innerHTML = '';
+        const locations = getLocationsList();
+        if (locations.length === 0) {
+            listContainer.innerHTML = '<div style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:8px;">Nicio locație adăugată. Adaugă una mai jos.</div>';
+        } else {
+            locations.forEach(loc => {
+                const isSelected = currentDefLoc.toLowerCase() === loc.toLowerCase();
+                const row = document.createElement('div');
+                row.className = 'merchant-loc-option-row' + (isSelected ? ' is-active' : '');
+                row.innerHTML = `
+                    <span style="display:flex;align-items:center;gap:6px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        <span>📍</span>
+                        <span>${escapeHtml(loc)}</span>
+                    </span>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        ${isSelected ? '<span class="loc-option-check">✓ Implicită</span>' : '<span style="font-size:0.72rem;color:var(--text-muted);">Alege</span>'}
+                        <button type="button" class="location-item-del-btn" title="Șterge ${escapeHtml(loc)} din listă" aria-label="Șterge ${escapeHtml(loc)}">🗑️</button>
+                    </div>
+                `;
+                row.addEventListener('click', (e) => {
+                    if (e.target.closest('.location-item-del-btn')) return;
+                    setMerchantDefaultLocation(sName, loc);
+                    const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+                    if (curExpenseStore.toLowerCase() === sName.toLowerCase()) {
+                        selectLocation(loc);
+                    }
+                    if (typeof showToast === 'function') {
+                        showToast(`Locația implicită pentru ${sName} este acum ${loc}.`);
+                    }
+                    closeModal('modalMerchantDefaultLocation');
+                });
+
+                const delBtn = row.querySelector('.location-item-del-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        deleteCustomLocation(loc);
+                    });
+                }
+
+                listContainer.appendChild(row);
+            });
+        }
+    }
+
+    // Input și buton pentru adăugare / setare oraș nou
+    const inputNew = document.getElementById('inputNewMerchantDefLoc');
+    const btnSaveNew = document.getElementById('btnSaveNewMerchantDefLoc');
+    if (inputNew) inputNew.value = '';
+
+    if (btnSaveNew && !btnSaveNew.dataset.bound) {
+        btnSaveNew.dataset.bound = 'true';
+        btnSaveNew.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const val = (document.getElementById('inputNewMerchantDefLoc')?.value || '').trim();
+            if (!val) return;
+            setMerchantDefaultLocation(currentMerchantForDefLocModal, val);
+            const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+            if (curExpenseStore.toLowerCase() === currentMerchantForDefLocModal.toLowerCase()) {
+                selectLocation(val);
+            }
+            if (typeof showToast === 'function') {
+                showToast(`Locația implicită pentru ${currentMerchantForDefLocModal} este acum ${val}.`);
+            }
+            closeModal('modalMerchantDefaultLocation');
+        });
+    }
+
+    if (inputNew && !inputNew.dataset.bound) {
+        inputNew.dataset.bound = 'true';
+        inputNew.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                const val = inputNew.value.trim();
+                if (!val) return;
+                setMerchantDefaultLocation(currentMerchantForDefLocModal, val);
+                const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+                if (curExpenseStore.toLowerCase() === currentMerchantForDefLocModal.toLowerCase()) {
+                    selectLocation(val);
+                }
+                if (typeof showToast === 'function') {
+                    showToast(`Locația implicită pentru ${currentMerchantForDefLocModal} este acum ${val}.`);
+                }
+                closeModal('modalMerchantDefaultLocation');
+            }
+        });
+        inputNew.addEventListener('input', () => {
+            const q = (inputNew.value || '').trim();
+            const qNorm = (typeof normalizeForSearch === 'function') ? normalizeForSearch(q) : q.toLowerCase();
+            const rows = listContainer ? listContainer.querySelectorAll('.merchant-loc-option-row') : [];
+            rows.forEach(r => {
+                const text = r.textContent || '';
+                const textNorm = (typeof normalizeForSearch === 'function') ? normalizeForSearch(text) : text.toLowerCase();
+                r.style.display = (!qNorm || textNorm.includes(qNorm)) ? 'flex' : 'none';
+            });
+        });
+    }
+}
+
+function getLocationsList() {
+    if (!Array.isArray(appData.locations) || appData.locations.length === 0) {
+        appData.locations = [...DEFAULT_LOCATIONS];
+    }
+    return [...appData.locations].sort((a, b) => a.localeCompare(b, 'ro', { sensitivity: 'base' }));
+}
+
+function renderLocationsDropdownList() {
+    const listEl = document.getElementById('locationsVerticalList');
+    if (!listEl) return;
+    const locations = getLocationsList();
+    const currentLoc = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+
+    // Filtrare dinamică după textul introdus în căsuța de adăugare/căutare
+    const filterInput = document.getElementById('newLocationInput');
+    const filterQuery = (filterInput?.value || '').trim();
+    const qNorm = (typeof normalizeForSearch === 'function') ? normalizeForSearch(filterQuery) : filterQuery.toLowerCase();
+    const filteredLocations = qNorm
+        ? locations.filter(l => (typeof normalizeForSearch === 'function' ? normalizeForSearch(l) : l.toLowerCase()).includes(qNorm))
+        : locations;
+
+    listEl.innerHTML = '';
+    if (filteredLocations.length === 0) {
+        listEl.innerHTML = `<div style="padding:10px;font-size:0.75rem;color:var(--text-muted);text-align:center;">Nicio locație găsită${filterQuery ? ` pentru „${escapeHtml(filterQuery)}”` : ''}. Apăsați „Adaugă” pentru a o salva.</div>`;
+    } else {
+        filteredLocations.forEach(loc => {
+            const row = document.createElement('div');
+            const isSel = currentLoc.toLowerCase() === loc.toLowerCase();
+            row.className = 'location-item-row' + (isSel ? ' is-selected' : '');
+            row.innerHTML = `
+                <span class="location-item-name">📍 ${escapeHtml(loc)}</span>
+                <button type="button" class="location-item-del-btn" title="Șterge ${escapeHtml(loc)} din listă" aria-label="Șterge ${escapeHtml(loc)}">🗑️</button>
+            `;
+
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('.location-item-del-btn')) return;
+                selectLocation(loc);
+            });
+
+            const delBtn = row.querySelector('.location-item-del-btn');
+            if (delBtn) {
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    deleteCustomLocation(loc);
+                });
+            }
+
+            listEl.appendChild(row);
+        });
+    }
+
+    // Gestionare locație implicită dacă este selectat un magazin
+    const selStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+    if (selStore) {
+        const storeDefLoc = getMerchantDefaultLocation(selStore);
+        const footer = document.createElement('div');
+        footer.className = 'popover-loc-store-footer';
+        footer.innerHTML = `
+            <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; padding: 2px 4px;">
+                <span>Magazin: <strong style="color: var(--text-color);">${escapeHtml(selStore)}</strong></span>
+                ${storeDefLoc ? `<span style="color: #60a5fa; font-weight:700;">📍 ${escapeHtml(storeDefLoc)}</span>` : '<span style="color: var(--text-muted); font-style:italic;">fără implicită</span>'}
+            </div>
+            <div style="display: flex; gap: 4px; margin-top: 2px;">
+                <button type="button" class="btn btn-sm" id="btnSetCurrentAsDefaultLoc" style="flex:1; padding: 3px 6px; font-size: 0.7rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 4px; font-weight:600;">
+                    ⚙️ Locație implicită magazin...
+                </button>
+                ${storeDefLoc ? `
+                <button type="button" class="btn btn-sm" id="btnRemoveCurrentDefaultLoc" style="padding: 3px 6px; font-size: 0.7rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px;" title="Șterge locația implicită pentru ${escapeHtml(selStore)}">
+                    ✕ Șterge
+                </button>` : ''}
+            </div>
+        `;
+        const btnSet = footer.querySelector('#btnSetCurrentAsDefaultLoc');
+        if (btnSet) {
+            btnSet.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openMerchantDefaultLocationModal(selStore);
+            });
+        }
+        const btnRem = footer.querySelector('#btnRemoveCurrentDefaultLoc');
+        if (btnRem) {
+            btnRem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeMerchantDefaultLocation(selStore);
+                if (typeof showToast === 'function') {
+                    showToast(`Locația implicită pentru ${selStore} a fost ștearsă.`);
+                }
+            });
+        }
+        listEl.appendChild(footer);
+    }
+}
+
+function selectLocation(loc) {
+    const hiddenLoc = document.getElementById('selectedExpenseLocation');
+    if (hiddenLoc) hiddenLoc.value = loc;
+
+    const inputLoc = document.getElementById('popoverLocationInput');
+    if (inputLoc) inputLoc.value = loc;
+
+    const clearBtn = document.getElementById('btnClearPopoverLocation');
+    if (clearBtn) clearBtn.style.display = loc ? 'inline-block' : 'none';
+
+    closeLocationsDropdown();
+}
+
+function clearLocation() {
+    const hiddenLoc = document.getElementById('selectedExpenseLocation');
+    if (hiddenLoc) hiddenLoc.value = '';
+
+    const inputLoc = document.getElementById('popoverLocationInput');
+    if (inputLoc) inputLoc.value = '';
+
+    const clearBtn = document.getElementById('btnClearPopoverLocation');
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    renderLocationsDropdownList();
+}
+
+function addCustomLocation(newLoc) {
+    const cleaned = (newLoc || '').trim();
+    if (!cleaned) return;
+
+    if (!Array.isArray(appData.locations)) {
+        appData.locations = [...DEFAULT_LOCATIONS];
+    }
+    const cleanLower = cleaned.toLowerCase();
+    if (appData.settings?.deletedLocations) {
+        appData.settings.deletedLocations = appData.settings.deletedLocations.filter(l => l !== cleanLower);
+    }
+    const exists = appData.locations.some(l => l.toLowerCase() === cleanLower);
+    if (!exists) {
+        appData.locations.push(cleaned);
+        saveData();
+    }
+    selectLocation(cleaned);
+    renderLocationsDropdownList();
+
+    const addInput = document.getElementById('newLocationInput');
+    if (addInput) addInput.value = '';
+}
+
+function deleteCustomLocation(locToDelete) {
+    if (!locToDelete) return;
+    const confirmMsg = `Sigur doriți să ștergeți locația „${locToDelete}” din listă?`;
+    if (!confirm(confirmMsg)) return;
+
+    if (!Array.isArray(appData.locations)) return;
+    const locClean = locToDelete.trim().toLowerCase();
+    appData.locations = appData.locations.filter(l => l.trim().toLowerCase() !== locClean);
+
+    // Salvăm în deletedLocations pentru ca locația ștearsă să nu fie re-adăugată automat
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.deletedLocations)) {
+        appData.settings.deletedLocations = [];
+    }
+    if (!appData.settings.deletedLocations.includes(locClean)) {
+        appData.settings.deletedLocations.push(locClean);
+    }
+
+    // Eliminăm și din setările implicite ale magazinelor dacă era configurată
+    if (appData.settings.merchantDefaultLocations) {
+        Object.keys(appData.settings.merchantDefaultLocations).forEach(st => {
+            if (appData.settings.merchantDefaultLocations[st]?.trim().toLowerCase() === locClean) {
+                delete appData.settings.merchantDefaultLocations[st];
+            }
+        });
+    }
+
+    saveData();
+
+    const curLoc = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+    if (curLoc.toLowerCase() === locClean) {
+        clearLocation();
+    } else {
+        renderLocationsDropdownList();
+    }
+
+    // Re-randare modal locație implicită dacă este deschis
+    if (typeof renderMerchantDefLocModal === 'function' && currentMerchantForDefLocModal) {
+        renderMerchantDefLocModal(currentMerchantForDefLocModal);
+    }
+
+    if (typeof showToast === 'function') {
+        showToast(`Locația „${locToDelete}” a fost ștearsă din listă.`);
+    }
+}
+
+function toggleLocationsDropdown(forceState) {
+    const dd = document.getElementById('popoverLocationsDropdown');
+    const caret = document.getElementById('popoverLocationCaret');
+    if (!dd) return;
+
+    const isOpen = dd.style.display === 'flex' || dd.style.display === 'block';
+    const shouldOpen = (typeof forceState === 'boolean') ? forceState : !isOpen;
+
+    if (shouldOpen) {
+        const addInput = document.getElementById('newLocationInput');
+        if (addInput) addInput.value = '';
+        renderLocationsDropdownList();
+        dd.style.display = 'flex';
+        if (caret) caret.classList.add('is-open');
+        if (addInput) setTimeout(() => addInput.focus(), 80);
+    } else {
+        dd.style.display = 'none';
+        if (caret) caret.classList.remove('is-open');
+    }
+}
+
+function closeLocationsDropdown() {
+    toggleLocationsDropdown(false);
+}
+
+function syncPopoverTopBarState() {
+    const currentLoc = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+    const popLocInput = document.getElementById('popoverLocationInput');
+    if (popLocInput) popLocInput.value = currentLoc;
+    const btnClearPopLoc = document.getElementById('btnClearPopoverLocation');
+    if (btnClearPopLoc) btnClearPopLoc.style.display = currentLoc ? 'inline-block' : 'none';
+
+    const popAmtInput = document.getElementById('popoverAmountInput');
+    const expAmtInput = document.getElementById('expenseAmount');
+    if (popAmtInput && expAmtInput) {
+        popAmtInput.value = expAmtInput.value || '';
+    }
+    const popCurr = document.getElementById('popoverAmountCurrency');
+    if (popCurr) {
+        popCurr.textContent = getActiveCurrency();
+    }
+    closeLocationsDropdown();
+}
+
+function bindPopoverTopBarEvents() {
+    const locBox = document.getElementById('popoverLocationBox');
+    if (locBox && !locBox.dataset.bound) {
+        locBox.dataset.bound = 'true';
+        locBox.addEventListener('click', (e) => {
+            if (e.target.closest('#btnClearPopoverLocation')) return;
+            toggleLocationsDropdown();
+        });
+    }
+
+    const btnClearPopLoc = document.getElementById('btnClearPopoverLocation');
+    if (btnClearPopLoc && !btnClearPopLoc.dataset.bound) {
+        btnClearPopLoc.dataset.bound = 'true';
+        btnClearPopLoc.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearLocation();
+        });
+    }
+
+    const btnCloseDD = document.getElementById('btnCloseLocationsDropdown');
+    if (btnCloseDD && !btnCloseDD.dataset.bound) {
+        btnCloseDD.dataset.bound = 'true';
+        btnCloseDD.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLocationsDropdown();
+        });
+    }
+
+    const btnAddLoc = document.getElementById('btnAddLocation');
+    const newLocInput = document.getElementById('newLocationInput');
+    if (btnAddLoc && !btnAddLoc.dataset.bound) {
+        btnAddLoc.dataset.bound = 'true';
+        btnAddLoc.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (newLocInput) {
+                addCustomLocation(newLocInput.value);
+            }
+        });
+    }
+    if (newLocInput && !newLocInput.dataset.bound) {
+        newLocInput.dataset.bound = 'true';
+        newLocInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                addCustomLocation(newLocInput.value);
+            }
+        });
+        newLocInput.addEventListener('input', () => {
+            renderLocationsDropdownList();
+        });
+    }
+
+    const dd = document.getElementById('popoverLocationsDropdown');
+    if (dd && !dd.dataset.bound) {
+        dd.dataset.bound = 'true';
+        dd.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    const popAmtInput = document.getElementById('popoverAmountInput');
+    const expAmtInput = document.getElementById('expenseAmount');
+    if (popAmtInput && !popAmtInput.dataset.bound) {
+        popAmtInput.dataset.bound = 'true';
+        popAmtInput.addEventListener('input', () => {
+            if (expAmtInput) {
+                expAmtInput.value = popAmtInput.value;
+                if (typeof updateExpenseLivePreview === 'function') {
+                    updateExpenseLivePreview();
+                }
+            }
+        });
+    }
+    if (expAmtInput && !expAmtInput.dataset.boundSyncPop) {
+        expAmtInput.dataset.boundSyncPop = 'true';
+        expAmtInput.addEventListener('input', () => {
+            if (popAmtInput) {
+                popAmtInput.value = expAmtInput.value;
+            }
+        });
+    }
+}
+
 // Închide complet panoul de cumpărături/magazine și readuce modal-box la înălțimea normală a formularului cheltuieli
 function closeFoodMerchantsOverlay() {
+    closeLocationsDropdown();
     const pop = document.getElementById('foodMerchantsFloatingOverlay');
     if (pop) pop.style.display = 'none';
     const mOverlay = document.getElementById('modalExpense');
@@ -15785,6 +17004,25 @@ function renderShoppingItemsCol(catId) {
         if (!descInput || !descInput.value) return [];
         return descInput.value.split(',').map(s => s.trim()).filter(Boolean);
     };
+    const selectedItems = getSelectedItems();
+
+    // Dacă reedităm o tranzacție și sunt articole selectate care nu sunt în lista filtrată, le includem
+    selectedItems.forEach(selName => {
+        const selLower = selName.toLowerCase();
+        const exists = filteredItems.some(it => {
+            const iName = it.name.toLowerCase();
+            const dName = getLocalizedItemName(it.name, activeLang).toLowerCase();
+            return iName === selLower || dName === selLower || 
+                   (typeof normalizeForSearch === 'function' && (normalizeForSearch(iName) === normalizeForSearch(selLower) || normalizeForSearch(dName) === normalizeForSearch(selLower)));
+        });
+        if (!exists) {
+            filteredItems.unshift({
+                name: selName,
+                icon: '🛍️',
+                priority: 100
+            });
+        }
+    });
 
     itemsListEl.innerHTML = '';
 
@@ -15797,8 +17035,17 @@ function renderShoppingItemsCol(catId) {
         const btn = document.createElement('button');
         btn.type = 'button';
         const displayName = getLocalizedItemName(item.name, activeLang);
-        const selectedItems = getSelectedItems();
-        const isMatch = selectedItems.some(s => s.toLowerCase() === item.name.toLowerCase() || s.toLowerCase() === displayName.toLowerCase());
+        const isMatch = selectedItems.some(s => {
+            const sLower = s.trim().toLowerCase();
+            const nameLower = item.name.toLowerCase();
+            const dispLower = displayName.toLowerCase();
+            if (sLower === nameLower || sLower === dispLower) return true;
+            if (typeof normalizeForSearch === 'function') {
+                const sNorm = normalizeForSearch(s);
+                return sNorm === normalizeForSearch(item.name) || sNorm === normalizeForSearch(displayName);
+            }
+            return false;
+        });
         btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
         btn.title = displayName;
 
@@ -15871,6 +17118,22 @@ function renderMerchantsCol(catId) {
     const merchantInput = document.getElementById('selectedExpenseMerchant');
     const currentMerchant = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
 
+    // Dacă reedităm o tranzacție și magazinul selectat nu este în lista filtrată, îl adăugăm la început
+    if (merchantInput && merchantInput.value.trim()) {
+        const selStore = merchantInput.value.trim();
+        const selStoreLower = selStore.toLowerCase();
+        const exists = filteredStores.some(st => {
+            const stLower = st.name.toLowerCase();
+            return stLower === selStoreLower || (typeof normalizeForSearch === 'function' && normalizeForSearch(stLower) === normalizeForSearch(selStoreLower));
+        });
+        if (!exists) {
+            filteredStores.unshift({
+                name: selStore,
+                priority: 100
+            });
+        }
+    }
+
     storesListEl.innerHTML = '';
 
     if (filteredStores.length === 0) {
@@ -15881,15 +17144,25 @@ function renderMerchantsCol(catId) {
     filteredStores.forEach(store => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        const isMatch = currentMerchant && currentMerchant === store.name.toLowerCase();
+        const isMatch = currentMerchant && (
+            currentMerchant === store.name.toLowerCase() ||
+            (typeof normalizeForSearch === 'function' && normalizeForSearch(currentMerchant) === normalizeForSearch(store.name))
+        );
         btn.className = 'merchant-popover-btn' + (isMatch ? ' active' : '');
         btn.title = store.name;
 
         const logoHtml = getMerchantLogoHtml(store.name, 16);
+        const defLoc = getMerchantDefaultLocation(store.name);
 
         btn.innerHTML = `
-            <span class="merchant-btn-name">${logoHtml} <span>${escapeHtml(store.name)}</span></span>
-            <span class="merchant-btn-del" title="Șterge magazinul">&times;</span>
+            <span class="merchant-btn-name">
+                ${logoHtml} <span>${escapeHtml(store.name)}</span>
+                ${defLoc ? `<span class="merchant-def-loc-pill" title="Locație implicită: ${escapeHtml(defLoc)}">📍 ${escapeHtml(defLoc)}</span>` : ''}
+            </span>
+            <span class="merchant-btn-actions">
+                <span class="merchant-btn-loc-pin ${defLoc ? 'has-loc' : ''}" title="${defLoc ? `Locație implicită: ${escapeHtml(defLoc)} (apasă pentru modificare/ștergere)` : 'Setează locație implicită magazin'}">📍</span>
+                <span class="merchant-btn-del" title="Șterge magazinul">&times;</span>
+            </span>
         `;
 
         btn.addEventListener('click', (e) => {
@@ -15900,6 +17173,11 @@ function renderMerchantsCol(catId) {
                 deleteCustomMerchant(store.name);
                 return;
             }
+            if (e.target && (e.target.classList.contains('merchant-btn-loc-pin') || e.target.closest('.merchant-btn-loc-pin') || e.target.closest('.merchant-def-loc-pill'))) {
+                e.stopPropagation();
+                openMerchantDefaultLocationModal(store.name);
+                return;
+            }
             const curSel = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
             if (curSel === store.name.toLowerCase()) {
                 if (merchantInput) merchantInput.value = '';
@@ -15908,6 +17186,14 @@ function renderMerchantsCol(catId) {
                 if (merchantInput) merchantInput.value = store.name;
                 storesListEl.querySelectorAll('.merchant-popover-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+
+                // Daca magazinul are o locatie implicita, o selectam automat; daca nu are, ramane fara locatie
+                const storeDefLoc = getMerchantDefaultLocation(store.name);
+                if (storeDefLoc) {
+                    selectLocation(storeDefLoc);
+                } else {
+                    clearLocation();
+                }
             }
             // Re-randez cumpărăturile cu noul filtru de magazin
             const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
@@ -15968,13 +17254,30 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
             mBox.style.maxHeight = 'calc(100vh - 48px)';
         }
 
-        // La deschiderea listelor Cumpărături / Magazine nu este selectat nimic default
+        // La deschiderea listelor Cumpărături / Magazine:
+        // Când se reeditează un card de cheltuieli existent pe aceeași categorie, cumpărăturile și magazinul setate rămân bifate!
+        // La o cheltuială nouă (sau categorie schimbată), nu este selectat nimic default.
+        const editId = document.getElementById('editExpenseId')?.value;
+        const isEditingSameCat = !!(editId && window._editingExpenseTx && window._editingExpenseTx.categoryId === catId);
+
         const descInput = document.getElementById('expenseDesc');
         const merchantInput = document.getElementById('selectedExpenseMerchant');
-        if (descInput) descInput.value = '';
-        if (merchantInput) merchantInput.value = '';
-        if (typeof updateExpenseBoxesClearButtons === 'function') {
-            updateExpenseBoxesClearButtons();
+        if (!isEditingSameCat) {
+            if (descInput) descInput.value = '';
+            if (merchantInput) merchantInput.value = '';
+            if (typeof updateExpenseBoxesClearButtons === 'function') {
+                updateExpenseBoxesClearButtons();
+            }
+        } else {
+            if (descInput && !descInput.value && window._editingExpenseTx.comment) {
+                descInput.value = window._editingExpenseTx.comment;
+            }
+            if (merchantInput && !merchantInput.value && window._editingExpenseTx.merchant) {
+                merchantInput.value = window._editingExpenseTx.merchant;
+            }
+            if (typeof updateExpenseBoxesClearButtons === 'function') {
+                updateExpenseBoxesClearButtons();
+            }
         }
 
         // Resetăm căutările la redeschidere
@@ -15998,6 +17301,10 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
     // 1. Randare coloane
     renderShoppingItemsCol(catId);
     renderMerchantsCol(catId);
+
+    // Sincronizare bare de sus: Locație și Sumă
+    bindPopoverTopBarEvents();
+    syncPopoverTopBarState();
 
     // Funcție dedicată: poziționare plutitoare deasupra tastaturii
     // Permite tastaturii să se deschidă natural la atingere (fără blur fals)
@@ -16142,15 +17449,36 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             closeFoodMerchantsOverlay();
 
+            // Sincronizare locație din caseta de sus
+            const popLoc = (document.getElementById('popoverLocationInput')?.value || '').trim();
+            const expLoc = document.getElementById('selectedExpenseLocation');
+            if (expLoc) expLoc.value = popLoc;
+            if (popLoc && Array.isArray(appData.locations) && !appData.locations.includes(popLoc)) {
+                appData.locations.push(popLoc);
+                saveData();
+            }
+
+            // Sincronizare sumă din caseta de sus
+            const popAmt = (document.getElementById('popoverAmountInput')?.value || '').trim();
+            if (popAmt) {
+                const expAmt = document.getElementById('expenseAmount');
+                if (expAmt) expAmt.value = popAmt;
+                if (typeof updateExpenseLivePreview === 'function') {
+                    updateExpenseLivePreview();
+                }
+            }
+
             const merch = document.getElementById('selectedExpenseMerchant')?.value || '';
             const itemDesc = document.getElementById('expenseDesc')?.value || '';
-            if (merch || itemDesc) {
-                const summary = [itemDesc, merch].filter(Boolean).join(' @ ');
+            if (merch || itemDesc || popLoc) {
+                const parts = [itemDesc, merch].filter(Boolean);
+                if (popLoc) parts.push(`📍 ${popLoc}`);
+                const summary = parts.join(' @ ');
                 showToast(`Selecție salvată: ${summary}`, 'success');
             }
 
             const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
-            if (isBillCategory(currentCatId) || isUtilityItemOrMerchant(merch, itemDesc)) {
+            if (isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
                 openExpenseUtilityFloatingPrompt(merch, itemDesc);
             }
             updateExpenseBoxesClearButtons();
@@ -16581,12 +17909,28 @@ function renderExpenseCategoryPicker() {
                 document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedHidden.value = cat.id;
+
+                const editId = document.getElementById('editExpenseId')?.value;
+                const isEditingSameCat = !!(editId && window._editingExpenseTx && window._editingExpenseTx.categoryId === cat.id);
+
                 const descInput = document.getElementById('expenseDesc');
                 const merchantInput = document.getElementById('selectedExpenseMerchant');
-                if (descInput) descInput.value = '';
-                if (merchantInput) merchantInput.value = '';
-                if (typeof updateExpenseBoxesClearButtons === 'function') {
-                    updateExpenseBoxesClearButtons();
+                if (!isEditingSameCat) {
+                    if (descInput) descInput.value = '';
+                    if (merchantInput) merchantInput.value = '';
+                    if (typeof updateExpenseBoxesClearButtons === 'function') {
+                        updateExpenseBoxesClearButtons();
+                    }
+                } else {
+                    if (descInput && !descInput.value && window._editingExpenseTx.comment) {
+                        descInput.value = window._editingExpenseTx.comment;
+                    }
+                    if (merchantInput && !merchantInput.value && window._editingExpenseTx.merchant) {
+                        merchantInput.value = window._editingExpenseTx.merchant;
+                    }
+                    if (typeof updateExpenseBoxesClearButtons === 'function') {
+                        updateExpenseBoxesClearButtons();
+                    }
                 }
                 updateFoodMerchantsQuickPicker(cat.id, true);
             }
@@ -16609,12 +17953,28 @@ function renderExpenseCategoryPicker() {
             document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedHidden.value = cat.id;
+
+            const editId = document.getElementById('editExpenseId')?.value;
+            const isEditingSameCat = !!(editId && window._editingExpenseTx && window._editingExpenseTx.categoryId === cat.id);
+
             const descInput = document.getElementById('expenseDesc');
             const merchantInput = document.getElementById('selectedExpenseMerchant');
-            if (descInput) descInput.value = '';
-            if (merchantInput) merchantInput.value = '';
-            if (typeof updateExpenseBoxesClearButtons === 'function') {
-                updateExpenseBoxesClearButtons();
+            if (!isEditingSameCat) {
+                if (descInput) descInput.value = '';
+                if (merchantInput) merchantInput.value = '';
+                if (typeof updateExpenseBoxesClearButtons === 'function') {
+                    updateExpenseBoxesClearButtons();
+                }
+            } else {
+                if (descInput && !descInput.value && window._editingExpenseTx.comment) {
+                    descInput.value = window._editingExpenseTx.comment;
+                }
+                if (merchantInput && !merchantInput.value && window._editingExpenseTx.merchant) {
+                    merchantInput.value = window._editingExpenseTx.merchant;
+                }
+                if (typeof updateExpenseBoxesClearButtons === 'function') {
+                    updateExpenseBoxesClearButtons();
+                }
             }
             updateFoodMerchantsQuickPicker(cat.id, true);
         });
@@ -16656,6 +18016,17 @@ function renderColorPresets() {
 // Open Modal Helper
 function openModal(modalId) {
     applyLanguage();
+    // Prevenire suprapunere între ferestrele principale de tranzacție
+    if (modalId === 'modalExpense') {
+        closeModal('modalIncome');
+        closeModal('modalTransfer');
+    } else if (modalId === 'modalIncome') {
+        closeModal('modalExpense');
+        closeModal('modalTransfer');
+    } else if (modalId === 'modalTransfer') {
+        closeModal('modalExpense');
+        closeModal('modalIncome');
+    }
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.scrollTop = 0;
@@ -16677,8 +18048,12 @@ function closeModal(modalId) {
         if (modal) {
             modal.classList.remove('active');
         }
+        if (modalId === 'modalExpense') {
+            window._editingExpenseTx = null;
+        }
     } else {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        window._editingExpenseTx = null;
     }
     const hasActiveModal = !!document.querySelector('.modal-overlay.active');
     if (!hasActiveModal) {
@@ -17869,9 +19244,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cod QR & Partajare / Instalare APK
     function openQrShareModal() {
-        const url = (window.location && window.location.href && window.location.href.startsWith('http') && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1'))
+        const rawUrl = (window.location && window.location.href && window.location.href.startsWith('http') && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1'))
             ? window.location.href.split('#')[0].split('?')[0]
             : 'https://valydd.github.io/MoneyApp/';
+        const url = `${rawUrl.replace(/\/$/, '')}/?v=${APP_VERSION}`;
 
         const urlDisplay = document.getElementById('qrShareUrlDisplay');
         if (urlDisplay) urlDisplay.textContent = url;
@@ -18019,6 +19395,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const expSelect = document.getElementById('expenseCurrencySelect');
         if (expSelect) expSelect.value = txCurr;
 
+        const mc = getTransactionMerchantAndComment(tx);
+        window._editingExpenseTx = {
+            id: tx.id,
+            categoryId: tx.categoryId,
+            merchant: mc.merchant || '',
+            comment: mc.comment || ''
+        };
+
         document.getElementById('editExpenseId').value = tx.id;
         document.getElementById('modalExpenseTitle').innerHTML = `<span style="color:var(--accent)">✏️</span> ${t('modal_edit_expense')}`;
         document.getElementById('btnSubmitExpense').textContent = t('btn_save');
@@ -18035,10 +19419,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedTime = extractTimeHHmm(tx.time || tx.initialTime, tx.createdAt) || '12:00';
             expTimeInput.value = savedTime;
         }
-        const mc = getTransactionMerchantAndComment(tx);
         const merchantHidden = document.getElementById('selectedExpenseMerchant');
         if (merchantHidden) merchantHidden.value = mc.merchant || '';
         document.getElementById('expenseDesc').value = mc.comment || '';
+        const txLocation = (tx.location || '').trim();
+        const locHidden = document.getElementById('selectedExpenseLocation');
+        if (locHidden) locHidden.value = txLocation;
+        const popLocInput = document.getElementById('popoverLocationInput');
+        if (popLocInput) popLocInput.value = txLocation;
+        const btnClearLoc = document.getElementById('btnClearPopoverLocation');
+        if (btnClearLoc) btnClearLoc.style.display = txLocation ? 'inline-block' : 'none';
+        const popAmtInput = document.getElementById('popoverAmountInput');
+        if (popAmtInput) popAmtInput.value = displayAmt;
         updateExpenseBoxesClearButtons();
         
         closeFoodMerchantsOverlay();
@@ -18455,6 +19847,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnOpenExpense = document.getElementById('btnOpenAddExpense');
     if (btnOpenExpense) {
         btnOpenExpense.addEventListener('click', () => {
+            window._editingExpenseTx = null;
             const form = document.getElementById('formExpense');
             if (form) form.reset();
             const editId = document.getElementById('editExpenseId');
@@ -18465,6 +19858,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedMerchantHidden) selectedMerchantHidden.value = '';
             const descInput = document.getElementById('expenseDesc');
             if (descInput) descInput.value = '';
+            const locHidden = document.getElementById('selectedExpenseLocation');
+            if (locHidden) locHidden.value = '';
+            const popLocInput = document.getElementById('popoverLocationInput');
+            if (popLocInput) popLocInput.value = '';
+            const btnClearLoc = document.getElementById('btnClearPopoverLocation');
+            if (btnClearLoc) btnClearLoc.style.display = 'none';
+            const popAmtInput = document.getElementById('popoverAmountInput');
+            if (popAmtInput) popAmtInput.value = '';
             updateExpenseBoxesClearButtons();
             const popover = document.getElementById('foodMerchantsFloatingOverlay');
             if (popover) {
@@ -18709,6 +20110,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
         const description = (document.getElementById('expenseDesc').value || '').trim();
         const paymentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
+        const location = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+        if (location && Array.isArray(appData.locations) && !appData.locations.includes(location)) {
+            appData.locations.push(location);
+        }
 
         if (!amount || amount <= 0) {
             showToast('Introduceți o sumă validă!', 'error');
@@ -18742,6 +20147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!existing.initialTime) existing.initialTime = existing.time || time;
                 existing.merchant = merchant;
                 existing.description = description;
+                existing.location = location;
                 existing.isSuspended = isSuspended;
                 existing.paymentMethod = paymentMethod;
 
@@ -18764,6 +20170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOverviewChartAndList();
             renderTransactionsHistory();
             renderStatsTab();
+            window._editingExpenseTx = null;
             closeModal('modalExpense');
             if (document.getElementById('modalCategoryDetails').classList.contains('active')) {
                 openCategoryDetailModal(categoryId);
@@ -18788,6 +20195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             categoryId: categoryId,
             merchant: merchant,
             description: description,
+            location: location,
             date: date,
             time: time,
             initialTime: time,
@@ -18809,6 +20217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderOverviewChartAndList();
         renderTransactionsHistory();
         renderStatsTab();
+        window._editingExpenseTx = null;
         closeModal('modalExpense');
         if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
             renderBillsAnalytics();
@@ -20575,7 +21984,317 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => console.log('Service Worker registration skipped:', err));
     }
+
+    // Inițializare Manager Configurare Widget Ecran Telefon
+    initWidgetSettingsManager();
 });
+
+// Operatori globali pentru deschiderea modalelor din Widget-urile Android
+window.openAddExpenseModalFromWidget = function() {
+    closeModal(); // Închide complet orice alt modal deschis anterior (ex. modalIncome)
+    setTimeout(() => {
+        const btn = document.getElementById('btnOpenAddExpense');
+        if (btn) {
+            btn.click();
+        } else if (typeof openModal === 'function') {
+            openModal('modalExpense');
+        }
+    }, 40);
+};
+
+window.openAddIncomeModalFromWidget = function() {
+    closeModal(); // Închide complet orice alt modal deschis anterior (ex. modalExpense)
+    setTimeout(() => {
+        const btn = document.getElementById('btnOpenAddIncome');
+        if (btn) {
+            btn.click();
+        } else if (typeof openModal === 'function') {
+            openModal('modalIncome');
+        }
+    }, 40);
+};
+
+// ========================================================
+// CONFIGURARE WIDGET ECRAN TELEFON (2x1, 4x1, 4x3)
+// ========================================================
+function initWidgetSettingsManager() {
+    const btnOpenWidgetModal = document.getElementById('btnWidgetSettings');
+    const modalWidget = document.getElementById('modalWidgetSettings');
+    if (!modalWidget) return;
+
+    // Setări implicite
+    let widgetSettings = {
+        theme: 'dark',
+        darkShade: '#0f172a',
+        opacity: 90
+    };
+
+    // Încărcare setări existente
+    function loadSavedSettings() {
+        if (window.AndroidBridge && typeof window.AndroidBridge.getWidgetSettings === 'function') {
+            try {
+                const nativeStr = window.AndroidBridge.getWidgetSettings();
+                if (nativeStr) {
+                    const parsed = JSON.parse(nativeStr);
+                    if (parsed.theme) widgetSettings.theme = parsed.theme;
+                    if (parsed.darkShade) widgetSettings.darkShade = parsed.darkShade;
+                    if (parsed.opacity !== undefined) widgetSettings.opacity = parseInt(parsed.opacity, 10);
+                }
+            } catch (e) {
+                console.warn('Eroare citire setari widget din AndroidBridge:', e);
+            }
+        } else {
+            try {
+                const stored = localStorage.getItem('moneyapp_widget_settings');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    widgetSettings = Object.assign(widgetSettings, parsed);
+                }
+            } catch (e) {}
+        }
+    }
+
+    // Funcție interpolare culoare negru spre gri
+    // 0 = #000000 -> 100 = #475569
+    function shadePercentToHex(percent) {
+        const p = Math.max(0, Math.min(100, percent)) / 100;
+        const r = Math.round(71 * p);
+        const g = Math.round(85 * p);
+        const b = Math.round(105 * p);
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    }
+
+    function hexToShadePercent(hex) {
+        if (!hex || hex === '#000000') return 0;
+        if (hex === '#0b0f19') return 18;
+        if (hex === '#0f172a') return 30;
+        if (hex === '#1e293b') return 60;
+        if (hex === '#334155') return 85;
+        if (hex === '#475569') return 100;
+        return 30;
+    }
+
+    // Actualizare UI controale și previzualizare
+    function updateWidgetPreviewAndControls() {
+        const isDark = widgetSettings.theme !== 'light';
+        const btnLight = document.getElementById('btnWidgetThemeLight');
+        const btnDark = document.getElementById('btnWidgetThemeDark');
+        if (btnLight) btnLight.classList.toggle('active', !isDark);
+        if (btnDark) btnDark.classList.toggle('active', isDark);
+
+        const darkSection = document.getElementById('sectionDarkShade');
+        if (darkSection) {
+            darkSection.style.opacity = isDark ? '1' : '0.45';
+            darkSection.style.pointerEvents = isDark ? 'auto' : 'none';
+        }
+
+        const hexBadge = document.getElementById('widgetDarkShadeHex');
+        if (hexBadge) hexBadge.textContent = isDark ? widgetSettings.darkShade : '#f8fafc';
+
+        const darkSlider = document.getElementById('widgetDarkSlider');
+        if (darkSlider && isDark) {
+            darkSlider.value = hexToShadePercent(widgetSettings.darkShade);
+        }
+
+        document.querySelectorAll('.widget-shade-chip').forEach(chip => {
+            chip.classList.toggle('active', isDark && chip.dataset.shade === widgetSettings.darkShade);
+        });
+
+        const opVal = Math.max(20, Math.min(100, parseInt(widgetSettings.opacity, 10) || 90));
+        const opBadge = document.getElementById('widgetOpacityBadge');
+        if (opBadge) opBadge.textContent = `${opVal}%`;
+        const opRange = document.getElementById('widgetOpacityRange');
+        if (opRange) opRange.value = opVal;
+
+        // Calcul culoare fundal previzualizare
+        const alpha = opVal / 100;
+        let effectiveBgRgba;
+        if (!isDark) {
+            effectiveBgRgba = `rgba(248, 250, 252, ${alpha})`;
+        } else {
+            const hex = widgetSettings.darkShade || '#0f172a';
+            const r = parseInt(hex.slice(1, 3), 16) || 15;
+            const g = parseInt(hex.slice(3, 5), 16) || 23;
+            const b = parseInt(hex.slice(5, 7), 16) || 42;
+            effectiveBgRgba = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        const textColorPrimary = isDark ? '#ffffff' : '#0f172a';
+        const textColorSecondary = isDark ? '#94a3b8' : '#64748b';
+
+        // Preluare solduri din aplicatie
+        const mainCurr = (typeof getActiveCurrency === 'function') ? getActiveCurrency() : 'RON';
+        const totEl = document.getElementById('displayTotalBalance');
+        let totStr = '0,00 ' + mainCurr;
+        if (totEl) {
+            const intP = totEl.querySelector('.bal-int')?.textContent || '0';
+            const decP = totEl.querySelector('.bal-dec')?.textContent || ',00';
+            totStr = `${intP}${decP} ${mainCurr}`;
+        }
+        const cardEl = document.getElementById('displayCardBalance');
+        let cardStr = '0,00 ' + mainCurr;
+        if (cardEl) {
+            const intP = cardEl.querySelector('.source-int')?.textContent || '0';
+            const decP = cardEl.querySelector('.source-dec')?.textContent || ',00';
+            cardStr = `${intP}${decP} ${mainCurr}`;
+        }
+        const cashEl = document.getElementById('displayCashBalance');
+        let cashStr = '0,00 ' + mainCurr;
+        if (cashEl) {
+            const intP = cashEl.querySelector('.source-int')?.textContent || '0';
+            const decP = cashEl.querySelector('.source-dec')?.textContent || ',00';
+            cashStr = `${intP}${decP} ${mainCurr}`;
+        }
+
+        // Aplicare pe toate casetele simulate
+        document.querySelectorAll('.simulated-widget').forEach(box => {
+            box.style.backgroundColor = effectiveBgRgba;
+        });
+
+        // 4x1 Text
+        const simTotal4x1 = document.getElementById('simValTotal4x1');
+        if (simTotal4x1) {
+            simTotal4x1.textContent = totStr;
+            simTotal4x1.style.color = textColorPrimary;
+        }
+        const simLabel4x1 = document.getElementById('simLabelTotal4x1');
+        if (simLabel4x1) simLabel4x1.style.color = textColorSecondary;
+
+        // 4x3 Text
+        const simAppTitle = document.getElementById('simAppTitle');
+        if (simAppTitle) simAppTitle.style.color = textColorSecondary;
+        const simTotal4x3 = document.getElementById('simValTotal4x3');
+        if (simTotal4x3) {
+            simTotal4x3.textContent = totStr;
+            simTotal4x3.style.color = textColorPrimary;
+        }
+        const simLabel4x3 = document.getElementById('simLabelTotal4x3');
+        if (simLabel4x3) simLabel4x3.style.color = textColorSecondary;
+
+        const simCardVal = document.getElementById('simCardVal');
+        if (simCardVal) {
+            simCardVal.textContent = cardStr;
+            simCardVal.style.color = isDark ? '#60a5fa' : '#2563eb';
+        }
+        const simCardLabel = document.getElementById('simCardLabel');
+        if (simCardLabel) simCardLabel.style.color = textColorSecondary;
+
+        const simCashVal = document.getElementById('simCashVal');
+        if (simCashVal) {
+            simCashVal.textContent = cashStr;
+            simCashVal.style.color = isDark ? '#34d399' : '#059669';
+        }
+        const simCashLabel = document.getElementById('simCashLabel');
+        if (simCashLabel) simCashLabel.style.color = textColorSecondary;
+
+        const simCurr = document.getElementById('simCurrencyBadge');
+        if (simCurr) {
+            simCurr.textContent = mainCurr;
+            simCurr.style.color = isDark ? '#38bdf8' : '#0284c7';
+        }
+    }
+
+    // Format Tab click
+    document.querySelectorAll('.widget-format-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.widget-format-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const fmt = tab.dataset.format;
+            const w2x1 = document.getElementById('simWidget2x1');
+            const w4x1 = document.getElementById('simWidget4x1');
+            const w4x3 = document.getElementById('simWidget4x3');
+            if (w2x1) w2x1.style.display = (fmt === '2x1') ? 'flex' : 'none';
+            if (w4x1) w4x1.style.display = (fmt === '4x1') ? 'flex' : 'none';
+            if (w4x3) w4x3.style.display = (fmt === '4x3') ? 'flex' : 'none';
+        });
+    });
+
+    // Theme toggle
+    const btnLight = document.getElementById('btnWidgetThemeLight');
+    if (btnLight) {
+        btnLight.addEventListener('click', () => {
+            widgetSettings.theme = 'light';
+            updateWidgetPreviewAndControls();
+        });
+    }
+    const btnDark = document.getElementById('btnWidgetThemeDark');
+    if (btnDark) {
+        btnDark.addEventListener('click', () => {
+            widgetSettings.theme = 'dark';
+            updateWidgetPreviewAndControls();
+        });
+    }
+
+    // Dark Shade Chips
+    document.querySelectorAll('.widget-shade-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            widgetSettings.theme = 'dark';
+            widgetSettings.darkShade = chip.dataset.shade;
+            updateWidgetPreviewAndControls();
+        });
+    });
+
+    // Dark Shade Slider
+    const darkSlider = document.getElementById('widgetDarkSlider');
+    if (darkSlider) {
+        darkSlider.addEventListener('input', (e) => {
+            widgetSettings.theme = 'dark';
+            widgetSettings.darkShade = shadePercentToHex(e.target.value);
+            updateWidgetPreviewAndControls();
+        });
+    }
+
+    // Opacity Range
+    const opRange = document.getElementById('widgetOpacityRange');
+    if (opRange) {
+        opRange.addEventListener('input', (e) => {
+            widgetSettings.opacity = parseInt(e.target.value, 10);
+            updateWidgetPreviewAndControls();
+        });
+    }
+
+    // Salvare Setari
+    const btnSave = document.getElementById('btnSaveWidgetSettings');
+    if (btnSave) {
+        btnSave.addEventListener('click', () => {
+            try {
+                localStorage.setItem('moneyapp_widget_settings', JSON.stringify(widgetSettings));
+            } catch (e) {}
+
+            if (window.AndroidBridge && typeof window.AndroidBridge.saveWidgetSettings === 'function') {
+                try {
+                    window.AndroidBridge.saveWidgetSettings(JSON.stringify(widgetSettings));
+                } catch (e) {
+                    console.warn('Eroare salvare widget in AndroidBridge:', e);
+                }
+            }
+
+            // De asemenea sincronizam soldurile actuale
+            if (typeof updateBalanceCards === 'function') {
+                updateBalanceCards();
+            }
+
+            if (typeof showToast === 'function') {
+                showToast('Setările widget-ului au fost salvate și aplicate pe ecranul telefonului!', 'success');
+            }
+
+            if (typeof closeModal === 'function') {
+                closeModal('modalWidgetSettings');
+            }
+        });
+    }
+
+    // Deschidere modal
+    if (btnOpenWidgetModal) {
+        btnOpenWidgetModal.addEventListener('click', () => {
+            loadSavedSettings();
+            updateWidgetPreviewAndControls();
+            if (typeof openModal === 'function') {
+                openModal('modalWidgetSettings');
+            }
+        });
+    }
+}
 
 
 

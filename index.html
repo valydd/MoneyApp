@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=481">
+    <link rel="stylesheet" href="style.css?v=504">
 </head>
 <body>
     <div class="container">
@@ -47,8 +47,10 @@
                         <div class="logo-meta-wrap">
                             <div class="logo-title-row">
                                 <h1 class="app-title">MoneyApp</h1>
-                                <span id="appVersionBadge" class="app-version-badge">v3.4.26</span>
+                                <span id="appVersionBadge" class="app-version-badge">v3.4.49</span>
                             </div>
+
+
                             <div class="app-subtitle" id="activeSectionSubtitle">Evidență Cheltuieli & Venituri</div>
                         </div>
                     </div>
@@ -62,6 +64,9 @@
                         </button>
                         <button class="icon-btn" id="btnBackup" title="Salvare & Export Date">
                             <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                        </button>
+                        <button class="icon-btn" id="btnWidgetSettings" title="Widget Ecran Telefon (2x1, 4x1, 4x3)">
+                            <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
                         </button>
                         <button class="icon-btn" id="btnQrModal" title="Deschide sau Instalează pe Telefon">
                             <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-5 0h2v3h-2v-3zm2 3h3v2h-3v-2zm3 3h3v3h-3v-3zm-3 0h3v-2h-3v2zm-2-2h2v2h-2v-2z"/></svg>
@@ -341,8 +346,22 @@
                     </div>
                 </div>
 
+                <!-- Card Medie Cheltuieli Zilnice (Ritm Zilnic în Statistici) -->
+                <div class="stats-daily-avg-banner" id="statsDailyAvgBanner">
+                    <div class="stats-daily-avg-top">
+                        <span class="stats-daily-avg-icon">⏱️</span>
+                        <span class="stats-daily-avg-title">Medie Cheltuieli / Zi</span>
+                    </div>
+                    <div class="stats-daily-avg-bottom">
+                        <span class="stats-daily-avg-sub" id="statsDailyAvgSub">Ritm zilnic (facturi distribuite pe 30 zile)</span>
+                        <span class="stats-daily-avg-num" id="displayStatsDailyAvgExpense">0,00 RON/zi</span>
+                    </div>
+                </div>
+
+
                 <!-- 5 Carduri Principale Expandabile pe Categorii de Date -->
                 <div class="stats-category-groups-container">
+
 
                     <!-- 1. CATEGORIA: VENITURI & CÂȘTIGURI (Verde Pal) -->
                     <div class="stats-cat-group-card b-kpi-theme-income" id="groupStatIncome">
@@ -675,6 +694,38 @@
                     </div>
                 </div>
 
+                <!-- GRAFIC NOU: Cumpărături pe Locații (Cumulat Toate Perioadele) -->
+                <div class="business-chart-card" id="cardStatsLocationsAllTime">
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <div class="b-chart-title">📍 Cumpărături pe Locații (Cumulat Toate Perioadele)</div>
+                                <div class="b-chart-sub">Clasamentul cheltuielilor după locație / oraș din toate perioadele</div>
+                            </div>
+                            <span id="statsLocationsTotalCountBadge" style="font-size: 0.72rem; font-weight: 700; color: #3b82f6; background: rgba(59, 130, 246, 0.12); padding: 3px 10px; border-radius: 12px;">0 Locații</span>
+                        </div>
+                    </div>
+                    <div style="min-height: 200px; position: relative;" id="wrapStatsLocationsBarChart">
+                        <canvas id="statsLocationsBarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- GRAFIC NOU: Cumpărături pe Magazine (Cumulat Toate Perioadele) -->
+                <div class="business-chart-card" id="cardStatsMerchantsAllTime">
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <div class="b-chart-title">🛒 Cumpărături pe Magazine (Cumulat Toate Perioadele)</div>
+                                <div class="b-chart-sub">Clasamentul magazinelor după totalul cheltuielilor din toate perioadele</div>
+                            </div>
+                            <span id="statsStoresTotalCountBadge" style="font-size: 0.72rem; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 3px 10px; border-radius: 12px;">0 Magazine</span>
+                        </div>
+                    </div>
+                    <div style="min-height: 220px; position: relative;" id="wrapStatsStoresBarChart">
+                        <canvas id="statsStoresBarChart"></canvas>
+                    </div>
+                </div>
+
                 <!-- GRAFIC 3: Evoluție Cashflow & Trend -->
                 <div class="business-chart-card">
                     <div class="b-chart-header">
@@ -763,6 +814,46 @@
                     <span class="merchant-popover-header-title" data-i18n="popover_header_title">🛍️ Cumpărături <span style="opacity:0.35;margin:0 4px;">|</span> 🛒 Magazine</span>
                     <button type="button" class="merchant-popover-close" id="btnCloseMerchantPopover" title="Închide lista">&times;</button>
                 </div>
+
+                <!-- Rând de Sus: Locație (Stânga 50%) și Sumă (Dreapta 50%) -->
+                <div class="merchant-popover-top-bar" id="merchantPopoverTopBar">
+                    <!-- Stânga: Căsuță Locație -->
+                    <div class="popover-top-field-col popover-loc-col">
+                        <div class="popover-top-input-box" id="popoverLocationBox" role="button" tabindex="0">
+                            <span class="popover-top-icon">📍</span>
+                            <input type="text" id="popoverLocationInput" class="popover-top-input" placeholder="Alege locație (ex: Pitești)..." autocomplete="off" readonly>
+                            <button type="button" class="popover-top-clear-btn" id="btnClearPopoverLocation" style="display:none;" title="Șterge locația">&times;</button>
+                            <span class="popover-top-caret" id="popoverLocationCaret">▾</span>
+                        </div>
+
+                        <!-- Meniu vertical popover cu locații (apare la click pe casetă) -->
+                        <div class="popover-locations-dropdown" id="popoverLocationsDropdown" style="display:none;">
+                            <div class="locations-dropdown-header">
+                                <span class="locations-dropdown-title">📍 Locații Magazine</span>
+                                <button type="button" class="locations-dropdown-close" id="btnCloseLocationsDropdown" title="Închide">&times;</button>
+                            </div>
+                            <!-- Adăugare locație nouă -->
+                            <div class="locations-add-row">
+                                <input type="text" id="newLocationInput" class="locations-add-input" placeholder="＋ Adaugă oraș / locație..." maxlength="30" autocomplete="off">
+                                <button type="button" class="locations-add-btn" id="btnAddLocation">Adaugă</button>
+                            </div>
+                            <!-- Listă verticală cu locații -->
+                            <div class="locations-vertical-list" id="locationsVerticalList">
+                                <!-- Generat dinamic în app.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dreapta: Căsuță Sumă -->
+                    <div class="popover-top-field-col popover-amount-col">
+                        <div class="popover-top-input-box" id="popoverAmountBox">
+                            <span class="popover-top-icon">💰</span>
+                            <input type="number" inputmode="decimal" step="0.01" min="0.01" id="popoverAmountInput" class="popover-top-input" placeholder="Sumă...">
+                            <span class="popover-top-currency" id="popoverAmountCurrency">RON</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="dual-popover-grid">
                     <!-- Coloana Stânga: Cumpărături (ex: Suc, Pâine...) -->
                     <div class="popover-col popover-items-col">
@@ -964,6 +1055,7 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden" id="selectedExpenseLocation" value="">
 
                 <!-- Butonul Scanează imediat sub casete -->
                 <div style="margin-top: 5px; margin-bottom: 5px;">
@@ -1352,10 +1444,12 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.26.apk" download="MoneyApp_v3.4.26.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.49.apk" download="MoneyApp_v3.4.49.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.26.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.49.apk</span>
                 </a>
+
+
 
                 <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                     <span id="qrShareUrlDisplay" style="font-size: 0.78rem; font-family: monospace; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; flex: 1;">
@@ -1387,6 +1481,146 @@
             </div>
 
             <button type="button" class="btn btn-secondary btn-block" data-close="modalQrShare" data-i18n="btn_close">Închide</button>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIGURARE WIDGET ECRAN TELEFON (2x1, 4x1, 4x3) -->
+    <div class="modal-overlay" id="modalWidgetSettings">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span>📱</span>
+                    <span>Widget Ecran Telefon</span>
+                </div>
+                <button class="modal-close" data-close="modalWidgetSettings">&times;</button>
+            </div>
+
+            <div class="widget-settings-subtitle">
+                Personalizează aspectul widget-urilor de pe ecranul principal (2x1, 4x1, 4x3).
+            </div>
+
+            <!-- Taburi Comutare Format Previzualizare -->
+            <div class="widget-format-tabs">
+                <button type="button" class="widget-format-tab" data-format="2x1">2x1 Acțiuni</button>
+                <button type="button" class="widget-format-tab active" data-format="4x1">4x1 Sold + Butoane</button>
+                <button type="button" class="widget-format-tab" data-format="4x3">4x3 Complet</button>
+            </div>
+
+            <!-- Scena Previzualizare Live -->
+            <div class="widget-preview-stage" id="widgetPreviewStage">
+                <!-- Preview 2x1 -->
+                <div class="simulated-widget simulated-widget-2x1" id="simWidget2x1" style="display: none;">
+                    <div class="sim-btn sim-btn-exp"><span>📉</span> <span>Cheltuială</span></div>
+                    <div class="sim-btn sim-btn-inc"><span>📈</span> <span>Venit</span></div>
+                </div>
+
+                <!-- Preview 4x1 -->
+                <div class="simulated-widget simulated-widget-4x1" id="simWidget4x1" style="display: flex;">
+                    <div class="sim-balance-col">
+                        <span class="sim-label" id="simLabelTotal4x1">Fond Disponibil</span>
+                        <span class="sim-val-large" id="simValTotal4x1">0,00 RON</span>
+                    </div>
+                    <div class="sim-btn-group-row">
+                        <div class="sim-btn-compact sim-btn-exp"><span>📉</span> <span>Cheltuială</span></div>
+                        <div class="sim-btn-compact sim-btn-inc"><span>📈</span> <span>Venit</span></div>
+                    </div>
+                </div>
+
+                <!-- Preview 4x3 -->
+                <div class="simulated-widget simulated-widget-4x3" id="simWidget4x3" style="display: none;">
+                    <div class="sim-header-row">
+                        <span id="simAppTitle">💎 MoneyApp</span>
+                        <span id="simCurrencyBadge" style="color: #38bdf8;">RON</span>
+                    </div>
+                    <div>
+                        <div class="sim-label" id="simLabelTotal4x3">Fond Disponibil Total</div>
+                        <div class="sim-val-large" id="simValTotal4x3" style="font-size: 1.3rem;">0,00 RON</div>
+                    </div>
+                    <div class="sim-boxes-row">
+                        <div class="sim-inner-box">
+                            <div class="sim-label" id="simCardLabel">💳 Card</div>
+                            <div class="sim-inner-val-card" id="simCardVal">0,00 RON</div>
+                        </div>
+                        <div class="sim-inner-box">
+                            <div class="sim-label" id="simCashLabel">💵 Cash</div>
+                            <div class="sim-inner-val-cash" id="simCashVal">0,00 RON</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <div class="sim-btn sim-btn-exp" style="height: 36px; font-size: 0.76rem;"><span>📉</span> <span>Cheltuială</span></div>
+                        <div class="sim-btn sim-btn-inc" style="height: 36px; font-size: 0.76rem;"><span>📈</span> <span>Venit</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secțiune 1: Temă Luminos / Întunecat -->
+            <div class="widget-ctrl-section">
+                <div class="widget-ctrl-header">
+                    <span>Temă Widget</span>
+                </div>
+                <div class="widget-theme-toggle-row">
+                    <button type="button" class="widget-theme-pill-btn" id="btnWidgetThemeLight" data-theme="light">
+                        <span>☀️</span> <span>Luminos</span>
+                    </button>
+                    <button type="button" class="widget-theme-pill-btn active" id="btnWidgetThemeDark" data-theme="dark">
+                        <span>🌙</span> <span>Întunecat</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Secțiune 2: Nuanță Întunecat (Negru spre Gri) -->
+            <div class="widget-ctrl-section" id="sectionDarkShade">
+                <div class="widget-ctrl-header">
+                    <span>Nuanță Întunecat (Negru spre Gri)</span>
+                    <span id="widgetDarkShadeHex" class="widget-range-badge">#0f172a</span>
+                </div>
+                <div class="widget-shade-spectrum-wrap">
+                    <!-- Preset Chips -->
+                    <div class="widget-shade-chips">
+                        <button type="button" class="widget-shade-chip" data-shade="#000000" style="background: #000000;" title="Negru Pur"></button>
+                        <button type="button" class="widget-shade-chip" data-shade="#0b0f19" style="background: #0b0f19;" title="Cărbune"></button>
+                        <button type="button" class="widget-shade-chip active" data-shade="#0f172a" style="background: #0f172a;" title="Gri Închis (Default)"></button>
+                        <button type="button" class="widget-shade-chip" data-shade="#1e293b" style="background: #1e293b;" title="Gri Ardezie"></button>
+                        <button type="button" class="widget-shade-chip" data-shade="#334155" style="background: #334155;" title="Gri Mediu"></button>
+                    </div>
+                    <!-- Slider Fin Negru spre Gri -->
+                    <div class="widget-shade-slider-wrap">
+                        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">Negru</span>
+                        <input type="range" class="widget-range-slider" id="widgetDarkSlider" min="0" max="100" value="30">
+                        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">Gri</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secțiune 3: Intensitate / Opacitate -->
+            <div class="widget-ctrl-section">
+                <div class="widget-ctrl-header">
+                    <span>Intensitate / Opacitate Fundal</span>
+                    <span id="widgetOpacityBadge" class="widget-range-badge">90%</span>
+                </div>
+                <div class="widget-shade-slider-wrap">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">20%</span>
+                    <input type="range" class="widget-range-slider" id="widgetOpacityRange" min="20" max="100" step="5" value="90">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">100%</span>
+                </div>
+            </div>
+
+            <!-- Ghid Utilizare -->
+            <div class="widget-guide-box">
+                <div class="widget-guide-title">
+                    <span>ℹ️</span> <span>Cum adaugi widget-ul pe ecran:</span>
+                </div>
+                1. Ieși pe ecranul principal al telefonului.<br>
+                2. Ține apăsat 2 secunde pe un spațiu liber al ecranului.<br>
+                3. Alege <strong>Widget-uri</strong> și caută <strong>MoneyApp</strong>.<br>
+                4. Selectează formatul (<strong>2x1</strong>, <strong>4x1</strong> sau <strong>4x3</strong>) și trage-l pe ecran.
+            </div>
+
+            <!-- Butoane Acțiune -->
+            <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary" data-close="modalWidgetSettings" style="flex: 1;">Închide</button>
+                <button type="button" class="btn btn-accent" id="btnSaveWidgetSettings" style="flex: 2; font-weight: 700;">💾 Salvează & Aplică</button>
+            </div>
         </div>
     </div>
 
@@ -1451,6 +1685,50 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-color);">
                 <span id="customMerchantsTotalCount" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">0 magazine, 0 cumpărături</span>
                 <button type="button" class="btn btn-accent" data-close="modalCustomMerchants" style="padding: 9px 22px; font-size: 0.88rem; font-weight: 700;" data-i18n="btn_close">Gata / Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SETARE LOCATIE IMPLICITA MAGAZIN -->
+    <div class="modal-overlay" id="modalMerchantDefaultLocation">
+        <div class="modal-box" style="max-width: 420px; padding: 14px 16px;">
+            <div class="modal-header" style="margin-bottom: 10px;">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <span id="merchantDefLocModalLogo">🏪</span>
+                    <span id="merchantDefLocModalTitle">Locație Implicită Magazin</span>
+                </div>
+                <button type="button" class="modal-close" data-close="modalMerchantDefaultLocation">&times;</button>
+            </div>
+
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                Alege locația care se va selecta automat la alegerea magazinului <strong id="merchantDefLocModalStoreName" style="color: var(--text-color);"></strong>:
+            </div>
+
+            <!-- Starea curentă a locației implicite -->
+            <div id="merchantDefLocCurrentWrap" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                    <span>📍</span>
+                    <span style="color: var(--text-muted);">Locație curentă:</span>
+                    <strong id="merchantDefLocCurrentVal" style="color: var(--accent);">Fără locație</strong>
+                </div>
+                <button type="button" id="btnRemoveMerchantDefLoc" class="btn btn-sm" style="display: none; padding: 4px 10px; font-size: 0.74rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); font-weight: 700; border-radius: 6px;">🗑️ Șterge</button>
+            </div>
+
+            <!-- Listă verticală cu locații existente pentru selecție rapidă -->
+            <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px;">Selectează din locațiile tale:</div>
+            <div id="merchantDefLocsList" style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; padding-right: 2px;">
+                <!-- Populat dinamic în JS -->
+            </div>
+
+            <!-- Adăugare oraș/locație nouă direct de aici -->
+            <div style="display: flex; gap: 6px; margin-bottom: 14px;">
+                <input type="text" id="inputNewMerchantDefLoc" class="form-control" placeholder="＋ Sau adaugă alt oraș / locație..." maxlength="30" style="flex: 1; height: 36px; font-size: 0.8rem; padding: 4px 8px;">
+                <button type="button" id="btnSaveNewMerchantDefLoc" class="btn btn-accent" style="padding: 0 12px; font-size: 0.76rem; font-weight: 700; white-space: nowrap;">Setează</button>
+            </div>
+
+            <!-- Butoane acțiune la bază -->
+            <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn-secondary btn-block" data-close="modalMerchantDefaultLocation" style="padding: 8px 12px; font-size: 0.82rem;">Închide</button>
             </div>
         </div>
     </div>
@@ -2575,8 +2853,10 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=481"></script>
+    <script src="app.js?v=504"></script>
 </body>
+
+
 </html>
 
 
