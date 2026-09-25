@@ -7022,21 +7022,22 @@ body.dark-theme .overview-export-box {
    - Butoane funcționale optimizate
    ======================================================== */
 #modalExpense.modal-overlay {
-    padding-top: 10px !important;
-    padding-bottom: 6px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
     align-items: flex-start !important;
     justify-content: center !important;
 }
 
 #modalExpense .modal-box {
-    padding: 8px 12px 10px 12px !important;
+    padding: 10px 12px 12px 12px !important;
     height: auto !important;
-    min-height: 0 !important;
-    max-height: 98vh !important;
+    min-height: min(670px, calc(100vh - 20px)) !important;
+    max-height: calc(100vh - 16px) !important;
     box-sizing: border-box !important;
     margin-top: 0px !important;
     margin-bottom: 0px !important;
     transform: none !important;
+    overflow-y: auto !important;
 }
 
 #modalExpense .modal-header {
@@ -7122,14 +7123,14 @@ body.dark-theme .overview-export-box {
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 4px !important;
     padding: 4px 2px !important;
-    max-height: 320px !important;
-    min-height: 290px !important;
+    max-height: 350px !important;
+    min-height: 300px !important;
     margin-bottom: 0px !important;
 }
 
 #modalExpense .cat-pick-btn {
-    min-height: 52px !important;
-    height: 52px !important;
+    min-height: 55px !important;
+    height: 55px !important;
     padding: 3px 1px !important;
     gap: 1px !important;
     border-radius: 7px !important;
@@ -7331,15 +7332,15 @@ body.dark-theme .overview-export-box {
 .expense-tools-col .expense-tool-select,
 .expense-tools-col .expense-tool-btn {
     width: 100% !important;
-    height: 35px !important;
-    min-height: 35px !important;
-    padding: 3px 4px !important;
-    font-size: 0.70rem !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 4px 5px !important;
+    font-size: 0.74rem !important;
     font-weight: 700 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     box-sizing: border-box !important;
@@ -7350,14 +7351,17 @@ body.dark-theme .overview-export-box {
 .expense-tools-col .tool-text {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
     min-width: 0 !important;
-    line-height: 1.2 !important;
+    line-height: 1.15 !important;
 }
 
 .expense-tools-col .tool-icon {
-    font-size: 0.85rem !important;
-    margin-right: 2px !important;
+    font-size: 0.95rem !important;
+    margin-right: 3px !important;
     flex-shrink: 0 !important;
 }
 
@@ -7375,10 +7379,10 @@ body.dark-theme .overview-export-box {
 }
 
 .expense-tool-select {
-    height: 35px !important;
-    min-height: 35px !important;
-    padding: 4px 10px !important;
-    font-size: 0.78rem !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 4px 8px !important;
+    font-size: 0.82rem !important;
     font-weight: 700 !important;
     border-radius: 8px !important;
     background: var(--input-bg) !important;
@@ -7401,14 +7405,14 @@ body.dark-theme .overview-export-box {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 35px;
-    min-height: 35px;
+    height: 44px;
+    min-height: 44px;
     padding: 4px 8px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background: var(--input-bg);
     color: var(--text-color);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     cursor: pointer;
     box-sizing: border-box;

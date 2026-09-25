@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.51";
+const APP_VERSION = "3.4.52";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -19868,12 +19868,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         openModal('modalExpense');
         updateExpenseLivePreview();
-        setTimeout(() => {
-            const amt = document.getElementById('expenseAmount');
-            if (amt) {
-                amt.focus({ preventScroll: true });
-            }
-        }, 150);
     };
 
     window.openEditIncomeModal = function(tx) {
@@ -20318,10 +20312,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderExpenseCategoryPicker();
             closeFoodMerchantsOverlay();
             openModal('modalExpense');
-            setTimeout(() => {
-                const amt = document.getElementById('expenseAmount');
-                if (amt) amt.focus({ preventScroll: true });
-            }, 150);
         });
     }
 
