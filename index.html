@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=505">
+    <link rel="stylesheet" href="style.css?v=506">
 </head>
 <body>
     <div class="container">
@@ -1659,16 +1659,19 @@
             </div>
             
             <div style="overflow-y: auto; max-height: 68vh; padding-right: 4px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 12px;">
-                <!-- Secțiunea 1: Magazine Noi Adăugate -->
+                <!-- Secțiunea 1: Magazine -->
                 <div>
                     <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                         <span>🏪</span>
-                        <span data-i18n="heading_my_merchants">Magazine Adăugate de Mine:</span>
+                        <span data-i18n="heading_my_merchants">Magazine:</span>
                     </div>
-                    <!-- Formular adăugare magazin nou direct -->
-                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                        <input type="text" id="inputNewCustomMerchantModal" class="form-control" placeholder="＋ Adaugă magazin nou..." maxlength="35" style="flex: 1; height: 34px; font-size: 0.8rem; padding: 4px 8px;">
-                        <button type="button" id="btnAddCustomMerchantModal" class="btn btn-accent" style="padding: 0 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap;">Adaugă</button>
+                    <!-- Căutare și Adăugare Magazin -->
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;">
+                        <input type="text" id="inputFilterCustomMerchantsModal" class="form-control" placeholder="🔍 Caută magazin în listă..." style="height: 34px; font-size: 0.8rem; padding: 4px 8px;">
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="inputNewCustomMerchantModal" class="form-control" placeholder="＋ Sau adaugă magazin nou..." maxlength="35" style="flex: 1; height: 34px; font-size: 0.8rem; padding: 4px 8px;">
+                            <button type="button" id="btnAddCustomMerchantModal" class="btn btn-accent" style="padding: 0 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap;">Adaugă</button>
+                        </div>
                     </div>
                     <div id="customMerchantsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
                         <!-- Populat dinamic via JS -->
@@ -2879,7 +2882,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=505"></script>
+    <script src="app.js?v=506"></script>
 </body>
 
 

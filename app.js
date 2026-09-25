@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.50";
+const APP_VERSION = "3.4.51";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -240,7 +240,7 @@ const I18N_DICTIONARY = {
         categories_list_modal_title: 'Listă Categorii',
         custom_merchants_title: 'Magazine și Cumpărături Noi',
         custom_merchants_sub: 'Toate magazinele și cumpărăturile noi adăugate de dumneavoastră:',
-        heading_my_merchants: 'Magazine Adăugate de Mine:',
+        heading_my_merchants: 'Magazine:',
         heading_my_items: 'Cumpărături Adăugate de Mine:',
         custom_merchants_empty: 'Niciun magazin nou adăugat încă.',
         custom_items_empty: 'Niciun articol nou de cumpărături adăugat încă.',
@@ -374,7 +374,7 @@ const I18N_DICTIONARY = {
         btn_added_merchants: '🛍️ Magazine și Cumpărături Noi',
         btn_added_merchants_items: 'Magazine și Cumpărături Noi',
         custom_merchants_title: 'Magazine și Cumpărături Noi',
-        heading_my_merchants: 'Magazine Adăugate de Mine:',
+        heading_my_merchants: 'Magazine:',
         heading_my_items: 'Cumpărături Adăugate de Mine:',
         categories_list_modal_title: 'Listă Categorii',
         custom_merchants_sub: 'Toate magazinele și furnizorii personalizați adăugați de dumneavoastră:',
@@ -16490,7 +16490,25 @@ function deleteCustomMerchant(name) {
     showToast(`Magazinul "${name}" a fost eliminat!`, 'info');
 }
 
-// Editare / Redenumire magazin
+// Returnează lista completă și unică a tuturor magazinelor (catalog + adăugate de utilizator), ordonată alfabetic
+function getAllStoresList() {
+    const rawStores = getFoodMerchantsList(null);
+    const seen = new Set();
+    const unique = [];
+    rawStores.forEach(s => {
+        const name = (typeof s === 'string' ? s : (s.name || '')).trim();
+        if (!name) return;
+        const lower = name.toLowerCase();
+        if (!seen.has(lower)) {
+            seen.add(lower);
+            unique.push(name);
+        }
+    });
+    unique.sort((a, b) => a.localeCompare(b, 'ro', { sensitivity: 'base' }));
+    return unique;
+}
+
+// Editare / Redenumire magazin (funcționează atât pentru magazinele adăugate cât și pentru cele din catalog)
 function editCustomMerchant(oldName, newName) {
     if (!oldName) return;
     const cleanOld = oldName.trim();
@@ -16499,31 +16517,47 @@ function editCustomMerchant(oldName, newName) {
 
     if (!appData.settings) appData.settings = {};
     if (!Array.isArray(appData.settings.customMerchants)) appData.settings.customMerchants = [];
+    if (!Array.isArray(appData.settings.hiddenMerchants)) appData.settings.hiddenMerchants = [];
 
     const oldLower = cleanOld.toLowerCase();
     const newLower = cleanNew.toLowerCase();
 
-    const exists = appData.settings.customMerchants.some(m => {
-        const n = typeof m === 'string' ? m : (m.name || '');
-        return n.toLowerCase() === newLower;
-    });
+    // Verificăm dacă noul nume există deja în lista activă de magazine
+    const allStores = getAllStoresList();
+    const exists = allStores.some(s => s.toLowerCase() === newLower);
     if (exists) {
         showToast(`Magazinul „${cleanNew}” există deja!`, 'warning');
         return;
     }
 
-    // Actualizare în customMerchants
-    appData.settings.customMerchants = appData.settings.customMerchants.map(m => {
-        if (typeof m === 'string') {
-            return m.toLowerCase() === oldLower ? cleanNew : m;
-        } else if (m && typeof m === 'object') {
-            if (m.name && m.name.toLowerCase() === oldLower) {
-                return { ...m, name: cleanNew };
+    // Verificăm dacă vechiul magazin era personalizat
+    const wasCustom = appData.settings.customMerchants.some(m => {
+        const n = typeof m === 'string' ? m : (m.name || '');
+        return n.toLowerCase() === oldLower;
+    });
+
+    if (wasCustom) {
+        appData.settings.customMerchants = appData.settings.customMerchants.map(m => {
+            if (typeof m === 'string') {
+                return m.toLowerCase() === oldLower ? cleanNew : m;
+            } else if (m && typeof m === 'object') {
+                if (m.name && m.name.toLowerCase() === oldLower) {
+                    return { ...m, name: cleanNew };
+                }
+                return m;
             }
             return m;
+        });
+    } else {
+        // Magazin din catalog: ascundem numele vechi și adăugăm noul nume ca magazin personalizat
+        if (!appData.settings.hiddenMerchants.includes(oldLower)) {
+            appData.settings.hiddenMerchants.push(oldLower);
         }
-        return m;
-    });
+        appData.settings.customMerchants.push({ name: cleanNew, icon: '🛒' });
+    }
+
+    // Scoatem noul nume din hidden dacă era ascuns anterior
+    appData.settings.hiddenMerchants = appData.settings.hiddenMerchants.filter(h => h !== newLower);
 
     // Actualizare în locațiile implicite
     if (appData.settings.merchantDefaultLocations) {
@@ -17802,13 +17836,13 @@ function renderCustomMerchantsModal() {
     const itemsListEl = document.getElementById('customItemsListContainer');
     const countEl = document.getElementById('customMerchantsTotalCount');
 
-    const customMerchants = (appData.settings && Array.isArray(appData.settings.customMerchants)) ? appData.settings.customMerchants : [];
+    const allStores = getAllStoresList();
     const customItems = (appData.settings && Array.isArray(appData.settings.customShoppingItems)) ? appData.settings.customShoppingItems : [];
     const userLocations = getLocationsList();
 
     if (countEl) {
         const activeLang = getLanguageForCurrency();
-        const mCount = customMerchants.length;
+        const mCount = allStores.length;
         const locCount = userLocations.length;
         const iCount = customItems.length;
         const mLabel = mCount === 1 ? (t('custom_merchants_singular', activeLang) || 'magazin') : (t('custom_merchants_plural', activeLang) || 'magazine');
@@ -17817,14 +17851,21 @@ function renderCustomMerchantsModal() {
         countEl.textContent = `${mCount} ${mLabel}, ${locCount} ${locLabel}, ${iCount} ${iLabel}`;
     }
 
-    // 1. Magazine Adăugate de Mine
+    // 1. Magazine (toate magazinele din catalog + cele adăugate, cu posibilitate de căutare / filtrare)
     if (merchantsListEl) {
         merchantsListEl.innerHTML = '';
-        if (customMerchants.length === 0) {
-            merchantsListEl.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 2px;">' + (t('custom_merchants_empty', getLanguageForCurrency()) || 'Niciun magazin nou adăugat încă.') + '</div>';
+        const filterInput = document.getElementById('inputFilterCustomMerchantsModal');
+        const filterVal = (filterInput?.value || '').trim();
+        const qNorm = (typeof normalizeForSearch === 'function') ? normalizeForSearch(filterVal) : filterVal.toLowerCase();
+
+        const filteredStores = qNorm
+            ? allStores.filter(s => (typeof normalizeForSearch === 'function' ? normalizeForSearch(s) : s.toLowerCase()).includes(qNorm))
+            : allStores;
+
+        if (filteredStores.length === 0) {
+            merchantsListEl.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 2px;">' + (filterVal ? `Niciun magazin găsit pentru „${escapeHtml(filterVal)}”.` : (t('custom_merchants_empty', getLanguageForCurrency()) || 'Niciun magazin disponibil.')) + '</div>';
         } else {
-            customMerchants.forEach(m => {
-                const name = typeof m === 'string' ? m : (m.name || '');
+            filteredStores.forEach(name => {
                 if (!name) return;
                 const defLoc = getMerchantDefaultLocation(name);
                 const tag = document.createElement('div');
@@ -17939,11 +17980,20 @@ function renderCustomMerchantsModal() {
         }
     }
 
-    // Conectare formulare de adăugare directă din modal
+    // Conectare formulare de adăugare și filtrare directă din modal
     initCustomMerchantsModalInputs();
 }
 
 function initCustomMerchantsModalInputs() {
+    // 0. Filtrare căutare magazine în listă
+    const filterInput = document.getElementById('inputFilterCustomMerchantsModal');
+    if (filterInput && !filterInput.dataset.bound) {
+        filterInput.dataset.bound = 'true';
+        filterInput.addEventListener('input', () => {
+            renderCustomMerchantsModal();
+        });
+    }
+
     // 1. Input Magazin Nou
     const btnAddMerchant = document.getElementById('btnAddCustomMerchantModal');
     const inputMerchant = document.getElementById('inputNewCustomMerchantModal');
