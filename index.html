@@ -30,7 +30,7 @@
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-    <link rel="stylesheet" href="style.css?v=504">
+    <link rel="stylesheet" href="style.css?v=505">
 </head>
 <body>
     <div class="container">
@@ -1653,7 +1653,7 @@
             <div class="modal-header" style="padding-bottom: 8px;">
                 <div class="modal-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
                     <span>🛍️</span>
-                    <span data-i18n="custom_merchants_title">Magazine și Cumpărături Noi</span>
+                    <span data-i18n="custom_merchants_title">Magazine, Locații și Cumpărături</span>
                 </div>
                 <button class="modal-close" data-close="modalCustomMerchants">&times;</button>
             </div>
@@ -1665,16 +1665,42 @@
                         <span>🏪</span>
                         <span data-i18n="heading_my_merchants">Magazine Adăugate de Mine:</span>
                     </div>
+                    <!-- Formular adăugare magazin nou direct -->
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="text" id="inputNewCustomMerchantModal" class="form-control" placeholder="＋ Adaugă magazin nou..." maxlength="35" style="flex: 1; height: 34px; font-size: 0.8rem; padding: 4px 8px;">
+                        <button type="button" id="btnAddCustomMerchantModal" class="btn btn-accent" style="padding: 0 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap;">Adaugă</button>
+                    </div>
                     <div id="customMerchantsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
                         <!-- Populat dinamic via JS -->
                     </div>
                 </div>
 
-                <!-- Secțiunea 2: Cumpărături Noi Adăugate -->
+                <!-- Secțiunea 2: Locații Adăugate de Mine -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                        <span>📍</span>
+                        <span>Locații Adăugate de Mine:</span>
+                    </div>
+                    <!-- Formular adăugare locație nouă direct -->
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="text" id="inputNewCustomLocationModal" class="form-control" placeholder="＋ Adaugă oraș / locație nouă..." maxlength="35" style="flex: 1; height: 34px; font-size: 0.8rem; padding: 4px 8px;">
+                        <button type="button" id="btnAddCustomLocationModal" class="btn btn-accent" style="padding: 0 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap;">Adaugă</button>
+                    </div>
+                    <div id="customLocationsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
+                        <!-- Populat dinamic via JS -->
+                    </div>
+                </div>
+
+                <!-- Secțiunea 3: Cumpărături Noi Adăugate -->
                 <div style="border-top: 1px solid var(--border-color); padding-top: 12px;">
                     <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
                         <span>🛍️</span>
                         <span data-i18n="heading_my_items">Cumpărături Adăugate de Mine:</span>
+                    </div>
+                    <!-- Formular adăugare cumpărătură nouă direct -->
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <input type="text" id="inputNewCustomItemModal" class="form-control" placeholder="＋ Adaugă articol cumpărături nou..." maxlength="35" style="flex: 1; height: 34px; font-size: 0.8rem; padding: 4px 8px;">
+                        <button type="button" id="btnAddCustomItemModal" class="btn btn-accent" style="padding: 0 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap;">Adaugă</button>
                     </div>
                     <div id="customItemsListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0;">
                         <!-- Populat dinamic via JS -->
@@ -1683,7 +1709,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-color);">
-                <span id="customMerchantsTotalCount" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">0 magazine, 0 cumpărături</span>
+                <span id="customMerchantsTotalCount" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">0 magazine, 0 locații, 0 cumpărături</span>
                 <button type="button" class="btn btn-accent" data-close="modalCustomMerchants" style="padding: 9px 22px; font-size: 0.88rem; font-weight: 700;" data-i18n="btn_close">Gata / Închide</button>
             </div>
         </div>
@@ -2853,7 +2879,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=504"></script>
+    <script src="app.js?v=505"></script>
 </body>
 
 

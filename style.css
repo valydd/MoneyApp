@@ -1795,8 +1795,12 @@ body.dark-theme .chart-center-curr {
     z-index: 1050;
 }
 
-#modalCategoryForm, #modalMerchantCatConfig, #modalCustomMerchants, #modalCurrencyPicker, #modalEurLanguagePicker, #modalFundCurrencyPicker, #modalMerchantDefaultLocation {
+#modalCategoryForm, #modalMerchantCatConfig, #modalCustomMerchants, #modalCurrencyPicker, #modalEurLanguagePicker, #modalFundCurrencyPicker {
     z-index: 1200 !important;
+}
+
+#modalMerchantDefaultLocation {
+    z-index: 1250 !important;
 }
 
 #modalReceiptScanner {
@@ -9192,6 +9196,90 @@ body.dark-theme .tx-loc-text {
 .btn-set-store-def-loc:hover {
     background: rgba(59, 130, 246, 0.28);
 }
+
+/* Custom Tags for Merchants, Locations & Shopping Items */
+.merchant-custom-tag, .location-custom-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.merchant-custom-tag:hover, .location-custom-tag:hover {
+    border-color: var(--accent);
+}
+
+.merchant-tag-loc-btn {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 6px;
+    transition: transform 0.1s, opacity 0.15s;
+}
+
+.merchant-tag-loc-btn:active {
+    transform: scale(0.95);
+}
+
+.merchant-tag-loc-btn.has-loc {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.merchant-tag-loc-btn:not(.has-loc) {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+}
+
+.merchant-tag-edit-btn, .location-tag-edit-btn, .item-tag-edit-btn, .location-item-edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0 3px;
+    line-height: 1;
+    transition: transform 0.1s, color 0.15s;
+}
+
+.merchant-tag-edit-btn:hover, .location-tag-edit-btn:hover, .item-tag-edit-btn:hover, .location-item-edit-btn:hover {
+    color: var(--accent);
+    transform: scale(1.15);
+}
+
+.location-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.location-item-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.location-item-row.is-selected {
+    background: rgba(59, 130, 246, 0.15);
+    font-weight: 700;
+}
+
 
 
 

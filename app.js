@@ -56,50 +56,20 @@ const DEFAULT_CATEGORIES = [
     { id: 'cat-9', name: 'Altele', color: '#64748b', icon: '📦' }
 ];
 
-const DEFAULT_LOCATIONS = [
-    'Alba Iulia',
-    'Alexandria',
-    'Arad',
-    'Bacău',
-    'Baia Mare',
-    'Bistrița',
-    'Botoșani',
-    'Brăila',
-    'Brașov',
-    'București',
-    'Buzău',
-    'Călărași',
-    'Cluj-Napoca',
-    'Constanța',
-    'Craiova',
-    'Curtea de Argeș',
-    'Deva',
-    'Drobeta-Turnu Severin',
-    'Focșani',
-    'Galați',
-    'Giurgiu',
-    'Iași',
-    'Miercurea Ciuc',
-    'Mioveni',
-    'Oradea',
-    'Piatra Neamț',
-    'Pitești',
-    'Ploiești',
-    'Râmnicu Vâlcea',
-    'Reșița',
-    'Satu Mare',
-    'Sfântu Gheorghe',
-    'Sibiu',
-    'Slatina',
-    'Slobozia',
-    'Suceava',
-    'Târgoviște',
-    'Târgu Jiu',
-    'Târgu Mureș',
-    'Timișoara',
-    'Tulcea',
-    'Vaslui',
-    'Zalău'
+const DEFAULT_LOCATIONS = [];
+
+// Lista veche de orașe care au fost anterior injectate în mod automat în aplicație
+const OLD_HARDCODED_DEFAULT_CITIES = [
+    'alba iulia', 'alexandria', 'arad', 'bacău', 'bacau', 'baia mare', 'bistrița', 'bistrita',
+    'botoșani', 'botosani', 'brăila', 'braila', 'brașov', 'brasov', 'bucurești', 'bucuresti',
+    'buzău', 'buzau', 'călărași', 'calarasi', 'cluj-napoca', 'constanța', 'constanta',
+    'craiova', 'curtea de argeș', 'curtea de arges', 'deva', 'drobeta-turnu severin',
+    'focșani', 'focsani', 'galați', 'galati', 'giurgiu', 'iași', 'iasi', 'miercurea ciuc',
+    'mioveni', 'oradea', 'piatra neamț', 'piatra neamt', 'pitești', 'pitesti', 'ploiesti', 'ploiești',
+    'râmnicu vâlcea', 'ramnicu valcea', 'reșița', 'resita', 'satu mare', 'sfântu gheorghe',
+    'sfantu gheorghe', 'sibiu', 'slatina', 'slobozia', 'suceava', 'târgoviște', 'targoviste',
+    'târgu jiu', 'targu jiu', 'târgu mureș', 'targu mures', 'timișoara', 'timisoara',
+    'tulcea', 'vaslui', 'zalău', 'zalau'
 ];
 
 // Initial State
@@ -107,13 +77,14 @@ let appData = {
     categories: [...DEFAULT_CATEGORIES],
     transactions: [],
     customDeposits: [],
-    locations: [...DEFAULT_LOCATIONS],
+    locations: [],
     settings: {
         eurRate: 4.98,
         theme: 'dark',
         mainCurrency: 'RON',
         secondaryCurrency: 'auto',
-        merchantDefaultLocations: {}
+        merchantDefaultLocations: {},
+        userAddedLocations: []
     }
 };
 window.appData = appData;
@@ -128,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.49";
+const APP_VERSION = "3.4.50";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -5998,18 +5969,49 @@ function loadData() {
         if (!Array.isArray(appData.settings.deletedLocations)) {
             appData.settings.deletedLocations = [];
         }
+        if (!Array.isArray(appData.settings.userAddedLocations)) {
+            appData.settings.userAddedLocations = [];
+        }
         const deletedLocs = appData.settings.deletedLocations.map(l => l.toLowerCase());
 
-        if (!Array.isArray(appData.locations) || appData.locations.length === 0) {
-            appData.locations = DEFAULT_LOCATIONS.filter(l => !deletedLocs.includes(l.toLowerCase()));
-        } else {
-            DEFAULT_LOCATIONS.forEach(defLoc => {
-                const defLower = defLoc.toLowerCase();
-                if (!deletedLocs.includes(defLower) && !appData.locations.some(l => l.toLowerCase() === defLower)) {
-                    appData.locations.push(defLoc);
+        // Identificăm locațiile reale ale utilizatorului (folosite în tranzacții, în setări de magazine sau adăugate explicit)
+        const userRealLocations = new Set();
+        if (Array.isArray(appData.transactions)) {
+            appData.transactions.forEach(tx => {
+                if (tx.location && typeof tx.location === 'string' && tx.location.trim().length > 0) {
+                    userRealLocations.add(tx.location.trim().toLowerCase());
                 }
             });
         }
+        if (appData.settings.merchantDefaultLocations && typeof appData.settings.merchantDefaultLocations === 'object') {
+            Object.values(appData.settings.merchantDefaultLocations).forEach(l => {
+                if (l && typeof l === 'string' && l.trim().length > 0) {
+                    userRealLocations.add(l.trim().toLowerCase());
+                }
+            });
+        }
+        if (Array.isArray(appData.settings.userAddedLocations)) {
+            appData.settings.userAddedLocations.forEach(l => {
+                if (l && typeof l === 'string' && l.trim().length > 0) {
+                    userRealLocations.add(l.trim().toLowerCase());
+                }
+            });
+        }
+
+        if (!Array.isArray(appData.locations)) {
+            appData.locations = [];
+        }
+
+        // Curățare: eliminăm toate orașele vechi hardcodate care NU au fost folosite niciodată de utilizator
+        appData.locations = appData.locations.filter(loc => {
+            if (!loc || typeof loc !== 'string') return false;
+            const lLow = loc.trim().toLowerCase();
+            if (deletedLocs.includes(lLow)) return false;
+            if (OLD_HARDCODED_DEFAULT_CITIES.includes(lLow)) {
+                return userRealLocations.has(lLow);
+            }
+            return true;
+        });
 
         // Auto-recuperare (Self-Healing) citiri contoare și locații din tranzacțiile existente
         if (Array.isArray(appData.transactions)) {
@@ -16348,7 +16350,7 @@ function deleteCustomShoppingItem(name) {
         appData.settings.hiddenShoppingItems.push(lower);
     }
     if (Array.isArray(appData.settings.customShoppingItems)) {
-        appData.settings.customShoppingItems = appData.settings.customShoppingItems.filter(i => i.name.toLowerCase().trim() !== lower);
+        appData.settings.customShoppingItems = appData.settings.customShoppingItems.filter(i => (typeof i === 'string' ? i : (i.name || '')).toLowerCase().trim() !== lower);
     }
 
     const descInput = document.getElementById('expenseDesc');
@@ -16365,6 +16367,60 @@ function deleteCustomShoppingItem(name) {
     const activeCatId = document.getElementById('selectedExpenseCategoryId')?.value;
     updateFoodMerchantsQuickPicker(activeCatId);
     showToast(`Articolul "${name}" a fost eliminat!`, 'info');
+}
+
+// Editare / Redenumire articol de cumpărături
+function editCustomShoppingItem(oldName, newName) {
+    if (!oldName) return;
+    const cleanOld = oldName.trim();
+    const cleanNew = (newName || '').trim();
+    if (!cleanNew || cleanNew.toLowerCase() === cleanOld.toLowerCase()) return;
+
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.customShoppingItems)) appData.settings.customShoppingItems = [];
+
+    const oldLower = cleanOld.toLowerCase();
+    const newLower = cleanNew.toLowerCase();
+
+    const exists = appData.settings.customShoppingItems.some(i => (typeof i === 'string' ? i : (i.name || '')).toLowerCase() === newLower);
+    if (exists) {
+        showToast(`Articolul „${cleanNew}” există deja!`, 'warning');
+        return;
+    }
+
+    appData.settings.customShoppingItems = appData.settings.customShoppingItems.map(item => {
+        if (typeof item === 'string') {
+            return item.toLowerCase() === oldLower ? cleanNew : item;
+        } else if (item && typeof item === 'object') {
+            if (item.name && item.name.toLowerCase() === oldLower) {
+                return { ...item, name: cleanNew };
+            }
+            return item;
+        }
+        return item;
+    });
+
+    const descInput = document.getElementById('expenseDesc');
+    if (descInput && descInput.value) {
+        let curItems = descInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        curItems = curItems.map(i => i.toLowerCase() === oldLower ? cleanNew : i);
+        descInput.value = curItems.join(', ');
+    }
+
+    saveData();
+    persistDatabaseToFile();
+    if (typeof renderCustomMerchantsModal === "function") renderCustomMerchantsModal();
+    const activeCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    updateFoodMerchantsQuickPicker(activeCatId);
+    showToast(`Articolul a fost redenumit în „${cleanNew}”!`, 'success');
+}
+
+function promptEditShoppingItem(name) {
+    if (!name) return;
+    const newName = prompt(`Redenumește articolul „${name}”:`, name);
+    if (newName !== null && newName.trim() && newName.trim() !== name) {
+        editCustomShoppingItem(name, newName.trim());
+    }
 }
 
 // Adăugare magazin personalizat cu salvare persistentă pe disc
@@ -16415,7 +16471,7 @@ function deleteCustomMerchant(name) {
         appData.settings.hiddenMerchants.push(lower);
     }
     if (Array.isArray(appData.settings.customMerchants)) {
-        appData.settings.customMerchants = appData.settings.customMerchants.filter(m => m.name.toLowerCase().trim() !== lower);
+        appData.settings.customMerchants = appData.settings.customMerchants.filter(m => (typeof m === 'string' ? m : (m.name || '')).toLowerCase().trim() !== lower);
     }
     
     // Dacă magazinul șters era cel selectat în formular, îl deselectăm
@@ -16432,6 +16488,82 @@ function deleteCustomMerchant(name) {
     renderMerchantCatConfigModal();
     renderCustomMerchantsModal();
     showToast(`Magazinul "${name}" a fost eliminat!`, 'info');
+}
+
+// Editare / Redenumire magazin
+function editCustomMerchant(oldName, newName) {
+    if (!oldName) return;
+    const cleanOld = oldName.trim();
+    const cleanNew = (newName || '').trim();
+    if (!cleanNew || cleanNew.toLowerCase() === cleanOld.toLowerCase()) return;
+
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.customMerchants)) appData.settings.customMerchants = [];
+
+    const oldLower = cleanOld.toLowerCase();
+    const newLower = cleanNew.toLowerCase();
+
+    const exists = appData.settings.customMerchants.some(m => {
+        const n = typeof m === 'string' ? m : (m.name || '');
+        return n.toLowerCase() === newLower;
+    });
+    if (exists) {
+        showToast(`Magazinul „${cleanNew}” există deja!`, 'warning');
+        return;
+    }
+
+    // Actualizare în customMerchants
+    appData.settings.customMerchants = appData.settings.customMerchants.map(m => {
+        if (typeof m === 'string') {
+            return m.toLowerCase() === oldLower ? cleanNew : m;
+        } else if (m && typeof m === 'object') {
+            if (m.name && m.name.toLowerCase() === oldLower) {
+                return { ...m, name: cleanNew };
+            }
+            return m;
+        }
+        return m;
+    });
+
+    // Actualizare în locațiile implicite
+    if (appData.settings.merchantDefaultLocations) {
+        if (appData.settings.merchantDefaultLocations[oldLower]) {
+            appData.settings.merchantDefaultLocations[newLower] = appData.settings.merchantDefaultLocations[oldLower];
+            delete appData.settings.merchantDefaultLocations[oldLower];
+        }
+    }
+
+    // Actualizare în tranzacții
+    if (Array.isArray(appData.transactions)) {
+        appData.transactions.forEach(tx => {
+            if (tx.merchant && tx.merchant.trim().toLowerCase() === oldLower) {
+                tx.merchant = cleanNew;
+            }
+        });
+    }
+
+    // Dacă era selectat în formularul de cheltuieli
+    const merchantInput = document.getElementById('selectedExpenseMerchant');
+    if (merchantInput && merchantInput.value.trim().toLowerCase() === oldLower) {
+        merchantInput.value = cleanNew;
+    }
+
+    saveData();
+    persistDatabaseToFile();
+
+    const activeCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    updateFoodMerchantsQuickPicker(activeCatId);
+    renderMerchantCatConfigModal();
+    renderCustomMerchantsModal();
+    showToast(`Magazinul a fost redenumit în „${cleanNew}”!`, 'success');
+}
+
+function promptEditMerchant(name) {
+    if (!name) return;
+    const newName = prompt(`Redenumește magazinul „${name}”:`, name);
+    if (newName !== null && newName.trim() && newName.trim() !== name) {
+        editCustomMerchant(name, newName.trim());
+    }
 }
 
 
@@ -16460,6 +16592,10 @@ function setMerchantDefaultLocation(storeName, locName) {
         if (!appData.locations.some(l => l.toLowerCase() === locClean.toLowerCase())) {
             appData.locations.push(locClean);
         }
+        if (!Array.isArray(appData.settings.userAddedLocations)) appData.settings.userAddedLocations = [];
+        if (!appData.settings.userAddedLocations.some(l => l.toLowerCase() === locClean.toLowerCase())) {
+            appData.settings.userAddedLocations.push(locClean);
+        }
     } else {
         delete appData.settings.merchantDefaultLocations[key];
     }
@@ -16467,6 +16603,7 @@ function setMerchantDefaultLocation(storeName, locName) {
     const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
     if (curCatId) renderMerchantsCol(curCatId);
     renderLocationsDropdownList();
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
 }
 
 function removeMerchantDefaultLocation(storeName) {
@@ -16477,6 +16614,7 @@ function removeMerchantDefaultLocation(storeName) {
     const curCatId = document.getElementById('selectedExpenseCategoryId')?.value;
     if (curCatId) renderMerchantsCol(curCatId);
     renderLocationsDropdownList();
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
 }
 
 let currentMerchantForDefLocModal = '';
@@ -16556,11 +16694,12 @@ function renderMerchantDefLocModal(storeName) {
                     </span>
                     <div style="display:flex;align-items:center;gap:6px;">
                         ${isSelected ? '<span class="loc-option-check">✓ Implicită</span>' : '<span style="font-size:0.72rem;color:var(--text-muted);">Alege</span>'}
+                        <button type="button" class="location-item-edit-btn" title="Editează ${escapeHtml(loc)}" aria-label="Editează ${escapeHtml(loc)}" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:2px 4px;color:var(--text-muted);">✏️</button>
                         <button type="button" class="location-item-del-btn" title="Șterge ${escapeHtml(loc)} din listă" aria-label="Șterge ${escapeHtml(loc)}">🗑️</button>
                     </div>
                 `;
                 row.addEventListener('click', (e) => {
-                    if (e.target.closest('.location-item-del-btn')) return;
+                    if (e.target.closest('.location-item-del-btn') || e.target.closest('.location-item-edit-btn')) return;
                     setMerchantDefaultLocation(sName, loc);
                     const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
                     if (curExpenseStore.toLowerCase() === sName.toLowerCase()) {
@@ -16571,6 +16710,15 @@ function renderMerchantDefLocModal(storeName) {
                     }
                     closeModal('modalMerchantDefaultLocation');
                 });
+
+                const editBtn = row.querySelector('.location-item-edit-btn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        promptEditLocation(loc);
+                    });
+                }
 
                 const delBtn = row.querySelector('.location-item-del-btn');
                 if (delBtn) {
@@ -16642,8 +16790,8 @@ function renderMerchantDefLocModal(storeName) {
 }
 
 function getLocationsList() {
-    if (!Array.isArray(appData.locations) || appData.locations.length === 0) {
-        appData.locations = [...DEFAULT_LOCATIONS];
+    if (!Array.isArray(appData.locations)) {
+        appData.locations = [];
     }
     return [...appData.locations].sort((a, b) => a.localeCompare(b, 'ro', { sensitivity: 'base' }));
 }
@@ -16672,13 +16820,25 @@ function renderLocationsDropdownList() {
             row.className = 'location-item-row' + (isSel ? ' is-selected' : '');
             row.innerHTML = `
                 <span class="location-item-name">📍 ${escapeHtml(loc)}</span>
-                <button type="button" class="location-item-del-btn" title="Șterge ${escapeHtml(loc)} din listă" aria-label="Șterge ${escapeHtml(loc)}">🗑️</button>
+                <div style="display:flex;align-items:center;gap:4px;">
+                    <button type="button" class="location-item-edit-btn" title="Editează ${escapeHtml(loc)}" aria-label="Editează ${escapeHtml(loc)}">✏️</button>
+                    <button type="button" class="location-item-del-btn" title="Șterge ${escapeHtml(loc)} din listă" aria-label="Șterge ${escapeHtml(loc)}">🗑️</button>
+                </div>
             `;
 
             row.addEventListener('click', (e) => {
-                if (e.target.closest('.location-item-del-btn')) return;
+                if (e.target.closest('.location-item-del-btn') || e.target.closest('.location-item-edit-btn')) return;
                 selectLocation(loc);
             });
+
+            const editBtn = row.querySelector('.location-item-edit-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    promptEditLocation(loc);
+                });
+            }
 
             const delBtn = row.querySelector('.location-item-del-btn');
             if (delBtn) {
@@ -16691,47 +16851,6 @@ function renderLocationsDropdownList() {
 
             listEl.appendChild(row);
         });
-    }
-
-    // Gestionare locație implicită dacă este selectat un magazin
-    const selStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
-    if (selStore) {
-        const storeDefLoc = getMerchantDefaultLocation(selStore);
-        const footer = document.createElement('div');
-        footer.className = 'popover-loc-store-footer';
-        footer.innerHTML = `
-            <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; padding: 2px 4px;">
-                <span>Magazin: <strong style="color: var(--text-color);">${escapeHtml(selStore)}</strong></span>
-                ${storeDefLoc ? `<span style="color: #60a5fa; font-weight:700;">📍 ${escapeHtml(storeDefLoc)}</span>` : '<span style="color: var(--text-muted); font-style:italic;">fără implicită</span>'}
-            </div>
-            <div style="display: flex; gap: 4px; margin-top: 2px;">
-                <button type="button" class="btn btn-sm" id="btnSetCurrentAsDefaultLoc" style="flex:1; padding: 3px 6px; font-size: 0.7rem; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 4px; font-weight:600;">
-                    ⚙️ Locație implicită magazin...
-                </button>
-                ${storeDefLoc ? `
-                <button type="button" class="btn btn-sm" id="btnRemoveCurrentDefaultLoc" style="padding: 3px 6px; font-size: 0.7rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 4px;" title="Șterge locația implicită pentru ${escapeHtml(selStore)}">
-                    ✕ Șterge
-                </button>` : ''}
-            </div>
-        `;
-        const btnSet = footer.querySelector('#btnSetCurrentAsDefaultLoc');
-        if (btnSet) {
-            btnSet.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openMerchantDefaultLocationModal(selStore);
-            });
-        }
-        const btnRem = footer.querySelector('#btnRemoveCurrentDefaultLoc');
-        if (btnRem) {
-            btnRem.addEventListener('click', (e) => {
-                e.stopPropagation();
-                removeMerchantDefaultLocation(selStore);
-                if (typeof showToast === 'function') {
-                    showToast(`Locația implicită pentru ${selStore} a fost ștearsă.`);
-                }
-            });
-        }
-        listEl.appendChild(footer);
     }
 }
 
@@ -16766,10 +16885,17 @@ function addCustomLocation(newLoc) {
     if (!cleaned) return;
 
     if (!Array.isArray(appData.locations)) {
-        appData.locations = [...DEFAULT_LOCATIONS];
+        appData.locations = [];
     }
     const cleanLower = cleaned.toLowerCase();
-    if (appData.settings?.deletedLocations) {
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.userAddedLocations)) {
+        appData.settings.userAddedLocations = [];
+    }
+    if (!appData.settings.userAddedLocations.some(l => l.toLowerCase() === cleanLower)) {
+        appData.settings.userAddedLocations.push(cleaned);
+    }
+    if (appData.settings.deletedLocations) {
         appData.settings.deletedLocations = appData.settings.deletedLocations.filter(l => l !== cleanLower);
     }
     const exists = appData.locations.some(l => l.toLowerCase() === cleanLower);
@@ -16779,9 +16905,15 @@ function addCustomLocation(newLoc) {
     }
     selectLocation(cleaned);
     renderLocationsDropdownList();
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
+    if (typeof renderMerchantDefLocModal === 'function' && currentMerchantForDefLocModal) {
+        renderMerchantDefLocModal(currentMerchantForDefLocModal);
+    }
 
     const addInput = document.getElementById('newLocationInput');
     if (addInput) addInput.value = '';
+    const addModalInput = document.getElementById('inputNewCustomLocationModal');
+    if (addModalInput) addModalInput.value = '';
 }
 
 function deleteCustomLocation(locToDelete) {
@@ -16800,6 +16932,9 @@ function deleteCustomLocation(locToDelete) {
     }
     if (!appData.settings.deletedLocations.includes(locClean)) {
         appData.settings.deletedLocations.push(locClean);
+    }
+    if (Array.isArray(appData.settings.userAddedLocations)) {
+        appData.settings.userAddedLocations = appData.settings.userAddedLocations.filter(l => l.trim().toLowerCase() !== locClean);
     }
 
     // Eliminăm și din setările implicite ale magazinelor dacă era configurată
@@ -16820,6 +16955,8 @@ function deleteCustomLocation(locToDelete) {
         renderLocationsDropdownList();
     }
 
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
+
     // Re-randare modal locație implicită dacă este deschis
     if (typeof renderMerchantDefLocModal === 'function' && currentMerchantForDefLocModal) {
         renderMerchantDefLocModal(currentMerchantForDefLocModal);
@@ -16827,6 +16964,83 @@ function deleteCustomLocation(locToDelete) {
 
     if (typeof showToast === 'function') {
         showToast(`Locația „${locToDelete}” a fost ștearsă din listă.`);
+    }
+}
+
+function editCustomLocation(oldLoc, newLoc) {
+    if (!oldLoc) return;
+    const cleanOld = oldLoc.trim();
+    const cleanNew = (newLoc || '').trim();
+    if (!cleanNew || cleanNew.toLowerCase() === cleanOld.toLowerCase()) return;
+
+    if (!Array.isArray(appData.locations)) appData.locations = [];
+
+    const oldLower = cleanOld.toLowerCase();
+    const newLower = cleanNew.toLowerCase();
+
+    // Verificăm dacă noua locație există deja
+    const exists = appData.locations.some(l => l.toLowerCase() === newLower);
+    if (exists) {
+        showToast(`Locația „${cleanNew}” există deja!`, 'warning');
+        return;
+    }
+
+    // Înlocuire în appData.locations
+    appData.locations = appData.locations.map(l => l.trim().toLowerCase() === oldLower ? cleanNew : l);
+
+    // Actualizare userAddedLocations
+    if (!appData.settings) appData.settings = {};
+    if (!Array.isArray(appData.settings.userAddedLocations)) appData.settings.userAddedLocations = [];
+    appData.settings.userAddedLocations = appData.settings.userAddedLocations.map(l => l.trim().toLowerCase() === oldLower ? cleanNew : l);
+    if (!appData.settings.userAddedLocations.some(l => l.toLowerCase() === newLower)) {
+        appData.settings.userAddedLocations.push(cleanNew);
+    }
+
+    if (Array.isArray(appData.settings.deletedLocations)) {
+        appData.settings.deletedLocations = appData.settings.deletedLocations.filter(l => l !== newLower);
+    }
+
+    // Actualizare în locațiile implicite ale magazinelor
+    if (appData.settings.merchantDefaultLocations) {
+        Object.keys(appData.settings.merchantDefaultLocations).forEach(k => {
+            if (appData.settings.merchantDefaultLocations[k]?.trim().toLowerCase() === oldLower) {
+                appData.settings.merchantDefaultLocations[k] = cleanNew;
+            }
+        });
+    }
+
+    // Actualizare în tranzacții
+    if (Array.isArray(appData.transactions)) {
+        appData.transactions.forEach(tx => {
+            if (tx.location && tx.location.trim().toLowerCase() === oldLower) {
+                tx.location = cleanNew;
+            }
+        });
+    }
+
+    // Actualizare formular dacă este selectată
+    const curLoc = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+    if (curLoc.toLowerCase() === oldLower) {
+        selectLocation(cleanNew);
+    } else {
+        renderLocationsDropdownList();
+    }
+
+    saveData();
+    persistDatabaseToFile();
+
+    if (typeof renderCustomMerchantsModal === 'function') renderCustomMerchantsModal();
+    if (typeof renderMerchantDefLocModal === 'function' && currentMerchantForDefLocModal) {
+        renderMerchantDefLocModal(currentMerchantForDefLocModal);
+    }
+    showToast(`Locația a fost redenumită în „${cleanNew}”!`, 'success');
+}
+
+function promptEditLocation(loc) {
+    if (!loc) return;
+    const newName = prompt(`Redenumește locația „${loc}”:`, loc);
+    if (newName !== null && newName.trim() && newName.trim() !== loc) {
+        editCustomLocation(loc, newName.trim());
     }
 }
 
@@ -17157,10 +17371,8 @@ function renderMerchantsCol(catId) {
         btn.innerHTML = `
             <span class="merchant-btn-name">
                 ${logoHtml} <span>${escapeHtml(store.name)}</span>
-                ${defLoc ? `<span class="merchant-def-loc-pill" title="Locație implicită: ${escapeHtml(defLoc)}">📍 ${escapeHtml(defLoc)}</span>` : ''}
             </span>
             <span class="merchant-btn-actions">
-                <span class="merchant-btn-loc-pin ${defLoc ? 'has-loc' : ''}" title="${defLoc ? `Locație implicită: ${escapeHtml(defLoc)} (apasă pentru modificare/ștergere)` : 'Setează locație implicită magazin'}">📍</span>
                 <span class="merchant-btn-del" title="Șterge magazinul">&times;</span>
             </span>
         `;
@@ -17171,11 +17383,6 @@ function renderMerchantsCol(catId) {
             if (e.target && (e.target.classList.contains('merchant-btn-del') || e.target.closest('.merchant-btn-del'))) {
                 e.stopPropagation();
                 deleteCustomMerchant(store.name);
-                return;
-            }
-            if (e.target && (e.target.classList.contains('merchant-btn-loc-pin') || e.target.closest('.merchant-btn-loc-pin') || e.target.closest('.merchant-def-loc-pill'))) {
-                e.stopPropagation();
-                openMerchantDefaultLocationModal(store.name);
                 return;
             }
             const curSel = merchantInput ? merchantInput.value.trim().toLowerCase() : '';
@@ -17588,22 +17795,26 @@ function closeAndSaveMerchantPrompt() {
 }
 
 
-// Randează lista completă cu magazine și cumpărături noi adăugate de utilizator
+// Randează lista completă cu magazine, locații și cumpărături noi adăugate de utilizator
 function renderCustomMerchantsModal() {
     const merchantsListEl = document.getElementById('customMerchantsListContainer');
+    const locsListEl = document.getElementById('customLocationsListContainer');
     const itemsListEl = document.getElementById('customItemsListContainer');
     const countEl = document.getElementById('customMerchantsTotalCount');
 
     const customMerchants = (appData.settings && Array.isArray(appData.settings.customMerchants)) ? appData.settings.customMerchants : [];
     const customItems = (appData.settings && Array.isArray(appData.settings.customShoppingItems)) ? appData.settings.customShoppingItems : [];
+    const userLocations = getLocationsList();
 
     if (countEl) {
         const activeLang = getLanguageForCurrency();
         const mCount = customMerchants.length;
+        const locCount = userLocations.length;
         const iCount = customItems.length;
         const mLabel = mCount === 1 ? (t('custom_merchants_singular', activeLang) || 'magazin') : (t('custom_merchants_plural', activeLang) || 'magazine');
+        const locLabel = locCount === 1 ? 'locație' : 'locații';
         const iLabel = iCount === 1 ? (t('custom_items_singular', activeLang) || 'cumpărătură') : (t('custom_items_plural', activeLang) || 'cumpărături');
-        countEl.textContent = `${mCount} ${mLabel}, ${iCount} ${iLabel}`;
+        countEl.textContent = `${mCount} ${mLabel}, ${locCount} ${locLabel}, ${iCount} ${iLabel}`;
     }
 
     // 1. Magazine Adăugate de Mine
@@ -17615,28 +17826,82 @@ function renderCustomMerchantsModal() {
             customMerchants.forEach(m => {
                 const name = typeof m === 'string' ? m : (m.name || '');
                 if (!name) return;
+                const defLoc = getMerchantDefaultLocation(name);
                 const tag = document.createElement('div');
                 tag.className = 'merchant-custom-tag';
-                tag.style.cssText = 'display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 9px; font-size: 0.83rem; font-weight: 600; color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.06);';
                 tag.innerHTML = `
                     <span style="display:inline-flex;align-items:center;gap:6px;">
                         ${getMerchantLogoHtml(name, 18)}
                         <span>${escapeHtml(name)}</span>
                     </span>
-                    <span class="merchant-tag-del" title="Șterge magazinul" style="cursor:pointer; font-size:1.15rem; color:var(--danger); margin-left:4px; padding:0 3px; font-weight:bold; line-height:1;">&times;</span>
+                    <button type="button" class="merchant-tag-loc-btn ${defLoc ? 'has-loc' : ''}" title="${defLoc ? `Locație implicită: ${escapeHtml(defLoc)} (apasă pentru modificare/ștergere)` : 'Setează locația implicită pentru acest magazin'}">
+                        📍 ${defLoc ? escapeHtml(defLoc) : 'Setează locație'}
+                    </button>
+                    <button type="button" class="merchant-tag-edit-btn" title="Redenumește magazinul">✏️</button>
+                    <button type="button" class="merchant-tag-del" title="Șterge magazinul">&times;</button>
                 `;
+
+                tag.querySelector('.merchant-tag-loc-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openMerchantDefaultLocationModal(name);
+                });
+
+                tag.querySelector('.merchant-tag-edit-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    promptEditMerchant(name);
+                });
+
                 tag.querySelector('.merchant-tag-del').addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     deleteCustomMerchant(name);
                     renderCustomMerchantsModal();
                 });
+
                 merchantsListEl.appendChild(tag);
             });
         }
     }
 
-    // 2. Cumpărături Noi Adăugate de Mine
+    // 2. Locații Adăugate de Mine
+    if (locsListEl) {
+        locsListEl.innerHTML = '';
+        if (userLocations.length === 0) {
+            locsListEl.innerHTML = '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 2px;">Nicio locație adăugată încă. Adaugă o locație nouă mai sus.</div>';
+        } else {
+            userLocations.forEach(loc => {
+                const tag = document.createElement('div');
+                tag.className = 'location-custom-tag';
+                tag.innerHTML = `
+                    <span style="display:inline-flex;align-items:center;gap:5px;">
+                        <span>📍</span>
+                        <span>${escapeHtml(loc)}</span>
+                    </span>
+                    <button type="button" class="location-tag-edit-btn" title="Redenumește locația">✏️</button>
+                    <button type="button" class="merchant-tag-del" title="Șterge locația">&times;</button>
+                `;
+
+                tag.querySelector('.location-tag-edit-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    promptEditLocation(loc);
+                });
+
+                tag.querySelector('.merchant-tag-del').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteCustomLocation(loc);
+                    renderCustomMerchantsModal();
+                });
+
+                locsListEl.appendChild(tag);
+            });
+        }
+    }
+
+    // 3. Cumpărături Noi Adăugate de Mine
     if (itemsListEl) {
         itemsListEl.innerHTML = '';
         if (customItems.length === 0) {
@@ -17647,21 +17912,104 @@ function renderCustomMerchantsModal() {
                 if (!name) return;
                 const tag = document.createElement('div');
                 tag.className = 'merchant-custom-tag';
-                tag.style.cssText = 'display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 9px; font-size: 0.83rem; font-weight: 600; color: var(--text-color); box-shadow: 0 1px 3px rgba(0,0,0,0.06);';
                 tag.innerHTML = `
                     <span style="display:inline-flex;align-items:center;gap:6px;">
                         <span style="font-size:1rem;">🛍️</span>
                         <span>${escapeHtml(name)}</span>
                     </span>
-                    <span class="merchant-tag-del" title="Șterge articolul" style="cursor:pointer; font-size:1.15rem; color:var(--danger); margin-left:4px; padding:0 3px; font-weight:bold; line-height:1;">&times;</span>
+                    <button type="button" class="item-tag-edit-btn" title="Redenumește articolul">✏️</button>
+                    <button type="button" class="merchant-tag-del" title="Șterge articolul">&times;</button>
                 `;
+
+                tag.querySelector('.item-tag-edit-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    promptEditShoppingItem(name);
+                });
+
                 tag.querySelector('.merchant-tag-del').addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     deleteCustomShoppingItem(name);
                     renderCustomMerchantsModal();
                 });
+
                 itemsListEl.appendChild(tag);
+            });
+        }
+    }
+
+    // Conectare formulare de adăugare directă din modal
+    initCustomMerchantsModalInputs();
+}
+
+function initCustomMerchantsModalInputs() {
+    // 1. Input Magazin Nou
+    const btnAddMerchant = document.getElementById('btnAddCustomMerchantModal');
+    const inputMerchant = document.getElementById('inputNewCustomMerchantModal');
+    if (btnAddMerchant && !btnAddMerchant.dataset.bound) {
+        btnAddMerchant.dataset.bound = 'true';
+        const handleAddStore = () => {
+            const val = (inputMerchant ? inputMerchant.value : '').trim();
+            if (!val) return;
+            addCustomMerchant(val, '🛒');
+            if (inputMerchant) inputMerchant.value = '';
+            renderCustomMerchantsModal();
+        };
+        btnAddMerchant.addEventListener('click', handleAddStore);
+        if (inputMerchant) {
+            inputMerchant.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddStore();
+                }
+            });
+        }
+    }
+
+    // 2. Input Locație Nouă
+    const btnAddLoc = document.getElementById('btnAddCustomLocationModal');
+    const inputLoc = document.getElementById('inputNewCustomLocationModal');
+    if (btnAddLoc && !btnAddLoc.dataset.bound) {
+        btnAddLoc.dataset.bound = 'true';
+        const handleAddLoc = () => {
+            const val = (inputLoc ? inputLoc.value : '').trim();
+            if (!val) return;
+            addCustomLocation(val);
+            if (inputLoc) inputLoc.value = '';
+            renderCustomMerchantsModal();
+        };
+        btnAddLoc.addEventListener('click', handleAddLoc);
+        if (inputLoc) {
+            inputLoc.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddLoc();
+                }
+            });
+        }
+    }
+
+    // 3. Input Cumpărătură Nouă
+    const btnAddItem = document.getElementById('btnAddCustomItemModal');
+    const inputItem = document.getElementById('inputNewCustomItemModal');
+    if (btnAddItem && !btnAddItem.dataset.bound) {
+        btnAddItem.dataset.bound = 'true';
+        const handleAddItem = () => {
+            const val = (inputItem ? inputItem.value : '').trim();
+            if (!val) return;
+            const curCat = document.getElementById('selectedExpenseCategoryId')?.value;
+            addCustomShoppingItem(val, curCat);
+            if (inputItem) inputItem.value = '';
+            renderCustomMerchantsModal();
+        };
+        btnAddItem.addEventListener('click', handleAddItem);
+        if (inputItem) {
+            inputItem.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddItem();
+                }
             });
         }
     }
