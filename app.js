@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.53";
+const APP_VERSION = "3.4.54";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -19679,6 +19679,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 container.innerHTML = `<img src="qrcode.png" alt="Cod QR" style="width:200px;height:200px;display:block;border-radius:8px;">`;
             }
+        }
+
         const apkBtn = document.getElementById('btnDownloadApkModal');
         if (apkBtn) {
             apkBtn.href = `MoneyApp_v${APP_VERSION}.apk`;
