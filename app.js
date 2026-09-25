@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.52";
+const APP_VERSION = "3.4.53";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -16350,6 +16350,8 @@ function addCustomShoppingItem(name, catId = null) {
 // Ștergere articol de cumpărături (personalizat sau din listă)
 function deleteCustomShoppingItem(name) {
     if (!name) return;
+    const confirmMsg = `Sigur doriți să ștergeți articolul de cumpărături „${name}”?`;
+    if (!confirm(confirmMsg)) return;
     const lower = name.toLowerCase().trim();
     if (!appData.settings) appData.settings = {};
     if (!Array.isArray(appData.settings.hiddenShoppingItems)) {
@@ -16471,6 +16473,8 @@ function addCustomMerchant(name, icon = '🛒', catId = null) {
 // Ștergere magazin (personalizat sau din listă)
 function deleteCustomMerchant(name) {
     if (!name) return;
+    const confirmMsg = `Sigur doriți să ștergeți magazinul „${name}”?`;
+    if (!confirm(confirmMsg)) return;
     const lower = name.toLowerCase().trim();
     if (!appData.settings) appData.settings = {};
     if (!Array.isArray(appData.settings.hiddenMerchants)) {
@@ -16706,6 +16710,7 @@ function renderMerchantDefLocModal(storeName) {
         btnRemoveDef.style.display = currentDefLoc ? 'inline-block' : 'none';
         btnRemoveDef.onclick = (e) => {
             e.stopPropagation();
+            if (!confirm(`Sigur doriți să eliminați locația implicită pentru magazinul „${sName}”?`)) return;
             removeMerchantDefaultLocation(sName);
             const curExpenseStore = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
             if (curExpenseStore.toLowerCase() === sName.toLowerCase()) {
