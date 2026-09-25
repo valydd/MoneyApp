@@ -294,7 +294,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Îndreptați camera spre <strong>codul QR de mai sus</strong>.',
         qr_step3: 'Atingeți <strong>linkul apărut</strong> pe ecran pentru a deschide MoneyApp în <strong>Browser</strong>!',
         qr_btn_copy: 'Copiază',
-        btn_download_apk: 'Descarcă MoneyApp_v3.3.98.apk',
+        btn_download_apk: 'Descarcă MoneyApp APK',
         link_copied: 'Link copiat în clipboard!',
         lbl_selected_period: 'Perioada selectată',
         lbl_total_spent: 'Total cheltuit',
@@ -653,7 +653,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Point the camera at the <strong>QR code above</strong>.',
         qr_step3: 'Tap the <strong>link pop-up</strong> on the screen to open MoneyApp in your <strong>Browser</strong>!',
         qr_btn_copy: 'Copy',
-        btn_download_apk: 'Download MoneyApp_v3.3.98.apk',
+        btn_download_apk: 'Download MoneyApp APK',
         link_copied: 'Link copied to clipboard!',
         lbl_selected_period: 'Selected Period',
         lbl_total_spent: 'Total Spent',
@@ -1002,7 +1002,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Richten Sie die Kamera auf den <strong>obigen QR-Code</strong>.',
         qr_step3: 'Tippen Sie auf den <strong>angezeigten Link</strong>, um MoneyApp im <strong>Browser</strong> zu öffnen!',
         qr_btn_copy: 'Kopieren',
-        btn_download_apk: 'MoneyApp_v3.3.98.apk herunterladen',
+        btn_download_apk: 'MoneyApp APK herunterladen',
         link_copied: 'Link in Zwischenablage kopiert!',
         lbl_selected_period: 'Ausgewählter Zeitraum',
         lbl_total_spent: 'Gesamtausgaben',
@@ -3791,7 +3791,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'Kamerayı yukarıdaki <strong>QR koduna</strong> doğrultun.',
         qr_step3: 'MoneyApp\'i <strong>Tarayıcıda</strong> açmak için ekrandaki <strong>bağlantıya</strong> dokunun!',
         qr_btn_copy: 'Kopya',
-        btn_download_apk: 'MoneyApp_v3.3.98.apk İndir',
+        btn_download_apk: 'MoneyApp APK İndir',
         link_copied: 'Bağlantı panoya kopyalandı!',
         lbl_selected_period: 'Seçilen Dönem',
         lbl_total_spent: 'Toplam Harcama',
@@ -4146,7 +4146,7 @@ const I18N_DICTIONARY = {
         qr_step2: 'カメラを上の<strong>QRコード</strong>に向けます。',
         qr_step3: '画面に表示された<strong>リンク</strong>をタップして、<strong>ブラウザ</strong>でMoneyAppを開きます！',
         qr_btn_copy: 'コピー',
-        btn_download_apk: 'MoneyApp_v3.3.98.apk をダウンロード',
+        btn_download_apk: 'MoneyApp APK をダウンロード',
         link_copied: 'リンクをクリップボードにコピーしました！',
         lbl_selected_period: '選択された期間',
         lbl_total_spent: '総支出',
@@ -4495,7 +4495,7 @@ const I18N_DICTIONARY = {
         qr_step2: '将镜头对准上方的<strong>二维码</strong>。',
         qr_step3: '点击屏幕上出现的<strong>链接</strong>即可在<strong>浏览器</strong>中打开 MoneyApp！',
         qr_btn_copy: '复制',
-        btn_download_apk: '下载 MoneyApp_v3.3.98.apk',
+        btn_download_apk: '下载 MoneyApp APK',
         link_copied: '链接已复制到剪贴板！',
         lbl_selected_period: '所选期间',
         lbl_total_spent: '总支出',
@@ -5432,6 +5432,15 @@ function applyLanguage() {
     // Actualizare data-i18n in toata pagina
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
+        if (key === 'btn_download_apk') {
+            el.textContent = `Descarcă MoneyApp_v${APP_VERSION}.apk`;
+            const parentA = el.closest('a');
+            if (parentA) {
+                parentA.href = `MoneyApp_v${APP_VERSION}.apk`;
+                parentA.setAttribute('download', `MoneyApp_v${APP_VERSION}.apk`);
+            }
+            return;
+        }
         const val = t(key, lang);
         if (val) {
             if (val.includes('<') || val.includes('&')) {
@@ -19665,7 +19674,16 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 container.innerHTML = `<img src="qrcode.png" alt="Cod QR" style="width:200px;height:200px;display:block;border-radius:8px;">`;
             }
+        const apkBtn = document.getElementById('btnDownloadApkModal');
+        if (apkBtn) {
+            apkBtn.href = `MoneyApp_v${APP_VERSION}.apk`;
+            apkBtn.setAttribute('download', `MoneyApp_v${APP_VERSION}.apk`);
+            const spanText = apkBtn.querySelector('[data-i18n="btn_download_apk"]') || apkBtn.querySelector('span:last-child');
+            if (spanText) {
+                spanText.textContent = `Descarcă MoneyApp_v${APP_VERSION}.apk`;
+            }
         }
+
         openModal('modalQrShare');
     }
 
