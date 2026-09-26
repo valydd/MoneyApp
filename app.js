@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.54";
+const APP_VERSION = "3.4.55";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -17725,18 +17725,41 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
 
             const merch = document.getElementById('selectedExpenseMerchant')?.value || '';
             const itemDesc = document.getElementById('expenseDesc')?.value || '';
-            if (merch || itemDesc || popLoc) {
-                const parts = [itemDesc, merch].filter(Boolean);
-                if (popLoc) parts.push(`📍 ${popLoc}`);
-                const summary = parts.join(' @ ');
-                showToast(`Selecție salvată: ${summary}`, 'success');
-            }
+            updateExpenseBoxesClearButtons();
 
             const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
             if (isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
                 openExpenseUtilityFloatingPrompt(merch, itemDesc);
+                return;
             }
-            updateExpenseBoxesClearButtons();
+
+            const parsedAmt = parseFloat(popAmt) || parseFloat(document.getElementById('expenseAmount')?.value);
+            if (parsedAmt > 0 && currentCatId) {
+                // Dacă utilizatorul a introdus suma și are categoria selectată, salvăm DIRECT cheltuiala!
+                const formExp = document.getElementById('formExpense');
+                if (formExp) {
+                    if (typeof formExp.requestSubmit === 'function') {
+                        formExp.requestSubmit();
+                    } else {
+                        formExp.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                    return;
+                }
+            }
+
+            // Dacă suma nu este încă introdusă, informăm utilizatorul să introducă suma
+            if (merch || itemDesc || popLoc) {
+                const parts = [itemDesc, merch].filter(Boolean);
+                if (popLoc) parts.push(`📍 ${popLoc}`);
+                const summary = parts.join(' @ ');
+                showToast(`Selecție confirmată (${summary}). Introduceți suma pentru a finaliza!`, 'info');
+            } else {
+                showToast('Introduceți suma pentru a finaliza cheltuiala!', 'info');
+            }
+            setTimeout(() => {
+                const expAmt = document.getElementById('expenseAmount');
+                if (expAmt) expAmt.focus();
+            }, 100);
         });
     }
 
@@ -20202,6 +20225,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formTransfer) {
         formTransfer.addEventListener('submit', (e) => {
             e.preventDefault();
+            if (formTransfer._isSubmitting) return;
+            formTransfer._isSubmitting = true;
+            setTimeout(() => { formTransfer._isSubmitting = false; }, 800);
+
             const editId = document.getElementById('editTransferId').value;
             const dir = document.getElementById('transferDirection').value || 'card-to-cash';
             const amtVal = parseFloat(document.getElementById('transferAmount').value);
@@ -20250,6 +20277,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 appData.transactions.push(newTx);
                 showToast(`🔄 Transfer înregistrat: ${formatMoney(amtVal, mainCurr)} (${dir === 'card-to-cash' ? 'Card ➔ Cash' : 'Cash ➔ Card'})`, 'success');
+            }
+
+            // Asigurare: săptămâna tranzacției să fie mereu depliată pentru ca noul card să fie vizibil imediat
+            if (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) {
+                const wKey = getIsoWeek(dateVal).key;
+                appData.settings.collapsedWeeks = appData.settings.collapsedWeeks.filter(k => k !== wKey);
             }
 
             saveData();
@@ -20508,76 +20541,135 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle Form Expense Submit (Adaugare sau Modificare)
-    document.getElementById('formExpense').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const editId = document.getElementById('editExpenseId').value;
-        const amount = parseFloat(document.getElementById('expenseAmount').value);
-        const categoryId = document.getElementById('selectedExpenseCategoryId').value;
-        const merchant = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
-        const date = document.getElementById('expenseDate').value || getTodayString();
-        const now = new Date();
-        const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
-        const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
-        const inputTimeVal = document.getElementById('expenseTime')?.value?.trim();
-        const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
-        const description = (document.getElementById('expenseDesc').value || '').trim();
-        const paymentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
-        const location = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
-        if (location && Array.isArray(appData.locations) && !appData.locations.includes(location)) {
-            appData.locations.push(location);
-        }
+    const formExpenseEl = document.getElementById('formExpense');
+    if (formExpenseEl) {
+        formExpenseEl.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (formExpenseEl._isSubmitting) return;
+            formExpenseEl._isSubmitting = true;
+            setTimeout(() => { formExpenseEl._isSubmitting = false; }, 800);
 
-        if (!amount || amount <= 0) {
-            showToast('Introduceți o sumă validă!', 'error');
-            return;
-        }
+            const editId = document.getElementById('editExpenseId').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const categoryId = document.getElementById('selectedExpenseCategoryId').value;
+            const merchant = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+            const date = document.getElementById('expenseDate').value || getTodayString();
+            const now = new Date();
+            const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
+            const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
+            const inputTimeVal = document.getElementById('expenseTime')?.value?.trim();
+            const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
+            const description = (document.getElementById('expenseDesc').value || '').trim();
+            const paymentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
+            const location = (document.getElementById('selectedExpenseLocation')?.value || '').trim();
+            if (location && Array.isArray(appData.locations) && !appData.locations.includes(location)) {
+                appData.locations.push(location);
+            }
 
-        if (!categoryId) {
-            showToast('Alegeți o categorie!', 'error');
-            return;
-        }
+            if (!amount || amount <= 0) {
+                showToast('Introduceți o sumă validă!', 'error');
+                return;
+            }
 
-        const currToUse = document.getElementById('expenseCurrencySelect')?.value || getActiveCurrency();
-        const amountInRon = convertToRon(amount, currToUse);
+            if (!categoryId) {
+                showToast('Alegeți o categorie!', 'error');
+                return;
+            }
 
-        const isSuspended = document.getElementById('expenseIsSuspended')?.checked || false;
+            const currToUse = document.getElementById('expenseCurrencySelect')?.value || getActiveCurrency();
+            const amountInRon = convertToRon(amount, currToUse);
 
-        const utilityIndexVal = parseFloat(document.getElementById('expenseUtilityIndex')?.value);
-        const utilityTypeVal = document.getElementById('expenseUtilityType')?.value || 'electricity';
-        const utilityIndexDateVal = document.getElementById('expenseUtilityIndexDate')?.value || date;
+            const isSuspended = document.getElementById('expenseIsSuspended')?.checked || false;
 
-        if (editId) {
-            // Modificare cheltuiala existenta
-            const existing = appData.transactions.find(t => t.id === editId);
-            if (existing) {
-                existing.amount = amount;
-                existing.originalCurrency = currToUse;
-                existing.amountInRon = amountInRon;
-                existing.categoryId = categoryId;
-                existing.date = date;
-                existing.time = time;
-                if (!existing.initialTime) existing.initialTime = existing.time || time;
-                existing.merchant = merchant;
-                existing.description = description;
-                existing.location = location;
-                existing.isSuspended = isSuspended;
-                existing.paymentMethod = paymentMethod;
+            const utilityIndexVal = parseFloat(document.getElementById('expenseUtilityIndex')?.value);
+            const utilityTypeVal = document.getElementById('expenseUtilityType')?.value || 'electricity';
+            const utilityIndexDateVal = document.getElementById('expenseUtilityIndexDate')?.value || date;
 
-                if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
-                    existing.utilityType = utilityTypeVal;
-                    existing.utilityIndex = utilityIndexVal;
-                    existing.utilityIndexDate = utilityIndexDateVal;
-                    syncTxUtilityReading(existing);
-                } else {
-                    delete existing.utilityType;
-                    delete existing.utilityIndex;
-                    delete existing.utilityIndexDate;
-                    if (Array.isArray(appData.utilityReadings)) {
-                        appData.utilityReadings = appData.utilityReadings.filter(r => r.txId !== existing.id);
+            // Asigurare: săptămâna tranzacției să fie mereu depliată pentru ca noul card să fie vizibil imediat
+            if (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) {
+                const wKey = getIsoWeek(date).key;
+                appData.settings.collapsedWeeks = appData.settings.collapsedWeeks.filter(k => k !== wKey);
+            }
+
+            if (editId) {
+                // Modificare cheltuiala existenta
+                const existing = appData.transactions.find(t => t.id === editId);
+                if (existing) {
+                    existing.amount = amount;
+                    existing.originalCurrency = currToUse;
+                    existing.amountInRon = amountInRon;
+                    existing.categoryId = categoryId;
+                    existing.date = date;
+                    existing.time = time;
+                    if (!existing.initialTime) existing.initialTime = existing.time || time;
+                    existing.merchant = merchant;
+                    existing.description = description;
+                    existing.location = location;
+                    existing.isSuspended = isSuspended;
+                    existing.paymentMethod = paymentMethod;
+
+                    if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
+                        existing.utilityType = utilityTypeVal;
+                        existing.utilityIndex = utilityIndexVal;
+                        existing.utilityIndexDate = utilityIndexDateVal;
+                        syncTxUtilityReading(existing);
+                    } else {
+                        delete existing.utilityType;
+                        delete existing.utilityIndex;
+                        delete existing.utilityIndexDate;
+                        if (Array.isArray(appData.utilityReadings)) {
+                            appData.utilityReadings = appData.utilityReadings.filter(r => r.txId !== existing.id);
+                        }
                     }
                 }
+                saveData();
+                updateBalanceCards();
+                renderOverviewChartAndList();
+                renderTransactionsHistory();
+                renderStatsTab();
+                window._editingExpenseTx = null;
+                closeModal('modalExpense');
+                if (document.getElementById('modalCategoryDetails').classList.contains('active')) {
+                    openCategoryDetailModal(categoryId);
+                }
+                if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
+                    renderBillsAnalytics();
+                }
+                if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
+                    renderUtilityMetersAnalytics();
+                }
+                showToast(t('btn_save'), 'success');
+                return;
             }
+
+            // Adaugare cheltuiala noua
+            const newTx = {
+                id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                type: 'expense',
+                amount: amount,
+                originalCurrency: currToUse,
+                amountInRon: amountInRon,
+                categoryId: categoryId,
+                merchant: merchant,
+                description: description,
+                location: location,
+                date: date,
+                time: time,
+                initialTime: time,
+                isSuspended: isSuspended,
+                paymentMethod: paymentMethod,
+                createdAt: Date.now()
+            };
+
+            if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
+                newTx.utilityType = utilityTypeVal;
+                newTx.utilityIndex = utilityIndexVal;
+                newTx.utilityIndexDate = utilityIndexDateVal;
+                syncTxUtilityReading(newTx);
+            }
+
+            appData.transactions.push(newTx);
             saveData();
             updateBalanceCards();
             renderOverviewChartAndList();
@@ -20585,133 +20677,100 @@ document.addEventListener('DOMContentLoaded', () => {
             renderStatsTab();
             window._editingExpenseTx = null;
             closeModal('modalExpense');
-            if (document.getElementById('modalCategoryDetails').classList.contains('active')) {
-                openCategoryDetailModal(categoryId);
-            }
             if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
                 renderBillsAnalytics();
             }
             if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
                 renderUtilityMetersAnalytics();
             }
-            showToast(t('btn_save'), 'success');
-            return;
-        }
-
-        // Adaugare cheltuiala noua
-        const newTx = {
-            id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-            type: 'expense',
-            amount: amount,
-            originalCurrency: currToUse,
-            amountInRon: amountInRon,
-            categoryId: categoryId,
-            merchant: merchant,
-            description: description,
-            location: location,
-            date: date,
-            time: time,
-            initialTime: time,
-            isSuspended: isSuspended,
-            paymentMethod: paymentMethod,
-            createdAt: Date.now()
-        };
-
-        if (!isNaN(utilityIndexVal) && utilityIndexVal > 0) {
-            newTx.utilityType = utilityTypeVal;
-            newTx.utilityIndex = utilityIndexVal;
-            newTx.utilityIndexDate = utilityIndexDateVal;
-            syncTxUtilityReading(newTx);
-        }
-
-        appData.transactions.push(newTx);
-        saveData();
-        updateBalanceCards();
-        renderOverviewChartAndList();
-        renderTransactionsHistory();
-        renderStatsTab();
-        window._editingExpenseTx = null;
-        closeModal('modalExpense');
-        if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
-            renderBillsAnalytics();
-        }
-        if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
-            renderUtilityMetersAnalytics();
-        }
-        showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
-    });
+            showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
+        });
+    }
 
     // Handle Form Income Submit (Adaugare sau Modificare)
-    document.getElementById('formIncome').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const editId = document.getElementById('editIncomeId').value;
-        const amount = parseFloat(document.getElementById('incomeAmount').value);
-        const date = document.getElementById('incomeDate').value || getTodayString();
-        const now = new Date();
-        const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
-        const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
-        const inputTimeVal = document.getElementById('incomeTime')?.value?.trim();
-        const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
-        const source = (document.getElementById('incomeSource').value || '').trim();
-        const isSuspended = document.getElementById('incomeIsSuspended')?.checked || false;
-        const paymentMethod = document.getElementById('incomePaymentMethod')?.value || 'card';
+    const formIncomeEl = document.getElementById('formIncome');
+    if (formIncomeEl) {
+        formIncomeEl.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (formIncomeEl._isSubmitting) return;
+            formIncomeEl._isSubmitting = true;
+            setTimeout(() => { formIncomeEl._isSubmitting = false; }, 800);
 
-        if (!amount || amount <= 0) {
-            showToast('Introduceți o sumă validă!', 'error');
-            return;
-        }
+            const editId = document.getElementById('editIncomeId').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const date = document.getElementById('incomeDate').value || getTodayString();
+            const now = new Date();
+            const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
+            const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
+            const inputTimeVal = document.getElementById('incomeTime')?.value?.trim();
+            const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
+            const source = (document.getElementById('incomeSource').value || '').trim();
+            const isSuspended = document.getElementById('incomeIsSuspended')?.checked || false;
+            const paymentMethod = document.getElementById('incomePaymentMethod')?.value || 'card';
 
-        const currToUse = document.getElementById('incomeCurrencySelect')?.value || getActiveCurrency();
-        const amountInRon = convertToRon(amount, currToUse);
-
-        if (editId) {
-            // Modificare venit existent
-            const existing = appData.transactions.find(t => t.id === editId);
-            if (existing) {
-                existing.amount = amount;
-                existing.originalCurrency = currToUse;
-                existing.amountInRon = amountInRon;
-                existing.description = source || `Venit (${currToUse})`;
-                existing.date = date;
-                existing.time = time;
-                existing.isSuspended = isSuspended;
-                existing.paymentMethod = paymentMethod;
+            if (!amount || amount <= 0) {
+                showToast('Introduceți o sumă validă!', 'error');
+                return;
             }
+
+            const currToUse = document.getElementById('incomeCurrencySelect')?.value || getActiveCurrency();
+            const amountInRon = convertToRon(amount, currToUse);
+
+            // Asigurare: săptămâna tranzacției să fie mereu depliată pentru ca noul card să fie vizibil imediat
+            if (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) {
+                const wKey = getIsoWeek(date).key;
+                appData.settings.collapsedWeeks = appData.settings.collapsedWeeks.filter(k => k !== wKey);
+            }
+
+            if (editId) {
+                // Modificare venit existent
+                const existing = appData.transactions.find(t => t.id === editId);
+                if (existing) {
+                    existing.amount = amount;
+                    existing.originalCurrency = currToUse;
+                    existing.amountInRon = amountInRon;
+                    existing.description = source || `Venit (${currToUse})`;
+                    existing.date = date;
+                    existing.time = time;
+                    existing.isSuspended = isSuspended;
+                    existing.paymentMethod = paymentMethod;
+                }
+                saveData();
+                updateBalanceCards();
+                renderOverviewChartAndList();
+                renderTransactionsHistory();
+                renderStatsTab();
+                closeModal('modalIncome');
+                showToast(t('btn_save'), 'success');
+                return;
+            }
+
+            // Adaugare venit nou
+            const newTx = {
+                id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                type: 'income',
+                amount: amount,
+                originalCurrency: currToUse,
+                amountInRon: amountInRon,
+                description: source || `Venit (${currToUse})`,
+                date: date,
+                time: time,
+                isSuspended: isSuspended,
+                paymentMethod: paymentMethod,
+                createdAt: Date.now()
+            };
+
+            appData.transactions.push(newTx);
             saveData();
             updateBalanceCards();
             renderOverviewChartAndList();
             renderTransactionsHistory();
             renderStatsTab();
             closeModal('modalIncome');
-            showToast(t('btn_save'), 'success');
-            return;
-        }
-
-        // Adaugare venit nou
-        const newTx = {
-            id: 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-            type: 'income',
-            amount: amount,
-            originalCurrency: currToUse,
-            amountInRon: amountInRon,
-            description: source || `Venit (${currToUse})`,
-            date: date,
-            time: time,
-            isSuspended: isSuspended,
-            paymentMethod: paymentMethod,
-            createdAt: Date.now()
-        };
-
-        appData.transactions.push(newTx);
-        saveData();
-        updateBalanceCards();
-        renderOverviewChartAndList();
-        renderTransactionsHistory();
-        renderStatsTab();
-        closeModal('modalIncome');
-        showToast(`+ ${formatMoney(amount, currToUse)}`, 'success');
-    });
+            showToast(`+ ${formatMoney(amount, currToUse)}`, 'success');
+        });
+    }
 
     // Asigurare vizibilitate campuri la deschiderea tastaturii pe mobil (doar pentru formulare lungi daca un camp e acoperit)
     document.addEventListener('focusin', (e) => {
