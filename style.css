@@ -8843,6 +8843,23 @@ body.dark-theme .merchant-popover-bottom-searches .merchant-col-search-input {
     border-color: var(--accent, #3b82f6);
 }
 
+@keyframes popoverBoxErrorShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.popover-top-input-box.popover-box-error {
+    border-color: var(--danger, #ef4444) !important;
+    background: rgba(239, 68, 68, 0.16) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.42) !important;
+    animation: popoverBoxErrorShake 0.45s ease-in-out !important;
+}
+
+.popover-top-input-box.popover-box-error .popover-top-input {
+    color: var(--danger, #ef4444) !important;
+}
+
 .popover-top-icon {
     font-size: 0.95rem;
     margin-right: 6px;

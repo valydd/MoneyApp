@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.56";
+const APP_VERSION = "3.4.57";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -17202,6 +17202,8 @@ function bindPopoverTopBarEvents() {
     if (popAmtInput && !popAmtInput.dataset.bound) {
         popAmtInput.dataset.bound = 'true';
         popAmtInput.addEventListener('input', () => {
+            const amtBox = document.getElementById('popoverAmountBox');
+            if (amtBox) amtBox.classList.remove('popover-box-error');
             if (expAmtInput) {
                 expAmtInput.value = popAmtInput.value;
                 if (typeof updateExpenseLivePreview === 'function') {
@@ -17748,15 +17750,20 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
                 }
             }
 
-            // Dacă suma nu este încă introdusă, NU închidem panoul de cumpărături! Cerem introducerea sumei chiar aici!
+            // Dacă suma nu este încă introdusă, NU închidem panoul de cumpărături! Evidențiem căsuța de sumă!
             showToast('Introduceți suma cumpărăturilor!', 'warning');
+            const popAmtBox = document.getElementById('popoverAmountBox');
             const popAmtInput = document.getElementById('popoverAmountInput');
+            if (popAmtBox) {
+                popAmtBox.classList.remove('popover-box-error');
+                void popAmtBox.offsetWidth; // Re-declanșează animația de shake
+                popAmtBox.classList.add('popover-box-error');
+                setTimeout(() => {
+                    if (popAmtBox) popAmtBox.classList.remove('popover-box-error');
+                }, 2500);
+            }
             if (popAmtInput) {
                 popAmtInput.focus();
-                popAmtInput.style.borderColor = 'var(--danger)';
-                setTimeout(() => {
-                    if (popAmtInput) popAmtInput.style.borderColor = '';
-                }, 1500);
             }
         });
     }
