@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.57";
+const APP_VERSION = "3.4.58";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -7969,6 +7969,8 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
 
     const item = document.createElement('div');
     item.className = 'tx-item' + (isSuspended ? ' tx-suspended' : '');
+    item.id = 'tx-item-' + tx.id;
+    item.dataset.txid = tx.id;
     item.innerHTML = `
         <div class="tx-row-top">
             <div class="tx-desc-wrap">
@@ -17496,12 +17498,7 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
 
     if (forceOpen) {
         popover.style.display = 'flex';
-        // Prevenim ghost click / tap-through de la degetul de pe categoria selectată
-        popover.style.pointerEvents = 'none';
         lastFoodMerchantsOpenTime = Date.now();
-        setTimeout(() => {
-            if (popover) popover.style.pointerEvents = '';
-        }, 320);
 
         const mOverlay = document.getElementById('modalExpense');
         if (mOverlay) mOverlay.classList.add('merchant-popover-open');
@@ -17700,72 +17697,8 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
 
     // 6. Buton Salvează Selecția din panoul dual (salvează direct cumpărăturile și suma)
     const btnConfirmSelection = document.getElementById('btnConfirmMerchantAndItemsSelection');
-    if (btnConfirmSelection && !btnConfirmSelection.dataset.bound) {
-        btnConfirmSelection.dataset.bound = 'true';
-        btnConfirmSelection.addEventListener('click', (e) => {
-            if (e) { e.preventDefault(); e.stopPropagation(); }
-
-            // Sincronizare locație din caseta de sus
-            const popLoc = (document.getElementById('popoverLocationInput')?.value || '').trim();
-            const expLoc = document.getElementById('selectedExpenseLocation');
-            if (expLoc) expLoc.value = popLoc;
-            if (popLoc && Array.isArray(appData.locations) && !appData.locations.includes(popLoc)) {
-                appData.locations.push(popLoc);
-                saveData();
-            }
-
-            // Sincronizare sumă din caseta de sus
-            const popAmt = (document.getElementById('popoverAmountInput')?.value || '').trim();
-            if (popAmt) {
-                const expAmt = document.getElementById('expenseAmount');
-                if (expAmt) expAmt.value = popAmt;
-                if (typeof updateExpenseLivePreview === 'function') {
-                    updateExpenseLivePreview();
-                }
-            }
-
-            const merch = document.getElementById('selectedExpenseMerchant')?.value || '';
-            const itemDesc = document.getElementById('expenseDesc')?.value || '';
-            updateExpenseBoxesClearButtons();
-
-            const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
-            if (isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
-                closeFoodMerchantsOverlay();
-                openExpenseUtilityFloatingPrompt(merch, itemDesc);
-                return;
-            }
-
-            const parsedAmt = parseFloat(popAmt) || parseFloat(document.getElementById('expenseAmount')?.value);
-            if (parsedAmt > 0 && currentCatId) {
-                // Dacă utilizatorul a introdus suma și are categoria selectată, închidem overlay-ul și salvăm DIRECT cheltuiala!
-                closeFoodMerchantsOverlay();
-                const formExp = document.getElementById('formExpense');
-                if (formExp) {
-                    if (typeof formExp.requestSubmit === 'function') {
-                        formExp.requestSubmit();
-                    } else {
-                        formExp.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                    }
-                    return;
-                }
-            }
-
-            // Dacă suma nu este încă introdusă, NU închidem panoul de cumpărături! Evidențiem căsuța de sumă!
-            showToast('Introduceți suma cumpărăturilor!', 'warning');
-            const popAmtBox = document.getElementById('popoverAmountBox');
-            const popAmtInput = document.getElementById('popoverAmountInput');
-            if (popAmtBox) {
-                popAmtBox.classList.remove('popover-box-error');
-                void popAmtBox.offsetWidth; // Re-declanșează animația de shake
-                popAmtBox.classList.add('popover-box-error');
-                setTimeout(() => {
-                    if (popAmtBox) popAmtBox.classList.remove('popover-box-error');
-                }, 2500);
-            }
-            if (popAmtInput) {
-                popAmtInput.focus();
-            }
-        });
+    if (btnConfirmSelection) {
+        btnConfirmSelection.onclick = handleSaveExpenseFromShoppingPopover;
     }
 
     // 7. Legare acțiuni fereastră prompt adăugare
@@ -17870,6 +17803,174 @@ function closeAndSaveMerchantPrompt() {
     overlay.style.display = 'none';
 }
 
+function handleSaveExpenseFromShoppingPopover(e) {
+    if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    }
+
+    // 1. Sincronizare locație din caseta de sus
+    const popLoc = (document.getElementById('popoverLocationInput')?.value || '').trim();
+    const expLoc = document.getElementById('selectedExpenseLocation');
+    if (expLoc) expLoc.value = popLoc;
+    if (popLoc && Array.isArray(appData.locations) && !appData.locations.includes(popLoc)) {
+        appData.locations.push(popLoc);
+        saveData();
+    }
+
+    // 2. Extragere și validare sumă din caseta de sus din popover
+    const popAmtVal = (document.getElementById('popoverAmountInput')?.value || '').trim();
+    const parsedAmt = parseFloat(popAmtVal);
+
+    if (isNaN(parsedAmt) || parsedAmt <= 0) {
+        showToast('Introduceți suma cumpărăturilor!', 'warning');
+        const popAmtBox = document.getElementById('popoverAmountBox');
+        const popAmtInput = document.getElementById('popoverAmountInput');
+        if (popAmtBox) {
+            popAmtBox.classList.remove('popover-box-error');
+            void popAmtBox.offsetWidth; // Forțează reflow pentru re-declanșarea animației de shake
+            popAmtBox.classList.add('popover-box-error');
+            setTimeout(() => {
+                if (popAmtBox) popAmtBox.classList.remove('popover-box-error');
+            }, 2500);
+        }
+        if (popAmtInput) {
+            popAmtInput.focus();
+        }
+        return;
+    }
+
+    // Sincronizare valoare sumă în inputul principal ascuns
+    const expAmt = document.getElementById('expenseAmount');
+    if (expAmt) expAmt.value = parsedAmt;
+    if (typeof updateExpenseLivePreview === 'function') {
+        updateExpenseLivePreview();
+    }
+
+    const merch = (document.getElementById('selectedExpenseMerchant')?.value || '').trim();
+    const itemDesc = (document.getElementById('expenseDesc')?.value || '').trim();
+    if (typeof updateExpenseBoxesClearButtons === 'function') {
+        updateExpenseBoxesClearButtons();
+    }
+
+    let currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
+    if (!currentCatId) {
+        const defaultCat = (Array.isArray(appData.categories) && appData.categories.find(c => c.id === 'mancare')) || (appData.categories && appData.categories[0]);
+        if (defaultCat) {
+            currentCatId = defaultCat.id;
+            const catInp = document.getElementById('selectedExpenseCategoryId');
+            if (catInp) catInp.value = currentCatId;
+        }
+    }
+
+    // Verificare utilitate contorizată (apă, gaz, curent)
+    if (typeof isMeteredUtilityBill === 'function' && isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
+        closeFoodMerchantsOverlay();
+        if (typeof openExpenseUtilityFloatingPrompt === 'function') {
+            openExpenseUtilityFloatingPrompt(merch, itemDesc);
+        }
+        return;
+    }
+
+    // Salvează direct cheltuiala și navighează la ecranul Tranzacții
+    saveExpenseDirectly(parsedAmt, currentCatId, merch, itemDesc, popLoc);
+}
+
+function saveExpenseDirectly(amount, categoryId, merchant, description, location) {
+    const editId = document.getElementById('editExpenseId')?.value;
+    const date = document.getElementById('expenseDate')?.value || getTodayString();
+    const now = new Date();
+    const fallbackTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const existingTx = editId ? appData.transactions.find(t => t.id === editId) : null;
+    const initialSavedTime = existingTx ? (extractTimeHHmm(existingTx.time || existingTx.initialTime, existingTx.createdAt)) : '';
+    const inputTimeVal = document.getElementById('expenseTime')?.value?.trim();
+    const time = extractTimeHHmm(inputTimeVal) || initialSavedTime || fallbackTime;
+
+    const paymentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
+    const currToUse = document.getElementById('expenseCurrencySelect')?.value || getActiveCurrency();
+    const amountInRon = convertToRon(amount, currToUse);
+    const isSuspended = document.getElementById('expenseIsSuspended')?.checked || false;
+
+    // Asigurare: săptămâna tranzacției să fie mereu depliată pentru ca noul card să fie vizibil imediat
+    if (appData.settings && Array.isArray(appData.settings.collapsedWeeks)) {
+        const wKey = getIsoWeek(date).key;
+        appData.settings.collapsedWeeks = appData.settings.collapsedWeeks.filter(k => k !== wKey);
+    }
+
+    let savedTxId = null;
+
+    if (editId && existingTx) {
+        existingTx.amount = amount;
+        existingTx.originalCurrency = currToUse;
+        existingTx.amountInRon = amountInRon;
+        existingTx.categoryId = categoryId;
+        existingTx.date = date;
+        existingTx.time = time;
+        if (!existingTx.initialTime) existingTx.initialTime = existingTx.time || time;
+        existingTx.merchant = merchant;
+        existingTx.description = description;
+        existingTx.location = location;
+        existingTx.isSuspended = isSuspended;
+        existingTx.paymentMethod = paymentMethod;
+        savedTxId = editId;
+    } else {
+        savedTxId = 'tx-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        const newTx = {
+            id: savedTxId,
+            type: 'expense',
+            amount: amount,
+            originalCurrency: currToUse,
+            amountInRon: amountInRon,
+            categoryId: categoryId,
+            merchant: merchant,
+            description: description,
+            location: location,
+            date: date,
+            time: time,
+            initialTime: time,
+            isSuspended: isSuspended,
+            paymentMethod: paymentMethod,
+            createdAt: Date.now()
+        };
+        appData.transactions.push(newTx);
+    }
+
+    saveData();
+    updateBalanceCards();
+    renderOverviewChartAndList();
+    renderTransactionsHistory();
+    renderStatsTab();
+    window._editingExpenseTx = null;
+
+    // Închidem overlay-ul de cumpărături și modalul
+    closeFoodMerchantsOverlay();
+    closeModal('modalExpense');
+
+    // Afișăm toast de succes
+    showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
+
+    // Comutăm instant pe fila Tranzacții
+    if (typeof window.switchTab === 'function') {
+        window.switchTab('tab-transactions');
+    }
+
+    // Navigăm și evidențiem noul card cu animație
+    setTimeout(() => {
+        const txCard = document.getElementById('tx-item-' + savedTxId) || document.querySelector(`[data-txid="${savedTxId}"]`);
+        if (txCard) {
+            txCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            txCard.classList.remove('tx-item-saved-highlight');
+            void txCard.offsetWidth;
+            txCard.classList.add('tx-item-saved-highlight');
+            setTimeout(() => {
+                if (txCard) txCard.classList.remove('tx-item-saved-highlight');
+            }, 2500);
+        }
+    }, 220);
+}
+
+window.handleSaveExpenseFromShoppingPopover = handleSaveExpenseFromShoppingPopover;
+window.saveExpenseDirectly = saveExpenseDirectly;
 
 // Randează lista completă cu magazine, locații și cumpărături noi adăugate de utilizator
 function renderCustomMerchantsModal() {
@@ -20689,6 +20790,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderUtilityMetersAnalytics();
             }
             showToast(`- ${formatMoney(amount, currToUse)}`, 'success');
+
+            // Navigare directă la ecranul Tranzacții și evidențiere card
+            if (typeof window.switchTab === 'function') {
+                window.switchTab('tab-transactions');
+            }
+            const savedTxId = editId || newTx.id;
+            setTimeout(() => {
+                const txCard = document.getElementById('tx-item-' + savedTxId) || document.querySelector(`[data-txid="${savedTxId}"]`);
+                if (txCard) {
+                    txCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    txCard.classList.remove('tx-item-saved-highlight');
+                    void txCard.offsetWidth;
+                    txCard.classList.add('tx-item-saved-highlight');
+                    setTimeout(() => {
+                        if (txCard) txCard.classList.remove('tx-item-saved-highlight');
+                    }, 2500);
+                }
+            }, 220);
         });
     }
 
