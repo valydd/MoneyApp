@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.55";
+const APP_VERSION = "3.4.56";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -17696,13 +17696,12 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         });
     }
 
-    // 6. Buton Salvează Selecția din panoul dual
+    // 6. Buton Salvează Selecția din panoul dual (salvează direct cumpărăturile și suma)
     const btnConfirmSelection = document.getElementById('btnConfirmMerchantAndItemsSelection');
     if (btnConfirmSelection && !btnConfirmSelection.dataset.bound) {
         btnConfirmSelection.dataset.bound = 'true';
         btnConfirmSelection.addEventListener('click', (e) => {
             if (e) { e.preventDefault(); e.stopPropagation(); }
-            closeFoodMerchantsOverlay();
 
             // Sincronizare locație din caseta de sus
             const popLoc = (document.getElementById('popoverLocationInput')?.value || '').trim();
@@ -17729,13 +17728,15 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
 
             const currentCatId = document.getElementById('selectedExpenseCategoryId')?.value;
             if (isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
+                closeFoodMerchantsOverlay();
                 openExpenseUtilityFloatingPrompt(merch, itemDesc);
                 return;
             }
 
             const parsedAmt = parseFloat(popAmt) || parseFloat(document.getElementById('expenseAmount')?.value);
             if (parsedAmt > 0 && currentCatId) {
-                // Dacă utilizatorul a introdus suma și are categoria selectată, salvăm DIRECT cheltuiala!
+                // Dacă utilizatorul a introdus suma și are categoria selectată, închidem overlay-ul și salvăm DIRECT cheltuiala!
+                closeFoodMerchantsOverlay();
                 const formExp = document.getElementById('formExpense');
                 if (formExp) {
                     if (typeof formExp.requestSubmit === 'function') {
@@ -17747,19 +17748,16 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
                 }
             }
 
-            // Dacă suma nu este încă introdusă, informăm utilizatorul să introducă suma
-            if (merch || itemDesc || popLoc) {
-                const parts = [itemDesc, merch].filter(Boolean);
-                if (popLoc) parts.push(`📍 ${popLoc}`);
-                const summary = parts.join(' @ ');
-                showToast(`Selecție confirmată (${summary}). Introduceți suma pentru a finaliza!`, 'info');
-            } else {
-                showToast('Introduceți suma pentru a finaliza cheltuiala!', 'info');
+            // Dacă suma nu este încă introdusă, NU închidem panoul de cumpărături! Cerem introducerea sumei chiar aici!
+            showToast('Introduceți suma cumpărăturilor!', 'warning');
+            const popAmtInput = document.getElementById('popoverAmountInput');
+            if (popAmtInput) {
+                popAmtInput.focus();
+                popAmtInput.style.borderColor = 'var(--danger)';
+                setTimeout(() => {
+                    if (popAmtInput) popAmtInput.style.borderColor = '';
+                }, 1500);
             }
-            setTimeout(() => {
-                const expAmt = document.getElementById('expenseAmount');
-                if (expAmt) expAmt.focus();
-            }, 100);
         });
     }
 
@@ -22395,6 +22393,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const expenseAmountInput = document.getElementById('expenseAmount');
         if (expenseAmountInput && !isNaN(finalAmount) && finalAmount > 0) {
             expenseAmountInput.value = finalAmount.toFixed(2);
+        }
+        const popAmtInput = document.getElementById('popoverAmountInput');
+        if (popAmtInput && !isNaN(finalAmount) && finalAmount > 0) {
+            popAmtInput.value = finalAmount.toFixed(2);
         }
 
         // 2. Setare Dată

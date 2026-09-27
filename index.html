@@ -34,7 +34,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MoneyApp">
-    <link rel="stylesheet" href="style.css?v=510">
+    <link rel="stylesheet" href="style.css?v=511">
 </head>
 <body>
     <div class="container">
@@ -51,7 +51,7 @@
                         <div class="logo-meta-wrap">
                             <div class="logo-title-row">
                                 <h1 class="app-title">MoneyApp</h1>
-                                <span id="appVersionBadge" class="app-version-badge">v3.4.55</span>
+                                <span id="appVersionBadge" class="app-version-badge">v3.4.56</span>
                             </div>
 
 
@@ -990,11 +990,10 @@
             <form id="formExpense">
                 <input type="hidden" id="editExpenseId">
 
-                <!-- Randul de sus: Suma (mai lunga), Data (mai scurta) si Ora - Fara etichete deasupra pentru a urca totul sus -->
-                <div class="form-row-3fields">
-                    <div class="form-group">
-                        <input type="number" inputmode="decimal" step="0.01" min="0.01" class="form-control" id="expenseAmount" placeholder="→ lei" required>
-                    </div>
+                <input type="hidden" id="expenseAmount" value="">
+
+                <!-- Randul de sus: Data si Ora -->
+                <div class="form-row-2fields-expense">
                     <div class="form-group">
                         <input type="date" class="form-control" id="expenseDate" required>
                     </div>
@@ -1097,13 +1096,8 @@
                     </div>
                 </div>
 
-                <!-- Bara de Acțiuni: Butoanele Salvează și Anulează împart un rând și sunt mai înalte -->
-                <div class="expense-action-bar">
-                    <button type="button" class="btn btn-secondary btn-expense-cancel" data-close="modalExpense" data-i18n="btn_cancel">Anulează</button>
-                    <button type="submit" class="btn btn-expense btn-expense-save" id="btnSubmitExpense" data-i18n="btn_save">
-                        <span>✓</span> <span>Salvează</span>
-                    </button>
-                </div>
+                <!-- Bara de Actiuni eliminata conform cerintelor: salvarea se face direct din panoul de cumparaturi -->
+                <button type="submit" id="btnSubmitExpense" style="display: none;"></button>
             </form>
         </div>
     </div>
@@ -1448,9 +1442,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.55.apk" download="MoneyApp_v3.4.55.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.56.apk" download="MoneyApp_v3.4.56.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.55.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.56.apk</span>
                 </a>
 
 
@@ -2886,7 +2880,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=510"></script>
+    <script src="app.js?v=511"></script>
 </body>
 
 

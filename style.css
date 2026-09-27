@@ -7049,6 +7049,28 @@ body.dark-theme .overview-export-box {
     font-size: 0.98rem !important;
 }
 
+.form-row-2fields-expense {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 6px;
+    margin-bottom: 6px;
+    align-items: center;
+    width: 100%;
+}
+
+.form-row-2fields-expense .form-group {
+    margin-bottom: 0;
+}
+
+.form-row-2fields-expense .form-control {
+    height: 38px !important;
+    padding: 6px 8px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+    box-sizing: border-box !important;
+}
+
 #modalExpense .form-row-3fields {
     grid-template-columns: 1.4fr 1.25fr 0.85fr !important;
     gap: 4px !important;
@@ -7068,12 +7090,12 @@ body.dark-theme .overview-export-box {
 
 #modalExpense #expenseDate,
 #modalExpense #expenseTime {
-    font-size: 0.76rem !important;
+    font-size: 0.80rem !important;
 }
 
-/* Selector Card vs Cash ergonomic și comod */
+/* Selector Card vs Cash ergonomic și comod - mai înalt */
 .payment-method-selector-wrap {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     width: 100%;
 }
 
@@ -7088,15 +7110,15 @@ body.dark-theme .overview-export-box {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 35px !important;
-    height: 35px !important;
-    padding: 3px 10px;
-    border-radius: 8px;
+    gap: 8px;
+    min-height: 44px !important;
+    height: 44px !important;
+    padding: 6px 12px;
+    border-radius: 9px;
     border: 1px solid var(--border-color);
     background: var(--input-bg);
     color: var(--text-color);
-    font-size: 0.84rem;
+    font-size: 0.90rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -7332,10 +7354,10 @@ body.dark-theme .overview-export-box {
 .expense-tools-col .expense-tool-select,
 .expense-tools-col .expense-tool-btn {
     width: 100% !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    padding: 4px 5px !important;
-    font-size: 0.74rem !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 6px 6px !important;
+    font-size: 0.78rem !important;
     font-weight: 700 !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -7345,7 +7367,7 @@ body.dark-theme .overview-export-box {
     text-overflow: ellipsis !important;
     box-sizing: border-box !important;
     text-align: center !important;
-    border-radius: 8px !important;
+    border-radius: 9px !important;
 }
 
 .expense-tools-col .tool-text {
@@ -7379,12 +7401,12 @@ body.dark-theme .overview-export-box {
 }
 
 .expense-tool-select {
-    height: 44px !important;
-    min-height: 44px !important;
-    padding: 4px 8px !important;
-    font-size: 0.82rem !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 6px 8px !important;
+    font-size: 0.84rem !important;
     font-weight: 700 !important;
-    border-radius: 8px !important;
+    border-radius: 9px !important;
     background: var(--input-bg) !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-color) !important;
@@ -7405,14 +7427,14 @@ body.dark-theme .overview-export-box {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 44px;
-    min-height: 44px;
-    padding: 4px 8px;
-    border-radius: 8px;
+    height: 52px;
+    min-height: 52px;
+    padding: 6px 8px;
+    border-radius: 9px;
     border: 1px solid var(--border-color);
     background: var(--input-bg);
     color: var(--text-color);
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     box-sizing: border-box;
@@ -7484,18 +7506,9 @@ body.dark-theme .expense-tool-btn.tool-suspend:has(.tool-checkbox:checked) {
     color: #fbbf24 !important;
 }
 
-/* ========================================================
-   BARA DE ACȚIUNI: SALVEAZĂ ȘI ANULEAZĂ ÎMPART UN RÂND (mai înalte)
-   ======================================================== */
+/* Bara de Actiuni eliminata conform cerintelor: salvarea se face direct din panoul de cumparaturi */
 .expense-action-bar {
-    display: grid;
-    grid-template-columns: 1fr 1.35fr;
-    gap: 8px;
-    margin-top: 6px;
-    margin-bottom: 2px;
-    width: 100%;
-    box-sizing: border-box;
-    align-items: stretch;
+    display: none !important;
 }
 
 .btn-expense-cancel {
