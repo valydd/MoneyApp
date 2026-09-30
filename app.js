@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.58";
+const APP_VERSION = "3.4.59";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -17213,6 +17213,11 @@ function bindPopoverTopBarEvents() {
                 }
             }
         });
+        popAmtInput.addEventListener('focus', () => {
+            if (typeof popAmtInput.select === 'function') {
+                popAmtInput.select();
+            }
+        });
     }
     if (expAmtInput && !expAmtInput.dataset.boundSyncPop) {
         expAmtInput.dataset.boundSyncPop = 'true';
@@ -17240,6 +17245,13 @@ function closeFoodMerchantsOverlay() {
     if (searchWrap) {
         searchWrap.classList.remove('is-floating-keyboard');
         searchWrap.style.bottom = '';
+    }
+    const editId = document.getElementById('editExpenseId')?.value;
+    if (!editId && !window._editingExpenseTx) {
+        const popAmt = document.getElementById('popoverAmountInput');
+        if (popAmt) popAmt.value = '';
+        const expAmt = document.getElementById('expenseAmount');
+        if (expAmt) expAmt.value = '';
     }
 }
 
@@ -17519,8 +17531,15 @@ function updateFoodMerchantsQuickPicker(catId, forceOpen = false) {
         if (!isEditingSameCat) {
             if (descInput) descInput.value = '';
             if (merchantInput) merchantInput.value = '';
+            const popAmt = document.getElementById('popoverAmountInput');
+            if (popAmt) popAmt.value = '';
+            const expAmt = document.getElementById('expenseAmount');
+            if (expAmt) expAmt.value = '';
             if (typeof updateExpenseBoxesClearButtons === 'function') {
                 updateExpenseBoxesClearButtons();
+            }
+            if (typeof updateExpenseLivePreview === 'function') {
+                updateExpenseLivePreview();
             }
         } else {
             if (descInput && !descInput.value && window._editingExpenseTx.comment) {
@@ -17803,6 +17822,54 @@ function closeAndSaveMerchantPrompt() {
     overlay.style.display = 'none';
 }
 
+function resetExpenseFormInputs() {
+    window._editingExpenseTx = null;
+    const form = document.getElementById('formExpense');
+    if (form) {
+        form.reset();
+    }
+
+    const editId = document.getElementById('editExpenseId');
+    if (editId) editId.value = '';
+
+    const expAmt = document.getElementById('expenseAmount');
+    if (expAmt) expAmt.value = '';
+
+    const popAmt = document.getElementById('popoverAmountInput');
+    if (popAmt) popAmt.value = '';
+
+    const selectedCat = document.getElementById('selectedExpenseCategoryId');
+    if (selectedCat) selectedCat.value = '';
+
+    const merch = document.getElementById('selectedExpenseMerchant');
+    if (merch) merch.value = '';
+
+    const desc = document.getElementById('expenseDesc');
+    if (desc) desc.value = '';
+
+    const loc = document.getElementById('selectedExpenseLocation');
+    if (loc) loc.value = '';
+
+    const popLoc = document.getElementById('popoverLocationInput');
+    if (popLoc) popLoc.value = '';
+
+    const btnClearLoc = document.getElementById('btnClearPopoverLocation');
+    if (btnClearLoc) btnClearLoc.style.display = 'none';
+
+    const amtBox = document.getElementById('popoverAmountBox');
+    if (amtBox) amtBox.classList.remove('popover-box-error');
+
+    document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
+
+    if (typeof updateExpenseBoxesClearButtons === 'function') {
+        updateExpenseBoxesClearButtons();
+    }
+    if (typeof updateExpenseLivePreview === 'function') {
+        updateExpenseLivePreview();
+    }
+}
+window.resetExpenseFormInputs = resetExpenseFormInputs;
+
 function handleSaveExpenseFromShoppingPopover(e) {
     if (e) {
         if (typeof e.preventDefault === 'function') e.preventDefault();
@@ -17941,6 +18008,7 @@ function saveExpenseDirectly(amount, categoryId, merchant, description, location
     renderTransactionsHistory();
     renderStatsTab();
     window._editingExpenseTx = null;
+    resetExpenseFormInputs();
 
     // Închidem overlay-ul de cumpărături și modalul
     closeFoodMerchantsOverlay();
@@ -18459,8 +18527,15 @@ function renderExpenseCategoryPicker() {
                 if (!isEditingSameCat) {
                     if (descInput) descInput.value = '';
                     if (merchantInput) merchantInput.value = '';
+                    const popAmt = document.getElementById('popoverAmountInput');
+                    if (popAmt) popAmt.value = '';
+                    const expAmt = document.getElementById('expenseAmount');
+                    if (expAmt) expAmt.value = '';
                     if (typeof updateExpenseBoxesClearButtons === 'function') {
                         updateExpenseBoxesClearButtons();
+                    }
+                    if (typeof updateExpenseLivePreview === 'function') {
+                        updateExpenseLivePreview();
                     }
                 } else {
                     if (descInput && !descInput.value && window._editingExpenseTx.comment) {
@@ -18503,8 +18578,15 @@ function renderExpenseCategoryPicker() {
             if (!isEditingSameCat) {
                 if (descInput) descInput.value = '';
                 if (merchantInput) merchantInput.value = '';
+                const popAmt = document.getElementById('popoverAmountInput');
+                if (popAmt) popAmt.value = '';
+                const expAmt = document.getElementById('expenseAmount');
+                if (expAmt) expAmt.value = '';
                 if (typeof updateExpenseBoxesClearButtons === 'function') {
                     updateExpenseBoxesClearButtons();
+                }
+                if (typeof updateExpenseLivePreview === 'function') {
+                    updateExpenseLivePreview();
                 }
             } else {
                 if (descInput && !descInput.value && window._editingExpenseTx.comment) {
@@ -18590,10 +18672,22 @@ function closeModal(modalId) {
             modal.classList.remove('active');
         }
         if (modalId === 'modalExpense') {
+            const editId = document.getElementById('editExpenseId')?.value;
+            if (!editId && !window._editingExpenseTx) {
+                if (typeof resetExpenseFormInputs === 'function') {
+                    resetExpenseFormInputs();
+                }
+            }
             window._editingExpenseTx = null;
         }
     } else {
         document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        const editId = document.getElementById('editExpenseId')?.value;
+        if (!editId && !window._editingExpenseTx) {
+            if (typeof resetExpenseFormInputs === 'function') {
+                resetExpenseFormInputs();
+            }
+        }
         window._editingExpenseTx = null;
     }
     const hasActiveModal = !!document.querySelector('.modal-overlay.active');
@@ -20735,6 +20829,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderTransactionsHistory();
                 renderStatsTab();
                 window._editingExpenseTx = null;
+                resetExpenseFormInputs();
                 closeModal('modalExpense');
                 if (document.getElementById('modalCategoryDetails').classList.contains('active')) {
                     openCategoryDetailModal(categoryId);
@@ -20782,6 +20877,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTransactionsHistory();
             renderStatsTab();
             window._editingExpenseTx = null;
+            resetExpenseFormInputs();
             closeModal('modalExpense');
             if (document.getElementById('modalBillsAnalytics') && document.getElementById('modalBillsAnalytics').classList.contains('active')) {
                 renderBillsAnalytics();
