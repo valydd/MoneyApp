@@ -99,7 +99,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.59";
+const APP_VERSION = "3.4.60";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -17135,6 +17135,11 @@ function syncPopoverTopBarState() {
     if (popCurr) {
         popCurr.textContent = getActiveCurrency();
     }
+    // Sincronizare stare metoda de plata (Card vs Cash)
+    const currentMethod = document.getElementById('expensePaymentMethod')?.value || 'card';
+    document.querySelectorAll('#expensePaymentMethodGroup .btn-pay-method').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.method === currentMethod);
+    });
     closeLocationsDropdown();
 }
 
@@ -17860,6 +17865,12 @@ function resetExpenseFormInputs() {
     if (amtBox) amtBox.classList.remove('popover-box-error');
 
     document.querySelectorAll('#expenseCategoryPicker .cat-pick-btn').forEach(b => b.classList.remove('active'));
+
+    const expPayInput = document.getElementById('expensePaymentMethod');
+    if (expPayInput) expPayInput.value = 'card';
+    document.querySelectorAll('#expensePaymentMethodGroup .btn-pay-method').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.method === 'card');
+    });
 
     if (typeof updateExpenseBoxesClearButtons === 'function') {
         updateExpenseBoxesClearButtons();

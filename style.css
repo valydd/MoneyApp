@@ -7123,6 +7123,29 @@ body.dark-theme .overview-export-box {
     width: 100%;
 }
 
+.popover-payment-method-wrap {
+    padding: 6px 12px 0 12px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 25;
+}
+
+.popover-payment-method-wrap .payment-method-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+.popover-payment-method-wrap .btn-pay-method {
+    min-height: 40px !important;
+    height: 40px !important;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    padding: 4px 8px;
+}
+
 .payment-method-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -7162,39 +7185,38 @@ body.dark-theme .overview-export-box {
     border-color: var(--accent);
 }
 
-/* Grilă categorii alungită în jos: încap 5 rânduri de categorii și 4 coloane,
-   împingând butonul Scanează sub marginea superioară a tastaturii virtuale */
+/* Grilă categorii alungită și mărită: ocupă tot spațiul liber lăsat de mutarea butoanelor Card/Cash */
 #modalExpense .category-picker-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 4px !important;
-    padding: 4px 2px !important;
-    max-height: 350px !important;
-    min-height: 300px !important;
+    gap: 5px !important;
+    padding: 6px 3px !important;
+    max-height: 420px !important;
+    min-height: 350px !important;
     margin-bottom: 0px !important;
 }
 
 #modalExpense .cat-pick-btn {
-    min-height: 55px !important;
-    height: 55px !important;
-    padding: 3px 1px !important;
-    gap: 1px !important;
-    border-radius: 7px !important;
+    min-height: 62px !important;
+    height: 62px !important;
+    padding: 4px 2px !important;
+    gap: 2px !important;
+    border-radius: 8px !important;
 }
 
 #modalExpense .cat-pick-icon {
-    font-size: 1.2rem !important;
+    font-size: 1.3rem !important;
     line-height: 1 !important;
 }
 
 #modalExpense .cat-pick-dot {
-    width: 5px !important;
-    height: 5px !important;
+    width: 6px !important;
+    height: 6px !important;
 }
 
 #modalExpense .cat-pick-name {
-    font-size: 0.65rem !important;
-    line-height: 1.1 !important;
+    font-size: 0.68rem !important;
+    line-height: 1.15 !important;
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
