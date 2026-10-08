@@ -44,6 +44,97 @@ const PRESET_COLORS = [
     '#0f172a', '#1e293b', '#09090b', '#18181b', '#020617'
 ];
 
+// Pictograme / Emoji presetate pentru categorii (Economii, Loto 6/49, cumpărături, servicii, etc.)
+const PRESET_CATEGORY_ICONS = [
+    // Economii, Investiții & Finanțe
+    { icon: '🐖', name: 'Economii / Pusculiță' },
+    { icon: '💰', name: 'Economii / Sac de bani' },
+    { icon: '🪙', name: 'Monede / Mărunțiș' },
+    { icon: '🏦', name: 'Bancă / Depozit' },
+    { icon: '📈', name: 'Investiții / Bursă / Creștere' },
+    { icon: '💎', name: 'Valoare / Aur / Bijuterii' },
+    { icon: '🔐', name: 'Fond de urgență / Siguranță' },
+    { icon: '💵', name: 'Bancnote / Cash / Salariu' },
+    { icon: '💳', name: 'Card bancar' },
+
+    // Loto 6/49, Jocuri & Pariuri
+    { icon: '🎰', name: 'Loto / Sloturi / Cazino' },
+    { icon: '🍀', name: 'Noroc / Loto 6/49' },
+    { icon: '🎟️', name: 'Bilet loto / Tombolă' },
+    { icon: '🎲', name: 'Zaruri / Jocuri' },
+    { icon: '🎱', name: 'Bila 8 / Loto / Biliard' },
+    { icon: '🎯', name: 'Pariuri sportive / Țintă' },
+    { icon: '🏆', name: 'Câștig / Trofeu' },
+    { icon: '🃏', name: 'Cărți de joc / Poker' },
+    { icon: '🎫', name: 'Tichet / Bilet' },
+
+    // Mâncare, Restaurante & Cafenele
+    { icon: '🛒', name: 'Supermarket / Alimente' },
+    { icon: '🍕', name: 'Pizza / Fast-food' },
+    { icon: '🍔', name: 'Burger / Restaurant' },
+    { icon: '☕', name: 'Cafea / Cafenea' },
+    { icon: '🍻', name: 'Bere / Ieșiri cu prietenii' },
+    { icon: '🍷', name: 'Vin / Bar / Cina' },
+    { icon: '🍞', name: 'Brutărie / Pâine' },
+    { icon: '🥦', name: 'Piață / Legume & Fructe' },
+    { icon: '🥩', name: 'Măcelărie / Carne' },
+    { icon: '🍦', name: 'Desert / Înghețată' },
+
+    // Transport & Auto
+    { icon: '🚗', name: 'Mașină / Auto' },
+    { icon: '⛽', name: 'Benzină / Combustibil' },
+    { icon: '🔧', name: 'Service / Reparații auto' },
+    { icon: '🚌', name: 'Transport în comun' },
+    { icon: '🚕', name: 'Taxi / Ride-sharing' },
+    { icon: '🚆', name: 'Tren / Călătorii' },
+    { icon: '✈️', name: 'Avion / Zbor / Vacanță' },
+    { icon: '🚲', name: 'Bicicletă' },
+    { icon: '🅿️', name: 'Parcare / Rovinietă' },
+
+    // Locuință, Facturi & Utilități
+    { icon: '🏠', name: 'Locuință / Chirie' },
+    { icon: '⚡', name: 'Curent electric / Utilități' },
+    { icon: '💧', name: 'Apă / Canal' },
+    { icon: '🔥', name: 'Gaze / Căldură' },
+    { icon: '📱', name: 'Telefon mobil / Abonament' },
+    { icon: '🌐', name: 'Internet / Wi-Fi' },
+    { icon: '📺', name: 'TV / Streaming / Netflix' },
+    { icon: '🛋️', name: 'Mobilă / Decorațiuni' },
+    { icon: '🧹', name: 'Curățenie / Menaj' },
+
+    // Shopping, Modă & Tehnologie
+    { icon: '🛍️', name: 'Shopping / Haine' },
+    { icon: '👗', name: 'Modă / Îmbrăcăminte' },
+    { icon: '👟', name: 'Încălțăminte' },
+    { icon: '💻', name: 'IT / Electronice' },
+    { icon: '📦', name: 'Curier / Colete' },
+    { icon: '🏷️', name: 'General / Etichetă' },
+
+    // Sănătate & Frumusețe
+    { icon: '💊', name: 'Farmacie / Medicamente' },
+    { icon: '🩺', name: 'Doctor / Consultație' },
+    { icon: '🦷', name: 'Dentist / Stomatolog' },
+    { icon: '💈', name: 'Frizerie / Coafor' },
+    { icon: '🧴', name: 'Cosmetice / Îngrijire' },
+    { icon: '🧘', name: 'Spa / Relaxare' },
+
+    // Familie, Copii, Animale & Cadouri
+    { icon: '👶', name: 'Copii / Bebe' },
+    { icon: '🐾', name: 'Animale / Pet shop' },
+    { icon: '🎁', name: 'Cadouri / Sărbători' },
+    { icon: '🎓', name: 'Educație / Cursuri' },
+    { icon: '📚', name: 'Cărți / Birotică' },
+
+    // Sport, Hobby & Divertisment
+    { icon: '⚽', name: 'Fotbal / Sport' },
+    { icon: '🏋️', name: 'Fitness / Sală' },
+    { icon: '🎮', name: 'Jocuri video' },
+    { icon: '🎬', name: 'Cinema / Filme' },
+    { icon: '🎵', name: 'Muzică / Concerte' },
+    { icon: '🏖️', name: 'Plajă / Concediu' },
+    { icon: '⛺', name: 'Munte / Camping' }
+];
+
 const DEFAULT_CATEGORIES = [
     { id: 'cat-1', name: 'Mâncare & Alimente', color: '#10b981', icon: '🛒' },
     { id: 'cat-2', name: 'Facturi & Utilități', color: '#ef4444', icon: '⚡' },
@@ -99,7 +190,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.60";
+const APP_VERSION = "3.4.61";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -18647,6 +18738,54 @@ function renderColorPresets() {
     });
 }
 
+// Preset Category Icons / Emojis in Category Edit Modal
+function renderIconPresets(selectedIcon = '') {
+    const palette = document.getElementById('iconPresetPalette');
+    if (!palette) return;
+    palette.innerHTML = '';
+    const currentVal = (selectedIcon || document.getElementById('categoryIconInput')?.value || '').trim();
+    const previewSpan = document.getElementById('categoryIconSelectedPreview');
+
+    if (typeof PRESET_CATEGORY_ICONS !== 'undefined' && Array.isArray(PRESET_CATEGORY_ICONS)) {
+        PRESET_CATEGORY_ICONS.forEach(item => {
+            const chip = document.createElement('div');
+            const isActive = (item.icon === currentVal);
+            chip.className = 'cat-icon-chip' + (isActive ? ' active' : '');
+            chip.textContent = item.icon;
+            chip.title = `${item.name} (${item.icon})`;
+            chip.setAttribute('role', 'button');
+            chip.setAttribute('tabindex', '0');
+
+            chip.addEventListener('click', () => {
+                const iconInput = document.getElementById('categoryIconInput');
+                if (iconInput) {
+                    iconInput.value = item.icon;
+                }
+                if (previewSpan) {
+                    previewSpan.textContent = `Selectat: ${item.icon} - ${item.name}`;
+                }
+                palette.querySelectorAll('.cat-icon-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+
+            palette.appendChild(chip);
+        });
+    }
+
+    if (previewSpan) {
+        if (typeof PRESET_CATEGORY_ICONS !== 'undefined' && Array.isArray(PRESET_CATEGORY_ICONS)) {
+            const found = PRESET_CATEGORY_ICONS.find(i => i.icon === currentVal);
+            if (found) {
+                previewSpan.textContent = `Selectat: ${found.icon} - ${found.name}`;
+            } else if (currentVal) {
+                previewSpan.textContent = `Pictogramă curentă: ${currentVal}`;
+            } else {
+                previewSpan.textContent = 'Alege o pictogramă rapidă de mai jos sau tastează orice emoji';
+            }
+        }
+    }
+}
+
 // Open Modal Helper
 function openModal(modalId) {
     applyLanguage();
@@ -19451,6 +19590,7 @@ function openCategoryEditModal(catToEdit = null) {
     }
 
     renderColorPresets();
+    renderIconPresets(iconInput.value);
     openModal('modalCategoryForm');
 }
 
@@ -21027,6 +21167,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('categoryColorPicker').addEventListener('input', (e) => {
         document.getElementById('categoryColorCode').textContent = e.target.value;
     });
+
+    // Icon input change event to sync preset chips and preview label
+    const categoryIconInputEl = document.getElementById('categoryIconInput');
+    if (categoryIconInputEl) {
+        categoryIconInputEl.addEventListener('input', (e) => {
+            const val = (e.target.value || '').trim();
+            const palette = document.getElementById('iconPresetPalette');
+            if (palette) {
+                palette.querySelectorAll('.cat-icon-chip').forEach(c => {
+                    if (c.textContent.trim() === val) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            }
+            const previewSpan = document.getElementById('categoryIconSelectedPreview');
+            if (previewSpan) {
+                if (typeof PRESET_CATEGORY_ICONS !== 'undefined' && Array.isArray(PRESET_CATEGORY_ICONS)) {
+                    const found = PRESET_CATEGORY_ICONS.find(i => i.icon === val);
+                    if (found) {
+                        previewSpan.textContent = `Selectat: ${found.icon} - ${found.name}`;
+                    } else if (val) {
+                        previewSpan.textContent = `Pictogramă: ${val}`;
+                    } else {
+                        previewSpan.textContent = 'Alege o pictogramă rapidă de mai jos sau tastează orice emoji';
+                    }
+                }
+            }
+        });
+    }
 
     // Save Category Form
     document.getElementById('formCategory').addEventListener('submit', (e) => {

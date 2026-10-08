@@ -34,7 +34,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MoneyApp">
-    <link rel="stylesheet" href="style.css?v=515">
+    <link rel="stylesheet" href="style.css?v=516">
 </head>
 <body>
     <div class="container">
@@ -51,7 +51,7 @@
                         <div class="logo-meta-wrap">
                             <div class="logo-title-row">
                                 <h1 class="app-title">MoneyApp</h1>
-                                <span id="appVersionBadge" class="app-version-badge">v3.4.60</span>
+                                <span id="appVersionBadge" class="app-version-badge">v3.4.61</span>
                             </div>
 
 
@@ -1268,8 +1268,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="categoryIconInput" data-i18n="lbl_category_icon">Iconiță / Emoji</label>
-                    <input type="text" class="form-control" id="categoryIconInput" placeholder="Ex: 💊, 🎁, ⛽, 🛒" maxlength="4">
+                    <label class="form-label" for="categoryIconInput" data-i18n="lbl_category_icon">Iconiță / Emoji *</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="text" class="form-control" id="categoryIconInput" placeholder="Ex: 🐖, 🎰, 🍀, 💊" maxlength="8" style="font-size: 1.25rem; font-weight: 700; width: 68px; text-align: center; padding: 4px 6px;">
+                        <span id="categoryIconSelectedPreview" style="font-size: 0.76rem; color: var(--text-muted); line-height: 1.3;">Alege o pictogramă rapidă de mai jos sau tastează orice emoji</span>
+                    </div>
+
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; margin-bottom: 2px;">Iconițe rapide recomandate (Economii, Loto 6/49, etc.):</div>
+                    <div class="cat-icon-preset-grid" id="iconPresetPalette">
+                        <!-- Populated with icon chips -->
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1443,9 +1451,9 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.60.apk" download="MoneyApp_v3.4.60.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <a id="btnDownloadApkModal" href="MoneyApp_v3.4.61.apk" download="MoneyApp_v3.4.61.apk" class="btn btn-accent btn-block" style="text-decoration:none; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.60.apk</span>
+                    <span data-i18n="btn_download_apk">Descarcă MoneyApp_v3.4.61.apk</span>
                 </a>
 
 
@@ -2881,7 +2889,7 @@
     <script src="chart.min.js"></script>
     <script src="chartjs-plugin-datalabels.min.js"></script>
     <script src="qrcode.min.js"></script>
-    <script src="app.js?v=515"></script>
+    <script src="app.js?v=516"></script>
 </body>
 
 
