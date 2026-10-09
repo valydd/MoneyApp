@@ -190,7 +190,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.61";
+const APP_VERSION = "3.4.62";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -6775,16 +6775,83 @@ function renderOverviewChartAndList() {
     const listEl = document.getElementById('overviewCategoryList');
     listEl.innerHTML = '';
 
-    if (activeCatList.length === 0) {
-        listEl.innerHTML = `
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg>
-                <div>Nu sunt cheltuieli înregistrate în această perioadă.</div>
-                <div style="font-size: 0.76rem; margin-top: 4px;">Apasă pe butonul "+ Cheltuială" pentru a adăuga.</div>
-            </div>
+    // Categoria Venit - afișată ÎNTOTDEAUNA pe prima poziție în lista de sub grafic
+    const customVenitCat = (appData.categories && Array.isArray(appData.categories))
+        ? appData.categories.find(c => {
+            const n = (c.name || '').trim().toLowerCase();
+            return n === 'venit' || n === 'venituri' || n.startsWith('venit');
+        })
+        : null;
+
+    const incomeTx = periodTx.filter(t => t.type === 'income' && !isTxSuspended(t));
+    let totalIncomeRon = 0;
+    incomeTx.forEach(t => totalIncomeRon += (parseFloat(t.amountInRon) || parseFloat(t.amount) || 0));
+
+    let catCustomRon = 0;
+    let catCustomCount = 0;
+    if (customVenitCat && catMap[customVenitCat.id]) {
+        catCustomRon = catMap[customVenitCat.id].totalRon || 0;
+        catCustomCount = catMap[customVenitCat.id].count || 0;
+    }
+
+    const combinedVenitRon = totalIncomeRon + catCustomRon;
+    const combinedVenitCount = incomeTx.length + catCustomCount;
+    const combinedVenitCurr = convertFromRon(combinedVenitRon, mainCurr);
+
+    const venitCategoryObj = customVenitCat || {
+        id: 'income',
+        name: (typeof t === 'function' ? t('btn_income') : null) || 'Venit',
+        color: '#10b981',
+        icon: '💰'
+    };
+
+    const venitItem = {
+        category: venitCategoryObj,
+        totalRon: combinedVenitRon,
+        total: combinedVenitCurr,
+        count: combinedVenitCount,
+        isIncome: true
+    };
+
+    // Filtram categoriile celorlalte cheltuieli (excluzand categoria Venit daca a existat deja)
+    const otherCats = activeCatList.filter(item => {
+        if (customVenitCat && item.category.id === customVenitCat.id) return false;
+        const n = (item.category.name || '').trim().toLowerCase();
+        return n !== 'venit' && n !== 'venituri' && !n.startsWith('venit');
+    });
+
+    // 1. Prima categorie: Venit - intotdeauna afisata prima
+    const rowVenit = document.createElement('div');
+    rowVenit.className = 'category-row category-row-income';
+    rowVenit.title = 'Apasă pentru a deschide lista detaliată a veniturilor';
+    const venitOpsText = `${venitItem.count} ${t('ops_suffix')}`;
+    rowVenit.innerHTML = `
+        <div class="category-meta">
+            <span class="cat-color-badge" style="background-color: ${venitItem.category.color || '#10b981'};"></span>
+            <span class="cat-icon-symbol">${venitItem.category.icon || '💰'}</span>
+            <span class="cat-name">${escapeHtml(venitItem.category.name)}</span>
+        </div>
+        <div class="category-stats">
+            <span class="cat-amount" style="color: var(--success, #10b981);">${formatMoney(venitItem.total, mainCurr)}</span>
+            <span class="cat-percent-badge" style="color: var(--success, #10b981); background: rgba(16, 185, 129, 0.12); font-weight: 600;">${venitOpsText}</span>
+        </div>
+    `;
+    rowVenit.addEventListener('click', () => {
+        openCategoryDetailModal(venitItem.category.id);
+    });
+    listEl.appendChild(rowVenit);
+
+    // 2. Apoi celelalte categorii exact ca acum
+    if (otherCats.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty-state';
+        emptyDiv.style.padding = '12px 10px';
+        emptyDiv.innerHTML = `
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Nu sunt alte cheltuieli înregistrate în această perioadă.</div>
         `;
+        listEl.appendChild(emptyDiv);
     } else {
-        activeCatList.forEach(item => {
+        otherCats.forEach(item => {
             const pct = grandExpenseTotal > 0 ? ((item.total / grandExpenseTotal) * 100).toFixed(1) : '0.0';
             const row = document.createElement('div');
             row.className = 'category-row';
@@ -6793,7 +6860,7 @@ function renderOverviewChartAndList() {
                 <div class="category-meta">
                     <span class="cat-color-badge" style="background-color: ${item.category.color};"></span>
                     <span class="cat-icon-symbol">${item.category.icon || '🏷️'}</span>
-                    <span class="cat-name">${item.category.name}</span>
+                    <span class="cat-name">${escapeHtml(item.category.name)}</span>
                 </div>
                 <div class="category-stats">
                     <span class="cat-amount">${formatMoney(item.total, mainCurr)}</span>
@@ -7346,16 +7413,36 @@ let currentExportData = {
 // Modal Drill-down: Click pe categorie/felie grafic
 function openCategoryDetailModal(categoryId) {
     currentDetailCategoryId = categoryId;
-    const category = appData.categories.find(c => c.id === categoryId) || {
-        id: categoryId,
-        name: 'Categorie',
-        color: '#3b82f6',
-        icon: '🏷️'
-    };
+    const customVenitCat = (appData.categories && Array.isArray(appData.categories))
+        ? appData.categories.find(c => {
+            const n = (c.name || '').trim().toLowerCase();
+            return n === 'venit' || n === 'venituri' || n.startsWith('venit');
+        })
+        : null;
+    const isVenitModal = (categoryId === 'income' || categoryId === 'cat-income-virtual' || (customVenitCat && categoryId === customVenitCat.id));
+
+    let category = null;
+    if (isVenitModal) {
+        category = customVenitCat || {
+            id: 'income',
+            name: (typeof t === 'function' ? t('btn_income') : null) || 'Venit',
+            color: '#10b981',
+            icon: '💰'
+        };
+    } else {
+        category = appData.categories.find(c => c.id === categoryId) || {
+            id: categoryId,
+            name: 'Categorie',
+            color: '#3b82f6',
+            icon: '🏷️'
+        };
+    }
 
     const periodKey = document.getElementById('overviewPeriod').value;
     const periodTx = filterTransactionsByPeriod(appData.transactions, periodKey);
-    const categoryTx = periodTx.filter(t => t.type === 'expense' && t.categoryId === categoryId);
+    const categoryTx = isVenitModal
+        ? periodTx.filter(t => t.type === 'income' || (customVenitCat && t.categoryId === customVenitCat.id))
+        : periodTx.filter(t => t.type === 'expense' && t.categoryId === categoryId);
 
     // Sort by date descending
     categoryTx.sort((a, b) => new Date(b.date) - new Date(a.date) || b.createdAt - a.createdAt);
@@ -7373,22 +7460,26 @@ function openCategoryDetailModal(categoryId) {
 
     // Populate modal
     document.getElementById('drilldownCategoryName').textContent = `${category.icon || ''} ${category.name}`;
-    document.getElementById('drilldownColorDot').style.backgroundColor = category.color;
+    document.getElementById('drilldownColorDot').style.backgroundColor = category.color || '#10b981';
     document.getElementById('drilldownPeriodLabel').textContent = getPeriodLabel(periodKey);
     document.getElementById('drilldownTotalSpent').textContent = formatMoney(convertFromRon(totalSpent, mainCurr), mainCurr);
-    document.getElementById('drilldownPercentLabel').textContent = `(${percent}% ${t('lbl_of_period_expenses')})`;
+    if (isVenitModal) {
+        document.getElementById('drilldownPercentLabel').textContent = `(${categoryTx.length} ${t('ops_suffix')})`;
+    } else {
+        document.getElementById('drilldownPercentLabel').textContent = `(${percent}% ${t('lbl_of_period_expenses')})`;
+    }
 
     const listEl = document.getElementById('drilldownTransactionsList');
     listEl.innerHTML = '';
 
     if (categoryTx.length === 0) {
-        listEl.innerHTML = `<div class="empty-state">${t('empty_category_expenses')}</div>`;
+        listEl.innerHTML = `<div class="empty-state">${isVenitModal ? 'Nu sunt venituri înregistrate în această perioadă.' : t('empty_category_expenses')}</div>`;
     } else {
         categoryTx.forEach(tx => {
             const isSuspended = isTxSuspended(tx);
             const mc = getTransactionMerchantAndComment(tx);
-            const mainTitle = category.name;
-            const itemIcon = category.icon || '🏷️';
+            const mainTitle = tx.type === 'income' ? (tx.description || category.name) : category.name;
+            const itemIcon = tx.type === 'income' ? (category.icon || '💰') : (category.icon || '🏷️');
 
             const commentText = (mc.comment || '').trim();
             const commentRowHtml = commentText ? `
@@ -7472,11 +7563,17 @@ function openCategoryDetailModal(categoryId) {
             // Doar butonul explicit de editare deschide formularul de editare, evitand deschiderea accidentala la tap pe grafic
             item.querySelector('.tx-edit-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                openEditExpenseModal(tx);
+                closeModal('modalCategoryDetails');
+                if (tx.type === 'income') {
+                    if (typeof openEditIncomeModal === 'function') openEditIncomeModal(tx);
+                } else {
+                    openEditExpenseModal(tx);
+                }
             });
             item.querySelector('.tx-del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (confirm('Sigur doriți să ștergeți această cheltuială?')) {
+                const confirmMsg = tx.type === 'income' ? 'Sigur doriți să ștergeți acest venit?' : 'Sigur doriți să ștergeți această cheltuială?';
+                if (confirm(confirmMsg)) {
                     deleteTransaction(tx.id);
                     openCategoryDetailModal(categoryId); // refresh current modal
                 }
@@ -7629,14 +7726,23 @@ function openExportSingleCategoryModal(categoryId) {
     if (!catId) return;
 
     const lang = getLanguageForCurrency();
-    const category = appData.categories.find(c => c.id === catId) || {
-        name: t('tab_categories', lang),
-        icon: '🏷️'
-    };
+    const customVenitCat = (appData.categories && Array.isArray(appData.categories))
+        ? appData.categories.find(c => {
+            const n = (c.name || '').trim().toLowerCase();
+            return n === 'venit' || n === 'venituri' || n.startsWith('venit');
+        })
+        : null;
+    const isVenit = (catId === 'income' || catId === 'cat-income-virtual' || (customVenitCat && catId === customVenitCat.id));
+
+    const category = isVenit
+        ? (customVenitCat || { name: (typeof t === 'function' ? t('btn_income', lang) : null) || 'Venit', icon: '💰' })
+        : (appData.categories.find(c => c.id === catId) || { name: t('tab_categories', lang), icon: '🏷️' });
 
     const periodKey = document.getElementById('overviewPeriod')?.value || 'current-month';
     const periodTx = filterTransactionsByPeriod(appData.transactions, periodKey);
-    const categoryTx = periodTx.filter(t => t.type === 'expense' && t.categoryId === catId);
+    const categoryTx = isVenit
+        ? periodTx.filter(t => t.type === 'income' || (customVenitCat && t.categoryId === customVenitCat.id))
+        : periodTx.filter(t => t.type === 'expense' && t.categoryId === catId);
     categoryTx.sort((a, b) => new Date(b.date) - new Date(a.date) || b.createdAt - a.createdAt);
 
     const mainCurr = getActiveCurrency();
