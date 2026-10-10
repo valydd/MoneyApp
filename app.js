@@ -190,7 +190,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.62";
+const APP_VERSION = "3.4.63";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -6389,10 +6389,22 @@ function updateBalanceCards() {
     }
 }
 
-// Helper: Ritm Zilnic Mediu de Cheltuieli (RON)
+// Helper: Identificare categorie de Economii (implicită cat-8 sau orice categorie ce conține „Economii”)
 function isSavingsCategory(tx) {
-    // Categoria "Economii & Rate" (cat-8) nu este o cheltuiala reala — banii raman in depozit/economii
-    return !!(tx && tx.categoryId === 'cat-8');
+    if (!tx) return false;
+    const catId = typeof tx === 'string' ? tx : (tx.categoryId || tx.id);
+    if (!catId) return false;
+    if (catId === 'cat-8') return true;
+    if (typeof appData !== 'undefined' && appData && Array.isArray(appData.categories)) {
+        const cat = appData.categories.find(c => c.id === catId);
+        if (cat) {
+            const name = (cat.name || '').trim().toLowerCase();
+            if (name === 'economii' || name === 'economie' || name.includes('economii') || name.includes('savings') || name.includes('sparen')) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function calculateDailyExpenseRateRon() {
@@ -6466,8 +6478,8 @@ function calculateDailyExpenseRateRon() {
 
 // Calcul Autonomie Financiară Globală (Banii actuali din cont / Ritmul de cheltuieli recent)
 function calculateGlobalRunwayDays() {
-    // 1. Sold curent total din cont (Venituri - Cheltuieli active)
-    // Veniturile nu se exclud la suspendarea saptamânii; cheltuielile se exclud
+    // 1. Fond total disponibil (Venituri - Cheltuieli de consum fără Economii)
+    // Banii alocați la Economii sunt bani puși deoparte (rezervă), așadar nu reduc fondul total pentru autonomie!
     let totalBalRon = 0;
     appData.transactions.forEach(t => {
         if (isTxSuspended(t)) return;
@@ -6476,9 +6488,19 @@ function calculateGlobalRunwayDays() {
             totalBalRon += a;
         } else if (t.type === 'expense') {
             if (isWeeklySuspendedTx(t)) return; // cheltuielile din saptamana suspendata excluse
-            totalBalRon -= a;
+            if (!isSavingsCategory(t)) {
+                totalBalRon -= a;
+            }
         }
     });
+
+    // Adăugăm și depozitele bancare din modulul Depozite / Economii (dacă există)
+    if (appData && Array.isArray(appData.deposits)) {
+        appData.deposits.forEach(dep => {
+            const depAmt = parseFloat(dep.amountInRon) || parseFloat(dep.amount) || 0;
+            totalBalRon += depAmt;
+        });
+    }
 
     if (totalBalRon <= 0) return 0;
 
@@ -7463,9 +7485,16 @@ function openCategoryDetailModal(categoryId) {
     document.getElementById('drilldownColorDot').style.backgroundColor = category.color || '#10b981';
     document.getElementById('drilldownPeriodLabel').textContent = getPeriodLabel(periodKey);
     document.getElementById('drilldownTotalSpent').textContent = formatMoney(convertFromRon(totalSpent, mainCurr), mainCurr);
+    const isSavingsModal = isSavingsCategory(categoryId) || isSavingsCategory(category);
+    const totalSpentLabelEl = document.getElementById('drilldownTotalSpentLabel');
     if (isVenitModal) {
+        if (totalSpentLabelEl) totalSpentLabelEl.textContent = t('total_income') || 'Total încasat';
         document.getElementById('drilldownPercentLabel').textContent = `(${categoryTx.length} ${t('ops_suffix')})`;
+    } else if (isSavingsModal) {
+        if (totalSpentLabelEl) totalSpentLabelEl.textContent = 'Total economisit';
+        document.getElementById('drilldownPercentLabel').textContent = `(${categoryTx.length} ${t('ops_suffix')} • Banii puși deoparte)`;
     } else {
+        if (totalSpentLabelEl) totalSpentLabelEl.textContent = t('lbl_total_spent') || 'Total cheltuit';
         document.getElementById('drilldownPercentLabel').textContent = `(${percent}% ${t('lbl_of_period_expenses')})`;
     }
 
@@ -8907,9 +8936,11 @@ function renderStatsTab() {
 
     let totIncomeRon = 0;
     let totExpenseRon = 0;
+    let totExpenseNonSavingsRon = 0;
     let peakExpenseTx = null;
     let peakIncomeTx = null;
     let expenseCount = 0;
+    let expenseNonSavingsCount = 0;
     let incomeCount = 0;
 
     filteredTxs.forEach(t => {
@@ -8923,6 +8954,10 @@ function renderStatsTab() {
         } else if (t.type === 'expense') {
             totExpenseRon += amtRon;
             expenseCount++;
+            if (!isSavingsCategory(t)) {
+                totExpenseNonSavingsRon += amtRon;
+                expenseNonSavingsCount++;
+            }
             if (!peakExpenseTx || amtRon > (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0)) {
                 peakExpenseTx = t;
             }
@@ -8938,9 +8973,11 @@ function renderStatsTab() {
     const savingsRate = totIncomeRon > 0 ? ((netSavingsRon / totIncomeRon) * 100).toFixed(1) : (netSavingsRon >= 0 ? '0.0' : '-');
 
     const daysCount = getDaysInStatsPeriod();
-    const dailyAvgRon = totExpenseRon / Math.max(1, daysCount);
+    const dailyAvgRon = (currentStatsPeriod === 'month')
+        ? calculateDailyExpenseRateRon()
+        : (totExpenseNonSavingsRon / Math.max(1, daysCount));
     const dailyIncomeRon = totIncomeRon / Math.max(1, daysCount);
-    const avgTicketRon = expenseCount > 0 ? (totExpenseRon / expenseCount) : 0;
+    const avgTicketRon = expenseNonSavingsCount > 0 ? (totExpenseNonSavingsRon / expenseNonSavingsCount) : (expenseCount > 0 ? totExpenseRon / expenseCount : 0);
 
     // Calcul Sold Curent Total pentru Autonomie Financiară (Runway)
     let totalBalRon = 0;
@@ -8948,8 +8985,16 @@ function renderStatsTab() {
         if (isTxSuspended(t)) return;
         const a = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
         if (t.type === 'income') totalBalRon += a;
-        else if (t.type === 'expense') totalBalRon -= a;
+        else if (t.type === 'expense') {
+            if (!isSavingsCategory(t)) totalBalRon -= a;
+        }
     });
+    if (appData && Array.isArray(appData.deposits)) {
+        appData.deposits.forEach(dep => {
+            const depAmt = parseFloat(dep.amountInRon) || parseFloat(dep.amount) || 0;
+            totalBalRon += depAmt;
+        });
+    }
 
     // 2. Afișare KPI-uri cu monedă stilizată mai mică
     const kpiIncEl = document.getElementById('statKpiIncome');
@@ -8993,25 +9038,19 @@ function renderStatsTab() {
             const currentPaceDisp = convertFromRon(currentPaceRon, mainCurr);
             statsBannerValEl.textContent = formatMoney(currentPaceDisp, mainCurr) + dayUnit;
             if (statsBannerSubEl) {
-                statsBannerSubEl.textContent = 'Ritm curent (facturi distribuite pe 30 zile)';
+                statsBannerSubEl.textContent = 'Ritm curent (fără economii, facturi pe 30 zile)';
             }
         } else {
-            let periodNonSavingsExpRon = 0;
-            filteredTxs.forEach(t => {
-                if (t.type === 'expense' && !isSavingsCategory(t)) {
-                    periodNonSavingsExpRon += (parseFloat(t.amountInRon) || parseFloat(t.amount) || 0);
-                }
-            });
-            const periodDailyRon = periodNonSavingsExpRon / Math.max(1, daysCount);
+            const periodDailyRon = totExpenseNonSavingsRon / Math.max(1, daysCount);
             const periodDailyDisp = convertFromRon(periodDailyRon, mainCurr);
             statsBannerValEl.textContent = formatMoney(periodDailyDisp, mainCurr) + dayUnit;
             if (statsBannerSubEl) {
                 const periodLabelMap = {
-                    '3months': 'Media ultimelor 3 luni',
-                    'year': 'Media zilnică pe anul curent',
-                    'all': 'Media zilnică din tot istoricul'
+                    '3months': 'Media ultimelor 3 luni (fără economii)',
+                    'year': 'Media zilnică pe anul curent (fără economii)',
+                    'all': 'Media zilnică din tot istoricul (fără economii)'
                 };
-                statsBannerSubEl.textContent = periodLabelMap[currentStatsPeriod] || 'Ritm zilnic de cheltuire';
+                statsBannerSubEl.textContent = periodLabelMap[currentStatsPeriod] || 'Ritm zilnic de cheltuire (fără economii)';
             }
         }
     }
@@ -10641,9 +10680,11 @@ function openKpiDetailModal(metricKey) {
 
     let totIncomeRon = 0;
     let totExpenseRon = 0;
+    let totExpenseNonSavingsRon = 0;
     let peakExpenseTx = null;
     let peakIncomeTx = null;
     let expenseCount = 0;
+    let expenseNonSavingsCount = 0;
     let incomeCount = 0;
     let transferCount = 0;
     let cardExpenseRon = 0;
@@ -10685,6 +10726,10 @@ function openKpiDetailModal(metricKey) {
         } else if (t.type === 'expense') {
             totExpenseRon += amtRon;
             expenseCount++;
+            if (!isSavingsCategory(t)) {
+                totExpenseNonSavingsRon += amtRon;
+                expenseNonSavingsCount++;
+            }
             if (t.date) daysWithExpenses.add(t.date);
             if (!peakExpenseTx || amtRon > (parseFloat(peakExpenseTx.amountInRon) || parseFloat(peakExpenseTx.amount) || 0)) {
                 peakExpenseTx = t;
@@ -10725,7 +10770,7 @@ function openKpiDetailModal(metricKey) {
             if (cash) cashBalRon += a;
             else cardBalRon += a;
         } else if (t.type === 'expense') {
-            totalBalRon -= a;
+            if (!isSavingsCategory(t)) totalBalRon -= a;
             if (cash) cashBalRon -= a;
             else cardBalRon -= a;
         } else if (t.type === 'transfer') {
@@ -10739,10 +10784,18 @@ function openKpiDetailModal(metricKey) {
             }
         }
     });
+    if (appData && Array.isArray(appData.deposits)) {
+        appData.deposits.forEach(dep => {
+            const depAmt = parseFloat(dep.amountInRon) || parseFloat(dep.amount) || 0;
+            totalBalRon += depAmt;
+        });
+    }
 
     const netSavingsRon = totIncomeRon - totExpenseRon;
     const savingsRate = totIncomeRon > 0 ? ((netSavingsRon / totIncomeRon) * 100).toFixed(1) : (netSavingsRon >= 0 ? '0.0' : '-');
-    const dailyAvgRon = totExpenseRon / Math.max(1, daysCount);
+    const dailyAvgRon = (currentStatsPeriod === 'month')
+        ? calculateDailyExpenseRateRon()
+        : (totExpenseNonSavingsRon / Math.max(1, daysCount));
     const dailyIncomeRon = totIncomeRon / Math.max(1, daysCount);
     const daysRunway = calculateGlobalRunwayDays();
     const burnRateRon = (daysRunway > 0 && totalBalRon > 0 && isFinite(daysRunway))
@@ -11106,9 +11159,9 @@ function openKpiDetailModal(metricKey) {
 
         html += `
             <div class="kpi-detail-hero" style="border-left: 4px solid #f59e0b;">
-                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Medie Plăți / Zi (Burn Rate)' : 'Daily Spend Pace'}</div>
+                <div class="kpi-detail-hero-label">${activeLang === 'ro' ? 'Medie Plăți / Zi (Fără Economii)' : 'Daily Spend Pace (Excl. Savings)'}</div>
                 <div class="kpi-detail-hero-val expense-color">${formatMoney(convertFromRon(dailyAvgRon, mainCurr), mainCurr)}/zi</div>
-                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `calculat pe durata a ${daysCount} zile din perioada selectată` : `calculated across ${daysCount} days in period`}</div>
+                <div class="kpi-detail-hero-sub">${activeLang === 'ro' ? `calculat pe durata a ${daysCount} zile din perioada selectată (categoria Economii este exclusă)` : `calculated across ${daysCount} days (savings excluded)`}</div>
             </div>
 
             <div class="kpi-detail-mini-grid">
