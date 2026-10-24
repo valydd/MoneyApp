@@ -9413,3 +9413,76 @@ body.dark-theme .tx-loc-text {
 
 
 
+
+/* Pastile rapide pentru sursa venituri */
+.btn-income-chip {
+    padding: 4px 9px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--input-bg, rgba(0,0,0,0.03)) !important;
+    color: var(--text-color) !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    user-select: none !important;
+}
+.btn-income-chip:hover {
+    border-color: var(--success, #10b981) !important;
+    color: var(--success, #10b981) !important;
+}
+.btn-income-chip.active {
+    background: rgba(16, 185, 129, 0.14) !important;
+    border-color: var(--success, #10b981) !important;
+    color: var(--success, #10b981) !important;
+    box-shadow: 0 1px 3px rgba(16, 185, 129, 0.15) !important;
+}
+.btn-income-chip.chip-savings.active {
+    background: rgba(139, 92, 246, 0.14) !important;
+    border-color: #8b5cf6 !important;
+    color: #8b5cf6 !important;
+}
+.tx-savings-income-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.28);
+    margin-left: 5px;
+}
+.tx-no-index-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    cursor: pointer;
+    margin-left: 4px;
+}
+.tx-has-index-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    background: rgba(37, 99, 235, 0.10);
+    color: var(--accent);
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    cursor: pointer;
+    margin-left: 4px;
+}

@@ -190,7 +190,7 @@ let statsStoresBarChartInstance = null;
 let currentStatsPeriod = 'month';
 let currentPeriodCategoryData = []; // Cached category data for active chart
 let selectedCurrency = 'RON';
-const APP_VERSION = "3.4.63";
+const APP_VERSION = "3.4.64";
 
 function updateAppVersionBadge() {
     const badge = document.getElementById('appVersionBadge');
@@ -6407,6 +6407,14 @@ function isSavingsCategory(tx) {
     return false;
 }
 
+// Helper: Identificare venit care provine din contul de economii / depozite
+function isSavingsIncome(tx) {
+    if (!tx) return false;
+    const desc = (typeof tx === 'string' ? tx : (tx.description || tx.merchant || tx.notes || '')).trim().toLowerCase();
+    if (!desc) return false;
+    return desc.includes('cont economii') || desc.includes('economii') || desc.includes('economie') || desc.includes('retragere economii') || desc.includes('depozit') || desc.includes('savings');
+}
+
 function calculateDailyExpenseRateRon() {
     const today = new Date();
     const curYear = today.getFullYear();
@@ -6805,7 +6813,7 @@ function renderOverviewChartAndList() {
         })
         : null;
 
-    const incomeTx = periodTx.filter(t => t.type === 'income' && !isTxSuspended(t));
+    const incomeTx = periodTx.filter(t => t.type === 'income' && !isTxSuspended(t) && !isSavingsIncome(t));
     let totalIncomeRon = 0;
     incomeTx.forEach(t => totalIncomeRon += (parseFloat(t.amountInRon) || parseFloat(t.amount) || 0));
 
@@ -8118,8 +8126,9 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
         sign = '-';
         colorClass = 'expense-color';
     } else {
-        icon = '💰';
-        mainTitle = 'Venit';
+        const isSavInc = isSavingsIncome(tx);
+        icon = isSavInc ? '🔄' : '💰';
+        mainTitle = isSavInc ? 'Retragere Economii' : 'Venit';
         sign = '+';
         colorClass = 'income-color';
     }
@@ -8157,6 +8166,20 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
         matchBadgeHtml = '<span class="tx-match-badge exact">🎯 Sumă exactă</span>';
     } else if (matchType === 'near' && typeof diffVal === 'number') {
         matchBadgeHtml = '<span class="tx-match-badge near">±' + formatMoney(diffVal, mainCurr) + ' diferență</span>';
+    }
+    let savingsIncBadgeHtml = '';
+    if (!isTransfer && !isExp && isSavingsIncome(tx)) {
+        savingsIncBadgeHtml = '<span class="tx-savings-income-badge" title="Fonduri aduse din contul de economii (nu se adună la venitul de muncă)">🔄 Cont Economii</span>';
+    }
+    let meterStatusBadgeHtml = '';
+    if (isExp && typeof isMeteredUtilityBill === 'function' && isMeteredUtilityBill(tx.categoryId, mc.merchant, mc.comment || tx.description)) {
+        const hasIdx = !isNaN(parseFloat(tx.utilityIndex)) && parseFloat(tx.utilityIndex) > 0;
+        if (hasIdx) {
+            const uCfg = UTILITY_METERS_CONFIG[tx.utilityType || 'electricity'] || UTILITY_METERS_CONFIG.electricity;
+            meterStatusBadgeHtml = `<span class="tx-has-index-badge" title="Apasă pentru a vedea/edita indexul contorului">${uCfg.icon} Index: ${tx.utilityIndex} ${uCfg.unit}</span>`;
+        } else {
+            meterStatusBadgeHtml = '<span class="tx-no-index-badge" title="Factură salvată fără index. Apasă pentru a adăuga indexul acum!">⚡ Adaugă index</span>';
+        }
     }
 
     const commentText = (isExp ? mc.comment : (tx.description || '')).trim();
@@ -8212,6 +8235,8 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
             <span class="tx-date">📅 ${formatDateDisplay(tx.date)}${timeDisp}</span>
             ${payBadgeHtml}
             ${matchBadgeHtml}
+            ${savingsIncBadgeHtml}
+            ${meterStatusBadgeHtml}
         </div>
         ${commentRowHtml}
         ${locationRowHtml}
@@ -8237,6 +8262,30 @@ function buildTxHistoryItemElement(tx, matchType, diffVal, mainCurr) {
         e.stopPropagation();
         toggleSuspendTransaction(tx.id);
     });
+
+    const badgeIdx = item.querySelector('.tx-no-index-badge, .tx-has-index-badge');
+    if (badgeIdx) {
+        badgeIdx.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (typeof openExpenseUtilityFloatingPrompt === 'function') {
+                const merch = tx.merchant || '';
+                const itemDesc = tx.description || '';
+                const uType = tx.utilityType || 'electricity';
+                const uIndex = tx.utilityIndex || '';
+                const uDate = tx.utilityIndexDate || tx.date || getTodayString();
+                const uIdxInp = document.getElementById('expenseUtilityIndex');
+                const uDateInp = document.getElementById('expenseUtilityIndexDate');
+                const uTypeInp = document.getElementById('expenseUtilityType');
+                if (uIdxInp) uIdxInp.value = uIndex;
+                if (uDateInp) uDateInp.value = uDate;
+                if (uTypeInp) uTypeInp.value = uType;
+                openExpenseUtilityFloatingPrompt(merch, itemDesc, {
+                    isDirectEdit: true,
+                    txId: tx.id
+                });
+            }
+        });
+    }
 
     item.style.cursor = 'pointer';
     item.addEventListener('click', (e) => {
@@ -8946,10 +8995,12 @@ function renderStatsTab() {
     filteredTxs.forEach(t => {
         const amtRon = parseFloat(t.amountInRon) || parseFloat(t.amount) || 0;
         if (t.type === 'income') {
-            totIncomeRon += amtRon;
-            incomeCount++;
-            if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
-                peakIncomeTx = t;
+            if (!isSavingsIncome(t)) {
+                totIncomeRon += amtRon;
+                incomeCount++;
+                if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
+                    peakIncomeTx = t;
+                }
             }
         } else if (t.type === 'expense') {
             totExpenseRon += amtRon;
@@ -10706,23 +10757,25 @@ function openKpiDetailModal(metricKey) {
         const cash = isCashTx(t);
 
         if (t.type === 'income') {
-            totIncomeRon += amtRon;
-            incomeCount++;
-            if (cash) {
-                cashIncomeRon += amtRon;
-                cashIncomeCount++;
-            } else {
-                cardIncomeRon += amtRon;
-                cardIncomeCount++;
+            if (!isSavingsIncome(t)) {
+                totIncomeRon += amtRon;
+                incomeCount++;
+                if (cash) {
+                    cashIncomeRon += amtRon;
+                    cashIncomeCount++;
+                } else {
+                    cardIncomeRon += amtRon;
+                    cardIncomeCount++;
+                }
+                if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
+                    peakIncomeTx = t;
+                }
+                const src = (t.description && t.description.trim()) ? t.description.trim() : (activeLang === 'ro' ? 'Venit Diverse' : 'Income');
+                if (!incomeSourceMap[src]) incomeSourceMap[src] = { name: src, totalRon: 0, count: 0, txs: [] };
+                incomeSourceMap[src].totalRon += amtRon;
+                incomeSourceMap[src].count++;
+                incomeSourceMap[src].txs.push(t);
             }
-            if (!peakIncomeTx || amtRon > (parseFloat(peakIncomeTx.amountInRon) || parseFloat(peakIncomeTx.amount) || 0)) {
-                peakIncomeTx = t;
-            }
-            const src = (t.description && t.description.trim()) ? t.description.trim() : (activeLang === 'ro' ? 'Venit Diverse' : 'Income');
-            if (!incomeSourceMap[src]) incomeSourceMap[src] = { name: src, totalRon: 0, count: 0, txs: [] };
-            incomeSourceMap[src].totalRon += amtRon;
-            incomeSourceMap[src].count++;
-            incomeSourceMap[src].txs.push(t);
         } else if (t.type === 'expense') {
             totExpenseRon += amtRon;
             expenseCount++;
@@ -14767,7 +14820,10 @@ function isUtilityItemOrMerchant(merch, itemDesc, catId) {
     return isMeteredUtilityBill(currentCatId, merch, itemDesc);
 }
 
-function openExpenseUtilityFloatingPrompt(merch, itemDesc) {
+function openExpenseUtilityFloatingPrompt(merch, itemDesc, pendingTxData) {
+    if (pendingTxData) {
+        window._pendingUtilityExpense = pendingTxData;
+    }
     const overlay = document.getElementById('expenseUtilityFloatingOverlay');
     if (!overlay) return;
 
@@ -14865,37 +14921,85 @@ function updateFloatingUtilityLivePreview() {
     `;
 }
 
-function saveExpenseUtilityFloatingPrompt() {
+function saveExpenseUtilityFloatingPrompt(withIndex = true) {
     const indexInput = document.getElementById('expenseUtilityFloatingIndex');
     const dateInput = document.getElementById('expenseUtilityFloatingDate');
-    const newVal = parseFloat(indexInput ? indexInput.value : '');
-
-    if (isNaN(newVal) || newVal <= 0) {
-        showToast('Introduceți o valoare validă a indexului!', 'error');
-        return;
-    }
-
-    const newDate = (dateInput && dateInput.value) ? dateInput.value : getTodayString();
     const uType = currentFloatingPromptUtilityType || 'electricity';
     const cfg = UTILITY_METERS_CONFIG[uType] || UTILITY_METERS_CONFIG.electricity;
+
+    let newVal = NaN;
+    let newDate = (dateInput && dateInput.value) ? dateInput.value : getTodayString();
+
+    if (withIndex) {
+        newVal = parseFloat(indexInput ? indexInput.value : '');
+        if (isNaN(newVal) || newVal <= 0) {
+            showToast('Introduceți o valoare validă a indexului sau apăsați „Fără index”!', 'warning');
+            if (indexInput) indexInput.focus();
+            return;
+        }
+    }
 
     const uIdxHidden = document.getElementById('expenseUtilityIndex');
     const uDateHidden = document.getElementById('expenseUtilityIndexDate');
     const uTypeHidden = document.getElementById('expenseUtilityType');
 
-    if (uIdxHidden) uIdxHidden.value = newVal;
-    if (uDateHidden) uDateHidden.value = newDate;
-    if (uTypeHidden) uTypeHidden.value = uType;
-
-    const badge = document.getElementById('expenseUtilityEnteredBadge');
-    const badgeText = document.getElementById('expenseUtilityEnteredText');
-    if (badge && badgeText) {
-        badgeText.innerHTML = `Index: <strong>${newVal} ${cfg.unit}</strong> (${cfg.name}) • ${formatDateDisplay(newDate)}`;
-        badge.style.display = 'none';
+    if (!isNaN(newVal) && newVal > 0) {
+        if (uIdxHidden) uIdxHidden.value = newVal;
+        if (uDateHidden) uDateHidden.value = newDate;
+        if (uTypeHidden) uTypeHidden.value = uType;
+    } else {
+        if (uIdxHidden) uIdxHidden.value = '';
+        if (uDateHidden) uDateHidden.value = '';
     }
 
     closeExpenseUtilityFloatingPrompt();
-    showToast(`✓ Index reținut: ${newVal} ${cfg.unit} (${cfg.name})`, 'success');
+
+    // Dacă avem tranzacție în așteptare salvată din popover sau editare, o finalizăm automat
+    const pending = window._pendingUtilityExpense;
+    if (pending) {
+        window._pendingUtilityExpense = null;
+        if (pending.isDirectEdit && pending.txId) {
+            const tx = appData.transactions.find(t => t.id === pending.txId);
+            if (tx) {
+                if (!isNaN(newVal) && newVal > 0) {
+                    tx.utilityType = uType;
+                    tx.utilityIndex = newVal;
+                    tx.utilityIndexDate = newDate;
+                    syncTxUtilityReading(tx);
+                    showToast(`✓ Factură actualizată cu index: ${newVal} ${cfg.unit}`, 'success');
+                } else {
+                    delete tx.utilityType;
+                    delete tx.utilityIndex;
+                    delete tx.utilityIndexDate;
+                    if (Array.isArray(appData.utilityReadings)) {
+                        appData.utilityReadings = appData.utilityReadings.filter(r => r.txId !== tx.id);
+                    }
+                    showToast('Factură salvată fără index.', 'info');
+                }
+                saveData();
+                updateBalanceCards();
+                renderOverviewChartAndList();
+                renderTransactionsHistory();
+                renderStatsTab();
+                if (document.getElementById('modalUtilityMetersAnalytics') && document.getElementById('modalUtilityMetersAnalytics').classList.contains('active')) {
+                    renderUtilityMetersAnalytics();
+                }
+                return;
+            }
+        }
+        // Salvare directă a noii cheltuieli
+        saveExpenseDirectly(pending.amount, pending.categoryId, pending.merchant, pending.description, pending.location);
+        if (!isNaN(newVal) && newVal > 0) {
+            showToast(`✓ Factură înregistrată cu index: ${newVal} ${cfg.unit}`, 'success');
+        } else {
+            showToast('✓ Factură înregistrată (fără index)', 'success');
+        }
+        return;
+    }
+
+    if (!isNaN(newVal) && newVal > 0) {
+        showToast(`✓ Index reținut: ${newVal} ${cfg.unit} (${cfg.name})`, 'success');
+    }
 }
 
 function updateDirectMeterLivePreview() {
@@ -18195,7 +18299,14 @@ function handleSaveExpenseFromShoppingPopover(e) {
     if (typeof isMeteredUtilityBill === 'function' && isMeteredUtilityBill(currentCatId, merch, itemDesc)) {
         closeFoodMerchantsOverlay();
         if (typeof openExpenseUtilityFloatingPrompt === 'function') {
-            openExpenseUtilityFloatingPrompt(merch, itemDesc);
+            const pendingTx = {
+                amount: parsedAmt,
+                categoryId: currentCatId,
+                merchant: merch,
+                description: itemDesc,
+                location: popLoc
+            };
+            openExpenseUtilityFloatingPrompt(merch, itemDesc, pendingTx);
         }
         return;
     }
@@ -20452,7 +20563,14 @@ document.addEventListener('DOMContentLoaded', () => {
             incTimeInput.value = savedTime;
         }
         const srcInput = document.getElementById('incomeSource');
-        if (srcInput) srcInput.value = tx.description || '';
+        if (srcInput) {
+            srcInput.value = tx.description || '';
+            document.querySelectorAll('#incomeQuickChipsWrap .btn-income-chip').forEach(btn => {
+                const s = (btn.dataset.source || '').trim().toLowerCase();
+                const cur = (tx.description || '').trim().toLowerCase();
+                btn.classList.toggle('active', cur === s || (s === 'cont economii' && cur.includes('economii')));
+            });
+        }
         
         const incPayMethod = (tx.paymentMethod === 'cash') ? 'cash' : 'card';
         const incPayInput = document.getElementById('incomePaymentMethod');
@@ -21032,6 +21150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (submitBtn) submitBtn.textContent = t('btn_save');
             const dateInput = document.getElementById('incomeDate');
             if (dateInput) dateInput.value = getTodayString();
+            document.querySelectorAll('#incomeQuickChipsWrap .btn-income-chip').forEach(btn => btn.classList.remove('active'));
             const incTimeInput = document.getElementById('incomeTime');
             if (incTimeInput) {
                 const now = new Date();
@@ -21818,7 +21937,48 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSaveUtilPrompt) {
         btnSaveUtilPrompt.addEventListener('click', (e) => {
             e.preventDefault();
-            saveExpenseUtilityFloatingPrompt();
+            saveExpenseUtilityFloatingPrompt(true);
+        });
+    }
+
+    const btnSaveNoIdxPrompt = document.getElementById('btnSaveWithoutIndexUtilityPrompt');
+    if (btnSaveNoIdxPrompt) {
+        btnSaveNoIdxPrompt.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveExpenseUtilityFloatingPrompt(false);
+        });
+    }
+
+    // Gestionare pastile rapide sursa venituri (Avans, Lichidare, Diurnă, Cont Economii, etc.)
+    function syncIncomeQuickChipsUI(val) {
+        const cur = (val || '').trim().toLowerCase();
+        document.querySelectorAll('#incomeQuickChipsWrap .btn-income-chip').forEach(btn => {
+            const s = (btn.dataset.source || '').trim().toLowerCase();
+            btn.classList.toggle('active', cur === s || (s === 'cont economii' && cur.includes('economii')));
+        });
+    }
+
+    document.querySelectorAll('#incomeQuickChipsWrap .btn-income-chip').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const src = btn.dataset.source;
+            const srcInput = document.getElementById('incomeSource');
+            if (srcInput) {
+                if (src === 'Altele') {
+                    srcInput.value = '';
+                    srcInput.focus();
+                } else {
+                    srcInput.value = src;
+                }
+                syncIncomeQuickChipsUI(srcInput.value);
+            }
+        });
+    });
+
+    const incomeSrcInput = document.getElementById('incomeSource');
+    if (incomeSrcInput) {
+        incomeSrcInput.addEventListener('input', (e) => {
+            syncIncomeQuickChipsUI(e.target.value);
         });
     }
 
